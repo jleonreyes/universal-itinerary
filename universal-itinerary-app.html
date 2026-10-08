@@ -126,13 +126,6 @@
             border-radius: 8px;
             background: #0f172a;
             border: 2px dashed #334155;
-            transition: all 0.2s;
-        }
-
-        .time-slot.drag-over {
-            background: #1e40af;
-            border-color: #3b82f6;
-            transform: scale(1.02);
         }
 
         .time-label {
@@ -159,16 +152,8 @@
             align-items: flex-start;
             font-size: 13px;
             color: #fff;
-            cursor: grab;
             border: 1px solid rgba(255,255,255,0.2);
-            user-select: none;
-            -webkit-user-select: none;
             gap: 8px;
-        }
-
-        .attraction-in-slot:active {
-            cursor: grabbing;
-            opacity: 0.7;
         }
 
         .attraction-name {
@@ -233,20 +218,18 @@
             color: #fff;
             font-size: 12px;
             font-weight: 600;
-            cursor: grab;
+            cursor: pointer;
             user-select: none;
-            -webkit-user-select: none;
             transition: all 0.2s;
             text-align: center;
             word-break: break-word;
+            -webkit-user-select: none;
         }
 
         .attraction-btn:active {
-            cursor: grabbing;
             transform: scale(0.95);
         }
 
-        /* Colores por zona/mundo */
         .btn-nintendo { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
         .btn-dark { border-color: #6b21a8; background: rgba(107, 33, 168, 0.2); }
         .btn-berk { border-color: #22c55e; background: rgba(34, 197, 94, 0.2); }
@@ -255,7 +238,6 @@
         .btn-marvel { border-color: #ec4899; background: rgba(236, 72, 153, 0.2); }
         .btn-jurassic { border-color: #92400e; background: rgba(146, 64, 14, 0.2); }
         .btn-illumination { border-color: #f97316; background: rgba(249, 115, 22, 0.2); }
-        .btn-seuss { border-color: #d946ef; background: rgba(217, 70, 239, 0.2); }
 
         .slot-nintendo { background: rgba(239, 68, 68, 0.15); }
         .slot-dark { background: rgba(107, 33, 168, 0.15); }
@@ -265,37 +247,6 @@
         .slot-marvel { background: rgba(236, 72, 153, 0.15); }
         .slot-jurassic { background: rgba(146, 64, 14, 0.15); }
         .slot-illumination { background: rgba(249, 115, 22, 0.15); }
-        .slot-seuss { background: rgba(217, 70, 239, 0.15); }
-
-        .suggestions {
-            background: #1e40af;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
-            border-left: 4px solid #60a5fa;
-        }
-
-        .suggestions-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #93c5fd;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .suggestion-item {
-            font-size: 12px;
-            color: #e0e7ff;
-            margin-bottom: 6px;
-            padding-left: 8px;
-            border-left: 2px solid #60a5fa;
-            line-height: 1.4;
-        }
-
-        .suggestion-item:last-child {
-            margin-bottom: 0;
-        }
 
         .stats {
             background: #1e293b;
@@ -324,6 +275,103 @@
             margin-top: 4px;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            padding: 16px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 90%;
+            border: 1px solid #334155;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .hours-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .hour-btn {
+            padding: 12px;
+            background: #334155;
+            border: 2px solid #475569;
+            border-radius: 6px;
+            color: #cbd5e1;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .hour-btn:active {
+            background: #475569;
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .modal-btn.cancel {
+            background: #334155;
+            color: #cbd5e1;
+        }
+
+        .modal-btn.cancel:active {
+            background: #475569;
+        }
+
+        .modal-btn.confirm {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .modal-btn.confirm:active {
+            background: #1e40af;
+        }
+
         @media (max-height: 667px) {
             .timeline-container {
                 max-height: 50vh;
@@ -343,11 +391,6 @@
         </header>
 
         <div class="day-selector" id="daySelector"></div>
-
-        <div class="suggestions" id="suggestionsPanel" style="display: none;">
-            <div class="suggestions-title">Próxima recomendación</div>
-            <div id="suggestionsList"></div>
-        </div>
 
         <div class="stats" id="stats">
             <div class="stat">
@@ -374,12 +417,23 @@
         </div>
     </div>
 
+    <!-- Modal de selección de hora -->
+    <div class="modal" id="hourModal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">Selecciona horario</div>
+            <div class="hours-grid" id="hoursGrid"></div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn confirm" id="confirmBtn" onclick="confirmHour()" style="display:none;">Agregar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const attractions = {
             'EPIC - Celestial Park': [
                 { id: 'stardust', name: 'Stardust Racers', duration: 5, park: 'Epic', zone: 'celestial' },
-                { id: 'constellation', name: 'Constellation Carousel', duration: 4, park: 'Epic', zone: 'celestial' },
-                { id: 'astronomica', name: 'Astronomica', duration: 3, park: 'Epic', zone: 'celestial' }
+                { id: 'constellation', name: 'Constellation Carousel', duration: 4, park: 'Epic', zone: 'celestial' }
             ],
             'EPIC - Dark Universe': [
                 { id: 'curse', name: 'Curse of the Werewolf', duration: 3, park: 'Epic', zone: 'dark' },
@@ -416,24 +470,18 @@
                 { id: 'hogwarts', name: 'Hogwarts Always (Show)', duration: 15, park: 'IOA', zone: 'harrypotter' },
                 { id: 'express_hm', name: 'Hogwarts Express (Hogsmeade)', duration: 9, park: 'IOA', zone: 'harrypotter' },
                 { id: 'leaky', name: 'Leaky Cauldron (Comida)', duration: 45, park: 'IOA', zone: 'harrypotter' },
-                { id: 'honeydukes', name: 'Honeydukes (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' },
-                { id: 'ollivanders', name: 'Ollivanders (Tienda)', duration: 20, park: 'IOA', zone: 'harrypotter' },
-                { id: 'knock', name: 'Knock Turn Alley (Tienda)', duration: 15, park: 'IOA', zone: 'harrypotter' },
-                { id: 'celestina', name: 'Celestina Warbeck (Tienda)', duration: 15, park: 'IOA', zone: 'harrypotter' },
-                { id: 'beedle', name: 'Beedle the Bard (Tienda)', duration: 15, park: 'IOA', zone: 'harrypotter' }
+                { id: 'honeydukes', name: 'Honeydukes (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' }
             ],
             'IOA - Marvel Super Hero Island': [
                 { id: 'spiderman', name: 'Spider-Man Adventure', duration: 4, park: 'IOA', zone: 'marvel' },
-                { id: 'hulk', name: 'The Incredible Hulk Coaster', duration: 3, park: 'IOA', zone: 'marvel' },
-                { id: 'doom', name: 'Doctor Doom\'s Fearfall', duration: 3, park: 'IOA', zone: 'marvel' }
+                { id: 'hulk', name: 'The Incredible Hulk Coaster', duration: 3, park: 'IOA', zone: 'marvel' }
             ],
             'IOA - Skull Island': [
                 { id: 'skull', name: 'Skull Island: Reign of Kong', duration: 4, park: 'IOA', zone: 'marvel' }
             ],
             'IOA - Jurassic Park': [
                 { id: 'velocicoaster', name: 'VelociCoaster', duration: 3, park: 'IOA', zone: 'jurassic' },
-                { id: 'pteranodon', name: 'Pteranodon Flyers', duration: 4, park: 'IOA', zone: 'jurassic' },
-                { id: 'river', name: 'Jurassic Park River Adventure', duration: 4, park: 'IOA', zone: 'jurassic' }
+                { id: 'pteranodon', name: 'Pteranodon Flyers', duration: 4, park: 'IOA', zone: 'jurassic' }
             ],
             'USF - Diagon Alley': [
                 { id: 'gringotts', name: 'Harry Potter and the Escape from Gringotts', duration: 5, park: 'USF', zone: 'harrypotter' },
@@ -460,15 +508,18 @@
         };
 
         const waitTimes = {
-            battle: { 9: 110, 10: 120, 11: 95, 12: 80, 13: 75, 14: 85, 15: 90, 16: 100, 17: 95, 18: 80, 19: 60, 20: 40 },
-            minecart: { 9: 120, 10: 110, 11: 100, 12: 90, 13: 85, 14: 95, 15: 105, 16: 110, 17: 100, 18: 85, 19: 60, 20: 40 },
-            mariokart: { 9: 55, 10: 75, 11: 85, 12: 80, 13: 70, 14: 80, 15: 90, 16: 95, 17: 85, 18: 65, 19: 45, 20: 25 },
-            yoshi: { 9: 5, 10: 15, 11: 25, 12: 30, 13: 25, 14: 30, 15: 35, 16: 40, 17: 35, 18: 25, 19: 15, 20: 10 },
-            dragon: { 9: 5, 10: 20, 11: 30, 12: 35, 13: 30, 14: 35, 15: 40, 16: 45, 17: 40, 18: 30, 19: 20, 20: 15 },
-            wing: { 9: 5, 10: 15, 11: 25, 12: 30, 13: 25, 14: 30, 15: 35, 16: 40, 17: 35, 18: 25, 19: 15, 20: 10 },
-            hagrid: { 9: 55, 10: 65, 11: 75, 12: 80, 13: 70, 14: 75, 15: 85, 16: 90, 17: 80, 18: 65, 19: 45, 20: 30 },
-            forbidden: { 9: 10, 10: 15, 11: 20, 12: 25, 13: 20, 14: 25, 15: 30, 16: 35, 17: 30, 18: 20, 19: 15, 20: 10 },
-            gringotts: { 9: 15, 10: 45, 11: 60, 12: 75, 13: 65, 14: 70, 15: 80, 16: 85, 17: 75, 18: 60, 19: 40, 20: 20 }
+            battle: { 9: 60, 10: 70, 11: 95, 12: 120, 13: 140, 14: 150, 15: 170, 16: 180, 17: 205, 18: 180, 19: 120, 20: 90 },
+            minecart: { 9: 0, 10: 120, 11: 120, 12: 120, 13: 120, 14: 120, 15: 120, 16: 120, 17: 0, 18: 75, 19: 75, 20: 75 },
+            mariokart: { 9: 85, 10: 100, 11: 120, 12: 120, 13: 120, 14: 120, 15: 120, 16: 120, 17: 75, 18: 60, 19: 50, 20: 40 },
+            yoshi: { 9: 0, 10: 40, 11: 40, 12: 50, 13: 60, 14: 70, 15: 80, 16: 85, 17: 35, 18: 25, 19: 20, 20: 15 },
+            dragon: { 9: 0, 10: 40, 11: 40, 12: 60, 13: 80, 14: 90, 15: 100, 16: 110, 17: 20, 18: 15, 19: 10, 20: 5 },
+            wing: { 9: 0, 10: 45, 11: 45, 12: 60, 13: 80, 14: 90, 15: 100, 16: 110, 17: 35, 18: 30, 19: 25, 20: 20 },
+            fyre: { 9: 0, 10: 25, 11: 25, 12: 40, 13: 50, 14: 60, 15: 70, 16: 80, 17: 5, 18: 5, 19: 5, 20: 5 },
+            monsters: { 9: 0, 10: 15, 11: 15, 12: 20, 13: 30, 14: 40, 15: 50, 16: 60, 17: 15, 18: 10, 19: 8, 20: 5 },
+            curse: { 9: 0, 10: 50, 11: 50, 12: 70, 13: 90, 14: 100, 15: 110, 16: 120, 17: 60, 18: 45, 19: 35, 20: 30 },
+            hagrid: { 9: 75, 10: 80, 11: 90, 12: 100, 13: 110, 14: 120, 15: 130, 16: 140, 17: 100, 18: 80, 19: 60, 20: 45 },
+            gringotts: { 9: 20, 10: 25, 11: 30, 12: 40, 13: 50, 14: 60, 15: 70, 16: 75, 17: 50, 18: 35, 19: 25, 20: 15 },
+            despicable: { 9: 45, 10: 50, 11: 55, 12: 60, 13: 70, 14: 75, 15: 80, 16: 85, 17: 60, 18: 45, 19: 30, 20: 20 }
         };
 
         const days = [
@@ -481,7 +532,8 @@
 
         let currentDay = 0;
         let itineraries = {};
-        let draggedElement = null;
+        let selectedAttraction = null;
+        let selectedHour = null;
 
         const zoneColors = {
             nintendo: 'btn-nintendo',
@@ -491,8 +543,7 @@
             harrypotter: 'btn-harrypotter',
             illumination: 'btn-illumination',
             marvel: 'btn-marvel',
-            jurassic: 'btn-jurassic',
-            seuss: 'btn-seuss'
+            jurassic: 'btn-jurassic'
         };
 
         const slotZoneColors = {
@@ -503,8 +554,7 @@
             harrypotter: 'slot-harrypotter',
             illumination: 'slot-illumination',
             marvel: 'slot-marvel',
-            jurassic: 'slot-jurassic',
-            seuss: 'slot-seuss'
+            jurassic: 'slot-jurassic'
         };
 
         function init() {
@@ -575,9 +625,6 @@
             for (let hour = 9; hour < 22; hour++) {
                 const slot = document.createElement('div');
                 slot.className = 'time-slot';
-                slot.ondrop = (e) => handleDrop(e, hour);
-                slot.ondragover = (e) => handleDragOver(e, slot);
-                slot.ondragleave = (e) => slot.classList.remove('drag-over');
 
                 const timeLabel = document.createElement('div');
                 timeLabel.className = 'time-label';
@@ -592,8 +639,6 @@
                 if (attraction) {
                     const card = document.createElement('div');
                     card.className = `attraction-in-slot ${slotZoneColors[attraction.zone] || ''}`;
-                    card.draggable = true;
-                    card.ondragstart = (e) => handleDragStart(e, attraction);
 
                     const nameDiv = document.createElement('div');
                     nameDiv.className = 'attraction-name';
@@ -626,42 +671,61 @@
                 slot.appendChild(content);
                 timeline.appendChild(slot);
             }
-
-            renderSuggestions();
         }
 
-        function handleDragStart(e, attraction) {
-            draggedElement = attraction;
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function handleDragOver(e, slot) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            slot.classList.add('drag-over');
-        }
-
-        function handleDrop(e, hour) {
-            e.preventDefault();
-            e.target.closest('.time-slot').classList.remove('drag-over');
-
-            if (!draggedElement) return;
-
+        function openHourModal(attraction) {
+            selectedAttraction = attraction;
+            selectedHour = null;
+            document.getElementById('modalTitle').textContent = `${attraction.name} - Selecciona horario`;
+            
+            const hoursGrid = document.getElementById('hoursGrid');
+            hoursGrid.innerHTML = '';
+            
             const dayItinerary = itineraries[currentDay] || [];
-            itineraries[currentDay] = dayItinerary.filter(a => a.id !== draggedElement.id);
-            itineraries[currentDay].push({
-                id: draggedElement.id,
-                name: draggedElement.name,
-                hour: hour,
-                duration: draggedElement.duration,
-                park: draggedElement.park,
-                zone: draggedElement.zone
-            });
+            const usedHours = new Set(dayItinerary.map(a => a.hour));
+            
+            for (let hour = 9; hour < 22; hour++) {
+                const btn = document.createElement('button');
+                btn.className = 'hour-btn';
+                btn.textContent = `${hour}:00`;
+                btn.disabled = usedHours.has(hour);
+                btn.style.opacity = usedHours.has(hour) ? '0.5' : '1';
+                btn.onclick = () => {
+                    selectedHour = hour;
+                    document.querySelectorAll('.hour-btn').forEach(b => b.style.borderColor = '#475569');
+                    btn.style.borderColor = '#3b82f6';
+                    document.getElementById('confirmBtn').style.display = 'block';
+                };
+                hoursGrid.appendChild(btn);
+            }
+            
+            document.getElementById('confirmBtn').style.display = 'none';
+            document.getElementById('hourModal').classList.add('open');
+        }
 
-            saveItineraries();
-            draggedElement = null;
-            renderTimeline();
-            updateStats();
+        function closeModal() {
+            document.getElementById('hourModal').classList.remove('open');
+            selectedAttraction = null;
+            selectedHour = null;
+        }
+
+        function confirmHour() {
+            if (selectedAttraction && selectedHour !== null) {
+                const dayItinerary = itineraries[currentDay] || [];
+                dayItinerary.push({
+                    id: selectedAttraction.id,
+                    name: selectedAttraction.name,
+                    hour: selectedHour,
+                    duration: selectedAttraction.duration,
+                    park: selectedAttraction.park,
+                    zone: selectedAttraction.zone
+                });
+                itineraries[currentDay] = dayItinerary;
+                saveItineraries();
+                closeModal();
+                renderTimeline();
+                updateStats();
+            }
         }
 
         function renderAttractions() {
@@ -683,11 +747,7 @@
                     const btn = document.createElement('button');
                     btn.className = `attraction-btn ${zoneColors[attr.zone] || ''}`;
                     btn.textContent = attr.name;
-                    btn.draggable = true;
-                    btn.ondragstart = (e) => {
-                        draggedElement = attr;
-                        e.dataTransfer.effectAllowed = 'move';
-                    };
+                    btn.onclick = () => openHourModal(attr);
                     grid.appendChild(btn);
                 });
 
@@ -700,45 +760,6 @@
         function getWaitTime(attractionId, hour) {
             const times = waitTimes[attractionId] || {};
             return times[hour] || 0;
-        }
-
-        function renderSuggestions() {
-            const panel = document.getElementById('suggestionsPanel');
-            const dayItinerary = itineraries[currentDay] || [];
-
-            if (dayItinerary.length === 0) {
-                panel.style.display = 'none';
-                return;
-            }
-
-            const lastAttr = dayItinerary.reduce((prev, current) => {
-                return prev.hour > current.hour ? prev : current;
-            });
-
-            const endHour = lastAttr.hour + Math.ceil((getWaitTime(lastAttr.id, lastAttr.hour) + lastAttr.duration) / 60);
-
-            let allAttractions = [];
-            Object.values(attractions).forEach(arr => allAttractions = allAttractions.concat(arr));
-            
-            const usedIds = new Set(dayItinerary.map(a => a.id));
-            const available = allAttractions.filter(a => !usedIds.has(a.id));
-
-            if (available.length === 0) {
-                panel.style.display = 'none';
-                return;
-            }
-
-            panel.style.display = 'block';
-            const list = document.getElementById('suggestionsList');
-            list.innerHTML = '';
-
-            available.slice(0, 3).forEach(attr => {
-                const wait = getWaitTime(attr.id, endHour);
-                const suggestion = document.createElement('div');
-                suggestion.className = 'suggestion-item';
-                suggestion.textContent = `${attr.name}: ${wait > 0 ? wait + 'min + ' : ''}${attr.duration}m a las ${endHour}:00`;
-                list.appendChild(suggestion);
-            });
         }
 
         function updateStats() {

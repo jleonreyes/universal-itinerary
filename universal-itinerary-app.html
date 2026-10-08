@@ -1,786 +1,797 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Universal Itinerario">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jleonreyes/universal-itinerary/main/icon-192x192.png">
-    <meta name="theme-color" content="#1e3a8a">
-    <title>Universal Orlando Itinerario</title>
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Universal%20Orlando%20Itinerario%22,%22short_name%22:%22Universal%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f172a%22,%22theme_color%22:%22%231e3a8a%22,%22orientation%22:%22portrait%22}">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Universal">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jleonreyes/universal-itinerary/main/icon-192x192.png">
+<meta name="theme-color" content="#0f172a">
+<title>Universal Orlando 2027</title>
+<style>
+:root{
+  --bg:#0f172a; --panel:#1e293b; --panel2:#172033; --line:#334155;
+  --text:#e2e8f0; --muted:#94a3b8; --dim:#64748b;
+  --accent:#3b82f6; --bad:#f87171; --badbg:rgba(248,113,113,.12); --free:#34d399;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;color:var(--text);
+  padding-bottom:calc(96px + env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-action:manipulation}
+.wrap{max-width:720px;margin:0 auto;padding:0 max(14px,env(safe-area-inset-left)) 0 max(14px,env(safe-area-inset-right))}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
-            overflow-x: hidden;
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
-        }
+/* Top */
+.top{padding-top:calc(env(safe-area-inset-top) + 10px)}
+.count{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);padding:6px 2px 10px}
+.count b{color:#fff;font-variant-numeric:tabular-nums;font-size:15px}
+.tabs-bar{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(env(safe-area-inset-top)) 0 8px;margin:0 -14px;padding-left:14px;padding-right:14px}
+.tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-top:6px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:2px solid var(--line);border-radius:10px;padding:6px 12px;text-align:center;line-height:1.25;font-size:13px;font-weight:600;color:#cbd5e1}
+.tab small{display:block;font-weight:500;font-size:12px}
+.tab.on{border-color:var(--accent);background:#1e40af;color:#fff}
 
-        .container {
-            max-width: 100%;
-            padding: 16px max(16px, env(safe-area-inset-left));
-            padding-right: max(16px, env(safe-area-inset-right));
-        }
+/* Day header */
+.dayhead{padding:14px 2px 10px}
+.dayhead .n{font-size:12px;color:var(--dim);letter-spacing:.3px}
+.dayhead h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:30px;line-height:1.1;color:#fff;margin:2px 0 6px}
+.dayhead .park{font-size:17px;font-weight:700;color:#f0abfc}
+.dayhead .sub{font-size:13px;color:var(--muted);margin-top:2px;line-height:1.35}
 
-        header {
-            margin-bottom: 24px;
-            padding-top: max(16px, env(safe-area-inset-top));
-        }
+.stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 4px;margin:6px 0 12px;text-align:center}
+.stats .v{font-size:17px;font-weight:700;color:#60a5fa;font-variant-numeric:tabular-nums}
+.stats .l{font-size:11px;color:var(--dim);margin-top:2px}
+.stats .v.bad{color:var(--bad)}
 
-        .countdown {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+/* Timeline */
+.list{border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:52px 1fr;gap:10px;width:100%;text-align:left;padding:11px 8px 11px 6px;border-bottom:1px solid var(--line);position:relative;border-left:6px solid var(--z,var(--dim))}
+.row:active{filter:brightness(1.25)}
+.row{background:var(--zb,transparent)}
+.row .t{text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.row .t{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:1px}
+.row.major .t{color:#fff;font-weight:700}
+.row .t.bad{color:var(--bad)}
+.row .nm{font-size:16px;line-height:1.3}
+.row.major .nm{font-weight:700}
+.row .d{font-size:13px;color:#cbd5e1;font-weight:400}
+.row .m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:5px;font-size:11px}
+.chip{border-radius:5px;padding:2px 6px;font-weight:600;letter-spacing:.2px}
+.chip.obl{color:#fff;background:#dc2626}
+.chip.sin{color:#e2e8f0;background:rgba(15,23,42,.45)}
+.chip.wet{color:#0c4a6e;background:#7dd3fc}
+.chip.pin{color:#422006;background:#fde047}
+.occ{color:#a8b4c6;font-variant-numeric:tabular-nums}
+.row.now{outline:2px solid var(--free);outline-offset:-2px}
+.row.now .t::after{content:"AHORA";display:block;font-size:9px;color:var(--free);font-weight:800;margin-top:3px}
+.row.flash{animation:flash 1.6s ease}
+@keyframes flash{0%,40%{filter:brightness(1.8)}100%{filter:none}}
+.gap{font-size:12px;color:var(--free);padding:6px 10px 6px 66px;border-bottom:1px dashed var(--line)}
+.clash{font-size:12.5px;color:var(--bad);background:var(--badbg);padding:8px 10px 8px 66px;border-bottom:1px solid var(--line);line-height:1.35}
 
-        .countdown-label {
-            font-size: 12px;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+.tip{margin:16px 0 8px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.5;color:#cbd5e1}
+.tip summary{font-weight:700;color:#fff;list-style:none}
+.tip summary::-webkit-details-marker{display:none}
+.tip p{margin-top:8px}
+.reset{display:block;margin:14px auto 0;font-size:13px;color:var(--dim);text-decoration:underline;padding:8px}
+.help{font-size:12.5px;color:var(--dim);text-align:center;margin:10px 0 0;line-height:1.4}
 
-        .countdown-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
-            font-variant-numeric: tabular-nums;
-        }
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;
+  background:var(--accent);color:#fff;font-weight:700;font-size:16px;border-radius:28px;padding:14px 20px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.fab:active{transform:scale(.96)}
 
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
+/* Sheets */
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s}
+.backdrop.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);border-radius:18px 18px 0 0;border-top:1px solid var(--line);
+  max-height:90vh;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateY(105%);transition:transform .25s ease;
+  padding:8px 16px calc(20px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+.sheet.on{transform:none}
+.grab{width:40px;height:5px;border-radius:3px;background:#475569;margin:2px auto 12px}
+.sh-title{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+.in{width:100%;font-size:16px;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:#fff;padding:10px 12px;font-family:inherit}
+.in.big{font-size:18px;font-weight:700}
+.when{font-size:14px;color:var(--muted);margin:4px 0 12px}
+.when b{color:#fff}
+.when .bad{color:var(--bad);font-weight:600}
+.field{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:15px}
+.field>span small{display:block;font-size:12px;color:var(--dim);margin-top:2px}
+.field.col{flex-direction:column;align-items:stretch}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:40px;height:38px;border-radius:10px;background:#334155;font-size:20px;font-weight:700}
+.step button:active{background:#475569}
+.step .val{min-width:62px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{padding:8px 11px;font-size:14px;color:var(--muted)}
+.seg button.on{background:#334155;color:#fff;font-weight:600}
+.switch input{width:50px;height:30px;appearance:none;-webkit-appearance:none;background:#334155;border-radius:15px;position:relative;transition:background .2s;flex:0 0 auto}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .2s}
+.switch input:checked{background:#22c55e}
+.switch input:checked::after{left:23px}
+input[type=time]{font-size:17px;background:var(--bg);color:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-family:inherit;min-width:110px}
+.hint{font-size:12px;color:var(--dim);margin:-4px 0 8px;line-height:1.4}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.acts button{background:#334155;border-radius:10px;padding:12px;font-size:15px;font-weight:600}
+.acts button:active{background:#475569}
+.acts .del{color:#fca5a5}
+.done{width:100%;margin-top:10px;background:var(--accent);color:#fff;font-weight:700;border-radius:12px;padding:14px;font-size:16px}
 
-        .day-selector {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-bottom: 24px;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 8px;
-        }
+.cat-top{position:sticky;top:-8px;background:var(--panel);padding:4px 0 10px;z-index:2}
+.cat-top label{font-size:13px;color:var(--muted);display:block;margin:6px 0 4px}
+select.in{appearance:none;-webkit-appearance:none}
+.grp{font-size:12px;font-weight:800;color:var(--gz,var(--dim));letter-spacing:.4px;text-transform:uppercase;margin:16px 0 6px}
+.ci{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 10px;border-radius:10px;background:var(--zb,var(--bg));margin-bottom:6px;border-left:6px solid var(--z)}
+.ci:active{filter:brightness(1.25)}
+.ci .x{flex:1;min-width:0}
+.ci .x b{display:block;font-size:15px}
+.ci .x small{color:#cbd5e1;font-size:12px}
+.ci .plus{font-size:22px;color:#fff;font-weight:700}
 
-        .day-btn {
-            flex-shrink: 0;
-            padding: 8px 12px;
-            border: 2px solid #334155;
-            border-radius: 8px;
-            background: transparent;
-            color: #cbd5e1;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .day-btn.active {
-            border-color: #3b82f6;
-            background: #1e40af;
-            color: #fff;
-        }
-
-        .day-btn:active {
-            transform: scale(0.95);
-        }
-
-        .timeline-container {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
-            overflow-y: auto;
-            max-height: 60vh;
-            border: 1px solid #334155;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .timeline {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            min-height: 600px;
-            position: relative;
-        }
-
-        .time-slot {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 8px;
-            min-height: 80px;
-            border-radius: 8px;
-            background: #0f172a;
-            border: 2px dashed #334155;
-        }
-
-        .time-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #94a3b8;
-            min-width: 50px;
-            text-align: right;
-            padding-top: 4px;
-        }
-
-        .slot-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .attraction-in-slot {
-            padding: 8px 12px;
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            font-size: 13px;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.2);
-            gap: 8px;
-        }
-
-        .attraction-name {
-            flex: 1;
-        }
-
-        .attraction-meta {
-            font-size: 11px;
-            color: rgba(255,255,255,0.8);
-            line-height: 1.3;
-        }
-
-        .remove-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.8);
-            cursor: pointer;
-            font-size: 16px;
-            padding: 0;
-            flex-shrink: 0;
-        }
-
-        .attractions-panel {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 24px;
-            border: 1px solid #334155;
-        }
-
-        .attractions-title {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #f1f5f9;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .park-section {
-            margin-bottom: 16px;
-        }
-
-        .park-name {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .attractions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 8px;
-        }
-
-        .attraction-btn {
-            padding: 10px 8px;
-            background: #334155;
-            border: 2px solid;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.2s;
-            text-align: center;
-            word-break: break-word;
-            -webkit-user-select: none;
-        }
-
-        .attraction-btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-nintendo { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
-        .btn-dark { border-color: #6b21a8; background: rgba(107, 33, 168, 0.2); }
-        .btn-berk { border-color: #22c55e; background: rgba(34, 197, 94, 0.2); }
-        .btn-celestial { border-color: #eab308; background: rgba(234, 179, 8, 0.2); }
-        .btn-harrypotter { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); }
-        .btn-marvel { border-color: #ec4899; background: rgba(236, 72, 153, 0.2); }
-        .btn-jurassic { border-color: #92400e; background: rgba(146, 64, 14, 0.2); }
-        .btn-illumination { border-color: #f97316; background: rgba(249, 115, 22, 0.2); }
-
-        .slot-nintendo { background: rgba(239, 68, 68, 0.15); }
-        .slot-dark { background: rgba(107, 33, 168, 0.15); }
-        .slot-berk { background: rgba(34, 197, 94, 0.15); }
-        .slot-celestial { background: rgba(234, 179, 8, 0.15); }
-        .slot-harrypotter { background: rgba(59, 130, 246, 0.15); }
-        .slot-marvel { background: rgba(236, 72, 153, 0.15); }
-        .slot-jurassic { background: rgba(146, 64, 14, 0.15); }
-        .slot-illumination { background: rgba(249, 115, 22, 0.15); }
-
-        .stats {
-            background: #1e293b;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            font-size: 12px;
-            border: 1px solid #334155;
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-weight: 700;
-            color: #60a5fa;
-            font-size: 16px;
-        }
-
-        .stat-label {
-            color: #64748b;
-            font-size: 11px;
-            margin-top: 4px;
-        }
-
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            padding: 16px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal.open {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 90%;
-            border: 1px solid #334155;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .hours-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .hour-btn {
-            padding: 12px;
-            background: #334155;
-            border: 2px solid #475569;
-            border-radius: 6px;
-            color: #cbd5e1;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .hour-btn:active {
-            background: #475569;
-            border-color: #3b82f6;
-            color: #3b82f6;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .modal-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 14px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .modal-btn.cancel {
-            background: #334155;
-            color: #cbd5e1;
-        }
-
-        .modal-btn.cancel:active {
-            background: #475569;
-        }
-
-        .modal-btn.confirm {
-            background: #3b82f6;
-            color: #fff;
-        }
-
-        .modal-btn.confirm:active {
-            background: #1e40af;
-        }
-
-        @media (max-height: 667px) {
-            .timeline-container {
-                max-height: 50vh;
-            }
-        }
-    </style>
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);opacity:0;pointer-events:none;
+  background:#f1f5f9;color:#0f172a;border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;z-index:80;display:flex;gap:14px;align-items:center;transition:all .2s;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%);pointer-events:auto}
+.toast button{color:#1d4ed8;font-weight:800}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="countdown">
-                <div class="countdown-label">Faltan</div>
-                <div class="countdown-value" id="countdown">00d 00h 00m</div>
-            </div>
-            <h1>Universal Orlando</h1>
-            <p style="font-size: 13px; color: #94a3b8;">26 feb – 4 mar 2027</p>
-        </header>
 
-        <div class="day-selector" id="daySelector"></div>
+<div class="wrap">
+  <div class="top">
+    <div class="count"><span>Universal · 26 feb – 4 mar</span><b id="countdown"></b></div>
+  </div>
+  <div class="tabs-bar"><div class="tabs" id="tabs"></div></div>
 
-        <div class="stats" id="stats">
-            <div class="stat">
-                <div class="stat-value" id="statAttractions">0</div>
-                <div class="stat-label">Atracciones</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="statWaitTime">0h</div>
-                <div class="stat-label">Espera Total</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value" id="statDuration">0h</div>
-                <div class="stat-label">Duración Total</div>
-            </div>
-        </div>
+  <div class="dayhead">
+    <div class="n" id="dNum"></div>
+    <h1 id="dTitle"></h1>
+    <div class="park" id="dPark"></div>
+    <div class="sub" id="dSub"></div>
+  </div>
 
-        <div class="timeline-container" id="timelineContainer">
-            <div class="timeline" id="timeline"></div>
-        </div>
+  <div class="stats">
+    <div><div class="v" id="sRides">0</div><div class="l">Atracciones</div></div>
+    <div><div class="v" id="sQueue">0</div><div class="l">Fila máx. sumada</div></div>
+    <div><div class="v" id="sEnd">–</div><div class="l" id="sEndL">Termina</div></div>
+  </div>
 
-        <div class="attractions-panel">
-            <div class="attractions-title">Atracciones Disponibles</div>
-            <div id="attractionsList"></div>
-        </div>
+  <div class="list" id="list"></div>
+  <p class="help">Toca cualquier renglón para cambiar fila, duración u hora fija, moverlo o borrarlo. Lo que sigue se recorre solo.</p>
+
+  <details class="tip" id="tip"><summary>Notas del día</summary><p id="tipText"></p></details>
+  <button class="reset" id="resetBtn">Restaurar el itinerario original de este día</button>
+</div>
+
+<button class="fab" id="fab">＋ Agregar</button>
+
+<div class="backdrop" id="backdrop"></div>
+
+<div class="sheet" id="editSheet"><div class="grab"></div><div id="editBody"></div></div>
+
+<div class="sheet" id="catSheet">
+  <div class="grab"></div>
+  <div class="cat-top">
+    <label for="afterSel">Agregar después de</label>
+    <select class="in" id="afterSel"></select>
+    <label for="q">Buscar</label>
+    <input class="in" id="q" type="search" placeholder="Atracción, show, comida…" autocomplete="off">
+  </div>
+  <div id="catList"></div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Deshacer</button></div>
+
+<script>
+/* ---------- utilidades ---------- */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,'0');
+const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60 + m; };
+const fmt = m => { m = Math.round(m); return Math.floor(m/60) + ':' + pad(((m%60)+60)%60); };
+const hhmm = m => pad(Math.floor(m/60)) + ':' + pad(m%60);
+const secs = s => { if(!s) return 0; const [a,b] = s.split(':').map(Number); return a*60 + (b||0); };
+const rideFmt = s => Math.floor(s/60) + ':' + pad(s%60);
+const ceil5 = m => Math.ceil(m/5)*5;
+const uid = () => Math.random().toString(36).slice(2,10);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- zonas y colores ---------- */
+const ZC = {
+  hpe:'#6366f1', hpi:'#38bdf8', hpu:'#3b82f6', hp:'#3b82f6', nintendo:'#f87171', berk:'#4ade80', dark:'#a78bfa', celestial:'#facc15',
+  marvel:'#f472b6', jurassic:'#c08a3e', illum:'#fb923c', seuss:'#2dd4bf', toon:'#e879f9',
+  usf:'#fda4af', dw:'#a3e635', log:'#475569'
+};
+const zc = z => ZC[z] || ZC.log;
+// Fondo de color del renglón: más intenso en atracciones y shows
+const tint = (hex,a) => { const n = parseInt(hex.slice(1),16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`; };
+const zbg = (z,strong) => z === 'log' ? 'transparent' : tint(zc(z), strong ? .5 : .3);
+
+/* ---------- itinerario estudiado (PDF) ---------- */
+// lk: 'obl' locker obligatorio · 'sin' sin locker · '' no aplica ; wet: se moja
+const R = (t,name,zone,q,ride,lk='',note='',o={}) => ({t,name,zone,type:'ride',qMin:q[0],qMax:q[1],ride:secs(ride),
+  lk:lk.replace('-moja',''), wet:lk.includes('moja'), note, ...o});
+const X = (t,name,zone,note='',type='other',o={}) => ({t,name,zone,note,type,...o});
+const L = (t,name,note='',o={}) => X(t,name,'log',note,'log',o);
+const W = (t,name,o={}) => X(t,name,'log','10 min','walk',o);
+const S = (t,name,zone,note='función fija',o={}) => X(t,name,zone,note,'show',{fixed:true,...o});
+const M = (t,name,zone,note='',o={}) => X(t,name,zone,note,'meal',o);
+const FX = {fixed:true};
+
+const DAYS = [
+ { key:'2027-02-27', tab:['Sáb','27 feb'], title:'Sábado 27 de febrero', park:'Epic Universe',
+   sub:'Ministry of Magic + Isle of Berk · Epic 10:00–21:00 · EPA 9:00',
+   tip:'Battle at the Ministry va primera, sin excepción. El early entry es su ventana más barata del día: arranca cerca de 50–70 min y sube sin parar hasta 85+ a media mañana. Además Universal cierra su fila por capacidad, a veces varias horas antes del cierre, así que dejarla para la tarde o la noche es arriesgar perderla. El costo de ir primero es que Berk sube de 5 a 25–40 min, pero es el intercambio correcto.',
+   seed:[
+    L('7:20','Desayuno en cuarto','',FX),
+    L('7:50','Salida a pie del hotel'),
+    L('8:00','Torniquetes Chronos','1 hora antes del EPA'),
+    W('9:00','Apertura EPA · caminar a Ministry',FX),
+    R('9:10','Battle at the Ministry','hpe',[50,70],'5:00','obl','su mejor ventana'),
+    W('10:30','Caminar a Isle de Berk'),
+    R('10:40',"Hiccup's Wing Gliders",'berk',[25,40],'2:30','obl'),
+    R('11:30',"Dragon Racer's Rally",'berk',[25,40],'2:00','obl'),
+    R('12:20','Fyre Drill','berk',[15,25],'4:00','sin-moja'),
+    X('12:50','Viking Training Camp','berk','Toothless si baja de 30'),
+    S('13:40','The Untrainable Dragon','berk','función fija · 25 min'),
+    M('14:30','Comida · Mead Hall','berk','mac and cheese · hamburguesa · pollo'),
+    W('15:30','Caminar a Ministry'),
+    S('16:00','Le Cirque Arcanus','hpe','función fija · 25 min'),
+    M('16:35','Bièraubeurre Cart','hpe','cerveza de mantequilla'),
+    X('16:55','Place Cachée · Rue Fondaine','hpe'),
+    L('17:50','Descanso en hotel','1:15'),
+    X('19:20','Varitas y hechizos de noche','hpe'),
+    X('20:15','Celestial Park · tiendas y fuentes','celestial'),
+    X('21:00','Posición · portal Dark Universe a Meteor Astropub','celestial','30 min antes',FX),
+    S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
+   ]},
+ { key:'2027-02-28', tab:['Dom','28 feb'], title:'Domingo 28 de febrero', park:'Epic Universe',
+   sub:'Super Nintendo World + Dark Universe · Epic 10:00–21:00 · EPA 9:00',
+   tip:'Celestial Goodnight se ve mejor de cara al Helios Grand Hotel, en el arco del portal de Dark Universe al Meteor Astropub. Si Mine-Cart marca más de 50 min o está detenida, pasa directo a Mario Kart y recupérala el miércoles. Mario y Luigi están en planta baja y Peach en el nivel superior: fórmate 20 minutos antes de cada función.',
+   seed:[
+    L('7:20','Desayuno en cuarto','',FX),
+    L('7:50','Salida a pie del hotel'),
+    L('8:00','Torniquetes Chronos','1 hora antes del EPA'),
+    W('9:00','Apertura EPA · caminar a Nintendo',FX),
+    R('9:10','Mine-Cart Madness','nintendo',[20,45],'3:30','sin'),
+    R('10:05','Mario Kart','nintendo',[30,60],'5:00','sin'),
+    R('11:15',"Yoshi's Adventure",'nintendo',[30,45],'5:00','sin'),
+    X('12:10','Power-Up Band · compra y retos','nintendo'),
+    X('12:30','Fila de Mario y Luigi','nintendo','planta baja'),
+    S('12:50','Meet Mario y Luigi','nintendo'),
+    X('13:20','Fila de Peach','nintendo','subir escaleras'),
+    S('13:40','Meet Princess Peach','nintendo'),
+    M('14:00',"Snack · Yoshi's Snack Island",'nintendo','calzones de caparazón'),
+    X('14:30','Retos · segunda ronda','nintendo'),
+    M('15:00','Comida · Toadstool Cafe','nintendo','Mario Burger · papas trufa'),
+    L('16:15','Descanso en hotel','1:30'),
+    W('17:50','Regreso · caminar a Dark Universe'),
+    R('18:10','Monsters Unchained','dark',[15,30],'5:00','obl'),
+    R('18:50','Curse of the Werewolf','dark',[20,45],'2:00','sin'),
+    X('19:35','Dark Universe de noche','dark'),
+    W('20:50','Caminar a Celestial Park'),
+    X('21:00','Posición · portal Dark Universe a Meteor Astropub','celestial','30 min antes',FX),
+    S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
+   ]},
+ { key:'2027-03-01', tab:['Lun','1 mar'], title:'Lunes 1 de marzo', park:'Harry Potter · IOA ↔ USF',
+   sub:'Park-to-Park · IOA 9:00–20:00 · USF 9:00–19:00 · EPA en IOA 8:00',
+   tip:"Si a las 8:40 Hagrid's sigue detenida o pasa de 45 min, intercambia este día completo con el del martes. Hogwarts Always se repite cada 20 minutos desde el anochecer hasta el cierre. Mejor punto: frente al escenario de Frog Choir, del lado que deja ver el costado izquierdo del castillo y los cerdos alados. Si sobra tiempo en Seuss: Cat in the Hat y Caro-Seuss-el.",
+   seed:[
+    L('6:05','Desayuno en cuarto','',FX),
+    L('6:30','Autobús a IOA'),
+    L('7:00','Torniquetes IOA','1 hora antes del EPA'),
+    W('8:00','Apertura EPA · caminar a Hogsmeade',FX),
+    R('8:10',"Hagrid's",'hpi',[20,35],'3:00','obl','punto de decisión'),
+    R('8:55','Forbidden Journey','hpi',[10,20],'4:20','obl'),
+    R('9:30','Flight of the Hippogriff','hpi',[5,15],'1:00','sin'),
+    X('9:50','Posición frente al escenario','hpi'),
+    S('10:00','Frog Choir','hpi','función fija · 8 min'),
+    R('10:15',"Hogwarts Express → King's Cross",'hpi',[10,20],'4:00'),
+    W('10:40','Caminar a Diagon Alley'),
+    R('10:50','Escape from Gringotts','hpu',[20,35],'5:30','obl','antes del pico'),
+    M('11:45',"Florean Fortescue's · helados",'hpu','15–20 · para llevar'),
+    S('12:30','Celestina Warbeck','hpu','función fija · comiendo helado'),
+    S('13:00','Tales of Beedle the Bard','hpu'),
+    X('13:30','Knockturn Alley · dragón','hpu'),
+    X('14:00','Ollivanders grande','hpu','20–30'),
+    X('14:35','Tiendas y varitas','hpu'),
+    M('15:00','Comida · Leaky Cauldron','hpu','fish and chips · bangers and mash'),
+    R('16:10','Hogwarts Express → Hogsmeade','hpu',[0,0],'','','USF cierra 19:00'),
+    M('16:45',"Honeydukes · Hog's Head",'hpi','cerveza de mantequilla'),
+    S('17:30','Triwizard Spirit Rally','hpi'),
+    W('18:00','Caminar a Seuss Landing'),
+    R('18:10','High in the Sky Trolley Train','seuss',[20,30],'6:00','sin'),
+    R('18:50','One Fish, Two Fish','seuss',[15,25],'2:00','sin'),
+    W('19:10','Caminar a Hogsmeade'),
+    X('19:20','Posición frente al escenario','hpi','30 min antes'),
+    S('19:50','Hogwarts Always','hpi','proyección · 8 min'),
+    L('20:00','Cierre IOA','',{fixed:true,d:10}),
+   ]},
+ { key:'2027-03-02', tab:['Mar','2 mar'], title:'Martes 2 de marzo', park:'USF → IOA',
+   sub:'USF 9:00–19:00 · IOA 9:00–20:00 · EPA en IOA 8:00',
+   tip:'Opcionales, solo con espera razonable: Revenge of the Mummy en New York y Skull Island: Kong en Jurassic, ambas oscuras y con sustos. Rellenos: Kang & Kodos en Springfield, Storm Force en Marvel y Bilge-Rat Barges en Toon Lagoon, que empapa por completo.',
+   seed:[
+    L('6:05','Desayuno en cuarto','',FX),
+    L('6:30','Autobús a IOA'),
+    L('7:00','Torniquetes IOA','1 hora antes del EPA'),
+    W('8:00','Apertura EPA · caminar a Hogsmeade',FX),
+    R('8:10',"Hagrid's · repetición",'hpi',[15,30],'3:00','obl'),
+    R('8:45','Flight of the Hippogriff','hpi',[5,15],'1:00','sin'),
+    R('9:05','Hogwarts Express → USF','hpi',[0,0],'4:00','','corre desde el EPA'),
+    R('9:30','Transformers','usf',[25,40],'4:30','obl'),
+    R('10:25','Jimmy Fallon','usf',[10,20],'5:00','sin'),
+    R('11:00','Minion Mayhem','illum',[35,60],'5:00','sin'),
+    R('12:10','Villain-Con Minion Blast','illum',[25,40],'10:00','sin'),
+    W('13:10','Caminar a DreamWorks Land'),
+    R('13:20','E.T. Adventure','dw',[20,40],'4:30','sin'),
+    R('14:15','Trolls Trollercoaster','dw',[15,30],'1:30','sin'),
+    M('15:00','Comida · Fast Food Boulevard','usf',"Cletus: tiras de pollo · Luigi's: pizza"),
+    R('16:05','MIB Alien Attack','usf',[20,35],'4:30','sin'),
+    R('16:55','Hogwarts Express → IOA','hpu',[0,0],'4:00','','última ventana'),
+    R('17:30','Jurassic River Adventure','jurassic',[25,35],'6:00','obl-moja'),
+    R('18:20','Ripsaw Falls','toon',[25,40],'5:00','obl-moja','calor de tarde'),
+    R('19:15','Spider-Man','marvel',[20,35],'4:30','sin'),
+    L('20:00','Cierre IOA','',{fixed:true,d:10}),
+   ]},
+ { key:'2027-03-03', tab:['Mié','3 mar'], title:'Miércoles 3 de marzo', park:'Epic Universe',
+   sub:'Recuperación · Epic 10:00–21:00 · EPA 9:00 · multitud 5',
+   tip:'Si algo proyecta más de 60 min, sáltalo y vuelve después de las 19:00. Con multitud 5 las esperas caen a la mitad. La laguna del Constellation Carousel da vista de la escala completa del show y es la salida más rápida del parque.',
+   seed:[
+    L('7:30','Desayuno','',FX),
+    L('7:50','Salida a pie del hotel'),
+    L('8:00','Torniquetes Chronos','1 hora antes del EPA'),
+    W('9:00','Apertura EPA · caminar a Nintendo',FX),
+    R('9:10','Mine-Cart Madness','nintendo',[15,30],'3:30','sin'),
+    R('9:50','Mario Kart','nintendo',[25,40],'5:00','sin'),
+    R('10:45','Batalla con Bowser Jr.','nintendo',[10,20],'','sin'),
+    W('11:15','Caminar a Ministry'),
+    R('11:25','Battle at the Ministry','hpe',[45,70],'5:00','obl'),
+    X('12:45','Varitas · hechizos faltantes','hpe'),
+    W('13:30','Caminar a Isle de Berk'),
+    R('13:40',"Hiccup's Wing Gliders",'berk',[25,40],'2:30','obl'),
+    M('14:30','Snack · Star Sui Bao','celestial','bao al vapor · Celestial Park'),
+    W('15:05','Caminar a Dark Universe'),
+    R('15:15','Monsters Unchained','dark',[20,35],'5:00','obl'),
+    M('16:00','Comida · Pizza Moon','dark','pizza al horno de leña · brownie'),
+    L('17:10','Descanso en hotel','1:00'),
+    X('18:30','Souvenirs · K. Rammelle y tiendas','hpe'),
+    M('19:15',"Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe','cambia de azul a violeta · sin alcohol'),
+    M('19:30','Crepa de cerveza de mantequilla',"hpe","Café L'air De La Sirène"),
+    X('19:50','Varitas de noche · Rue Fondaine','hpe'),
+    R('20:15','Constellation Carousel iluminado','celestial',[0,0],'','sin'),
+    X('21:00','Posición · laguna del carrusel','celestial','salida más rápida',FX),
+    S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
+   ]},
+];
+
+/* ---------- catálogo para agregar ---------- */
+// r = juego (fila mín–máx, duración, locker) · o = actividad/show/comida con minutos que ocupa
+const r = (name,zone,q,ride,lk='',note='') => ({name,zone,type:'ride',qMin:q[0],qMax:q[1],ride:secs(ride),lk:lk.replace('-moja',''),wet:lk.includes('moja'),note});
+const o = (name,zone,dur,note='',type='other') => ({name,zone,type,dur,note});
+const CAT = [
+ ['Epic · Ministry of Magic', [
+   r('Battle at the Ministry','hpe',[50,70],'5:00','obl'),
+   o('Le Cirque Arcanus','hpe',35,'función fija · 25 min','show'),
+   o('Bièraubeurre Cart','hpe',20,'cerveza de mantequilla','meal'),
+   o("Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe',15,'cambia de azul a violeta','meal'),
+   o('Crepa de cerveza de mantequilla','hpe',20,"Café L'air De La Sirène",'meal'),
+   o("Comida · Café L'air De La Sirène",'hpe',60,'Kinder Schnitzel · grilled cheese','meal'),
+   o('Comida · Le Gobelet Noir','hpe',60,'carta alemana','meal'),
+   o('Varitas y hechizos','hpe',45),
+   o('Place Cachée · Rue Fondaine','hpe',45),
+   o('Souvenirs · K. Rammelle','hpe',30,'Butterbeer Caramel · Pumpkin Juice'),
+ ]],
+ ['Epic · Super Nintendo World', [
+   r('Mine-Cart Madness','nintendo',[20,45],'3:30','sin'),
+   r('Mario Kart','nintendo',[30,60],'5:00','sin'),
+   r("Yoshi's Adventure",'nintendo',[30,45],'5:00','sin'),
+   r('Batalla con Bowser Jr.','nintendo',[10,20],'','sin'),
+   o('Power-Up Band · retos','nintendo',20),
+   o('Meet Mario y Luigi','nintendo',25,'planta baja · fórmate 20 min antes','show'),
+   o('Meet Princess Peach','nintendo',25,'nivel superior · fórmate 20 min antes','show'),
+   o("Snack · Yoshi's Snack Island",'nintendo',30,'calzones de caparazón','meal'),
+   o('Comida · Toadstool Cafe','nintendo',75,'Mario Burger · papas trufa','meal'),
+ ]],
+ ['Epic · Isle of Berk', [
+   r("Hiccup's Wing Gliders",'berk',[25,40],'2:30','obl'),
+   r("Dragon Racer's Rally",'berk',[25,40],'2:00','obl'),
+   r('Fyre Drill','berk',[15,25],'4:00','sin-moja'),
+   o('Meet Toothless','berk',30,'filas largas'),
+   o('Viking Training Camp','berk',45),
+   o('The Untrainable Dragon','berk',45,'función fija · 25 min','show'),
+   o('Comida · Mead Hall','berk',45,'mac and cheese · hamburguesa · pollo','meal'),
+ ]],
+ ['Epic · Dark Universe', [
+   r('Monsters Unchained','dark',[15,30],'5:00','obl'),
+   r('Curse of the Werewolf','dark',[20,45],'2:00','sin'),
+   o('Dark Universe de noche','dark',60),
+   o('Comida · Pizza Moon','dark',70,'pizza al horno de leña · brownie','meal'),
+ ]],
+ ['Epic · Celestial Park', [
+   r('Constellation Carousel','celestial',[5,15],'2:00','sin'),
+   r('Stardust Racers','celestial',[45,75],'2:00','obl','fuera del plan por intensidad'),
+   o('Snack · Star Sui Bao','celestial',30,'bao al vapor','meal'),
+   o('Posición para Celestial Goodnight','celestial',30,'30 min antes'),
+   o('Universal Celestial Goodnight','celestial',20,'30 min tras el cierre','show'),
+ ]],
+ ['IOA · Hogsmeade', [
+   r("Hagrid's",'hpi',[20,35],'3:00','obl'),
+   r('Forbidden Journey','hpi',[10,20],'4:20','obl'),
+   r('Flight of the Hippogriff','hpi',[5,15],'1:00','sin'),
+   r("Hogwarts Express → King's Cross",'hpi',[10,20],'4:00'),
+   o('Frog Choir','hpi',15,'función fija · 8 min','show'),
+   o('Triwizard Spirit Rally','hpi',20,'función fija','show'),
+   o('Hogwarts Always','hpi',10,'proyección · 8 min','show'),
+   o("Honeydukes · Hog's Head",'hpi',45,'cerveza de mantequilla','meal'),
+   o('Posición frente al escenario','hpi',30),
+ ]],
+ ['IOA · Seuss Landing', [
+   r('High in the Sky Trolley Train','seuss',[20,30],'6:00','sin'),
+   r('One Fish, Two Fish','seuss',[15,25],'2:00','sin'),
+   r('The Cat in the Hat','seuss',[15,30],'4:00'),
+   r('Caro-Seuss-el','seuss',[5,15],'2:00'),
+   o('Comida · Circus McGurkus','seuss',60,'mac and cheese','meal'),
+ ]],
+ ['IOA · Marvel · Toon Lagoon', [
+   r('Spider-Man','marvel',[20,35],'4:30','sin'),
+   r('Storm Force Accelatron','marvel',[5,15],'2:00'),
+   r('Ripsaw Falls','toon',[25,40],'5:00','obl-moja'),
+   r('Bilge-Rat Barges','toon',[20,40],'5:00','moja','empapa por completo'),
+ ]],
+ ['IOA · Jurassic Park · Skull Island', [
+   r('Jurassic River Adventure','jurassic',[25,35],'6:00','obl-moja'),
+   r('Skull Island: Reign of Kong','jurassic',[15,30],'5:00','','oscura · sustos'),
+   r('Pteranodon Flyers','jurassic',[40,60],'1:20','','máx. 142 cm'),
+   o('Camp Jurassic','jurassic',30),
+ ]],
+ ['USF · Diagon Alley', [
+   r('Escape from Gringotts','hpu',[20,35],'5:30','obl'),
+   r('Hogwarts Express → Hogsmeade','hpu',[10,20],'4:00'),
+   o("Florean Fortescue's · helados",'hpu',45,'para llevar','meal'),
+   o('Celestina Warbeck','hpu',15,'función fija','show'),
+   o('Tales of Beedle the Bard','hpu',15,'función fija','show'),
+   o('Knockturn Alley · dragón','hpu',30),
+   o('Ollivanders','hpu',35,'20–30 fila'),
+   o('Comida · Leaky Cauldron','hpu',70,'fish and chips · bangers and mash','meal'),
+ ]],
+ ['USF · Minion Land · DreamWorks', [
+   r('Minion Mayhem','illum',[35,60],'5:00','sin'),
+   r('Villain-Con Minion Blast','illum',[25,40],'10:00','sin'),
+   r('E.T. Adventure','dw',[20,40],'4:30','sin'),
+   r('Trolls Trollercoaster','dw',[15,30],'1:30','sin'),
+ ]],
+ ['USF · Resto del parque', [
+   r('Transformers','usf',[25,40],'4:30','obl'),
+   r('Jimmy Fallon','usf',[10,20],'5:00','sin'),
+   r('MIB Alien Attack','usf',[20,35],'4:30','sin'),
+   r('Revenge of the Mummy','usf',[25,45],'3:00','','oscura · sustos'),
+   r('Kang & Kodos','usf',[5,15],'1:30'),
+   o('Comida · Fast Food Boulevard','usf',65,"Cletus: tiras de pollo · Luigi's: pizza",'meal'),
+ ]],
+ ['Logística', [
+   o('Caminar · mismo land','log',5,'5 min','walk'),
+   o('Caminar · cambio de land','log',10,'10 min','walk'),
+   o('Descanso en hotel','log',90,'incluye ida y vuelta','log'),
+   o('Snack','log',20,'','meal'),
+   o('Comida','log',60,'','meal'),
+   o('Tiendas','log',30),
+   o('Baño / pausa','log',10),
+   o('Actividad libre','log',30),
+ ]],
+];
+
+/* ---------- estado ---------- */
+const KEY = 'uo27.itinerario.v2';
+function build(seed){
+  return seed.map((s,i) => {
+    const t = toMin(s.t), next = seed[i+1];
+    const dur = s.d ?? (next ? toMin(next.t) - t : 30);
+    return { id:uid(), name:s.name, note:s.note||'', zone:s.zone, type:s.type,
+      qMin:s.qMin||0, qMax:s.qMax||0, ride:s.ride||0, lk:s.lk||'', wet:!!s.wet, walk:5,
+      fixed: !!s.fixed || i===0, at:t, dur };
+  });
+}
+let state;
+try { state = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
+if(!state || !state.days) state = { days:{} };
+DAYS.forEach(d => { if(!Array.isArray(state.days[d.key])) state.days[d.key] = build(d.seed); });
+// Si ya tenías guardado el itinerario con el azul único de Harry Potter, lo pasa al tono de su parque
+(() => {
+  const byName = {};
+  CAT.forEach(([g,arr]) => arr.forEach(c => byName[c.name] = c.zone));
+  DAYS.forEach(d => d.seed.forEach(s => byName[s.name] = s.zone));
+  DAYS.forEach(d => state.days[d.key].forEach((it,i,list) => {
+    if(it.zone !== 'hp') return;
+    it.zone = (d.key === '2027-03-01' && /Express → Hogsmeade/.test(it.name)) ? 'hpu' : (byName[it.name] || (d.park === 'Epic Universe' ? 'hpe' : 'hpi'));
+  }));
+})();
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+let cur = 0;
+try { const t = +localStorage.getItem('uo27.tab'); if(t>=0 && t<DAYS.length) cur = t; } catch(e) {}
+const todayKey = (() => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; })();
+const todayIdx = DAYS.findIndex(d => d.key === todayKey);
+if(todayIdx >= 0) cur = todayIdx;
+
+const items = () => state.days[DAYS[cur].key];
+
+/* ---------- cálculo de horarios ---------- */
+// Cada renglón empieza cuando termina el anterior, salvo los de hora fija.
+function schedule(list){
+  let t = null;
+  return list.map(it => {
+    let start, gap = 0, clash = 0;
+    if(it.fixed || t === null){
+      start = it.at ?? t ?? 480;
+      if(t !== null){ if(t > start) clash = t - start; else gap = start - t; }
+    } else start = t;
+    t = start + it.dur;
+    return { start, end:t, gap, clash };
+  });
+}
+const rideDur = it => ceil5(it.qMax + it.ride/60 + it.walk);
+
+function detail(it){
+  if(it.type === 'ride'){
+    const p = [];
+    if(it.qMax > 0) p.push(`${it.qMin}–${it.qMax} fila`);
+    if(it.ride > 0) p.push(`+ ${rideFmt(it.ride)}`);
+    let s = p.join(' ');
+    if(it.note) s += (s ? ' · ' : '') + it.note;
+    return s;
+  }
+  return it.note || '';
+}
+function chips(it){
+  let h = '';
+  if(it.lk === 'obl') h += '<span class="chip obl">Locker obligatorio</span>';
+  if(it.lk === 'sin') h += '<span class="chip sin">Sin locker</span>';
+  if(it.wet) h += '<span class="chip wet">Se moja</span>';
+  if(it.fixed) h += '<span class="chip pin">Hora fija</span>';
+  return h;
+}
+
+/* ---------- render ---------- */
+function renderTabs(){
+  $('#tabs').innerHTML = DAYS.map((d,i) =>
+    `<button class="tab ${i===cur?'on':''}" data-i="${i}">${d.tab[0]}<small>${d.tab[1]}</small></button>`).join('');
+}
+function render(){
+  const d = DAYS[cur], list = items(), sc = schedule(list);
+  $('#dNum').textContent = `${cur+1} de ${DAYS.length}`;
+  $('#dTitle').textContent = d.title;
+  $('#dPark').textContent = d.park;
+  $('#dSub').textContent = d.sub;
+  $('#tipText').textContent = d.tip;
+
+  const now = new Date(), nowMin = now.getHours()*60 + now.getMinutes();
+  const isToday = d.key === todayKey;
+  let html = '';
+  list.forEach((it,i) => {
+    const s = sc[i];
+    if(s.gap >= 5) html += `<div class="gap">Tiempo libre · ${s.gap} min</div>`;
+    if(s.clash > 0) html += `<div class="clash">⚠ Te pasas ${s.clash} min: lo anterior termina a las ${fmt(s.start + s.clash)} y esto es a las ${fmt(s.start)}. Quita algo o acorta una fila.</div>`;
+    const major = it.type === 'ride' || it.type === 'show';
+    const isNow = isToday && nowMin >= s.start && nowMin < s.end;
+    html += `<button class="row ${major?'major':''} ${isNow?'now':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
+      <span class="t ${s.clash?'bad':''}">${fmt(s.start)}</span>
+      <span class="b"><span class="nm">${esc(it.name)}</span> <span class="d">${esc(detail(it))}</span>
+        <span class="m">${chips(it)}<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span></span></span>
+    </button>`;
+  });
+  $('#list').innerHTML = html || '<p class="help" style="padding:24px 0">Sin actividades. Toca ＋ Agregar.</p>';
+
+  const rides = list.filter(x => x.type === 'ride' && x.qMax > 0);
+  const q = rides.reduce((a,x) => a + x.qMax, 0);
+  $('#sRides').textContent = list.filter(x => x.type === 'ride').length;
+  $('#sQueue').textContent = `${Math.floor(q/60)}h ${q%60}m`;
+  const clashes = sc.filter(s => s.clash > 0).length;
+  const sEnd = $('#sEnd');
+  if(clashes){ sEnd.textContent = clashes; sEnd.classList.add('bad'); $('#sEndL').textContent = clashes===1?'Empalme':'Empalmes'; }
+  else { sEnd.textContent = sc.length ? fmt(sc[sc.length-1].end) : '–'; sEnd.classList.remove('bad'); $('#sEndL').textContent = 'Termina'; }
+}
+
+function renderCountdown(){
+  const diff = new Date(2027,1,26,0,0,0) - new Date();
+  const el = $('#countdown');
+  if(diff <= 0){ el.textContent = '¡Ya estamos aquí!'; return; }
+  const d = Math.floor(diff/864e5), h = Math.floor(diff/36e5)%24, m = Math.floor(diff/6e4)%60;
+  el.textContent = `${d}d ${pad(h)}h ${pad(m)}m`;
+}
+
+/* ---------- hojas (modales) ---------- */
+let editId = null, undoSnap = null, toastTimer = null;
+function openSheet(id){
+  $('#backdrop').classList.add('on'); $('#'+id).classList.add('on');
+}
+function closeSheets(){
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('on'));
+  $('#backdrop').classList.remove('on'); editId = null;
+  document.activeElement && document.activeElement.blur && document.activeElement.blur();
+}
+$('#backdrop').onclick = closeSheets;
+
+function stepper(key,label,val,sub=''){
+  return `<div class="field"><span>${label}${sub?`<small>${sub}</small>`:''}</span>
+    <div class="step"><button data-step="${key}" data-d="-1">−</button><span class="val">${val}</span><button data-step="${key}" data-d="1">+</button></div></div>`;
+}
+function seg(key,opts,val){
+  return `<div class="seg">${opts.map(([v,l]) => `<button data-seg="${key}" data-v="${v}" class="${String(val)===String(v)?'on':''}">${l}</button>`).join('')}</div>`;
+}
+
+function openEdit(id){ editId = id; renderEdit(); openSheet('editSheet'); }
+function renderEdit(){
+  const list = items(), i = list.findIndex(x => x.id === editId);
+  if(i < 0) return closeSheets();
+  const it = list[i], s = schedule(list)[i], ride = it.type === 'ride';
+  $('#editBody').innerHTML = `
+    <div class="sh-title"><span class="dot" style="background:${zc(it.zone)};width:16px;height:16px"></span><input class="in big" id="eName" value="${esc(it.name)}"></div>
+    <div class="when">Empieza <b>${fmt(s.start)}</b> · termina <b>${fmt(s.end)}</b>${s.clash?` · <span class="bad">te pasas ${s.clash} min</span>`:''}</div>
+    <label class="field switch"><span>Hora fija<small>Shows y funciones: no se mueve aunque cambie lo anterior</small></span><input type="checkbox" id="eFixed" ${it.fixed?'checked':''}></label>
+    ${it.fixed ? `<div class="field"><span>Hora</span><input type="time" id="eAt" step="300" value="${hhmm(it.at ?? s.start)}"></div>` : ''}
+    ${ride ? stepper('qMin','Fila mínima',`${it.qMin} min`) + stepper('qMax','Fila máxima',`${it.qMax} min`,'Con esta se calcula el horario')
+           + stepper('ride','Duración del juego',rideFmt(it.ride))
+           + `<div class="field"><span>Caminar al siguiente</span>${seg('walk',[[0,'0'],[5,'5'],[10,'10']],it.walk)}</div>` : ''}
+    ${stepper('dur','Ocupa en total',`${it.dur} min`, ride ? 'Fila máx. + juego + caminar, redondeado a 5' : '')}
+    ${ride ? `<div class="field"><span>Locker</span>${seg('lk',[['obl','Obligatorio'],['sin','Sin'],['','—']],it.lk)}</div>
+              <label class="field switch"><span>Se moja</span><input type="checkbox" id="eWet" ${it.wet?'checked':''}></label>` : ''}
+    <div class="field col"><span>Nota</span><input class="in" id="eNote" value="${esc(it.note)}" placeholder="Ej. función fija · 25 min"></div>
+    <div class="acts">
+      <button data-act="up" ${i===0?'disabled style="opacity:.4"':''}>↑ Subir</button>
+      <button data-act="down" ${i===list.length-1?'disabled style="opacity:.4"':''}>↓ Bajar</button>
+      <button data-act="insert">＋ Agregar después</button>
+      <button data-act="del" class="del">Eliminar</button>
     </div>
+    <button class="done" data-act="close">Listo</button>`;
+}
+function curItem(){ return items().find(x => x.id === editId); }
+function commit(rerenderSheet=true){ save(); render(); if(rerenderSheet) renderEdit(); }
 
-    <!-- Modal de selección de hora -->
-    <div class="modal" id="hourModal">
-        <div class="modal-content">
-            <div class="modal-title" id="modalTitle">Selecciona horario</div>
-            <div class="hours-grid" id="hoursGrid"></div>
-            <div class="modal-actions">
-                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
-                <button class="modal-btn confirm" id="confirmBtn" onclick="confirmHour()" style="display:none;">Agregar</button>
-            </div>
-        </div>
-    </div>
+$('#editBody').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  const it = curItem(); if(!it) return;
+  if(b.dataset.step){
+    const k = b.dataset.step, d = +b.dataset.d;
+    if(k === 'qMin') it.qMin = Math.max(0, it.qMin + d*5);
+    if(k === 'qMax') it.qMax = Math.max(0, it.qMax + d*5);
+    if(k === 'ride') it.ride = Math.max(0, it.ride + d*30);
+    if(k === 'dur')  it.dur  = Math.max(0, it.dur + d*5);
+    if(it.qMin > it.qMax) { if(k==='qMin') it.qMax = it.qMin; else it.qMin = it.qMax; }
+    if(it.type === 'ride' && k !== 'dur') it.dur = rideDur(it);
+    return commit();
+  }
+  if(b.dataset.seg){
+    const k = b.dataset.seg, v = b.dataset.v;
+    if(k === 'walk'){ it.walk = +v; it.dur = rideDur(it); }
+    if(k === 'lk') it.lk = v;
+    return commit();
+  }
+  const act = b.dataset.act, list = items(), i = list.indexOf(it);
+  if(act === 'close') return closeSheets();
+  if(act === 'up' && i > 0){ [list[i-1], list[i]] = [list[i], list[i-1]]; return commit(); }
+  if(act === 'down' && i < list.length-1){ [list[i+1], list[i]] = [list[i], list[i+1]]; return commit(); }
+  if(act === 'insert'){ const id = it.id; closeSheets(); return openCatalog(id); }
+  if(act === 'del'){
+    undoSnap = { key:DAYS[cur].key, list: JSON.parse(JSON.stringify(list)) };
+    const before = schedule(list);
+    list.splice(i,1);
+    if(i === 0 && list[0]) { list[0].fixed = true; list[0].at = before[1].start; }
+    closeSheets(); save(); render();
+    toast(`Eliminado: ${it.name}`);
+  }
+});
+$('#editBody').addEventListener('input', e => {
+  const it = curItem(); if(!it) return;
+  if(e.target.id === 'eName'){ it.name = e.target.value; commit(false); }
+  if(e.target.id === 'eNote'){ it.note = e.target.value; commit(false); }
+});
+$('#editBody').addEventListener('change', e => {
+  const it = curItem(); if(!it) return;
+  if(e.target.id === 'eFixed'){
+    const list = items(), s = schedule(list)[list.indexOf(it)];
+    it.fixed = e.target.checked; if(it.fixed) it.at = s.start;
+    if(list.indexOf(it) === 0) it.fixed = true;
+    commit();
+  }
+  if(e.target.id === 'eAt' && e.target.value){ it.at = toMin(e.target.value); commit(); }
+  if(e.target.id === 'eWet'){ it.wet = e.target.checked; commit(); }
+});
 
-    <script>
-        const attractions = {
-            'EPIC - Celestial Park': [
-                { id: 'stardust', name: 'Stardust Racers', duration: 5, park: 'Epic', zone: 'celestial' },
-                { id: 'constellation', name: 'Constellation Carousel', duration: 4, park: 'Epic', zone: 'celestial' }
-            ],
-            'EPIC - Dark Universe': [
-                { id: 'curse', name: 'Curse of the Werewolf', duration: 3, park: 'Epic', zone: 'dark' },
-                { id: 'monsters', name: 'Monsters Unchained', duration: 3, park: 'Epic', zone: 'dark' }
-            ],
-            'EPIC - Isle of Berk': [
-                { id: 'wing', name: 'Hiccup\'s Wing Gliders', duration: 4, park: 'Epic', zone: 'berk' },
-                { id: 'dragon', name: 'Dragon Racer\'s Rally', duration: 4, park: 'Epic', zone: 'berk' },
-                { id: 'fyre', name: 'Fyre Drill', duration: 3, park: 'Epic', zone: 'berk' },
-                { id: 'untrainable', name: 'The Untrainable Dragon (Show)', duration: 15, park: 'Epic', zone: 'berk' },
-                { id: 'mead', name: 'Mead Hall (Comida)', duration: 45, park: 'Epic', zone: 'berk' }
-            ],
-            'EPIC - Super Nintendo World - Mario': [
-                { id: 'mariokart', name: 'Mario Kart: Bowser\'s Challenge', duration: 5, park: 'Epic', zone: 'nintendo' },
-                { id: 'yoshi', name: 'Yoshi\'s Adventure', duration: 4, park: 'Epic', zone: 'nintendo' },
-                { id: 'mario_meet', name: 'Meet Mario & Luigi (Show)', duration: 25, park: 'Epic', zone: 'nintendo' },
-                { id: 'peach_meet', name: 'Meet Princess Peach (Show)', duration: 25, park: 'Epic', zone: 'nintendo' },
-                { id: 'toadstool', name: 'Toadstool Cafe (Comida)', duration: 45, park: 'Epic', zone: 'nintendo' }
-            ],
-            'EPIC - Super Nintendo World - Donkey Kong': [
-                { id: 'minecart', name: 'Mine-Cart Madness', duration: 3, park: 'Epic', zone: 'nintendo' }
-            ],
-            'EPIC - Wizarding World - Ministry of Magic': [
-                { id: 'battle', name: 'Harry Potter and the Battle at the Ministry', duration: 5, park: 'Epic', zone: 'harrypotter' },
-                { id: 'cirque', name: 'Le Cirque Arcanus (Show)', duration: 25, park: 'Epic', zone: 'harrypotter' },
-                { id: 'celestial_show', name: 'Universal Celestial Goodnight (Show)', duration: 20, park: 'Epic', zone: 'celestial' }
-            ],
-            'IOA - Wizarding World - Hogsmeade': [
-                { id: 'hagrid', name: 'Hagrid\'s Motorbike Adventure', duration: 3, park: 'IOA', zone: 'harrypotter' },
-                { id: 'forbidden', name: 'Forbidden Journey', duration: 4, park: 'IOA', zone: 'harrypotter' },
-                { id: 'hippogriff', name: 'Flight of the Hippogriff', duration: 3, park: 'IOA', zone: 'harrypotter' },
-                { id: 'frog', name: 'Frog Choir (Show)', duration: 10, park: 'IOA', zone: 'harrypotter' },
-                { id: 'triwizard', name: 'Triwizard Spirit Rally (Show)', duration: 15, park: 'IOA', zone: 'harrypotter' },
-                { id: 'hogwarts', name: 'Hogwarts Always (Show)', duration: 15, park: 'IOA', zone: 'harrypotter' },
-                { id: 'express_hm', name: 'Hogwarts Express (Hogsmeade)', duration: 9, park: 'IOA', zone: 'harrypotter' },
-                { id: 'leaky', name: 'Leaky Cauldron (Comida)', duration: 45, park: 'IOA', zone: 'harrypotter' },
-                { id: 'honeydukes', name: 'Honeydukes (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' }
-            ],
-            'IOA - Marvel Super Hero Island': [
-                { id: 'spiderman', name: 'Spider-Man Adventure', duration: 4, park: 'IOA', zone: 'marvel' },
-                { id: 'hulk', name: 'The Incredible Hulk Coaster', duration: 3, park: 'IOA', zone: 'marvel' }
-            ],
-            'IOA - Skull Island': [
-                { id: 'skull', name: 'Skull Island: Reign of Kong', duration: 4, park: 'IOA', zone: 'marvel' }
-            ],
-            'IOA - Jurassic Park': [
-                { id: 'velocicoaster', name: 'VelociCoaster', duration: 3, park: 'IOA', zone: 'jurassic' },
-                { id: 'pteranodon', name: 'Pteranodon Flyers', duration: 4, park: 'IOA', zone: 'jurassic' }
-            ],
-            'USF - Diagon Alley': [
-                { id: 'gringotts', name: 'Harry Potter and the Escape from Gringotts', duration: 5, park: 'USF', zone: 'harrypotter' },
-                { id: 'express_kc', name: 'Hogwarts Express (Kings Cross)', duration: 9, park: 'USF', zone: 'harrypotter' },
-                { id: 'florean', name: 'Florean Fortescue (Comida)', duration: 30, park: 'USF', zone: 'harrypotter' }
-            ],
-            'USF - New York': [
-                { id: 'mummy', name: 'Revenge of the Mummy', duration: 4, park: 'USF', zone: 'dark' }
-            ],
-            'USF - Hollywood': [
-                { id: 'et', name: 'E.T. Adventure', duration: 4, park: 'USF', zone: 'illumination' },
-                { id: 'bourne', name: 'The Bourne Stuntacular (Show)', duration: 20, park: 'USF', zone: 'illumination' }
-            ],
-            'USF - Minion Land': [
-                { id: 'despicable', name: 'Despicable Me Minion Mayhem', duration: 4, park: 'USF', zone: 'illumination' },
-                { id: 'villain', name: 'Illumination\'s Villain-Con Minion Blast', duration: 4, park: 'USF', zone: 'illumination' }
-            ],
-            'USF - World Expo': [
-                { id: 'mib', name: 'Men in Black: Alien Attack', duration: 4, park: 'USF', zone: 'illumination' }
-            ],
-            'USF - Production Central': [
-                { id: 'transformers', name: 'Transformers: The Ride 3D', duration: 4, park: 'USF', zone: 'illumination' }
-            ]
-        };
+/* ---------- catálogo ---------- */
+function openCatalog(afterId){
+  const list = items(), sc = schedule(list);
+  const sel = afterId ?? (list.length ? list[list.length-1].id : '__start');
+  $('#afterSel').innerHTML = `<option value="__start">Al inicio del día</option>` +
+    list.map((it,i) => `<option value="${it.id}" ${it.id===sel?'selected':''}>${fmt(sc[i].start)} · ${esc(it.name)}</option>`).join('');
+  $('#q').value = '';
+  renderCatalog('');
+  openSheet('catSheet');
+  $('#catSheet').scrollTop = 0;
+}
+function catLine(c){
+  if(c.type === 'ride'){
+    const p = [];
+    if(c.qMax) p.push(`${c.qMin}–${c.qMax} fila`);
+    if(c.ride) p.push(`+ ${rideFmt(c.ride)}`);
+    p.push(`ocupa ~${ceil5(c.qMax + c.ride/60 + 5)} min`);
+    return p.join(' · ');
+  }
+  return `ocupa ${c.dur} min${c.note ? ' · ' + c.note : ''}`;
+}
+function renderCatalog(q){
+  q = q.trim().toLowerCase();
+  let html = `<button class="ci" data-custom="1" style="--z:#94a3b8"><span class="x"><b>Actividad personalizada</b><small>Escribe tú el nombre y los minutos</small></span><span class="plus">＋</span></button>`;
+  CAT.forEach(([g, arr], gi) => {
+    const rows = arr.map((c,ci) => ({c,ci})).filter(({c}) => !q || (c.name + ' ' + g).toLowerCase().includes(q));
+    if(!rows.length) return;
+    html += `<div class="grp" style="--gz:${zc(arr[0].zone)}">${g}</div>` + rows.map(({c,ci}) =>
+      `<button class="ci" data-g="${gi}" data-c="${ci}" style="--z:${zc(c.zone)};--zb:${zbg(c.zone, true)}"><span class="x"><b>${esc(c.name)}</b><small>${esc(catLine(c))}</small></span><span class="plus">＋</span></button>`).join('');
+  });
+  $('#catList').innerHTML = html;
+}
+$('#q').addEventListener('input', e => renderCatalog(e.target.value));
+$('#catList').addEventListener('click', e => {
+  const b = e.target.closest('button.ci'); if(!b) return;
+  let it;
+  if(b.dataset.custom){
+    it = { id:uid(), name:'Nueva actividad', note:'', zone:'log', type:'other', qMin:0,qMax:0,ride:0,lk:'',wet:false,walk:5, fixed:false, at:null, dur:30 };
+  } else {
+    const c = CAT[+b.dataset.g][1][+b.dataset.c];
+    it = { id:uid(), name:c.name, note:c.note||'', zone:c.zone, type:c.type, qMin:c.qMin||0, qMax:c.qMax||0, ride:c.ride||0,
+      lk:c.lk||'', wet:!!c.wet, walk:5, fixed:false, at:null, dur:c.dur||0 };
+    if(it.type === 'ride') it.dur = rideDur(it);
+  }
+  const list = items(), after = $('#afterSel').value;
+  undoSnap = { key:DAYS[cur].key, list: JSON.parse(JSON.stringify(list)) };
+  let idx = after === '__start' ? 0 : list.findIndex(x => x.id === after) + 1;
+  if(idx === 0){
+    const s0 = list.length ? schedule(list)[0].start : 480;
+    it.fixed = true; it.at = s0;
+  }
+  list.splice(idx, 0, it);
+  save(); closeSheets(); render();
+  const el = document.querySelector(`.row[data-id="${it.id}"]`);
+  if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.add('flash'); }
+  toast(`Agregado: ${it.name}`);
+  if(b.dataset.custom) setTimeout(() => { openEdit(it.id); const n = $('#eName'); n && n.select(); }, 350);
+});
 
-        const waitTimes = {
-            battle: { 9: 60, 10: 70, 11: 95, 12: 120, 13: 140, 14: 150, 15: 170, 16: 180, 17: 205, 18: 180, 19: 120, 20: 90 },
-            minecart: { 9: 0, 10: 120, 11: 120, 12: 120, 13: 120, 14: 120, 15: 120, 16: 120, 17: 0, 18: 75, 19: 75, 20: 75 },
-            mariokart: { 9: 85, 10: 100, 11: 120, 12: 120, 13: 120, 14: 120, 15: 120, 16: 120, 17: 75, 18: 60, 19: 50, 20: 40 },
-            yoshi: { 9: 0, 10: 40, 11: 40, 12: 50, 13: 60, 14: 70, 15: 80, 16: 85, 17: 35, 18: 25, 19: 20, 20: 15 },
-            dragon: { 9: 0, 10: 40, 11: 40, 12: 60, 13: 80, 14: 90, 15: 100, 16: 110, 17: 20, 18: 15, 19: 10, 20: 5 },
-            wing: { 9: 0, 10: 45, 11: 45, 12: 60, 13: 80, 14: 90, 15: 100, 16: 110, 17: 35, 18: 30, 19: 25, 20: 20 },
-            fyre: { 9: 0, 10: 25, 11: 25, 12: 40, 13: 50, 14: 60, 15: 70, 16: 80, 17: 5, 18: 5, 19: 5, 20: 5 },
-            monsters: { 9: 0, 10: 15, 11: 15, 12: 20, 13: 30, 14: 40, 15: 50, 16: 60, 17: 15, 18: 10, 19: 8, 20: 5 },
-            curse: { 9: 0, 10: 50, 11: 50, 12: 70, 13: 90, 14: 100, 15: 110, 16: 120, 17: 60, 18: 45, 19: 35, 20: 30 },
-            hagrid: { 9: 75, 10: 80, 11: 90, 12: 100, 13: 110, 14: 120, 15: 130, 16: 140, 17: 100, 18: 80, 19: 60, 20: 45 },
-            gringotts: { 9: 20, 10: 25, 11: 30, 12: 40, 13: 50, 14: 60, 15: 70, 16: 75, 17: 50, 18: 35, 19: 25, 20: 15 },
-            despicable: { 9: 45, 10: 50, 11: 55, 12: 60, 13: 70, 14: 75, 15: 80, 16: 85, 17: 60, 18: 45, 19: 30, 20: 20 }
-        };
+/* ---------- toast con deshacer ---------- */
+function toast(msg){
+  $('#toastMsg').textContent = msg;
+  $('#toastUndo').style.display = undoSnap ? '' : 'none';
+  $('#toast').classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $('#toast').classList.remove('on'), 4500);
+}
+$('#toastUndo').onclick = () => {
+  if(!undoSnap) return;
+  state.days[undoSnap.key] = undoSnap.list; undoSnap = null;
+  save(); render(); $('#toast').classList.remove('on');
+};
 
-        const days = [
-            { date: '27 feb', name: 'Sáb', park: 'Epic' },
-            { date: '28 feb', name: 'Dom', park: 'Epic' },
-            { date: '1 mar', name: 'Lun', park: 'IOA ↔ USF' },
-            { date: '2 mar', name: 'Mar', park: 'USF → IOA' },
-            { date: '3 mar', name: 'Mié', park: 'Epic' }
-        ];
+/* ---------- eventos generales ---------- */
+$('#tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if(!b) return;
+  cur = +b.dataset.i;
+  try { localStorage.setItem('uo27.tab', cur); } catch(err) {}
+  renderTabs(); render(); window.scrollTo({top:0});
+});
+$('#list').addEventListener('click', e => {
+  const b = e.target.closest('.row'); if(b) openEdit(b.dataset.id);
+});
+$('#fab').onclick = () => openCatalog();
+$('#resetBtn').onclick = () => {
+  if(!confirm('¿Restaurar el itinerario original de este día? Se pierden los cambios que hiciste en este día.')) return;
+  undoSnap = { key:DAYS[cur].key, list: JSON.parse(JSON.stringify(items())) };
+  state.days[DAYS[cur].key] = build(DAYS[cur].seed);
+  save(); render(); window.scrollTo({top:0}); toast('Día restaurado');
+};
 
-        let currentDay = 0;
-        let itineraries = {};
-        let selectedAttraction = null;
-        let selectedHour = null;
-
-        const zoneColors = {
-            nintendo: 'btn-nintendo',
-            dark: 'btn-dark',
-            berk: 'btn-berk',
-            celestial: 'btn-celestial',
-            harrypotter: 'btn-harrypotter',
-            illumination: 'btn-illumination',
-            marvel: 'btn-marvel',
-            jurassic: 'btn-jurassic'
-        };
-
-        const slotZoneColors = {
-            nintendo: 'slot-nintendo',
-            dark: 'slot-dark',
-            berk: 'slot-berk',
-            celestial: 'slot-celestial',
-            harrypotter: 'slot-harrypotter',
-            illumination: 'slot-illumination',
-            marvel: 'slot-marvel',
-            jurassic: 'slot-jurassic'
-        };
-
-        function init() {
-            loadItineraries();
-            renderCountdown();
-            renderDaySelector();
-            renderTimeline();
-            renderAttractions();
-            updateStats();
-            setInterval(renderCountdown, 1000);
-        }
-
-        function loadItineraries() {
-            const saved = localStorage.getItem('universalItineraries');
-            if (saved) {
-                itineraries = JSON.parse(saved);
-            } else {
-                days.forEach((_, i) => {
-                    itineraries[i] = [];
-                });
-            }
-        }
-
-        function saveItineraries() {
-            localStorage.setItem('universalItineraries', JSON.stringify(itineraries));
-        }
-
-        function renderCountdown() {
-            const tripDate = new Date(2027, 1, 26, 0, 0, 0);
-            const now = new Date();
-            const diff = tripDate - now;
-
-            if (diff < 0) {
-                document.getElementById('countdown').textContent = '¡En el viaje!';
-                return;
-            }
-
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const m = Math.floor((diff / (1000 * 60)) % 60);
-
-            document.getElementById('countdown').textContent = `${String(d).padStart(2, '0')}d ${String(h).padStart(2, '0')}h ${String(m).padStart(2, '0')}m`;
-        }
-
-        function renderDaySelector() {
-            const selector = document.getElementById('daySelector');
-            selector.innerHTML = '';
-            days.forEach((day, i) => {
-                const btn = document.createElement('button');
-                btn.className = `day-btn ${i === currentDay ? 'active' : ''}`;
-                btn.textContent = `${day.name}\n${day.date}`;
-                btn.style.whiteSpace = 'pre-line';
-                btn.onclick = () => {
-                    currentDay = i;
-                    selector.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    renderTimeline();
-                    updateStats();
-                };
-                selector.appendChild(btn);
-            });
-        }
-
-        function renderTimeline() {
-            const timeline = document.getElementById('timeline');
-            timeline.innerHTML = '';
-
-            for (let hour = 9; hour < 22; hour++) {
-                const slot = document.createElement('div');
-                slot.className = 'time-slot';
-
-                const timeLabel = document.createElement('div');
-                timeLabel.className = 'time-label';
-                timeLabel.textContent = `${hour}:00`;
-
-                const content = document.createElement('div');
-                content.className = 'slot-content';
-
-                const dayItinerary = itineraries[currentDay] || [];
-                const attraction = dayItinerary.find(a => a.hour === hour);
-
-                if (attraction) {
-                    const card = document.createElement('div');
-                    card.className = `attraction-in-slot ${slotZoneColors[attraction.zone] || ''}`;
-
-                    const nameDiv = document.createElement('div');
-                    nameDiv.className = 'attraction-name';
-                    nameDiv.textContent = attraction.name;
-
-                    const metaDiv = document.createElement('div');
-                    metaDiv.className = 'attraction-meta';
-                    const waitMin = getWaitTime(attraction.id, hour);
-                    const endHour = hour + Math.ceil((waitMin + attraction.duration) / 60);
-                    metaDiv.textContent = `${waitMin}min\n+${attraction.duration}m\n→${endHour}h`;
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.className = 'remove-btn';
-                    removeBtn.textContent = '✕';
-                    removeBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        itineraries[currentDay] = dayItinerary.filter(a => a.id !== attraction.id);
-                        saveItineraries();
-                        renderTimeline();
-                        updateStats();
-                    };
-
-                    card.appendChild(nameDiv);
-                    card.appendChild(metaDiv);
-                    card.appendChild(removeBtn);
-                    content.appendChild(card);
-                }
-
-                slot.appendChild(timeLabel);
-                slot.appendChild(content);
-                timeline.appendChild(slot);
-            }
-        }
-
-        function openHourModal(attraction) {
-            selectedAttraction = attraction;
-            selectedHour = null;
-            document.getElementById('modalTitle').textContent = `${attraction.name} - Selecciona horario`;
-            
-            const hoursGrid = document.getElementById('hoursGrid');
-            hoursGrid.innerHTML = '';
-            
-            const dayItinerary = itineraries[currentDay] || [];
-            const usedHours = new Set(dayItinerary.map(a => a.hour));
-            
-            for (let hour = 9; hour < 22; hour++) {
-                const btn = document.createElement('button');
-                btn.className = 'hour-btn';
-                btn.textContent = `${hour}:00`;
-                btn.disabled = usedHours.has(hour);
-                btn.style.opacity = usedHours.has(hour) ? '0.5' : '1';
-                btn.onclick = () => {
-                    selectedHour = hour;
-                    document.querySelectorAll('.hour-btn').forEach(b => b.style.borderColor = '#475569');
-                    btn.style.borderColor = '#3b82f6';
-                    document.getElementById('confirmBtn').style.display = 'block';
-                };
-                hoursGrid.appendChild(btn);
-            }
-            
-            document.getElementById('confirmBtn').style.display = 'none';
-            document.getElementById('hourModal').classList.add('open');
-        }
-
-        function closeModal() {
-            document.getElementById('hourModal').classList.remove('open');
-            selectedAttraction = null;
-            selectedHour = null;
-        }
-
-        function confirmHour() {
-            if (selectedAttraction && selectedHour !== null) {
-                const dayItinerary = itineraries[currentDay] || [];
-                dayItinerary.push({
-                    id: selectedAttraction.id,
-                    name: selectedAttraction.name,
-                    hour: selectedHour,
-                    duration: selectedAttraction.duration,
-                    park: selectedAttraction.park,
-                    zone: selectedAttraction.zone
-                });
-                itineraries[currentDay] = dayItinerary;
-                saveItineraries();
-                closeModal();
-                renderTimeline();
-                updateStats();
-            }
-        }
-
-        function renderAttractions() {
-            const list = document.getElementById('attractionsList');
-            list.innerHTML = '';
-
-            Object.keys(attractions).forEach(sectionName => {
-                const section = document.createElement('div');
-                section.className = 'park-section';
-
-                const parkName = document.createElement('div');
-                parkName.className = 'park-name';
-                parkName.textContent = sectionName;
-
-                const grid = document.createElement('div');
-                grid.className = 'attractions-grid';
-
-                attractions[sectionName].forEach(attr => {
-                    const btn = document.createElement('button');
-                    btn.className = `attraction-btn ${zoneColors[attr.zone] || ''}`;
-                    btn.textContent = attr.name;
-                    btn.onclick = () => openHourModal(attr);
-                    grid.appendChild(btn);
-                });
-
-                section.appendChild(parkName);
-                section.appendChild(grid);
-                list.appendChild(section);
-            });
-        }
-
-        function getWaitTime(attractionId, hour) {
-            const times = waitTimes[attractionId] || {};
-            return times[hour] || 0;
-        }
-
-        function updateStats() {
-            const dayItinerary = itineraries[currentDay] || [];
-            const totalWait = dayItinerary.reduce((sum, a) => sum + getWaitTime(a.id, a.hour), 0);
-            const totalDuration = dayItinerary.reduce((sum, a) => sum + a.duration, 0);
-            const total = totalWait + totalDuration;
-
-            document.getElementById('statAttractions').textContent = dayItinerary.length;
-            document.getElementById('statWaitTime').textContent = `${Math.floor(totalWait / 60)}h ${totalWait % 60}m`;
-            document.getElementById('statDuration').textContent = `${Math.floor(total / 60)}h ${total % 60}m`;
-        }
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript,' + encodeURIComponent(`
-                self.addEventListener('install', () => self.skipWaiting());
-                self.addEventListener('activate', () => self.clients.claim());
-            `)).catch(() => {});
-        }
-
-        init();
-    </script>
+renderTabs(); render(); renderCountdown();
+setInterval(() => { renderCountdown(); if(DAYS[cur].key === todayKey && !editId) render(); }, 30000);
+if(todayIdx >= 0){ const n = document.querySelector('.row.now'); n && setTimeout(() => n.scrollIntoView({block:'center'}), 300); }
+</script>
 </body>
 </html>

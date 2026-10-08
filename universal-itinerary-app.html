@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Universal Itinerario">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/jleonreyes/universal-itinerary/main/icon-192x192.png">
     <meta name="theme-color" content="#1e3a8a">
     <title>Universal Orlando Itinerario</title>
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Universal%20Orlando%20Itinerario%22,%22short_name%22:%22Universal%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230f172a%22,%22theme_color%22:%22%231e3a8a%22,%22orientation%22:%22portrait%22}">
@@ -151,7 +152,6 @@
         }
 
         .attraction-in-slot {
-            background: #1e40af;
             padding: 8px 12px;
             border-radius: 6px;
             display: flex;
@@ -160,7 +160,7 @@
             font-size: 13px;
             color: #fff;
             cursor: grab;
-            border: 1px solid #3b82f6;
+            border: 1px solid rgba(255,255,255,0.2);
             user-select: none;
             -webkit-user-select: none;
             gap: 8px;
@@ -177,14 +177,14 @@
 
         .attraction-meta {
             font-size: 11px;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             line-height: 1.3;
         }
 
         .remove-btn {
             background: transparent;
             border: none;
-            color: #cbd5e1;
+            color: rgba(255,255,255,0.8);
             cursor: pointer;
             font-size: 16px;
             padding: 0;
@@ -228,9 +228,9 @@
         .attraction-btn {
             padding: 10px 8px;
             background: #334155;
-            border: 2px solid #475569;
+            border: 2px solid;
             border-radius: 6px;
-            color: #cbd5e1;
+            color: #fff;
             font-size: 12px;
             font-weight: 600;
             cursor: grab;
@@ -243,9 +243,25 @@
 
         .attraction-btn:active {
             cursor: grabbing;
-            background: #475569;
             transform: scale(0.95);
         }
+
+        /* Colores por zona */
+        .btn-nintendo { border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
+        .btn-dark { border-color: #6b21a8; background: rgba(107, 33, 168, 0.2); }
+        .btn-berk { border-color: #22c55e; background: rgba(34, 197, 94, 0.2); }
+        .btn-celestial { border-color: #eab308; background: rgba(234, 179, 8, 0.2); }
+        .btn-harrypotter { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); }
+        .btn-illumination { border-color: #f97316; background: rgba(249, 115, 22, 0.2); }
+        .btn-marvel { border-color: #ec4899; background: rgba(236, 72, 153, 0.2); }
+
+        .slot-nintendo { background: rgba(239, 68, 68, 0.15); }
+        .slot-dark { background: rgba(107, 33, 168, 0.15); }
+        .slot-berk { background: rgba(34, 197, 94, 0.15); }
+        .slot-celestial { background: rgba(234, 179, 8, 0.15); }
+        .slot-harrypotter { background: rgba(59, 130, 246, 0.15); }
+        .slot-illumination { background: rgba(249, 115, 22, 0.15); }
+        .slot-marvel { background: rgba(236, 72, 153, 0.15); }
 
         .suggestions {
             background: #1e40af;
@@ -355,36 +371,76 @@
     </div>
 
     <script>
+        // Datos de atracciones con zona/color
         const attractions = {
-            epic: [
-                { id: 'battle', name: 'Battle at the Ministry', duration: 5, park: 'Epic' },
-                { id: 'minecart', name: 'Mine-Cart Madness', duration: 3, park: 'Epic' },
-                { id: 'mariokart', name: 'Mario Kart', duration: 5, park: 'Epic' },
-                { id: 'yoshi', name: 'Yoshi\'s Adventure', duration: 4, park: 'Epic' },
-                { id: 'dragon', name: 'Dragon Racer\'s Rally', duration: 4, park: 'Epic' },
-                { id: 'wing', name: 'Wing Gliders', duration: 4, park: 'Epic' },
-                { id: 'curse', name: 'Curse of the Werewolf', duration: 3, park: 'Epic' },
-                { id: 'monsters', name: 'Monsters Unchained', duration: 3, park: 'Epic' }
+            'Super Nintendo World': [
+                { id: 'mariokart', name: 'Mario Kart', duration: 5, park: 'Epic', zone: 'nintendo' },
+                { id: 'yoshi', name: 'Yoshi\'s Adventure', duration: 4, park: 'Epic', zone: 'nintendo' },
+                { id: 'dragon', name: 'Dragon Racer\'s Rally', duration: 4, park: 'Epic', zone: 'nintendo' },
+                { id: 'wing', name: 'Wing Gliders', duration: 4, park: 'Epic', zone: 'nintendo' }
             ],
-            ioa: [
-                { id: 'hagrid', name: 'Hagrid\'s Motorbike', duration: 3, park: 'IOA' },
-                { id: 'forbidden', name: 'Forbidden Journey', duration: 4, park: 'IOA' },
-                { id: 'hippogriff', name: 'Flight of Hippogriff', duration: 3, park: 'IOA' },
-                { id: 'spiderman', name: 'Spider-Man Adventure', duration: 4, park: 'IOA' },
-                { id: 'skull', name: 'Skull Island: Kong', duration: 4, park: 'IOA' }
+            'Dark Universe': [
+                { id: 'curse', name: 'Curse of the Werewolf', duration: 3, park: 'Epic', zone: 'dark' },
+                { id: 'monsters', name: 'Monsters Unchained', duration: 3, park: 'Epic', zone: 'dark' },
+                { id: 'mummy', name: 'Revenge of the Mummy', duration: 4, park: 'USF', zone: 'dark' }
             ],
-            usf: [
-                { id: 'gringotts', name: 'Gringotts', duration: 5, park: 'USF' },
-                { id: 'mummy', name: 'Revenge of the Mummy', duration: 4, park: 'USF' },
-                { id: 'despicable', name: 'Despicable Me', duration: 4, park: 'USF' },
-                { id: 'villain', name: 'Villain-Con Blast', duration: 4, park: 'USF' },
-                { id: 'et', name: 'E.T. Adventure', duration: 4, park: 'USF' },
-                { id: 'jimmyfallon', name: 'Race Through NY', duration: 4, park: 'USF' },
-                { id: 'mib', name: 'Men in Black', duration: 4, park: 'USF' },
-                { id: 'transformers', name: 'Transformers', duration: 4, park: 'USF' }
+            'Isle of Berk': [
+                { id: 'minecart', name: 'Mine-Cart Madness', duration: 3, park: 'Epic', zone: 'berk' },
+                { id: 'toothless', name: 'Toothless (Meet & Greet)', duration: 30, park: 'Epic', zone: 'berk' }
+            ],
+            'Celestial Park': [
+                { id: 'battle', name: 'Battle at the Ministry', duration: 5, park: 'Epic', zone: 'celestial' },
+                { id: 'celestial', name: 'Universal Celestial Goodnight', duration: 20, park: 'Epic', zone: 'celestial' }
+            ],
+            'Harry Potter (IOA)': [
+                { id: 'hagrid', name: 'Hagrid\'s Motorbike', duration: 3, park: 'IOA', zone: 'harrypotter' },
+                { id: 'forbidden', name: 'Forbidden Journey', duration: 4, park: 'IOA', zone: 'harrypotter' },
+                { id: 'hippogriff', name: 'Flight of Hippogriff', duration: 3, park: 'IOA', zone: 'harrypotter' },
+                { id: 'frog', name: 'Frog Choir', duration: 10, park: 'IOA', zone: 'harrypotter' },
+                { id: 'express_hm', name: 'Hogwarts Express (Hogsmeade)', duration: 9, park: 'IOA', zone: 'harrypotter' },
+                { id: 'triwizard', name: 'Triwizard', duration: 15, park: 'IOA', zone: 'harrypotter' },
+                { id: 'hogwarts', name: 'Hogwarts Always', duration: 15, park: 'IOA', zone: 'harrypotter' }
+            ],
+            'Harry Potter (USF)': [
+                { id: 'gringotts', name: 'Gringotts', duration: 5, park: 'USF', zone: 'harrypotter' },
+                { id: 'express_kc', name: 'Hogwarts Express (Kings Cross)', duration: 9, park: 'USF', zone: 'harrypotter' }
+            ],
+            'Otros Parques IOA': [
+                { id: 'spiderman', name: 'Spider-Man Adventure', duration: 4, park: 'IOA', zone: 'marvel' },
+                { id: 'skull', name: 'Skull Island: Kong', duration: 4, park: 'IOA', zone: 'marvel' }
+            ],
+            'Otros Parques USF': [
+                { id: 'despicable', name: 'Despicable Me', duration: 4, park: 'USF', zone: 'illumination' },
+                { id: 'villain', name: 'Villain-Con Blast', duration: 4, park: 'USF', zone: 'illumination' },
+                { id: 'et', name: 'E.T. Adventure', duration: 4, park: 'USF', zone: 'illumination' },
+                { id: 'jimmyfallon', name: 'Race Through NY', duration: 4, park: 'USF', zone: 'illumination' },
+                { id: 'mib', name: 'Men in Black', duration: 4, park: 'USF', zone: 'illumination' },
+                { id: 'transformers', name: 'Transformers', duration: 4, park: 'USF', zone: 'illumination' }
+            ],
+            'Shows & Experiencias': [
+                { id: 'mario', name: 'Meet Mario & Luigi', duration: 25, park: 'Epic', zone: 'nintendo' },
+                { id: 'peach', name: 'Meet Princess Peach', duration: 25, park: 'Epic', zone: 'nintendo' },
+                { id: 'cirque', name: 'Le Cirque Arcanus', duration: 25, park: 'Epic', zone: 'celestial' },
+                { id: 'mardi', name: 'Mardi Gras Parade', duration: 30, park: 'USF', zone: 'illumination' },
+                { id: 'cinematic', name: 'Cinematic Spectacular', duration: 20, park: 'USF', zone: 'illumination' }
+            ],
+            'Comidas & Restaurantes': [
+                { id: 'mead', name: 'Mead Hall (Comida)', duration: 45, park: 'Epic', zone: 'harrypotter' },
+                { id: 'toadstool', name: 'Toadstool Cafe (Comida)', duration: 45, park: 'Epic', zone: 'nintendo' },
+                { id: 'florean', name: 'Florean Fortescue (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' },
+                { id: 'celestina', name: 'Celestina (Comida)', duration: 15, park: 'IOA', zone: 'harrypotter' },
+                { id: 'beedle', name: 'Beedle the Bard (Comida)', duration: 15, park: 'IOA', zone: 'harrypotter' },
+                { id: 'knock', name: 'Knock Turn Alley (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' },
+                { id: 'ollivanders', name: 'Ollivanders (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' },
+                { id: 'leaky', name: 'Leaky Cauldron (Comida)', duration: 45, park: 'IOA', zone: 'harrypotter' },
+                { id: 'honeydukes', name: 'Honeydukes (Comida)', duration: 30, park: 'IOA', zone: 'harrypotter' },
+                { id: 'fastfood', name: 'Fast Food Boulevard (Comida)', duration: 45, park: 'USF', zone: 'illumination' },
+                { id: 'pizza', name: 'Pizza Moon (Comida)', duration: 45, park: 'USF', zone: 'illumination' },
+                { id: 'crepa', name: 'Crepa de Cerveza de Mantequilla (Comida)', duration: 40, park: 'USF', zone: 'harrypotter' }
             ]
         };
 
+        // Tiempos de espera históricos (minutos)
         const waitTimes = {
             battle: { 9: 110, 10: 120, 11: 95, 12: 80, 13: 75, 14: 85, 15: 90, 16: 100, 17: 95, 18: 80, 19: 60, 20: 40 },
             minecart: { 9: 120, 10: 110, 11: 100, 12: 90, 13: 85, 14: 95, 15: 105, 16: 110, 17: 100, 18: 85, 19: 60, 20: 40 },
@@ -394,7 +450,10 @@
             wing: { 9: 5, 10: 15, 11: 25, 12: 30, 13: 25, 14: 30, 15: 35, 16: 40, 17: 35, 18: 25, 19: 15, 20: 10 },
             hagrid: { 9: 55, 10: 65, 11: 75, 12: 80, 13: 70, 14: 75, 15: 85, 16: 90, 17: 80, 18: 65, 19: 45, 20: 30 },
             forbidden: { 9: 10, 10: 15, 11: 20, 12: 25, 13: 20, 14: 25, 15: 30, 16: 35, 17: 30, 18: 20, 19: 15, 20: 10 },
-            gringotts: { 9: 15, 10: 45, 11: 60, 12: 75, 13: 65, 14: 70, 15: 80, 16: 85, 17: 75, 18: 60, 19: 40, 20: 20 }
+            gringotts: { 9: 15, 10: 45, 11: 60, 12: 75, 13: 65, 14: 70, 15: 80, 16: 85, 17: 75, 18: 60, 19: 40, 20: 20 },
+            toothless: { 9: 45, 10: 50, 11: 55, 12: 50, 13: 45, 14: 50, 15: 60, 16: 65, 17: 55, 18: 40, 19: 25, 20: 15 },
+            mario: { 9: 30, 10: 40, 11: 45, 12: 40, 13: 35, 14: 40, 15: 50, 16: 55, 17: 45, 18: 30, 19: 20, 20: 10 },
+            peach: { 9: 30, 10: 40, 11: 45, 12: 40, 13: 35, 14: 40, 15: 50, 16: 55, 17: 45, 18: 30, 19: 20, 20: 10 }
         };
 
         const days = [
@@ -409,6 +468,27 @@
         let itineraries = {};
         let draggedElement = null;
 
+        const zoneColors = {
+            nintendo: 'btn-nintendo',
+            dark: 'btn-dark',
+            berk: 'btn-berk',
+            celestial: 'btn-celestial',
+            harrypotter: 'btn-harrypotter',
+            illumination: 'btn-illumination',
+            marvel: 'btn-marvel'
+        };
+
+        const slotZoneColors = {
+            nintendo: 'slot-nintendo',
+            dark: 'slot-dark',
+            berk: 'slot-berk',
+            celestial: 'slot-celestial',
+            harrypotter: 'slot-harrypotter',
+            illumination: 'slot-illumination',
+            marvel: 'slot-marvel'
+        };
+
+        // Inicializar
         function init() {
             loadItineraries();
             renderCountdown();
@@ -493,7 +573,7 @@
 
                 if (attraction) {
                     const card = document.createElement('div');
-                    card.className = 'attraction-in-slot';
+                    card.className = `attraction-in-slot ${slotZoneColors[attraction.zone] || ''}`;
                     card.draggable = true;
                     card.ondragstart = (e) => handleDragStart(e, attraction);
 
@@ -556,7 +636,8 @@
                 name: draggedElement.name,
                 hour: hour,
                 duration: draggedElement.duration,
-                park: draggedElement.park
+                park: draggedElement.park,
+                zone: draggedElement.zone
             });
 
             saveItineraries();
@@ -569,20 +650,20 @@
             const list = document.getElementById('attractionsList');
             list.innerHTML = '';
 
-            ['epic', 'ioa', 'usf'].forEach(parkKey => {
+            Object.keys(attractions).forEach(sectionName => {
                 const section = document.createElement('div');
                 section.className = 'park-section';
 
                 const parkName = document.createElement('div');
                 parkName.className = 'park-name';
-                parkName.textContent = parkKey === 'epic' ? 'EPIC UNIVERSE' : parkKey === 'ioa' ? 'ISLANDS OF ADVENTURE' : 'UNIVERSAL STUDIOS FLORIDA';
+                parkName.textContent = sectionName;
 
                 const grid = document.createElement('div');
                 grid.className = 'attractions-grid';
 
-                attractions[parkKey].forEach(attr => {
+                attractions[sectionName].forEach(attr => {
                     const btn = document.createElement('button');
-                    btn.className = 'attraction-btn';
+                    btn.className = `attraction-btn ${zoneColors[attr.zone] || ''}`;
                     btn.textContent = attr.name;
                     btn.draggable = true;
                     btn.ondragstart = (e) => {
@@ -600,7 +681,7 @@
 
         function getWaitTime(attractionId, hour) {
             const times = waitTimes[attractionId] || {};
-            return times[hour] || 30;
+            return times[hour] || 0;
         }
 
         function renderSuggestions() {
@@ -618,7 +699,9 @@
 
             const endHour = lastAttr.hour + Math.ceil((getWaitTime(lastAttr.id, lastAttr.hour) + lastAttr.duration) / 60);
 
-            const allAttractions = [...attractions.epic, ...attractions.ioa, ...attractions.usf];
+            let allAttractions = [];
+            Object.values(attractions).forEach(arr => allAttractions = allAttractions.concat(arr));
+            
             const usedIds = new Set(dayItinerary.map(a => a.id));
             const available = allAttractions.filter(a => !usedIds.has(a.id));
 
@@ -635,7 +718,7 @@
                 const wait = getWaitTime(attr.id, endHour);
                 const suggestion = document.createElement('div');
                 suggestion.className = 'suggestion-item';
-                suggestion.textContent = `${attr.name}: ${wait}min a las ${endHour}:00`;
+                suggestion.textContent = `${attr.name}: ${wait > 0 ? wait + 'min + ' : ''}${attr.duration}m a las ${endHour}:00`;
                 list.appendChild(suggestion);
             });
         }
@@ -651,6 +734,7 @@
             document.getElementById('statDuration').textContent = `${Math.floor(total / 60)}h ${total % 60}m`;
         }
 
+        // Service Worker para PWA
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('data:text/javascript,' + encodeURIComponent(`
                 self.addEventListener('install', () => self.skipWaiting());

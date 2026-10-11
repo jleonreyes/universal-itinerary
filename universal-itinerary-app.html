@@ -25,8 +25,19 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 
 /* Top */
 .top{padding-top:calc(env(safe-area-inset-top) + 10px)}
-.count{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted);padding:6px 2px 10px}
-.count b{color:#fff;font-variant-numeric:tabular-nums;font-size:15px}
+.cdlabel{font-size:15px;font-weight:700;color:#cbd5e1;text-align:center;margin:4px 0 8px;letter-spacing:.2px}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.cd div{background:linear-gradient(160deg,#2563eb,#1e3a8a);border-radius:14px;padding:12px 2px 10px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.cd b{display:block;font-size:40px;line-height:1;font-weight:800;color:#fff;font-variant-numeric:tabular-nums}
+.cd span{display:block;font-size:13px;font-weight:700;color:#bfdbfe;margin-top:6px;text-transform:uppercase;letter-spacing:.6px}
+.cd.done{display:block;text-align:center;font-size:30px;font-weight:800;color:#fff;background:linear-gradient(160deg,#2563eb,#1e3a8a);border-radius:14px;padding:16px}
+.flights{background:linear-gradient(160deg,rgba(124,58,237,.45),rgba(124,58,237,.18));border:1px solid rgba(167,139,250,.5);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.fl-head{display:flex;justify-content:space-between;align-items:center;font-size:15px;font-weight:800;color:#ddd6fe;margin-bottom:2px}
+.fl-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px solid rgba(167,139,250,.3)}
+.fl-row b{display:block;font-size:14px;color:#fff}
+.fl-row small{display:block;font-size:13px;color:#ddd6fe}
+.fl-row span{font-size:16px;font-weight:800;color:#fff;white-space:nowrap;font-variant-numeric:tabular-nums}
+.fl-note{font-size:12px;color:#c4b5fd;margin-top:6px}
 .tabs-bar{position:sticky;top:0;z-index:20;background:var(--bg);padding:calc(env(safe-area-inset-top)) 0 8px;margin:0 -14px;padding-left:14px;padding-right:14px}
 .tabs{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-top:6px}
 .tabs::-webkit-scrollbar{display:none}
@@ -48,7 +59,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 
 /* Timeline */
 .list{border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:52px 1fr;gap:10px;width:100%;text-align:left;padding:11px 8px 11px 6px;border-bottom:1px solid var(--line);position:relative;border-left:6px solid var(--z,var(--dim))}
+.row{cursor:pointer;display:grid;grid-template-columns:52px 1fr;gap:10px;width:100%;text-align:left;padding:11px 8px 11px 6px;border-bottom:1px solid var(--line);position:relative;border-left:6px solid var(--z,var(--dim))}
 .row:active{filter:brightness(1.25)}
 .row{background:var(--zb,transparent)}
 .row .t{text-shadow:0 1px 2px rgba(0,0,0,.35)}
@@ -65,6 +76,15 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .chip.wet{color:#0c4a6e;background:#7dd3fc}
 .chip.pin{color:#422006;background:#fde047}
 .occ{color:#a8b4c6;font-variant-numeric:tabular-nums}
+.chip.warn{color:#fff;background:#ea580c}
+.st{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;align-items:center}
+.st small{font-size:11px;color:#cbd5e1;margin-right:2px}
+.st span{font-size:12px;padding:4px 7px;border-radius:6px;background:rgba(15,23,42,.5);color:#f1f5f9;font-variant-numeric:tabular-nums;font-weight:600;cursor:pointer}
+.st span.on{background:#fde047;color:#422006;font-weight:800}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 6px}
+.tgrid button{background:#334155;border-radius:8px;padding:10px 0;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.tgrid button.on{background:#fde047;color:#422006}
+.src{font-size:12px;color:var(--dim);line-height:1.4;margin-bottom:6px}
 .row.now{outline:2px solid var(--free);outline-offset:-2px}
 .row.now .t::after{content:"AHORA";display:block;font-size:9px;color:var(--free);font-weight:800;margin-top:3px}
 .row.flash{animation:flash 1.6s ease}
@@ -123,6 +143,10 @@ input[type=time]{font-size:17px;background:var(--bg);color:#fff;border:1px solid
 .cat-top{position:sticky;top:-8px;background:var(--panel);padding:4px 0 10px;z-index:2}
 .cat-top label{font-size:13px;color:var(--muted);display:block;margin:6px 0 4px}
 select.in{appearance:none;-webkit-appearance:none}
+.pf{display:flex;gap:6px;margin:10px 0 8px;overflow-x:auto;scrollbar-width:none}
+.pf::-webkit-scrollbar{display:none}
+.pf button{flex:0 0 auto;padding:8px 13px;border-radius:18px;border:2px solid var(--line);font-size:14px;font-weight:700;color:#cbd5e1}
+.pf button.on{background:#f1f5f9;color:#0f172a;border-color:#f1f5f9}
 .grp{font-size:12px;font-weight:800;color:var(--gz,var(--dim));letter-spacing:.4px;text-transform:uppercase;margin:16px 0 6px}
 .ci{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 10px;border-radius:10px;background:var(--zb,var(--bg));margin-bottom:6px;border-left:6px solid var(--z)}
 .ci:active{filter:brightness(1.25)}
@@ -141,7 +165,14 @@ select.in{appearance:none;-webkit-appearance:none}
 
 <div class="wrap">
   <div class="top">
-    <div class="count"><span>Universal · 26 feb – 4 mar</span><b id="countdown"></b></div>
+    <div class="cdlabel" id="cdLabel">Faltan para el vuelo · vie 26 feb, 11:10</div>
+    <div class="cd" id="countdown"></div>
+    <div class="flights">
+      <div class="fl-head"><span>✈ Vuelos</span></div>
+      <div class="fl-row"><div><b>Ida</b><small>vie 26 feb</small></div><span>Sale 11:10 → Orlando 15:18</span></div>
+      <div class="fl-row"><div><b>Regreso</b><small>jue 4 mar</small></div><span>Orlando 17:05 → llega 19:45</span></div>
+      <div class="fl-note">Cada hora es la local de su ciudad · Orlando va 1 h adelante de casa</div>
+    </div>
   </div>
   <div class="tabs-bar"><div class="tabs" id="tabs"></div></div>
 
@@ -176,8 +207,8 @@ select.in{appearance:none;-webkit-appearance:none}
   <div class="cat-top">
     <label for="afterSel">Agregar después de</label>
     <select class="in" id="afterSel"></select>
-    <label for="q">Buscar</label>
-    <input class="in" id="q" type="search" placeholder="Atracción, show, comida…" autocomplete="off">
+    <div class="pf" id="parkFilter"></div>
+    <input class="in" id="q" type="search" placeholder="Buscar en los 3 parques…" autocomplete="off">
   </div>
   <div id="catList"></div>
 </div>
@@ -201,12 +232,41 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;
 const ZC = {
   hpe:'#6366f1', hpi:'#38bdf8', hpu:'#3b82f6', hp:'#3b82f6', nintendo:'#f87171', berk:'#4ade80', dark:'#a78bfa', celestial:'#facc15',
   marvel:'#f472b6', jurassic:'#c08a3e', illum:'#fb923c', seuss:'#2dd4bf', toon:'#e879f9',
-  usf:'#fda4af', dw:'#a3e635', log:'#475569'
+  usf:'#fda4af', dw:'#a3e635', fly:'#7c3aed', log:'#475569'
 };
 const zc = z => ZC[z] || ZC.log;
 // Fondo de color del renglón: más intenso en atracciones y shows
 const tint = (hex,a) => { const n = parseInt(hex.slice(1),16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`; };
 const zbg = (z,strong) => z === 'log' ? 'transparent' : tint(zc(z), strong ? .5 : .3);
+
+/* ---------- horarios registrados de shows ---------- */
+// Muestra publicada para sáb 28 feb y dom 1 mar 2026 (TouringPlans), salvo donde se indica.
+const F26 = 'Horarios publicados 28 feb–1 mar 2026';
+const SHOWTIMES = {
+  'Le Cirque Arcanus': { t:['10:45','11:35','12:25','13:15','14:15','15:05','15:55','16:45','17:35','18:25','19:15','20:05'], src:F26 },
+  'The Untrainable Dragon': { t:['11:10','12:00','12:50','13:40','14:30','15:40','16:30','17:20','18:10','19:00'], src:F26 },
+  'The Bourne Stuntacular': { t:['11:15','12:00','13:00','13:45','15:00','15:45','16:45','17:30'], src:F26 },
+  'Celestina Warbeck': { t:['11:00','12:00','13:00','14:30','15:30','16:30'], src:F26 },
+  'Tales of Beedle the Bard': { t:['14:00','15:00','16:00','17:30','18:30','19:30'], src:F26 },
+  'Frog Choir': { t:['11:00','12:00','13:00','14:30','15:30','16:30'], src:F26 },
+  'Triwizard Spirit Rally': { t:['10:30','11:30','12:00','14:00','15:00','16:00'], src:F26 },
+  "Oh! The Stories You'll Hear!": { t:['11:00','12:00','13:00','14:45','15:45','16:45'], src:F26 },
+  'Po Live!': { t:['11:00','11:30','12:00','12:30','13:00','13:30','14:15','14:45','15:15','15:45','16:15','16:45'], src:F26 },
+  'DreamWorks Imagination Celebration': { t:['11:30','12:30','13:30','14:45','15:45','16:45','18:00','19:00'], src:F26 },
+  'The Blues Brothers Show': { t:['11:00','12:00','13:00','14:25','15:25'], src:F26 },
+  'Marilyn and the Diamond Bellas': { t:['10:45','11:45','12:45','14:15','15:15','16:15'], src:F26 },
+  'Desfile de Mardi Gras': { t:['19:00'], src:F26 + ' · algunas noches a las 17:00 o 18:00' },
+  'The Cosmos Fountain': { t:['21:00'], src:F26 },
+  'Universal Celestial Goodnight': { t:['21:30'], src:'Empezó en verano 2026 · no aparecía en feb–mar 2026, confirmar' },
+  'Hogwarts Always': { t:[], src:'Sin horario fijo: se repite cada ~20 min del anochecer al cierre · no aparecía en feb–mar 2026, confirmar' },
+  'Universal Mega Movie Parade': { t:['19:00'], src:'Solo corrió en verano 2026 (cerró el 23 ago) · en Mardi Gras ese horario es del desfile de Mardi Gras' },
+  'CineSational': { t:['21:00'], src:'Solo corrió abr–ago 2026 · confirmar' },
+  'Meet Mario y Luigi': { t:['9:00','10:00','11:00','12:00','12:50','13:00','13:50','14:00','14:50','15:50','16:40','17:40','18:40','19:40'], src:'Horarios de octubre 2026 (app de Universal)' },
+  'Meet Princess Peach': { t:['9:20','10:20','10:40','11:20','11:40','12:20','12:40','13:20','13:40','15:00','16:00','17:00','18:00'], src:'Horarios de octubre 2026 (app de Universal)' },
+  'Meet Toothless': { t:[], src:'Sin horario: desde la apertura; la fila cierra 1 hora antes del cierre' },
+  'Raptor Encounter': { t:[], src:'Continuo ~10:00–18:45; los raptores rotan cada ~20 min' },
+};
+const showInfo = it => { const k = Object.keys(SHOWTIMES).find(k => it.name.startsWith(k)); return k ? SHOWTIMES[k] : null; };
 
 /* ---------- itinerario estudiado (PDF) ---------- */
 // lk: 'obl' locker obligatorio · 'sin' sin locker · '' no aplica ; wet: se moja
@@ -219,8 +279,21 @@ const S = (t,name,zone,note='función fija',o={}) => X(t,name,zone,note,'show',{
 const M = (t,name,zone,note='',o={}) => X(t,name,zone,note,'meal',o);
 const FX = {fixed:true};
 
+const FL = (t,name,note,o={}) => X(t,name,'fly',note,'flight',{fixed:true,...o});
 const DAYS = [
- { key:'2027-02-27', tab:['Sáb','27 feb'], title:'Sábado 27 de febrero', park:'Epic Universe',
+ { key:'2027-02-26', tab:['Vie','26 feb'], title:'Viernes 26 de febrero', park:'Vuelo de ida', parks:[],
+   sub:'Sale 11:10 → llega a Orlando 15:18',
+   tip:'Orlando va una hora adelante de casa en estas fechas: Estados Unidos cambia al horario de verano hasta el 14 de marzo de 2027. Las horas antes de despegar son de casa y las de después de aterrizar, de Orlando. Ten a la mano los pasaportes, la clave de reservación y la confirmación del hotel. La salida de casa y el traslado al hotel son estimados: ajústalos a su trayecto y transporte.',
+   seed:[
+    L('7:10','Salida de casa al aeropuerto','hora de casa · ajústala a su trayecto',FX),
+    L('8:10','Llegar al aeropuerto','3 h antes por ser vuelo internacional · documentar maletas',FX),
+    FL('11:10','Vuelo de ida → Orlando','Sale 11:10 hora de casa · llega 15:18 hora Orlando · 3 h 08 min de vuelo'),
+    L('15:18','Aterrizaje en Orlando (MCO)','hora Orlando · migración y maletas',FX),
+    L('16:45','Traslado al hotel','~30 min · confirmar transporte'),
+    L('17:30','Check-in en el hotel',''),
+    L('18:15','Tarde libre · cena','',{d:105}),
+   ]},
+ { key:'2027-02-27', tab:['Sáb','27 feb'], title:'Sábado 27 de febrero', park:'Epic Universe', parks:['Epic'],
    sub:'Ministry of Magic + Isle of Berk · Epic 10:00–21:00 · EPA 9:00',
    tip:'Battle at the Ministry va primera, sin excepción. El early entry es su ventana más barata del día: arranca cerca de 50–70 min y sube sin parar hasta 85+ a media mañana. Además Universal cierra su fila por capacidad, a veces varias horas antes del cierre, así que dejarla para la tarde o la noche es arriesgar perderla. El costo de ir primero es que Berk sube de 5 a 25–40 min, pero es el intercambio correcto.',
    seed:[
@@ -246,7 +319,7 @@ const DAYS = [
     X('21:00','Posición · portal Dark Universe a Meteor Astropub','celestial','30 min antes',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
- { key:'2027-02-28', tab:['Dom','28 feb'], title:'Domingo 28 de febrero', park:'Epic Universe',
+ { key:'2027-02-28', tab:['Dom','28 feb'], title:'Domingo 28 de febrero', park:'Epic Universe', parks:['Epic'],
    sub:'Super Nintendo World + Dark Universe · Epic 10:00–21:00 · EPA 9:00',
    tip:'Celestial Goodnight se ve mejor de cara al Helios Grand Hotel, en el arco del portal de Dark Universe al Meteor Astropub. Si Mine-Cart marca más de 50 min o está detenida, pasa directo a Mario Kart y recupérala el miércoles. Mario y Luigi están en planta baja y Peach en el nivel superior: fórmate 20 minutos antes de cada función.',
    seed:[
@@ -274,7 +347,7 @@ const DAYS = [
     X('21:00','Posición · portal Dark Universe a Meteor Astropub','celestial','30 min antes',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
- { key:'2027-03-01', tab:['Lun','1 mar'], title:'Lunes 1 de marzo', park:'Harry Potter · IOA ↔ USF',
+ { key:'2027-03-01', tab:['Lun','1 mar'], title:'Lunes 1 de marzo', park:'Harry Potter · IOA ↔ USF', parks:['IOA','USF'],
    sub:'Park-to-Park · IOA 9:00–20:00 · USF 9:00–19:00 · EPA en IOA 8:00',
    tip:"Si a las 8:40 Hagrid's sigue detenida o pasa de 45 min, intercambia este día completo con el del martes. Hogwarts Always se repite cada 20 minutos desde el anochecer hasta el cierre. Mejor punto: frente al escenario de Frog Choir, del lado que deja ver el costado izquierdo del castillo y los cerdos alados. Si sobra tiempo en Seuss: Cat in the Hat y Caro-Seuss-el.",
    seed:[
@@ -308,7 +381,7 @@ const DAYS = [
     S('19:50','Hogwarts Always','hpi','proyección · 8 min'),
     L('20:00','Cierre IOA','',{fixed:true,d:10}),
    ]},
- { key:'2027-03-02', tab:['Mar','2 mar'], title:'Martes 2 de marzo', park:'USF → IOA',
+ { key:'2027-03-02', tab:['Mar','2 mar'], title:'Martes 2 de marzo', park:'USF → IOA', parks:['USF','IOA'],
    sub:'USF 9:00–19:00 · IOA 9:00–20:00 · EPA en IOA 8:00',
    tip:'Opcionales, solo con espera razonable: Revenge of the Mummy en New York y Skull Island: Kong en Jurassic, ambas oscuras y con sustos. Rellenos: Kang & Kodos en Springfield, Storm Force en Marvel y Bilge-Rat Barges en Toon Lagoon, que empapa por completo.',
    seed:[
@@ -324,7 +397,7 @@ const DAYS = [
     R('11:00','Minion Mayhem','illum',[35,60],'5:00','sin'),
     R('12:10','Villain-Con Minion Blast','illum',[25,40],'10:00','sin'),
     W('13:10','Caminar a DreamWorks Land'),
-    R('13:20','E.T. Adventure','dw',[20,40],'4:30','sin'),
+    R('13:20','E.T. Adventure','usf',[20,40],'4:30','sin'),
     R('14:15','Trolls Trollercoaster','dw',[15,30],'1:30','sin'),
     M('15:00','Comida · Fast Food Boulevard','usf',"Cletus: tiras de pollo · Luigi's: pizza"),
     R('16:05','MIB Alien Attack','usf',[20,35],'4:30','sin'),
@@ -334,7 +407,7 @@ const DAYS = [
     R('19:15','Spider-Man','marvel',[20,35],'4:30','sin'),
     L('20:00','Cierre IOA','',{fixed:true,d:10}),
    ]},
- { key:'2027-03-03', tab:['Mié','3 mar'], title:'Miércoles 3 de marzo', park:'Epic Universe',
+ { key:'2027-03-03', tab:['Mié','3 mar'], title:'Miércoles 3 de marzo', park:'Epic Universe', parks:['Epic'],
    sub:'Recuperación · Epic 10:00–21:00 · EPA 9:00 · multitud 5',
    tip:'Si algo proyecta más de 60 min, sáltalo y vuelve después de las 19:00. Con multitud 5 las esperas caen a la mitad. La laguna del Constellation Carousel da vista de la escala completa del show y es la salida más rápida del parque.',
    seed:[
@@ -353,7 +426,7 @@ const DAYS = [
     M('14:30','Snack · Star Sui Bao','celestial','bao al vapor · Celestial Park'),
     W('15:05','Caminar a Dark Universe'),
     R('15:15','Monsters Unchained','dark',[20,35],'5:00','obl'),
-    M('16:00','Comida · Pizza Moon','dark','pizza al horno de leña · brownie'),
+    M('16:00','Comida · Pizza Moon','celestial','pizza al horno de leña · brownie'),
     L('17:10','Descanso en hotel','1:00'),
     X('18:30','Souvenirs · K. Rammelle y tiendas','hpe'),
     M('19:15',"Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe','cambia de azul a violeta · sin alcohol'),
@@ -363,6 +436,22 @@ const DAYS = [
     X('21:00','Posición · laguna del carrusel','celestial','salida más rápida',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
+ { key:'2027-03-04', tab:['Jue','4 mar'], title:'Jueves 4 de marzo', park:'Vuelo de regreso', parks:[],
+   sub:'Sale de Orlando 17:05 → llega 19:45',
+   tip:'El vuelo sale 17:05 hora de Orlando y llega 19:45 hora de casa (3 h 40 min de vuelo). Llega a MCO 3 horas antes por ser internacional. Después del check-out, los hoteles de Universal guardan las maletas en el bell desk mientras disfrutan la mañana. La comida fuerte queda en el aeropuerto después de pasar seguridad, a la hora de siempre.',
+   seed:[
+    L('8:00','Desayuno','',FX),
+    L('8:30','Mañana libre · alberca o CityWalk',''),
+    L('11:00','Check-out del hotel','dejar maletas en el bell desk'),
+    L('11:30','Tiempo libre · CityWalk o compras',''),
+    L('13:15','Salida al aeropuerto MCO','recoger maletas · ~30–40 min · confirmar transporte'),
+    L('14:05','Llegar a MCO','3 h antes por ser vuelo internacional · documentar y seguridad',FX),
+    M('15:00','Comida en el aeropuerto','log','después de pasar seguridad'),
+    L('16:20','En la sala de abordaje','~45 min antes del vuelo'),
+    FL('17:05','Vuelo de regreso → casa','Sale 17:05 hora Orlando · llega 19:45 hora de casa · 3 h 40 min de vuelo'),
+    L('19:45','Aterrizaje','hora de casa · migración, aduana y maletas',FX),
+    L('21:00','Llegada a casa','ajústala a su trayecto',{fixed:true,d:15}),
+   ]},
 ];
 
 /* ---------- catálogo para agregar ---------- */
@@ -370,50 +459,62 @@ const DAYS = [
 const r = (name,zone,q,ride,lk='',note='') => ({name,zone,type:'ride',qMin:q[0],qMax:q[1],ride:secs(ride),lk:lk.replace('-moja',''),wet:lk.includes('moja'),note});
 const o = (name,zone,dur,note='',type='other') => ({name,zone,type,dur,note});
 const CAT = [
- ['Epic · Ministry of Magic', [
-   r('Battle at the Ministry','hpe',[50,70],'5:00','obl'),
-   o('Le Cirque Arcanus','hpe',35,'función fija · 25 min','show'),
-   o('Bièraubeurre Cart','hpe',20,'cerveza de mantequilla','meal'),
-   o("Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe',15,'cambia de azul a violeta','meal'),
-   o('Crepa de cerveza de mantequilla','hpe',20,"Café L'air De La Sirène",'meal'),
-   o("Comida · Café L'air De La Sirène",'hpe',60,'Kinder Schnitzel · grilled cheese','meal'),
-   o('Comida · Le Gobelet Noir','hpe',60,'carta alemana','meal'),
-   o('Varitas y hechizos','hpe',45),
-   o('Place Cachée · Rue Fondaine','hpe',45),
-   o('Souvenirs · K. Rammelle','hpe',30,'Butterbeer Caramel · Pumpkin Juice'),
+ ['Epic · Celestial Park', [
+   r('Stardust Racers','celestial',[45,75],'2:00','obl','intensa'),
+   r('Constellation Carousel','celestial',[5,15],'2:00','sin'),
+   o('Astronomica','celestial',20,'fuentes y juegos de agua','other'),
+   o('Universal Celestial Goodnight','celestial',20,'30 min tras el cierre','show'),
+   o('The Cosmos Fountain','celestial',15,'show de fuentes y luces · noche','show'),
+   o('Posición para Celestial Goodnight','celestial',30,'30 min antes'),
+   o('Comida · Pizza Moon','celestial',70,'pizza al horno de leña · brownie','meal'),
+   o('Snack · Star Sui Bao','celestial',30,'bao al vapor','meal'),
+   o('Comida · The Blue Dragon','celestial',60,'pan-asiático','meal'),
+   o('Comida · Atlantic','celestial',75,'restaurante de mesa · mariscos','meal'),
+   o('Helado · Frosty Moon','celestial',20,'','meal'),
+   o('Meteor Astropub','celestial',60,'','meal'),
  ]],
- ['Epic · Super Nintendo World', [
-   r('Mine-Cart Madness','nintendo',[20,45],'3:30','sin'),
-   r('Mario Kart','nintendo',[30,60],'5:00','sin'),
-   r("Yoshi's Adventure",'nintendo',[30,45],'5:00','sin'),
-   r('Batalla con Bowser Jr.','nintendo',[10,20],'','sin'),
-   o('Power-Up Band · retos','nintendo',20),
-   o('Meet Mario y Luigi','nintendo',25,'planta baja · fórmate 20 min antes','show'),
-   o('Meet Princess Peach','nintendo',25,'nivel superior · fórmate 20 min antes','show'),
-   o("Snack · Yoshi's Snack Island",'nintendo',30,'calzones de caparazón','meal'),
-   o('Comida · Toadstool Cafe','nintendo',75,'Mario Burger · papas trufa','meal'),
+ ['Epic · Dark Universe', [
+   r('Monsters Unchained','dark',[15,30],'5:00','obl'),
+   r('Curse of the Werewolf','dark',[20,45],'2:00','sin'),
+   o('Darkmoor Monster Makeup Experience','dark',40,'costo extra · reservar','other'),
+   o('Dark Universe de noche','dark',60),
+   o('Comida · Das Stakehaus','dark',60,'','meal'),
+   o('The Burning Blade Tavern','dark',30,'bebidas y snacks','meal'),
  ]],
  ['Epic · Isle of Berk', [
    r("Hiccup's Wing Gliders",'berk',[25,40],'2:30','obl'),
    r("Dragon Racer's Rally",'berk',[25,40],'2:00','obl'),
    r('Fyre Drill','berk',[15,25],'4:00','sin-moja'),
-   o('Meet Toothless','berk',30,'filas largas'),
-   o('Viking Training Camp','berk',45),
    o('The Untrainable Dragon','berk',45,'función fija · 25 min','show'),
+   o('Meet Toothless','berk',30,'filas largas','show'),
+   o('Viking Training Camp','berk',45),
    o('Comida · Mead Hall','berk',45,'mac and cheese · hamburguesa · pollo','meal'),
+   o("Comida · Hooligan's Grog & Gruel",'berk',40,'mac and cheese','meal'),
  ]],
- ['Epic · Dark Universe', [
-   r('Monsters Unchained','dark',[15,30],'5:00','obl'),
-   r('Curse of the Werewolf','dark',[20,45],'2:00','sin'),
-   o('Dark Universe de noche','dark',60),
-   o('Comida · Pizza Moon','dark',70,'pizza al horno de leña · brownie','meal'),
+ ['Epic · Super Nintendo World', [
+   r('Mario Kart','nintendo',[30,60],'5:00','sin'),
+   r("Yoshi's Adventure",'nintendo',[30,45],'5:00','sin'),
+   r('Mine-Cart Madness','nintendo',[20,45],'3:30','sin','Donkey Kong Country'),
+   r('Batalla con Bowser Jr.','nintendo',[10,20],'','sin'),
+   o('Power-Up Band · retos','nintendo',20),
+   o('Meet Mario y Luigi','nintendo',25,'planta baja · fórmate 20 min antes','show'),
+   o('Meet Princess Peach','nintendo',25,'nivel superior · fórmate 20 min antes','show'),
+   o('Comida · Toadstool Cafe','nintendo',75,'Mario Burger · papas trufa','meal'),
+   o("Snack · Yoshi's Snack Island",'nintendo',30,'calzones de caparazón','meal'),
+   o('Snack · Turbo-Boost Treats','nintendo',20,'churros y palomitas','meal'),
+   o('Snack · The Bubbly Barrel','nintendo',20,'Donkey Kong Country','meal'),
  ]],
- ['Epic · Celestial Park', [
-   r('Constellation Carousel','celestial',[5,15],'2:00','sin'),
-   r('Stardust Racers','celestial',[45,75],'2:00','obl','fuera del plan por intensidad'),
-   o('Snack · Star Sui Bao','celestial',30,'bao al vapor','meal'),
-   o('Posición para Celestial Goodnight','celestial',30,'30 min antes'),
-   o('Universal Celestial Goodnight','celestial',20,'30 min tras el cierre','show'),
+ ['Epic · Ministry of Magic', [
+   r('Battle at the Ministry','hpe',[50,70],'5:00','obl'),
+   o('Le Cirque Arcanus','hpe',35,'función fija · 25 min','show'),
+   o('Varitas y hechizos','hpe',45),
+   o('Place Cachée · Rue Fondaine','hpe',45),
+   o('Souvenirs · K. Rammelle','hpe',30,'Butterbeer Caramel · Pumpkin Juice'),
+   o('Bièraubeurre Cart','hpe',20,'cerveza de mantequilla','meal'),
+   o("Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe',15,'cambia de azul a violeta','meal'),
+   o('Crepa de cerveza de mantequilla','hpe',20,"Café L'air De La Sirène",'meal'),
+   o("Comida · Café L'air De La Sirène",'hpe',60,'Kinder Schnitzel · grilled cheese','meal'),
+   o('Comida · Le Gobelet Noir','hpe',60,'carta alemana','meal'),
  ]],
  ['IOA · Hogsmeade', [
    r("Hagrid's",'hpi',[20,35],'3:00','obl'),
@@ -423,51 +524,102 @@ const CAT = [
    o('Frog Choir','hpi',15,'función fija · 8 min','show'),
    o('Triwizard Spirit Rally','hpi',20,'función fija','show'),
    o('Hogwarts Always','hpi',10,'proyección · 8 min','show'),
-   o("Honeydukes · Hog's Head",'hpi',45,'cerveza de mantequilla','meal'),
    o('Posición frente al escenario','hpi',30),
+   o('Ollivanders (Hogsmeade)','hpi',35,'20–30 fila'),
+   o("Honeydukes · Hog's Head",'hpi',45,'cerveza de mantequilla','meal'),
+   o('Comida · Three Broomsticks','hpi',60,'','meal'),
+ ]],
+ ['IOA · Jurassic Park · Skull Island', [
+   r('Jurassic River Adventure','jurassic',[25,35],'6:00','obl-moja','reabre 19 nov 2026'),
+   r('VelociCoaster','jurassic',[45,75],'1:40','obl','intensa'),
+   r('Pteranodon Flyers','jurassic',[40,60],'1:20','','máx. 142 cm'),
+   r('Skull Island: Reign of Kong','jurassic',[15,30],'5:00','','oscura · sustos'),
+   o('Raptor Encounter','jurassic',25,'conocer al raptor','show'),
+   o('Camp Jurassic','jurassic',30,'zona de juegos'),
+   o('Jurassic Park Discovery Center','jurassic',20),
+ ]],
+ ['IOA · Marvel Super Hero Island', [
+   r('Spider-Man','marvel',[20,35],'4:30','sin'),
+   r('Storm Force Accelatron','marvel',[5,15],'2:00'),
+   r('The Incredible Hulk Coaster','marvel',[30,60],'2:30','obl','intensa'),
+   r("Doctor Doom's Fearfall",'marvel',[20,35],'1:00','','intensa'),
+   o('Meet superhéroes Marvel','marvel',25,'','show'),
+   o('Comida · Café 4','marvel',45,'pizza y pasta','meal'),
+ ]],
+ ['IOA · Toon Lagoon', [
+   r('Ripsaw Falls','toon',[25,40],'5:00','obl-moja'),
+   r('Bilge-Rat Barges','toon',[20,40],'5:00','moja','empapa por completo'),
+   o('Me Ship, The Olive','toon',20,'zona de juegos'),
+   o('Comida · Comic Strip Cafe','toon',45,'','meal'),
  ]],
  ['IOA · Seuss Landing', [
    r('High in the Sky Trolley Train','seuss',[20,30],'6:00','sin'),
    r('One Fish, Two Fish','seuss',[15,25],'2:00','sin'),
    r('The Cat in the Hat','seuss',[15,30],'4:00'),
    r('Caro-Seuss-el','seuss',[5,15],'2:00'),
+   o("Oh! The Stories You'll Hear!",'seuss',15,'función fija','show'),
+   o('If I Ran the Zoo','seuss',20,'zona de juegos'),
    o('Comida · Circus McGurkus','seuss',60,'mac and cheese','meal'),
  ]],
- ['IOA · Marvel · Toon Lagoon', [
-   r('Spider-Man','marvel',[20,35],'4:30','sin'),
-   r('Storm Force Accelatron','marvel',[5,15],'2:00'),
-   r('Ripsaw Falls','toon',[25,40],'5:00','obl-moja'),
-   r('Bilge-Rat Barges','toon',[20,40],'5:00','moja','empapa por completo'),
+ ['IOA · Port of Entry · Lost Continent', [
+   o('Comida · Mythos','log',75,'restaurante de mesa · cierra a inicios de 2027, confirmar','meal'),
+   o('Comida · Confisco Grille','log',60,'','meal'),
+   o('Snack · Croissant Moon Bakery','log',20,'','meal'),
  ]],
- ['IOA · Jurassic Park · Skull Island', [
-   r('Jurassic River Adventure','jurassic',[25,35],'6:00','obl-moja'),
-   r('Skull Island: Reign of Kong','jurassic',[15,30],'5:00','','oscura · sustos'),
-   r('Pteranodon Flyers','jurassic',[40,60],'1:20','','máx. 142 cm'),
-   o('Camp Jurassic','jurassic',30),
+ ['USF · Desfiles y shows nocturnos', [
+   o('Desfile de Mardi Gras','usf',45,'7:00 pm casi todas las noches · confirmar','show'),
+   o('Mardi Gras · comida internacional','usf',40,'kioscos de Carnaval','meal'),
+   o('Universal Mega Movie Parade','usf',30,'desfile de películas · confirmar hora','show'),
+   o('CineSational: A Symphonic Spectacular','usf',25,'en la laguna · al cierre · confirmar','show'),
+   o('Posición para el desfile','usf',20,'llegar 20 min antes'),
  ]],
- ['USF · Diagon Alley', [
+ ['USF · Diagon Alley · London', [
    r('Escape from Gringotts','hpu',[20,35],'5:30','obl'),
    r('Hogwarts Express → Hogsmeade','hpu',[10,20],'4:00'),
-   o("Florean Fortescue's · helados",'hpu',45,'para llevar','meal'),
    o('Celestina Warbeck','hpu',15,'función fija','show'),
    o('Tales of Beedle the Bard','hpu',15,'función fija','show'),
+   o('Knight Bus · conductor y cabeza parlante','hpu',15,'London','show'),
    o('Knockturn Alley · dragón','hpu',30),
    o('Ollivanders','hpu',35,'20–30 fila'),
+   o("Florean Fortescue's · helados",'hpu',45,'para llevar','meal'),
    o('Comida · Leaky Cauldron','hpu',70,'fish and chips · bangers and mash','meal'),
  ]],
- ['USF · Minion Land · DreamWorks', [
+ ['USF · Minion Land', [
    r('Minion Mayhem','illum',[35,60],'5:00','sin'),
    r('Villain-Con Minion Blast','illum',[25,40],'10:00','sin'),
-   r('E.T. Adventure','dw',[20,40],'4:30','sin'),
-   r('Trolls Trollercoaster','dw',[15,30],'1:30','sin'),
+   o('Meet Gru y los Minions','illum',20,'','show'),
+   o('Comida · Minion Cafe','illum',45,'','meal'),
  ]],
- ['USF · Resto del parque', [
-   r('Transformers','usf',[25,40],'4:30','obl'),
-   r('Jimmy Fallon','usf',[10,20],'5:00','sin'),
-   r('MIB Alien Attack','usf',[20,35],'4:30','sin'),
+ ['USF · DreamWorks Land', [
+   r('Trolls Trollercoaster','dw',[15,30],'1:30','sin'),
+   o('DreamWorks Imagination Celebration','dw',25,'función fija','show'),
+   o('Po Live!','dw',20,'función fija','show'),
+   o('Meet Shrek y Burro','dw',20,'','show'),
+   o("Po's Kung Fu Training Camp",'dw',20,'zona de juegos'),
+   o("Poppy's Playground",'dw',20,'zona de juegos'),
+ ]],
+ ['USF · Hollywood', [
+   r('E.T. Adventure','usf',[20,40],'4:30','sin'),
+   o('The Bourne Stuntacular','usf',40,'función fija · 22 min · fórmate 15 min antes','show'),
+   o('Marilyn and the Diamond Bellas','usf',15,'función fija','show'),
+   o('Horror Make-Up Show','usf',35,'en remodelación hasta invierno 2026 · confirmar','show'),
+   r('Fast & Furious: Hollywood Drift','usf',[45,75],'2:00','obl','abre en 2027 · confirmar fecha'),
+   o("Comida · Mel's Drive-In",'usf',45,'','meal'),
+ ]],
+ ['USF · New York · San Francisco', [
    r('Revenge of the Mummy','usf',[25,45],'3:00','','oscura · sustos'),
+   r('Jimmy Fallon','usf',[10,20],'5:00','sin'),
+   o('The Blues Brothers Show','usf',20,'función fija','show'),
+   o("Comida · Louie's Italian",'usf',45,'pizza','meal'),
+   o("Comida · Finnegan's",'usf',60,'en remodelación · confirmar','meal'),
+ ]],
+ ['USF · Springfield · World Expo · Production Central', [
+   r('The Simpsons Ride','usf',[20,35],'4:30'),
    r('Kang & Kodos','usf',[5,15],'1:30'),
+   r('MIB Alien Attack','usf',[20,35],'4:30','sin'),
+   r('Transformers','usf',[25,40],'4:30','obl'),
    o('Comida · Fast Food Boulevard','usf',65,"Cletus: tiras de pollo · Luigi's: pizza",'meal'),
+   o('Snack · Lard Lad Donuts','usf',20,'','meal'),
  ]],
  ['Logística', [
    o('Caminar · mismo land','log',5,'5 min','walk'),
@@ -496,20 +648,26 @@ let state;
 try { state = JSON.parse(localStorage.getItem(KEY)); } catch(e) {}
 if(!state || !state.days) state = { days:{} };
 DAYS.forEach(d => { if(!Array.isArray(state.days[d.key])) state.days[d.key] = build(d.seed); });
-// Si ya tenías guardado el itinerario con el azul único de Harry Potter, lo pasa al tono de su parque
+// Actualiza colores de lo que ya tenías guardado (tonos de Harry Potter, Pizza Moon, E.T.)
 (() => {
   const byName = {};
   CAT.forEach(([g,arr]) => arr.forEach(c => byName[c.name] = c.zone));
   DAYS.forEach(d => d.seed.forEach(s => byName[s.name] = s.zone));
-  DAYS.forEach(d => state.days[d.key].forEach((it,i,list) => {
-    if(it.zone !== 'hp') return;
-    it.zone = (d.key === '2027-03-01' && /Express → Hogsmeade/.test(it.name)) ? 'hpu' : (byName[it.name] || (d.park === 'Epic Universe' ? 'hpe' : 'hpi'));
+  DAYS.forEach(d => state.days[d.key].forEach(it => {
+    if(byName[it.name]) it.zone = byName[it.name];
+    else if(it.zone === 'hp') it.zone = d.parks.includes('Epic') ? 'hpe' : 'hpi';
   }));
 })();
+// Rehace los días de vuelo una sola vez para borrar de los teléfonos los datos de la versión anterior
+if(state.travelV !== 2){
+  ['2027-02-26','2027-03-04'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
+  state.travelV = 2;
+}
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+save();
 
 let cur = 0;
-try { const t = +localStorage.getItem('uo27.tab'); if(t>=0 && t<DAYS.length) cur = t; } catch(e) {}
+try { const k = localStorage.getItem('uo27.tabkey'); const t = DAYS.findIndex(d => d.key === k); if(t >= 0) cur = t; else cur = 1; } catch(e) { cur = 1; }
 const todayKey = (() => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; })();
 const todayIdx = DAYS.findIndex(d => d.key === todayKey);
 if(todayIdx >= 0) cur = todayIdx;
@@ -572,13 +730,16 @@ function render(){
     const s = sc[i];
     if(s.gap >= 5) html += `<div class="gap">Tiempo libre · ${s.gap} min</div>`;
     if(s.clash > 0) html += `<div class="clash">⚠ Te pasas ${s.clash} min: lo anterior termina a las ${fmt(s.start + s.clash)} y esto es a las ${fmt(s.start)}. Quita algo o acorta una fila.</div>`;
-    const major = it.type === 'ride' || it.type === 'show';
+    const major = it.type === 'ride' || it.type === 'show' || it.type === 'flight';
     const isNow = isToday && nowMin >= s.start && nowMin < s.end;
-    html += `<button class="row ${major?'major':''} ${isNow?'now':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
+    const si = showInfo(it), times = si ? si.t.map(toMin) : [];
+    const off = it.fixed && times.length && !times.includes(s.start);
+    const pills = times.length ? `<span class="st"><small>Funciones:</small>${times.map(t => `<span data-t="${t}" class="${t===s.start?'on':''}">${fmt(t)}</span>`).join('')}</span>` : '';
+    html += `<div class="row ${major?'major':''} ${isNow?'now':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
       <span class="t ${s.clash?'bad':''}">${fmt(s.start)}</span>
       <span class="b"><span class="nm">${esc(it.name)}</span> <span class="d">${esc(detail(it))}</span>
-        <span class="m">${chips(it)}<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span></span></span>
-    </button>`;
+        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con horarios 2026</span>':''}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>
+    </div>`;
   });
   $('#list').innerHTML = html || '<p class="help" style="padding:24px 0">Sin actividades. Toca ＋ Agregar.</p>';
 
@@ -592,12 +753,14 @@ function render(){
   else { sEnd.textContent = sc.length ? fmt(sc[sc.length-1].end) : '–'; sEnd.classList.remove('bad'); $('#sEndL').textContent = 'Termina'; }
 }
 
+// Cuenta regresiva a la salida del vuelo de ida: vie 26 feb 2027, 11:10 (hora del teléfono)
+const FLIGHT_OUT = new Date(2027,1,26,11,10).getTime();
 function renderCountdown(){
-  const diff = new Date(2027,1,26,0,0,0) - new Date();
+  const diff = FLIGHT_OUT - Date.now();
   const el = $('#countdown');
-  if(diff <= 0){ el.textContent = '¡Ya estamos aquí!'; return; }
-  const d = Math.floor(diff/864e5), h = Math.floor(diff/36e5)%24, m = Math.floor(diff/6e4)%60;
-  el.textContent = `${d}d ${pad(h)}h ${pad(m)}m`;
+  if(diff <= 0){ el.className = 'cd done'; el.textContent = '¡Buen viaje!'; $('#cdLabel').textContent = 'Universal Orlando 2027'; return; }
+  const d = Math.floor(diff/864e5), h = Math.floor(diff/36e5)%24, m = Math.floor(diff/6e4)%60, sc = Math.floor(diff/1e3)%60;
+  el.innerHTML = [[d,'días'],[pad(h),'horas'],[pad(m),'min'],[pad(sc),'seg']].map(([v,l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
 }
 
 /* ---------- hojas (modales) ---------- */
@@ -630,6 +793,9 @@ function renderEdit(){
     <div class="when">Empieza <b>${fmt(s.start)}</b> · termina <b>${fmt(s.end)}</b>${s.clash?` · <span class="bad">te pasas ${s.clash} min</span>`:''}</div>
     <label class="field switch"><span>Hora fija<small>Shows y funciones: no se mueve aunque cambie lo anterior</small></span><input type="checkbox" id="eFixed" ${it.fixed?'checked':''}></label>
     ${it.fixed ? `<div class="field"><span>Hora</span><input type="time" id="eAt" step="300" value="${hhmm(it.at ?? s.start)}"></div>` : ''}
+    ${(() => { const si = showInfo(it); if(!si) return '';
+       const g = si.t.length ? `<div class="tgrid">${si.t.map(toMin).map(t => `<button data-settime="${t}" class="${it.fixed && t===s.start?'on':''}">${fmt(t)}</button>`).join('')}</div>` : '';
+       return `<div class="field col"><span>Funciones registradas<small>Toca una para mover el show a esa hora</small></span>${g}<div class="src">${esc(si.src)}</div></div>`; })()}
     ${ride ? stepper('qMin','Fila mínima',`${it.qMin} min`) + stepper('qMax','Fila máxima',`${it.qMax} min`,'Con esta se calcula el horario')
            + stepper('ride','Duración del juego',rideFmt(it.ride))
            + `<div class="field"><span>Caminar al siguiente</span>${seg('walk',[[0,'0'],[5,'5'],[10,'10']],it.walk)}</div>` : ''}
@@ -661,6 +827,7 @@ $('#editBody').addEventListener('click', e => {
     if(it.type === 'ride' && k !== 'dur') it.dur = rideDur(it);
     return commit();
   }
+  if(b.dataset.settime){ it.fixed = true; it.at = +b.dataset.settime; return commit(); }
   if(b.dataset.seg){
     const k = b.dataset.seg, v = b.dataset.v;
     if(k === 'walk'){ it.walk = +v; it.dur = rideDur(it); }
@@ -705,6 +872,8 @@ function openCatalog(afterId){
   $('#afterSel').innerHTML = `<option value="__start">Al inicio del día</option>` +
     list.map((it,i) => `<option value="${it.id}" ${it.id===sel?'selected':''}>${fmt(sc[i].start)} · ${esc(it.name)}</option>`).join('');
   $('#q').value = '';
+  parkSel = 'day';
+  renderParkFilter();
   renderCatalog('');
   openSheet('catSheet');
   $('#catSheet').scrollTop = 0;
@@ -719,11 +888,26 @@ function catLine(c){
   }
   return `ocupa ${c.dur} min${c.note ? ' · ' + c.note : ''}`;
 }
+let parkSel = 'day';
+const PARKS = [['day','Este día'],['Epic','Epic'],['IOA','Islands'],['USF','Studios'],['all','Todo']];
+function renderParkFilter(){
+  $('#parkFilter').innerHTML = PARKS.map(([v,l]) => `<button data-p="${v}" class="${parkSel===v?'on':''}">${l}</button>`).join('');
+}
+$('#parkFilter').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  parkSel = b.dataset.p; $('#q').value = ''; renderParkFilter(); renderCatalog('');
+});
+function parkOk(g){
+  if(g === 'Logística' || parkSel === 'all') return true;
+  const p = g.split(' · ')[0];
+  return parkSel === 'day' ? DAYS[cur].parks.includes(p) : p === parkSel;
+}
 function renderCatalog(q){
   q = q.trim().toLowerCase();
   let html = `<button class="ci" data-custom="1" style="--z:#94a3b8"><span class="x"><b>Actividad personalizada</b><small>Escribe tú el nombre y los minutos</small></span><span class="plus">＋</span></button>`;
   CAT.forEach(([g, arr], gi) => {
-    const rows = arr.map((c,ci) => ({c,ci})).filter(({c}) => !q || (c.name + ' ' + g).toLowerCase().includes(q));
+    if(!q && !parkOk(g)) return;
+    const rows = arr.map((c,ci) => ({c,ci})).filter(({c}) => !q || (c.name + ' ' + g + ' ' + (c.note||'')).toLowerCase().includes(q));
     if(!rows.length) return;
     html += `<div class="grp" style="--gz:${zc(arr[0].zone)}">${g}</div>` + rows.map(({c,ci}) =>
       `<button class="ci" data-g="${gi}" data-c="${ci}" style="--z:${zc(c.zone)};--zb:${zbg(c.zone, true)}"><span class="x"><b>${esc(c.name)}</b><small>${esc(catLine(c))}</small></span><span class="plus">＋</span></button>`).join('');
@@ -750,11 +934,14 @@ $('#catList').addEventListener('click', e => {
     it.fixed = true; it.at = s0;
   }
   list.splice(idx, 0, it);
+  const isShow = it.type === 'show';
+  if(isShow && !it.fixed){ it.at = schedule(list)[idx].start; it.fixed = true; }
   save(); closeSheets(); render();
   const el = document.querySelector(`.row[data-id="${it.id}"]`);
   if(el){ el.scrollIntoView({block:'center', behavior:'smooth'}); el.classList.add('flash'); }
   toast(`Agregado: ${it.name}`);
   if(b.dataset.custom) setTimeout(() => { openEdit(it.id); const n = $('#eName'); n && n.select(); }, 350);
+  else if(isShow) setTimeout(() => { openEdit(it.id); toast('Pon la hora de la función'); }, 350);
 });
 
 /* ---------- toast con deshacer ---------- */
@@ -775,11 +962,20 @@ $('#toastUndo').onclick = () => {
 $('#tabs').addEventListener('click', e => {
   const b = e.target.closest('.tab'); if(!b) return;
   cur = +b.dataset.i;
-  try { localStorage.setItem('uo27.tab', cur); } catch(err) {}
+  try { localStorage.setItem('uo27.tabkey', DAYS[cur].key); } catch(err) {}
   renderTabs(); render(); window.scrollTo({top:0});
 });
 $('#list').addEventListener('click', e => {
-  const b = e.target.closest('.row'); if(b) openEdit(b.dataset.id);
+  const b = e.target.closest('.row'); if(!b) return;
+  const pill = e.target.closest('[data-t]');
+  if(pill){
+    const it = items().find(x => x.id === b.dataset.id); if(!it) return;
+    undoSnap = { key:DAYS[cur].key, list: JSON.parse(JSON.stringify(items())) };
+    it.fixed = true; it.at = +pill.dataset.t; save(); render();
+    toast(`${it.name} → ${fmt(it.at)}`);
+    return;
+  }
+  openEdit(b.dataset.id);
 });
 $('#fab').onclick = () => openCatalog();
 $('#resetBtn').onclick = () => {
@@ -790,7 +986,8 @@ $('#resetBtn').onclick = () => {
 };
 
 renderTabs(); render(); renderCountdown();
-setInterval(() => { renderCountdown(); if(DAYS[cur].key === todayKey && !editId) render(); }, 30000);
+setInterval(renderCountdown, 1000);
+setInterval(() => { if(DAYS[cur].key === todayKey && !editId) render(); }, 30000);
 if(todayIdx >= 0){ const n = document.querySelector('.row.now'); n && setTimeout(() => n.scrollIntoView({block:'center'}), 300); }
 </script>
 </body>

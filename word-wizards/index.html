@@ -457,14 +457,14 @@ const STICK={};
 PAGES.forEach(p=>{p.items.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:false,page:p});p.gold.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:true,page:p})});
 const REG_IDS=PAGES.flatMap(p=>p.items.map(i=>i[0])), GOLD_IDS=PAGES.flatMap(p=>p.gold.map(i=>i[0]));
 
-const AVATARS=['🦄','🐉','🦉','🧚','🐱','🦊','🐼','🐬','🦋','🐯'];
+const AVATARS=['🐻','🦦','🦄','🐉','🦉','🧚','🐱','🦊','🐼','🐬','🦋','🐯'];
 const PTS=60, KEY='word-wizards-v1';
 
 /* ---------- STATE ---------- */
 const uid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{}});
-const blankState=()=>({players:[mkPlayer('Player 1','🦄'),mkPlayer('Player 2','🐉')],current:null,custom:[]});
-function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];s.players.forEach(p=>{p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
+const blankState=()=>({players:[mkPlayer('Player 1','🐻'),mkPlayer('Player 2','🦦')],avatarsV2:true,current:null,custom:[]});
+function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.players)&&s.players.length)return fix(s)}catch(e){}return blankState()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 let state=load();

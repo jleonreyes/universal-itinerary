@@ -128,6 +128,15 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .vt .vh{font-family:var(--f-display);color:var(--red);font-size:17px}
 .vt .vp{font-size:26px;font-weight:700}
 .vt .inl{width:100%}
+.rem{background:#FCE4EE;border:2.5px solid #E58AAE;border-radius:16px;padding:8px 14px;font-weight:700;display:flex;flex-direction:column;gap:2px}
+.rcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.rcol{border:3px solid var(--ink);border-radius:16px;padding:8px 12px;background:var(--card)}
+.rcol:nth-child(1){background:#FFF6D6}.rcol:nth-child(2){background:#E6F6EA}.rcol:nth-child(3){background:#E2F0FD}
+.rcol h3{font-size:20px;margin-bottom:4px}
+.rtab{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:20px}
+.rtab b{color:var(--red)}
+.rverbs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.rh{font-family:var(--f-display);color:var(--red);font-size:17px;border-bottom:2px solid var(--red)}
 .vtab{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1fr) minmax(0,1fr);gap:8px 10px;align-items:center;line-height:1.3;padding-top:8px;overflow-wrap:anywhere}
 .vtab .vh{font-family:var(--f-display);color:var(--red);font-size:17px;border-bottom:2px solid var(--red);padding-bottom:2px}
 .vtab .vp{font-size:24px;font-weight:700}
@@ -240,6 +249,7 @@ const SUBJ = [
   {s:"He",q:"he",t:1,be:"is",was:"was",pro:1,g:"He"},
   {s:"She",q:"she",t:1,be:"is",was:"was",pro:1,g:"She"},
   {s:"It",q:"it",t:1,be:"is",was:"was",pro:1,an:1,g:"It"},
+  {s:"It",q:"it",t:1,be:"is",was:"was",pro:1,wx:1,g:"It"},
   {s:"We",q:"we",t:0,be:"are",was:"were",pro:1,g:"We"},
   {s:"They",q:"they",t:0,be:"are",was:"were",pro:1,g:"They"},
   {s:"Cin",q:"Cin",t:1,be:"is",was:"was",g:"She"},
@@ -260,7 +270,7 @@ const SUBJ = [
   {s:"The dog",q:"the dog",t:1,be:"is",was:"was",an:1,g:"It"},
   {s:"The cat",q:"the cat",t:1,be:"is",was:"was",an:1,g:"It"}
 ];
-/* only verbs that appear in the girls' notebook; pz = a past form they have seen; np = past only */
+/* verbs from the girls' notebook and their printed practice sheets; pz = a past form they have seen; wx = weather (only with "It") */
 const ACTS = [
   {v:"play",s:"plays",ing:"playing",past:"played",pz:1,o:["soccer with my school friends","the piano for Grandpa","board games with Grandma","in the waves at the beach","tag at recess","video games with Dad"],ao:["with a ball of yarn","in the garden"]},
   {v:"eat",s:"eats",ing:"eating",past:"ate",pz:1,o:["ice cream at the beach","pancakes for breakfast","popcorn at the movies","tacos with Grandpa","a churro at Disney","cake at the birthday party"],ao:["its food","a carrot"]},
@@ -275,7 +285,18 @@ const ACTS = [
   {v:"cook",s:"cooks",ing:"cooking",past:"cooked",pz:1,o:["dinner for Grandpa","pasta with Dad","eggs in the kitchen","pancakes with Mom"]},
   {v:"bite",s:"bites",ing:"biting",past:"bit",pz:1,o:[],ao:["the ball","a bone","the new toy"]},
   {v:"take",s:"takes",ing:"taking",past:"took",pz:1,o:["photos at the beach","the bus to school","a nap after lunch","the train at Disney","the dog for a walk"]},
-  {v:"begin",s:"begins",ing:"beginning",past:"began",pz:1,o:["the homework at four o'clock","a new book","the race","the piano lesson"]}
+  {v:"begin",s:"begins",ing:"beginning",past:"began",pz:1,o:["the homework at four o'clock","a new book","the race","the piano lesson"]},
+  {v:"watch",s:"watches",ing:"watching",past:"watched",pz:1,o:["a movie with Grandma","the fireworks at Disney","cartoons with Dad","the sunset at the beach"],ao:["the birds from the window"]},
+  {v:"visit",s:"visits",ing:"visiting",past:"visited",pz:1,o:["Grandpa and Grandma","the castle at Disney","the museum with the class","the cousins in Puebla"]},
+  {v:"listen",s:"listens",ing:"listening",past:"listened",pz:1,o:["to music in the car","to the teacher","to Grandpa's stories"]},
+  {v:"work",s:"works",ing:"working",past:"worked",pz:1,o:["in the garden with Grandpa","with Dad at the office","on the school project"]},
+  {v:"finish",s:"finishes",ing:"finishing",past:"finished",pz:1,o:["the homework","the frappé","the puzzle with Dad"]},
+  {v:"enjoy",s:"enjoys",ing:"enjoying",past:"enjoyed",pz:1,o:["the party","the parade at Disney","the ice cream"]},
+  {v:"read",s:"reads",ing:"reading",past:"read",pz:1,o:["an interesting book","a story with Grandma","comics in bed"]},
+  {v:"swim",s:"swims",ing:"swimming",past:"swam",pz:0,o:["at the beach","in the hotel pool"],ao:["in the lake"]},
+  {v:"ride",s:"rides",ing:"riding",past:"rode",pz:0,o:["a bike with Dad","the roller coaster at Disney"]},
+  {v:"rain",s:"rains",ing:"raining",past:"rained",pz:1,wx:1,o:["a lot in the summer","in the afternoon"]},
+  {v:"snow",s:"snows",ing:"snowing",past:"snowed",pz:1,wx:1,o:["in the mountains","in winter"]}
 ];
 const T_PRES = ["every day","every Saturday","on Mondays","in the morning","every summer","after school"];
 const T_CONT = ["now","right now","at the moment"];
@@ -287,13 +308,14 @@ const THIRD = ["He","She","It"];
 let USED = new Set(), USEDO = new Set();
 function pair(af, f={}){
   for(let k=0;k<120;k++){
-    const a = R(ACTS.filter(af || (x => !x.np)));
-    let pool = SUBJ.filter(s => s.an ? !!(a.ao && a.ao.length) : a.o.length>0);
+    const a = R(ACTS.filter(x => (af ? af(x) : !x.np) && !(f.people && x.wx)));
+    let pool = SUBJ.filter(s => !!s.wx===!!a.wx && (s.an ? !!(a.ao && a.ao.length) : a.o.length>0));
     if(f.people) pool = pool.filter(s => !s.an);
     if(f.t!=null) pool = pool.filter(s => s.t===f.t);
     if(!pool.length) continue;
     const groups = [...new Set(pool.map(s => s.g))];
     let g;
+    if(a.wx){ const s = SUBJ.find(x => x.wx), o = R(a.o), key = `It|${a.v}|${o}`; if(USED.has(key)) continue; USED.add(key); return {a, s, o}; }
     if(f.bias){ const th = groups.filter(x => THIRD.includes(x)), ot = groups.filter(x => !THIRD.includes(x));
       g = (th.length && (Math.random()<.5 || !ot.length)) ? R(th) : R(ot); }
     else g = R(groups);
@@ -334,7 +356,7 @@ const H = {
   didnt: "After didn't the verb goes back to its normal form: didn't go (not didn't went).",
   did: "Past questions start with Did, and the verb goes back to its normal form: Did he take…?",
   cat: {p:"every day, on Mondays → simple present.", c:"now, right now → present continuous (am / is / are + ing).", x:"yesterday, last week → simple past."},
-  pron: {I:"I is for me, the person talking.",You:"You is for the person (or people) I talk to.",He:"He is for one boy or man.",She:"She is for one girl or woman.",It:"It is for one animal or thing.",They:"They is for two or more people, animals or things.",We:"We is for me and other people."}
+  pron: {I:"I is for me, the person talking.",You:"You is for the person (or people) I talk to.",He:"He is for one boy or man.",She:"She is for one girl or woman.",It:"It is for one animal or thing, and for the weather (it rains).",They:"They is for two or more people, animals or things.",We:"We is for me and other people."}
 };
 
 /* question builders */
@@ -397,6 +419,12 @@ function doChoose(){
   const t = Math.random()<.5 ? R(T_PRES) : null;
   return Qc({prompt:"Choose Do, Does, don't or doesn't.", text:sent(s, `___ ${a.v} ${o}`, t), options:opts, answers:[presNeg(s)], show:presNeg(s), hint:whoIs(s)+H.neg});
 }
+function presAB(){
+  const {a,s,o} = pair(null,{bias:1}); const r = Math.random();
+  if(r<.4) return Qc({prompt:"Choose the correct option.", text:`${s.s} ___ ${o}.`, options:[a.v, a.s], answers:[pres(a,s)], show:pres(a,s), hint:H.third(a,s)});
+  if(r<.75) return Qc({prompt:"Choose the correct option.", text:`${s.s} ___ ${a.v} ${o}.`, options:["don't","doesn't"], answers:[presNeg(s)], show:presNeg(s), hint:whoIs(s)+H.neg});
+  return Qc({prompt:"Choose the correct option.", text:`___ ${s.q} ${a.v} ${o}?`, options:["Do","Does"], answers:[s.t?"Does":"Do"], show:s.t?"Does":"Do", hint:whoIs(s)+H.q});
+}
 function presWrite(){
   const {a,s,o} = pair(null,{bias:1}); const r = Math.random();
   if(r<.6) return W1("Complete with the correct form of the verb.", sent(s, `___ ${o}`, R(T_PRES)), [pres(a,s)], H.third(a,s), `(${a.v})`);
@@ -412,6 +440,13 @@ function presFlip(){
   ], hint:whoIs(s)+H.neg+" "+H.q});
 }
 
+function presRewrite(){
+  const {a,s,o} = pair(null,{bias:1}); const r = Math.random(); const n = presNeg(s), D = s.t?"Does":"Do";
+  if(r<.34) return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${s.s} ${n} ${a.v} ${o}.`, sourceLabel:"Negative", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ${o}.`, blanks:[[pres(a,s)]]}], hint:H.third(a,s)});
+  if(r<.67) return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${D} ${s.q} ${a.v} ${o}?`, sourceLabel:"Question", rows:[{label:"Change to Negative", text:`${s.s} ___ ___ ${o}.`, blanks:[negAlts(n),[a.v]], picks:{0:["don't","doesn't"]}}], hint:whoIs(s)+H.neg});
+  return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${s.s} ${n} ${a.v} ${o}.`, sourceLabel:"Negative", rows:[{label:"Change to Question", text:`___ ${s.q} ___ ${o}?`, blanks:[[D],[a.v]], picks:{0:["Do","Does"]}}], hint:whoIs(s)+H.q});
+}
+
 /* --- Era 3: present continuous --- */
 const hasIng = a => !!a.ing;
 function contChoose(){
@@ -421,6 +456,10 @@ function contChoose(){
   if(r<.8) return Qc({prompt:"Choose the correct word.", text:`___ ${s.q} ${a.ing} ${o}?`, options:["Am","Is","Are"], answers:[cap(s.be)], show:cap(s.be), hint:whoIs(s)+H.cq});
   const opts = s.be==="am" ? ["am not","isn't","don't"] : s.be==="is" ? ["isn't","aren't","doesn't"] : ["aren't","isn't","don't"];
   return Qc({prompt:"Choose the correct word.", text:`${s.s} ___ ${a.ing} ${o}.`, options:opts, answers:[contNeg(s)], show:contNeg(s), hint:whoIs(s)+H.cneg});
+}
+function contAB(){
+  const {a,s,o} = pair(hasIng); const neg = Math.random()<.5;
+  return Qc({prompt:"Choose the correct option.", text:`${s.s} ___ ${neg?"not ":""}${a.ing} ${o}${neg||Math.random()<.5?"":" [[right now]]"}.`, options:["am","is","are"], answers:[s.be], show:s.be, hint:whoIs(s)+H.be});
 }
 function contWrite(){
   const {a,s,o} = pair(hasIng); const r = Math.random();
@@ -434,6 +473,13 @@ function contFlip(){
     {label:"Negative", text:`${s.s} ___ ${a.ing} ${o}.`, blanks:[negAlts(contNeg(s))], picks:{0:["am not","isn't","aren't"]}},
     {label:"Interrogative", text:`___ ${s.q} ${a.ing} ${o}?`, blanks:[[cap(s.be)]], picks:{0:["Am","Is","Are"]}}
   ], hint:whoIs(s)+H.cneg+" "+H.cq});
+}
+
+function contRewrite(){
+  const {a,s,o} = pair(hasIng); const r = Math.random(); const n = contNeg(s);
+  const negTxt = s.be==="am" ? `I am not ${a.ing} ${o}.` : `${s.s} ${n} ${a.ing} ${o}.`;
+  if(r<.5) return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:negTxt, sourceLabel:"Negative", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ${a.ing} ${o}.`, blanks:[[s.be]], picks:{0:["am","is","are"]}}], hint:whoIs(s)+H.be});
+  return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${cap(s.be)} ${s.q} ${a.ing} ${o}?`, sourceLabel:"Question", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ___ ${o}.`, blanks:[[s.be],[a.ing]], picks:{0:["am","is","are"]}}], hint:whoIs(s)+H.ing});
 }
 
 /* --- Era 4: verb forms (editable list) --- */
@@ -494,6 +540,12 @@ function pastChoose(){
   const {a,s,o} = pair(isPz);
   return Qc({prompt:"Circle the correct word.", text:`___ ${s.q} ${a.v} ${o} [[${t}]]?`, options:["Did","Does","Do"], answers:["Did"], show:"Did", hint:H.did});
 }
+function pastAB(){
+  const {a,s,o} = pair(isPz); const t = R(T_PAST); const r = Math.random();
+  if(r<.35) return Qc({prompt:"Choose the correct option.", text:sent(s, `___ ${o}`, t), options:[a.past, a.v], answers:[a.past], show:a.past, hint:H.past(a)});
+  if(r<.7) return Qc({prompt:"Choose the correct option.", text:sent(s, `___ ${o}`, t), options:[`didn't ${a.v}`, `don't ${a.v}`], answers:[`didn't ${a.v}`], show:`didn't ${a.v}`, hint:"Yesterday, last week… → didn't + verb."});
+  return Qc({prompt:"Choose the correct option.", text:`Did ${s.q} ___ ${o} [[${t}]]?`, options:[a.v, a.past], answers:[a.v], show:a.v, hint:H.did});
+}
 function pastWrite(){
   const {a,s,o} = pair(isPz); const t = R(T_PAST); const r = Math.random();
   if(r<.55) return W1("Complete with the verb in simple past.", sent(s, `___ ${o}`, t), [a.past], H.past(a), `(${a.v})`);
@@ -507,6 +559,13 @@ function pastFlip(){
     {label:"Negative", text:`${s.s} ___ ___ ${o} [[${t}]].`, blanks:[negAlts("didn't"),[a.v]], picks:{0:["didn't","don't","doesn't"]}},
     {label:"Interrogative", text:`___ ${s.q} ___ ${o} [[${t}]]?`, blanks:[["Did"],[a.v]], picks:{0:["Did","Do","Does"]}}
   ], hint:H.didnt+" "+H.did});
+}
+
+function pastRewrite(){
+  const {a,s,o} = pair(isPz); const t = R(T_PAST); const r = Math.random();
+  if(r<.5) return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${s.s} didn't ${a.v} ${o} [[${t}]].`, sourceLabel:"Negative", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ${o} [[${t}]].`, blanks:[[a.past]]}], hint:`Affirmative uses the past form: ${a.v} → ${a.past}.`});
+  if(r<.75) return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`Did ${s.q} ${a.v} ${o} [[${t}]]?`, sourceLabel:"Question", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ${o} [[${t}]].`, blanks:[[a.past]]}], hint:`Affirmative uses the past form: ${a.v} → ${a.past}.`});
+  return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`Did ${s.q} ${a.v} ${o} [[${t}]]?`, sourceLabel:"Question", rows:[{label:"Change to Negative", text:`${s.s} ___ ___ ${o} [[${t}]].`, blanks:[negAlts("didn't"),[a.v]], picks:{0:["didn't","don't","doesn't"]}}], hint:H.didnt});
 }
 
 /* --- Era 6: time mix --- */
@@ -545,19 +604,20 @@ function mixFix(){
 
 
 /* --- conjugation practice (tap, no typing) --- */
+function pickConj(ok){ let c = ACTS.filter(x => ok(x) && !USED.has("conj"+x.v)); if(!c.length) c = ACTS.filter(ok); const a = R(c); USED.add("conj"+a.v); return a; }
 const PR7 = ["I","You","He","She","It","We","They"];
 const BE7 = {I:"am",You:"are",He:"is",She:"is",It:"is",We:"are",They:"are"};
 const T3 = p => ["He","She","It"].includes(p);
 function presConj(){
-  const a = R(ACTS.filter(x => !x.np && x.o.length && !USED.has("conj"+x.v))); USED.add("conj"+a.v);
+  const a = pickConj(x => !x.np && !x.wx && x.o.length);
   return Qw({key:"pcj"+a.v, prompt:`Conjugate the verb “${a.v}” in simple present.`, rows:PR7.map(p => ({text:`${p} ___`, blanks:[[T3(p)?a.s:a.v]], picks:{0:[a.v,a.s]}})), hint:"He, she, it → verb + s. I, you, we, they → no -s."});
 }
 function contConj(){
-  const a = R(ACTS.filter(x => x.ing && x.o.length && !USED.has("conj"+x.v))); USED.add("conj"+a.v);
+  const a = pickConj(x => x.ing && !x.wx && x.o.length);
   return Qw({key:"ccj"+a.v, prompt:`Conjugate “${a.v}” in present continuous.`, rows:PR7.map(p => ({text:`${p} ___ ___`, blanks:[[BE7[p]],[a.ing]], picks:{0:["am","is","are"],1:[a.v,a.ing]}})), hint:H.be+" Then the verb + ing."});
 }
 function pastConj(){
-  const a = R(ACTS.filter(x => x.pz && x.o.length && !x.np && !USED.has("conj"+x.v))); USED.add("conj"+a.v);
+  const a = pickConj(x => x.pz && !x.wx && x.o.length && !x.np);
   const rows = shuffle(PR7.filter(x => x!=="It")).map((p,i) => {
     const kind = i%3; const q = p==="I" ? "I" : p.toLowerCase();
     if(kind===0) return {label:"Affirmative", text:`${p} ___ ${R(a.o)}.`, blanks:[[a.past]], picks:{0:[a.v,a.past]}};
@@ -584,17 +644,17 @@ const ERAS = [
     levels:[{n:"Pronouns", make:()=>makeSet(pronChoose,8)}, {n:"To be: choose", make:()=>makeSet(beChoose,8)}, {n:"To be: write", make:()=>[beGrid(), ...makeSet(mixGen(beWrite,pronWrite),6)]}],
     boss:()=>[...makeSet(pronChoose,4), ...makeSet(beChoose,3), ...makeSet(mixGen(beWrite,pronWrite),3)]},
   {id:"egypt", name:"Pyramid Sands", topic:"Simple Present", year:"2560 BC", hat:"nemes", hatName:"Pharaoh Headdress",
-    levels:[{n:"Conjugate", make:()=>makeSet(presConj,3)}, {n:"Choose", make:()=>makeSet(presChoose,8)}, {n:"Do · Does · Don't · Doesn't", make:()=>makeSet(doChoose,8)}, {n:"Write", make:()=>makeSet(presWrite,8)}, {n:"Negative & ?", make:()=>makeSet(presFlip,5)}],
-    boss:()=>[...makeSet(presChoose,3), ...makeSet(doChoose,2), ...makeSet(presWrite,3), ...makeSet(presFlip,1)]},
+    levels:[{n:"Conjugate", make:()=>makeSet(presConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(presChoose,presAB),8)}, {n:"Do · Does · Don't · Doesn't", make:()=>makeSet(doChoose,8)}, {n:"Write", make:()=>makeSet(presWrite,8)}, {n:"Negative & ?", make:()=>makeSet(presFlip,5)}, {n:"Rewrite", make:()=>makeSet(presRewrite,6)}],
+    boss:()=>[...makeSet(presChoose,3), ...makeSet(doChoose,2), ...makeSet(presWrite,3), ...makeSet(mixGen(presFlip,presRewrite),1)]},
   {id:"castle", name:"Castle Hill", topic:"Present Continuous", year:"1250 AD", hat:"crown", hatName:"Royal Crown",
-    levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(contChoose,8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}],
+    levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(contChoose,contAB),8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}, {n:"Rewrite", make:()=>makeSet(contRewrite,6)}],
     boss:()=>[...makeSet(contChoose,5), ...makeSet(contWrite,3), ...makeSet(contFlip,1)]},
   {id:"pirates", name:"Pirate Cove", topic:"Verbs: Present · Past · Past Participle", year:"1715", hat:"pirate", hatName:"Pirate Hat",
     levels:[{n:"Past", make:()=>makeSet(()=>vChoose("past"),Math.min(8,S.verbs.length))}, {n:"Past participle", make:()=>makeSet(()=>vChoose("pp"),Math.min(8,S.verbs.length))}, {n:"Table", make:()=>makeSet(vTable,Math.min(6,S.verbs.length))}, {n:"Full table", make:()=>[vFullTable()]}],
     boss:()=>[...makeSet(()=>vChoose(),4), vFullTable()]},
   {id:"west", name:"Dusty Town", topic:"Simple Past", year:"1870", hat:"cowboy", hatName:"Cowboy Hat",
-    levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(pastChoose,8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}],
-    boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(pastFlip,1)]},
+    levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(mixGen(pastChoose,pastAB),8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}, {n:"Rewrite", make:()=>makeSet(pastRewrite,6)}],
+    boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(mixGen(pastFlip,pastRewrite),1)]},
   {id:"space", name:"Moon Base", topic:"Time Mix: which tense?", year:"3026", hat:"helmet", hatName:"Space Helmet",
     levels:[{n:"Time words", make:()=>makeSet(mixChoose,8)}, {n:"Write", make:()=>makeSet(mixWrite,8)}, {n:"Fix it", make:()=>makeSet(mixFix,8)}],
     boss:()=>[...makeSet(mixChoose,5), ...makeSet(mixWrite,3), ...makeSet(mixFix,2)]}
@@ -787,6 +847,38 @@ function colorHTML(){
   <div><button class="btn" data-act="savecol">${p.color?"Save":"Start the adventure"}</button></div></div>`;
 }
 
+const RULES = {
+  dino:{rules:["I → am","He, she, it → is","You, we, they → are"], cols:[
+    {t:"Affirmative (+)", rows:[["I","am"],["You","are"],["He","is"],["She","is"],["It","is"],["We","are"],["They","are"]]},
+    {t:"Negative (−)", rows:[["I","am not"],["You","aren't"],["He","isn't"],["She","isn't"],["It","isn't"],["We","aren't"],["They","aren't"]]},
+    {t:"Question (?)", rows:[["Am","I…?"],["Are","you…?"],["Is","he…?"],["Is","she…?"],["Is","it…?"],["Are","we…?"],["Are","they…?"]], q:1}]},
+  egypt:{rules:["Affirmative: subject + verb (add -s for he, she, it)","Negative: don't / doesn't + verb","Question: Do / Does + subject + verb?"], cols:[
+    {t:"Affirmative (+)", rows:[["I","play"],["You","play"],["He","play<b>s</b>"],["She","play<b>s</b>"],["It","play<b>s</b>"],["We","play"],["They","play"]]},
+    {t:"Negative (−)", rows:[["I","<b>don't</b> play"],["You","<b>don't</b> play"],["He","<b>doesn't</b> play"],["She","<b>doesn't</b> play"],["It","<b>doesn't</b> play"],["We","<b>don't</b> play"],["They","<b>don't</b> play"]]},
+    {t:"Question (?)", rows:[["<b>Do</b>","I play?"],["<b>Do</b>","you play?"],["<b>Does</b>","he play?"],["<b>Does</b>","she play?"],["<b>Does</b>","it play?"],["<b>Do</b>","we play?"],["<b>Do</b>","they play?"]], q:1}]},
+  castle:{rules:["Affirmative: am / is / are + verb-ing","Negative: am not / isn't / aren't + verb-ing","Question: Am / Is / Are + subject + verb-ing?"], cols:[
+    {t:"Affirmative (+)", rows:[["I","<b>am</b> play<b>ing</b>"],["You","<b>are</b> play<b>ing</b>"],["He","<b>is</b> play<b>ing</b>"],["She","<b>is</b> play<b>ing</b>"],["It","<b>is</b> play<b>ing</b>"],["We","<b>are</b> play<b>ing</b>"],["They","<b>are</b> play<b>ing</b>"]]},
+    {t:"Negative (−)", rows:[["I","<b>am not</b> playing"],["You","<b>aren't</b> playing"],["He","<b>isn't</b> playing"],["She","<b>isn't</b> playing"],["It","<b>isn't</b> playing"],["We","<b>aren't</b> playing"],["They","<b>aren't</b> playing"]]},
+    {t:"Question (?)", rows:[["<b>Am</b>","I playing?"],["<b>Are</b>","you playing?"],["<b>Is</b>","he playing?"],["<b>Is</b>","she playing?"],["<b>Is</b>","it playing?"],["<b>Are</b>","we playing?"],["<b>Are</b>","they playing?"]], q:1}]},
+  west:{rules:["Affirmative: subject + past form (played, went)","Negative: didn't + verb","Question: Did + subject + verb?"], cols:[
+    {t:"Affirmative (+)", rows:[["I","play<b>ed</b>"],["You","play<b>ed</b>"],["He","play<b>ed</b>"],["She","play<b>ed</b>"],["It","play<b>ed</b>"],["We","play<b>ed</b>"],["They","play<b>ed</b>"]]},
+    {t:"Negative (−)", rows:[["I","<b>didn't</b> play"],["You","<b>didn't</b> play"],["He","<b>didn't</b> play"],["She","<b>didn't</b> play"],["It","<b>didn't</b> play"],["We","<b>didn't</b> play"],["They","<b>didn't</b> play"]]},
+    {t:"Question (?)", rows:[["<b>Did</b>","I play?"],["<b>Did</b>","you play?"],["<b>Did</b>","he play?"],["<b>Did</b>","she play?"],["<b>Did</b>","it play?"],["<b>Did</b>","we play?"],["<b>Did</b>","they play?"]], q:1}]},
+  space:{rules:["every day, on Mondays, after school → simple present","now, right now, at the moment → present continuous","yesterday, last week, last summer → simple past"], cols:[
+    {t:"Simple present", rows:[["She","plays"],["","every day"]]},
+    {t:"Present continuous", rows:[["She","is playing"],["","right now"]]},
+    {t:"Simple past", rows:[["She","played"],["","yesterday"]]}]}
+};
+function learnHTML(){
+  const e = ERAS[V.learn], back = V.learnBack==="play" ? "Back to the exercise" : "Back to the map";
+  let body;
+  if(e.id==="pirates") body = `<div class="rtab rverbs"><div class="rh">Present</div><div class="rh">Past</div><div class="rh">Past participle</div>${S.verbs.map(v => `<div>${esc(v.p)}</div><div><b>${esc(v.past)}</b></div><div><b>${esc(v.pp)}</b></div>`).join("")}</div>`;
+  else { const R2 = RULES[e.id];
+    body = `<div class="rem">${R2.rules.map(r => `<div>• ${esc(r)}</div>`).join("")}</div><div class="rcols">${R2.cols.map(c => `<div class="rcol"><h3>${c.t}</h3><div class="rtab">${c.rows.map(([a,b]) => `<div>${a}</div><div>${b}</div>`).join("")}</div></div>`).join("")}</div>`; }
+  return `<div class="row"><button class="btn small white" data-act="unlearn">${back}</button></div>
+  <div class="panel"><h2>Remember! ${e.topic}</h2>${body}</div>`;
+}
+
 function mapHTML(){
   const p = P(); const st = stageOf(p);
   let track = "";
@@ -795,7 +887,7 @@ function mapHTML(){
     const lv = e.levels.map((L,l) => `<button class="lvb" data-act="play" data-e="${i}" data-l="${l}" ${levelOpen(p,i,l)?"":"disabled"}>${l+1}. ${L.n}${stars(pr.l[l]||0)}</button>`).join("");
     const boss = `<button class="lvb boss" data-act="play" data-e="${i}" data-l="-1" ${bossOpen(p,i)?"":"disabled"}>Time Quiz<span style="font-size:13px">${pr.boss?`best ${pr.boss}/10`:"need 7/10"}</span></button>`;
     const here = p.era===e.id ? `<span class="mini">${petSVG(p,"idle")}</span>` : "";
-    track += `${i?'<div class="link" aria-hidden="true"><span></span></div>':""}<div class="era ${open?"":"locked"}"><div class="thumb">${scene(e.id)}${here}</div><div class="body"><div><h3>${e.name}</h3><div class="year">${e.year}</div></div><div class="topic">${e.topic}</div>${open?`<div class="lv">${lv}${boss}</div>`:`<div class="muted">Get 7 or more in the ${ERAS[i-1].name} Time Quiz to travel here.</div>`}</div></div>`;
+    track += `${i?'<div class="link" aria-hidden="true"><span></span></div>':""}<div class="era ${open?"":"locked"}"><div class="thumb">${scene(e.id)}${here}</div><div class="body"><div><h3>${e.name}</h3><div class="year">${e.year}</div></div><div class="topic">${e.topic}</div>${open?`<div><button class="btn small white" data-act="learn" data-e="${i}">Remember!</button></div><div class="lv">${lv}${boss}</div>`:`<div class="muted">Get 7 or more in the ${ERAS[i-1].name} Time Quiz to travel here.</div>`}</div></div>`;
   });
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}</div><button class="btn white" data-act="room">Pet room</button></div>
@@ -884,7 +976,7 @@ function playHTML(){
   const p = P(), s = V.sess, e = ERAS[s.ei], q = s.qs[s.i];
   const title = s.boss ? "Time Quiz" : e.levels[s.l].n;
   const pct = Math.round(s.i / s.qs.length * 100);
-  return `<div class="top"><button class="btn small white" data-act="map">Stop</button><span class="chip">${GEM}${p.xp}</span></div>
+  return `<div class="top"><div class="row"><button class="btn small white" data-act="map">Stop</button><button class="btn small white" data-act="learn" data-e="${s.ei}" data-from="play">Remember!</button></div><span class="chip">${GEM}${p.xp}</span></div>
   <div><h2 style="font-size:26px">${e.name}: ${title}</h2><div class="muted">${e.topic}${s.boss?" · Score to travel: 7 out of 10":""}</div></div>
   <div class="prog"><div class="bar"><i style="width:${pct}%"></i></div><span>${s.i+1} / ${s.qs.length}</span></div>
   <div class="play"><div class="note">${qHTML(q, V.fb)}</div><div class="side"><div class="pw">${petSVG(p, V.mood)}</div><div class="say">${esc(V.say)}</div><div class="nextitem">${isEgg(p)?"Finish this level to hatch me!":nextItem(p)?`Next: ${nextItem(p).name}`:"Legend!"}</div></div></div>`;
@@ -1008,7 +1100,7 @@ function grownHTML(){
 
 /* ---------- render & events ---------- */
 function render(){
-  const map = {home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
+  const map = {learn:learnHTML, home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
   if(["map","room","play","result","color"].includes(V.screen) && !P()) V.screen = "home";
   app.innerHTML = (map[V.screen]||homeHTML)();
   if(V.screen==="grown" && !V.grownOpen) bindGate();
@@ -1032,6 +1124,8 @@ const ACT = {
     p.color = (V.pick && V.pick.color) || p.color || "mint"; if(pet) p.pet = pet; save(); go("map"); },
   map(){ V.fb = null; go("map"); },
   room(){ V.roomSay = null; V.roomMood = "idle"; go("room"); },
+  learn(el){ V.learn = +el.dataset.e; V.learnBack = el.dataset.from || "map"; go("learn"); },
+  unlearn(){ go(V.learnBack==="play" && V.sess ? "play" : "map"); },
   sound(){ S.sound = !S.sound; save(); render(); },
   play(el){ startLevel(+el.dataset.e, +el.dataset.l); window.scrollTo(0,0); },
   opt(el){ doCheck(el.dataset.v); },

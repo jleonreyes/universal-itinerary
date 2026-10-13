@@ -128,6 +128,12 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .vt .vh{font-family:var(--f-display);color:var(--red);font-size:17px}
 .vt .vp{font-size:26px;font-weight:700}
 .vt .inl{width:100%}
+.vtab{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1fr) minmax(0,1fr);gap:8px 10px;align-items:center;line-height:1.3;padding-top:8px;overflow-wrap:anywhere}
+.vtab .vh{font-family:var(--f-display);color:var(--red);font-size:17px;border-bottom:2px solid var(--red);padding-bottom:2px}
+.vtab .vp{font-size:24px;font-weight:700}
+.vtab .pick{display:flex;border-style:solid}
+.vtab .pk{font-size:18px;padding:2px 10px}
+@media (max-width:520px){.vtab .pk{font-size:16px;padding:2px 7px}.vtab .vp{font-size:20px}}
 .actions{display:flex;justify-content:flex-end;padding-top:8px;line-height:1.2}
 .fb{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:10px 14px;line-height:1.45;margin-top:8px}
 .fb.ok{background:var(--ok-bg);border:2.5px solid var(--green)}
@@ -456,6 +462,13 @@ function vTable(){
   ], hint:vHint(v)});
 }
 
+/* the whole verb list as one table, like part II of the school quiz */
+function vFullTable(){
+  return Qw({key:"vfull", layout:"table", prompt:"Complete the table: tap the past and the past participle.", rows:shuffle(S.verbs).map(v => ({
+    present:v.p, text:`${v.p} → ___ → ___`, blanks:[[v.past],[v.pp]], picks:{0:shuffle(verbOpts(v,"past")), 1:shuffle(verbOpts(v,"pp"))}
+  })), hint:"Look at each verb: present → past → past participle."});
+}
+
 /* --- Era 5: simple past --- */
 const FIXED_PAST = [
   {text:"We ___ friends [[last year]].", options:["became","become","becoming"], a:"became", hint:"become → became → become"},
@@ -581,8 +594,8 @@ const ERAS = [
     levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(contChoose,8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}],
     boss:()=>[...makeSet(contChoose,5), ...makeSet(contWrite,3), ...makeSet(contFlip,1)]},
   {id:"pirates", name:"Pirate Cove", topic:"Verbs: Present · Past · Past Participle", year:"1715", hat:"pirate", hatName:"Pirate Hat",
-    levels:[{n:"Past", make:()=>makeSet(()=>vChoose("past"),Math.min(8,S.verbs.length))}, {n:"Past participle", make:()=>makeSet(()=>vChoose("pp"),Math.min(8,S.verbs.length))}, {n:"Table", make:()=>makeSet(vTable,Math.min(6,S.verbs.length))}],
-    boss:()=>[...makeSet(()=>vChoose(),4), ...makeSet(vTable,3)]},
+    levels:[{n:"Past", make:()=>makeSet(()=>vChoose("past"),Math.min(8,S.verbs.length))}, {n:"Past participle", make:()=>makeSet(()=>vChoose("pp"),Math.min(8,S.verbs.length))}, {n:"Table", make:()=>makeSet(vTable,Math.min(6,S.verbs.length))}, {n:"Full table", make:()=>[vFullTable()]}],
+    boss:()=>[...makeSet(()=>vChoose(),4), vFullTable()]},
   {id:"west", name:"Dusty Town", topic:"Simple Past", year:"1870", hat:"cowboy", hatName:"Cowboy Hat",
     levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(pastChoose,8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}],
     boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(pastFlip,1)]},
@@ -811,15 +824,18 @@ function startLevel(ei, l){
 function focusInput(){ const i = app.querySelector(".inl"); if(i && !V.fb) try{ i.focus({preventScroll:true}); }catch(e){} }
 
 const ac = 'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next"';
+function pickHTML(r, ri, k, fb){
+  const key = `${ri}_${k}`, sel = fb ? fb.vals[ri][k] : (V.picks[key]||"");
+  return `<span class="pick" role="group" aria-label="choose a word">${r.picks[k].map(o => { const on = o===sel; const cls = on ? (fb ? (fb.rows[ri].cells[k]?"on ok":"on no") : "on") : "";
+    return `<button class="pk ${cls}" data-act="pk" data-b="${key}" data-v="${esc(o)}" ${fb?"disabled":""} aria-pressed="${on}">${esc(o)}</button>`; }).join("")}</span>`;
+}
 function rowHTML(r, ri, hl, fb){
   const parts = r.text.split("___");
   let h = "";
   parts.forEach((part,k) => {
     h += hlText(part, hl);
     if(k < parts.length-1 && r.picks && r.picks[k]){
-      const key = `${ri}_${k}`, sel = fb ? fb.vals[ri][k] : (V.picks[key]||"");
-      h += `<span class="pick" role="group" aria-label="choose a word">${r.picks[k].map(o => { const on = o===sel; const cls = on ? (fb ? (fb.rows[ri].cells[k]?"on ok":"on no") : "on") : "";
-        return `<button class="pk ${cls}" data-act="pk" data-b="${key}" data-v="${esc(o)}" ${fb?"disabled":""} aria-pressed="${on}">${esc(o)}</button>`; }).join("")}</span>`;
+      h += pickHTML(r, ri, k, fb);
     } else if(k < parts.length-1){
       const alts = r.blanks[k]; const w = Math.max(6, ...alts.map(a=>a.length)) + 2;
       const val = fb ? fb.vals[ri][k] : ""; const cls = fb ? (fb.rows[ri].cells[k] ? "ok" : "no") : "";
@@ -838,6 +854,8 @@ function qHTML(q, fb){
     h += `<div class="q-text">${fmtChoose(q.text,hl)}${q.cue?` <span class="cue">${esc(q.cue)}</span>`:""}</div>`;
     h += `<div class="opts">${q.options.map(o => { let cls=""; if(fb){ if(o===q.answers[0]) cls="right"; else if(o===fb.pick) cls="wrong"; }
       return `<button class="opt ${cls}" data-act="opt" data-v="${esc(o)}" ${fb?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>`;
+  } else if(q.type==="write" && q.layout==="table"){
+    h += `<div class="vtab"><div class="vh">Present</div><div class="vh">Past</div><div class="vh">Past Participle</div>${q.rows.map((r,ri) => `<div class="vp">${esc(r.present)}</div><div>${pickHTML(r,ri,0,fb)}</div><div>${pickHTML(r,ri,1,fb)}</div>`).join("")}</div>`;
   } else if(q.type==="write"){
     q.rows.forEach((r,ri) => { h += `${r.label?`<div class="rowlabel">${r.label}</div>`:""}<div class="q-text">${rowHTML(r,ri,hl,fb)}${ri===0&&q.cue?` <span class="cue">${esc(q.cue)}</span>`:""}</div>`; });
   } else {

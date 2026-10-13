@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Time Pets">
+<meta name="theme-color" content="#EAF1F8">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<title>Time Pets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Lilita+One&display=swap">
+<style>
+html,body{margin:0}body{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+/* Layout: one column "time track" of eras; each lesson is a page of a school notebook (blue rules, red margin, red pencil headings, green teacher tick). Single light look on purpose. */
+:root{
+  --bg:#EAF1F8; --ink:#1E2A3A; --ink-soft:#56667B; --card:#FFFFFF;
+  --rule:#CDDCEF; --margin:#F1A3A8; --red:#D9434B; --green:#2E9E6B;
+  --gold:#F5C84C; --mark:#FFE68A; --ok-bg:#DDF4E8; --no-bg:#FCE2E3; --blank:#FFFBE6;
+  --f-display:'Lilita One','Arial Rounded MT Bold','Trebuchet MS',system-ui,sans-serif;
+  --f-body:'Andika','Trebuchet MS',system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.45}
+.wrap{max-width:800px;margin:0 auto;padding-inline:16px;padding-block:12px 48px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;letter-spacing:.01em}
+button{font:inherit;color:inherit}
+.btn{font-family:var(--f-display);font-size:20px;padding:10px 20px;border-radius:14px;border:3px solid var(--ink);background:var(--gold);box-shadow:0 4px 0 var(--ink);cursor:pointer;line-height:1.2}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.btn.white{background:var(--card)}
+.btn.small{font-size:16px;padding:6px 12px;border-width:2.5px;box-shadow:0 3px 0 var(--ink)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+:focus-visible{outline:3px solid #3A7FC0;outline-offset:3px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.muted{color:var(--ink-soft)}
+.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--card);border:2.5px solid var(--ink);border-radius:999px;padding:4px 12px;font-weight:700;font-variant-numeric:tabular-nums}
+.gem{width:20px;height:20px;flex:none}
+.brand{display:flex;align-items:center;gap:14px}
+.appicon{width:92px;height:92px;border-radius:22px;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);flex:none;display:block}
+@media (max-width:420px){.appicon{width:72px;height:72px;border-radius:18px}}
+.logo{font-family:var(--f-display);font-size:44px;line-height:1}
+.logo span{color:var(--red)}
+.tag{font-size:18px;color:var(--ink-soft)}
+.stage{position:relative;border:3px solid var(--ink);border-radius:22px;overflow:hidden;background:#cfe6ff;min-height:240px}
+.stage .scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage .petbox{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);width:min(46%,220px)}
+.stage .era-label{position:absolute;left:12px;top:10px;display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.9);border:2.5px solid var(--ink);border-radius:12px;padding:4px 10px}
+.stage .era-label b{font-family:var(--f-display);font-weight:400;font-size:18px}
+.stage .era-label small{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.bubble{position:absolute;right:12px;top:10px;max-width:46%;background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:6px 10px;font-size:15px;line-height:1.3}
+.bar{height:16px;border:2.5px solid var(--ink);border-radius:999px;background:var(--card);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#7FD3F5,#5CC8A8)}
+.petcard{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center}
+.petcard h2{font-size:26px}
+.players{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.pcard{display:flex;gap:12px;align-items:center;text-align:left;background:var(--card);border:3px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:10px 14px;cursor:pointer}
+.pcard .pw{width:96px;flex:none}
+.pcard h3{font-size:24px;line-height:1.1}
+.pcard .sub{font-size:15px;color:var(--ink-soft)}
+label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
+.inp{font-family:var(--f-body);font-size:22px;padding:6px 12px;border:3px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink);width:100%;min-width:0}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:48px;height:48px;border-radius:50%;border:3px solid var(--ink);cursor:pointer}
+.sw[aria-pressed="true"]{box-shadow:0 0 0 4px var(--card),0 0 0 7px var(--ink)}
+.newgrid{display:grid;grid-template-columns:1fr 220px;gap:18px;align-items:center}
+@media (max-width:560px){.newgrid{grid-template-columns:1fr}.newgrid .prev{width:180px;margin:0 auto}}
+.track{display:flex;flex-direction:column}
+.era{display:grid;grid-template-columns:150px 1fr;background:var(--card);border:3px solid var(--ink);border-radius:18px;overflow:hidden}
+.era .thumb{position:relative;min-height:130px;border-right:3px solid var(--ink)}
+.era .thumb svg.scene{position:absolute;inset:0;width:100%;height:100%}
+.era .thumb .mini{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:70%}
+.era .body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.era h3{font-size:24px;line-height:1.1}
+.era .topic{font-weight:700;color:var(--red)}
+.era.locked{background:#F4F6F9}
+.era.locked .thumb{filter:grayscale(1) opacity(.55)}
+.year{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.link{height:28px;display:flex;align-items:center;justify-content:center}
+.link span{width:0;height:100%;border-left:4px dotted var(--ink-soft)}
+.lv{display:flex;flex-wrap:wrap;gap:8px}
+.lvb{display:inline-flex;flex-direction:column;align-items:center;gap:2px;font-family:var(--f-display);font-size:15px;background:var(--card);border:2.5px solid var(--ink);border-radius:12px;padding:5px 10px 4px;box-shadow:0 3px 0 var(--ink);cursor:pointer}
+.lvb.boss{background:var(--gold)}
+.lvb[disabled]{opacity:.4;cursor:not-allowed;box-shadow:none}
+.stars{display:inline-flex;gap:1px}
+.stars svg{width:15px;height:15px}
+@media (max-width:520px){.era{grid-template-columns:1fr}.era .thumb{border-right:0;border-bottom:3px solid var(--ink);min-height:120px}.era .thumb .mini{width:34%}}
+.play{display:grid;grid-template-columns:1fr 160px;gap:16px;align-items:start}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);display:flex;flex-direction:column;align-items:center;gap:6px}
+.side .say{background:var(--card);border:2.5px solid var(--ink);border-radius:14px;padding:6px 10px;font-size:15px;text-align:center;line-height:1.3}
+.side .pw{width:150px}
+.side .nextitem{font-size:14px;font-weight:700;color:var(--ink-soft);text-align:center;line-height:1.3}
+@media (max-width:640px){.play{grid-template-columns:1fr}.side{position:static;flex-direction:row;order:-1}.side .pw{width:96px}}
+.prog{display:flex;align-items:center;gap:10px;font-variant-numeric:tabular-nums}
+.prog .bar{flex:1}
+.prog .bar i{background:var(--red)}
+.note{position:relative;background-color:var(--card);background-image:linear-gradient(to bottom,transparent 47px,var(--rule) 47px,var(--rule) 48px);background-size:100% 48px;border:3px solid var(--ink);border-radius:18px;padding:8px 18px 18px 44px;line-height:48px;display:flex;flex-direction:column;min-width:0}
+.note::before{content:"";position:absolute;left:28px;top:0;bottom:0;width:2px;background:var(--margin)}
+.q-prompt{font-family:var(--f-display);color:var(--red);font-size:22px;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+.rowlabel{font-family:var(--f-display);color:var(--red);font-size:18px}
+.q-src,.q-text{font-size:27px;overflow-wrap:anywhere}
+.blank{display:inline-block;min-width:96px;border-bottom:3px solid var(--ink);height:1em;vertical-align:-4px}
+.tw{background:var(--mark);border-radius:6px;padding:0 6px;font-weight:700;letter-spacing:.03em}
+.cue{color:var(--ink-soft);font-size:22px}
+.inl{display:inline-block;font-family:var(--f-body);font-size:24px;line-height:1.2;height:40px;padding:0 8px;border:3px solid var(--ink);border-radius:10px;background:var(--blank);color:var(--ink);vertical-align:middle;max-width:100%}
+.inl.ok{border-color:var(--green);background:#E6F8EE}
+.inl.no{border-color:var(--red);background:#FFECEE}
+.pick{display:inline-flex;flex-wrap:wrap;gap:6px;vertical-align:middle;padding:2px 4px;border:2px dashed var(--ink-soft);border-radius:14px;background:var(--blank);line-height:1.2}
+.pk{font-family:var(--f-body);font-weight:700;font-size:20px;border:2.5px solid var(--ink);border-radius:999px;padding:2px 12px;background:var(--card);box-shadow:0 2px 0 var(--ink);cursor:pointer}
+.pk.on{background:var(--mark)}
+.pk.on.ok{background:#BDEBD2;border-color:var(--green)}
+.pk.on.no{background:#FBCFD2;border-color:var(--red)}
+.pk[disabled]{cursor:default}
+.pm .egg{transform-box:view-box;transform-origin:100px 186px;animation:wob 2.4s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+.opts{display:flex;flex-wrap:wrap;gap:12px;padding-block:8px;line-height:1.3}
+.opt{flex:1 1 120px;font-weight:700;font-size:24px;background:var(--card);border:3px solid var(--ink);border-radius:999px;padding:8px 14px;box-shadow:0 4px 0 var(--ink);cursor:pointer}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.opt.right{background:#BDEBD2;border-color:var(--green);box-shadow:0 4px 0 var(--green)}
+.opt.wrong{background:#FBCFD2;border-color:var(--red);box-shadow:0 4px 0 var(--red);text-decoration:line-through}
+.opt[disabled]{cursor:default}
+.vt{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr) minmax(0,1fr);gap:8px 10px;align-items:center;line-height:1.3;padding-top:6px}
+.vt .vh{font-family:var(--f-display);color:var(--red);font-size:17px}
+.vt .vp{font-size:26px;font-weight:700}
+.vt .inl{width:100%}
+.actions{display:flex;justify-content:flex-end;padding-top:8px;line-height:1.2}
+.fb{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:10px 14px;line-height:1.45;margin-top:8px}
+.fb.ok{background:var(--ok-bg);border:2.5px solid var(--green)}
+.fb.no{background:var(--no-bg);border:2.5px solid var(--red)}
+.fb .tick{width:40px;height:40px;flex:none}
+.fb .x{font-family:var(--f-display);font-size:30px;color:var(--red);line-height:1;width:40px;text-align:center;flex:none}
+.fb b{font-family:var(--f-display);font-weight:400;font-size:22px}
+.fb .fix{font-size:21px}
+.fb .goal{font-weight:700;background:#fff;border-radius:6px;padding:0 5px;color:var(--green)}
+.fb .hint,.fb .tip{font-size:16px}
+.fb .tip{color:#7A5A00}
+.result{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+.result .bigstars{display:flex;gap:6px}
+.result .bigstars svg{width:56px;height:56px}
+.score{width:150px;height:150px;border-radius:50%;border:5px solid var(--green);display:flex;align-items:center;justify-content:center;transform:rotate(-8deg);font-family:var(--f-display);font-size:54px;color:var(--green);font-variant-numeric:tabular-nums}
+.score.low{border-color:var(--red);color:var(--red)}
+.grow{width:100%;max-width:420px;display:flex;flex-direction:column;gap:6px}
+.celebrate{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:12px 16px;width:100%;max-width:520px}
+.celebrate .pw{width:160px;margin:0 auto}
+.closet{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
+.hat{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:8px;box-shadow:0 3px 0 var(--ink);cursor:pointer;font-size:14px;font-weight:700;text-align:center;line-height:1.2}
+.hat svg{width:70px;height:70px}
+.hat[aria-pressed="true"]{background:var(--mark)}
+.hat[disabled]{opacity:.5;cursor:not-allowed;box-shadow:none}
+.panel{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.panel h2{font-size:24px}
+.travel{display:flex;flex-wrap:wrap;gap:10px}
+.vedit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center}
+.vedit .inp{font-size:18px;padding:4px 8px}
+.vedit .h{font-weight:700;font-size:14px;color:var(--ink-soft)}
+.gate{user-select:none;-webkit-user-select:none;touch-action:none}
+.gate .fill{display:block;height:6px;background:var(--red);width:0;border-radius:4px;margin-top:6px}
+.gate.holding .fill{width:100%;transition:width 1.5s linear}
+.pm{display:block;width:100%;height:auto;overflow:visible}
+.pg{transform-box:view-box;transform-origin:100px 192px}
+.pm.idle .pg{animation:bob 2.6s ease-in-out infinite}
+.pm.happy .pg{animation:hop .45s ease-out 2}
+.pm.sad .pg{animation:shake .35s ease-in-out 2}
+.pm .aura{transform-box:view-box;transform-origin:100px 112px;animation:spin 14s linear infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-24px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pm .pg,.pm .aura,.pm .egg{animation:none!important}.gate.holding .fill{transition:none}}
+</style>
+</head>
+<body>
+
+<div id="app" class="wrap"></div>
+
+<script>
+(() => {
+"use strict";
+const ICON = "icon-512.png";
+/* ---------------- storage ---------------- */
+const KEY = "timepets.v1";
+const DEFAULT_VERBS = [
+  {p:"am",past:"was",pp:"been"},{p:"is",past:"was",pp:"been"},{p:"are",past:"were",pp:"been"},
+  {p:"become",past:"became",pp:"become"},{p:"begin",past:"began",pp:"begun"},
+  {p:"bite",past:"bit",pp:"bitten"},{p:"bleed",past:"bled",pp:"bled"},{p:"go",past:"went",pp:"gone"}
+];
+const defaultPlayers = () => [
+  {id:"pelonchis", name:"Pelonchis Cacatúa", pet:"Mochi", species:"bear", color:null, xp:0, progress:{}, hats:[], hat:null, era:"dino"},
+  {id:"pillus", name:"Pillus Makakikus", pet:"Bubbles", species:"otter", color:null, xp:0, progress:{}, hats:[], hat:null, era:"dino"}
+];
+function load(){
+  let d = null;
+  try{ d = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+  if(!d || typeof d!=="object") d = {};
+  if(d.v!==3 && d.v!==4){ d.players = defaultPlayers(); }
+  if(d.v!==4){ (d.players||[]).forEach(p => { p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; }); d.v = 4; }
+  if(!Array.isArray(d.verbs) || !d.verbs.length) d.verbs = DEFAULT_VERBS.map(v=>({...v}));
+  if(!d.verbs.some(v => v.p==="go")) d.verbs.push({p:"go",past:"went",pp:"gone"});
+  if(d.sound==null) d.sound = true;
+  return d;
+}
+let S = load();
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+save();
+let V = {screen:"home"};
+const P = () => S.players.find(p => p.id === V.pid);
+
+/* ---------------- helpers ---------------- */
+const R = a => a[Math.floor(Math.random()*a.length)];
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hlText = (t, hl) => esc(t).replace(/\[\[(.+?)\]\]/g, (m,x) => hl ? `<span class="tw">${x.toUpperCase()}</span>` : x);
+const fmtChoose = (t, hl) => t.split("___").map(x => hlText(x,hl)).join('<span class="blank" aria-label="blank"></span>');
+const plain = t => t.replace(/\[\[|\]\]/g,"");
+
+function norm(s){
+  s = (s||"").toLowerCase().replace(/[’‘`´]/g,"'").replace(/[.?!,]/g," ").replace(/\s+/g," ").trim();
+  const map = [[/\bdon't\b/g,"do not"],[/\bdoesn't\b/g,"does not"],[/\bdidn't\b/g,"did not"],[/\bisn't\b/g,"is not"],[/\baren't\b/g,"are not"],[/\bwasn't\b/g,"was not"],[/\bweren't\b/g,"were not"],[/(^|\s)'m\b/g,"$1am"],[/\bi'm\b/g,"i am"],[/\b(you|we|they)'re\b/g,"$1 are"],[/\b(he|she|it)'s\b/g,"$1 is"]];
+  map.forEach(([r,t]) => { s = s.replace(r,t); });
+  return s.replace(/\s+/g," ").trim();
+}
+const fixApos = s => (s||"").replace(/\b(don|doesn|didn|isn|aren|wasn|weren)t\b/gi,"$1't");
+
+/* ---------------- grammar data ---------------- */
+const SUBJ = [
+  {s:"I",q:"I",t:0,be:"am",was:"was",pro:1,g:"I"},
+  {s:"You",q:"you",t:0,be:"are",was:"were",pro:1,g:"You"},
+  {s:"He",q:"he",t:1,be:"is",was:"was",pro:1,g:"He"},
+  {s:"She",q:"she",t:1,be:"is",was:"was",pro:1,g:"She"},
+  {s:"It",q:"it",t:1,be:"is",was:"was",pro:1,an:1,g:"It"},
+  {s:"We",q:"we",t:0,be:"are",was:"were",pro:1,g:"We"},
+  {s:"They",q:"they",t:0,be:"are",was:"were",pro:1,g:"They"},
+  {s:"Cin",q:"Cin",t:1,be:"is",was:"was",g:"She"},
+  {s:"Alicia",q:"Alicia",t:1,be:"is",was:"was",g:"She"},
+  {s:"Kikona",q:"Kikona",t:1,be:"is",was:"was",g:"She"},
+  {s:"Betilio",q:"Betilio",t:1,be:"is",was:"was",g:"He"},
+  {s:"Froy",q:"Froy",t:1,be:"is",was:"was",g:"He"},
+  {s:"Jorge",q:"Jorge",t:1,be:"is",was:"was",g:"He"},
+  {s:"Tina",q:"Tina",t:1,be:"is",was:"was",g:"She"},
+  {s:"Fafis",q:"Fafis",t:1,be:"is",was:"was",g:"She"},
+  {s:"Grandpa",q:"Grandpa",t:1,be:"is",was:"was",g:"He"},
+  {s:"Grandma",q:"Grandma",t:1,be:"is",was:"was",g:"She"},
+  {s:"Mom",q:"Mom",t:1,be:"is",was:"was",g:"She"},
+  {s:"Dad",q:"Dad",t:1,be:"is",was:"was",g:"He"},
+  {s:"Tina and Fafis",q:"Tina and Fafis",t:0,be:"are",was:"were",g:"They"},
+  {s:"Grandpa and Grandma",q:"Grandpa and Grandma",t:0,be:"are",was:"were",g:"They"},
+  {s:"Cin and Froy",q:"Cin and Froy",t:0,be:"are",was:"were",g:"They"},
+  {s:"My school friends",q:"my school friends",t:0,be:"are",was:"were",g:"They"},
+  {s:"Tina and I",q:"Tina and I",t:0,be:"are",was:"were",g:"We"},
+  {s:"Fafis and I",q:"Fafis and I",t:0,be:"are",was:"were",g:"We"},
+  {s:"Mom and I",q:"Mom and I",t:0,be:"are",was:"were",g:"We"},
+  {s:"The dog",q:"the dog",t:1,be:"is",was:"was",an:1,g:"It"},
+  {s:"The cat",q:"the cat",t:1,be:"is",was:"was",an:1,g:"It"}
+];
+/* only verbs that appear in the girls' notebook; pz = a past form they have seen; np = past only */
+const ACTS = [
+  {v:"play",s:"plays",ing:"playing",past:"played",pz:1,o:["soccer with my school friends","the piano for Grandpa","board games with Grandma","in the waves at the beach","tag at recess","video games with Dad"],ao:["with a ball of yarn","in the garden"]},
+  {v:"eat",s:"eats",ing:"eating",past:"ate",pz:1,o:["ice cream at the beach","pancakes for breakfast","popcorn at the movies","tacos with Grandpa","a churro at Disney","cake at the birthday party"],ao:["its food","a carrot"]},
+  {v:"like",s:"likes",ing:null,past:"liked",pz:0,o:["frappés with whipped cream","strawberry ice cream","the beach","Disney parades","roller coasters","Grandma's cookies"],ao:["warm blankets","belly rubs"]},
+  {v:"go",s:"goes",ing:"going",past:"went",pz:1,o:["to Disney with the family","to the beach with Grandma","to school by bus","to the mall with Mom","to the movies with my school friends","to the ice cream shop with Grandpa"],ao:["to the park","under the bed"]},
+  {v:"run",s:"runs",ing:"running",past:"ran",pz:0,o:["to the bus stop","around the track","on the beach","in the school race","to hug Grandma"],ao:["after the ball","around the garden"]},
+  {v:"walk",s:"walks",ing:"walking",past:"walked",pz:1,o:["to school with my friends","on the beach with Grandma","around Disney all day","the dog in the park","to the frappé shop with Mom"],ao:["in the park","on the wall"]},
+  {v:"brush",s:"brushes",ing:"brushing",past:"brushed",pz:1,o:["the horse at Grandpa's farm","the dog","Grandma's hair"]},
+  {v:"study",s:"studies",ing:"studying",past:"studied",pz:1,o:["English for the test","math with Dad","for the spelling quiz","science with my school friends"]},
+  {v:"dance",s:"dances",ing:"dancing",past:"danced",pz:1,o:["at the birthday party","in the school show","with Grandpa at the wedding","to music in the living room"]},
+  {v:"sleep",s:"sleeps",ing:"sleeping",past:"slept",pz:0,o:["at Grandpa and Grandma's house","in a tent at the beach","in the hotel at Disney","in the car"],ao:["on the sofa","in the sun"]},
+  {v:"cook",s:"cooks",ing:"cooking",past:"cooked",pz:1,o:["dinner for Grandpa","pasta with Dad","eggs in the kitchen","pancakes with Mom"]},
+  {v:"bite",s:"bites",ing:"biting",past:"bit",pz:1,o:[],ao:["the ball","a bone","the new toy"]},
+  {v:"take",s:"takes",ing:"taking",past:"took",pz:1,o:["photos at the beach","the bus to school","a nap after lunch","the train at Disney","the dog for a walk"]},
+  {v:"begin",s:"begins",ing:"beginning",past:"began",pz:1,o:["the homework at four o'clock","a new book","the race","the piano lesson"]}
+];
+const T_PRES = ["every day","every Saturday","on Mondays","in the morning","every summer","after school"];
+const T_CONT = ["now","right now","at the moment"];
+const T_PAST = ["yesterday","last week","last night","last Saturday","last summer","two days ago"];
+const ADJ = ["happy at the party","tired after the game","at the beach","excited about the trip to Disney","at Grandpa's house","at the ice cream shop","late for school"];
+const THIRD = ["He","She","It"];
+
+/* sentences used in the current lesson, so the same one does not come back */
+let USED = new Set(), USEDO = new Set();
+function pair(af, f={}){
+  for(let k=0;k<120;k++){
+    const a = R(ACTS.filter(af || (x => !x.np)));
+    let pool = SUBJ.filter(s => s.an ? !!(a.ao && a.ao.length) : a.o.length>0);
+    if(f.people) pool = pool.filter(s => !s.an);
+    if(f.t!=null) pool = pool.filter(s => s.t===f.t);
+    if(!pool.length) continue;
+    const groups = [...new Set(pool.map(s => s.g))];
+    let g;
+    if(f.bias){ const th = groups.filter(x => THIRD.includes(x)), ot = groups.filter(x => !THIRD.includes(x));
+      g = (th.length && (Math.random()<.5 || !ot.length)) ? R(th) : R(ot); }
+    else g = R(groups);
+    const s = R(pool.filter(x => x.g===g));
+    const o = s.an ? R(a.ao) : R(a.o);
+    const words = s.q.toLowerCase().split(" ").filter(w => w.length>2 && !["and","the"].includes(w));
+    if(words.some(w => o.toLowerCase().includes(w))) continue;
+    const key = `${s.s}|${a.v}|${o}`;
+    if(USED.has(key) || (k<70 && USEDO.has(o))) continue;
+    USED.add(key); USEDO.add(o);
+    return {a, s, o};
+  }
+  if(!f._again){ USED.clear(); USEDO.clear(); return pair(af, {...f, _again:1}); }
+  return {a:ACTS[0], s:SUBJ[3], o:ACTS[0].o[0]};
+}
+const pres = (a,s) => s.t ? a.s : a.v;
+const presNeg = s => s.t ? "doesn't" : "don't";
+const negAlts = n => ({"doesn't":["doesn't","does not"],"don't":["don't","do not"],"didn't":["didn't","did not"],"isn't":["isn't","is not"],"aren't":["aren't","are not"],"am not":["am not"]}[n]);
+const contNeg = s => s.be==="am" ? "am not" : s.be==="is" ? "isn't" : "aren't";
+const whoIs = s => s.pro ? "" : `${s.s} = ${s.g.toLowerCase()}. `;
+/* sentence with the time word at the end, or (sometimes) at the front like "YESTERDAY I cut my finger" */
+function sent(s, rest, t, frontChance){
+  if(t && Math.random() < (frontChance==null ? .4 : frontChance)) return `[[${cap(t)}]] ${s.q} ${rest}.`;
+  return `${s.s} ${rest}${t?` [[${t}]]`:""}.`;
+}
+
+const H = {
+  third: (a,s) => s.t ? `${whoIs(s)}With he, she, it the verb takes -s: ${a.s}.` : `${whoIs(s)}With I, you, we, they the verb has no -s: ${a.v}.`,
+  neg: "Use doesn't with he, she, it. Use don't with I, you, we, they. After don't / doesn't the verb has no -s.",
+  q: "Questions start with Do or Does. Does is for he, she, it. After Do / Does the verb has no -s.",
+  dodo: "Do and Does start questions. Don't and doesn't make negatives. Does / doesn't are for he, she, it.",
+  be: "I → am. He, she, it → is. You, we, they → are.",
+  ing: "Present continuous = am / is / are + verb-ing.",
+  cneg: "Negative: I am not, he isn't, they aren't + verb-ing.",
+  cq: "Questions start with Am, Is or Are, then the verb + ing.",
+  past: a => `Yesterday, last week… → simple past: ${a.v} → ${a.past}.`,
+  was: "I, he, she, it → was. You, we, they → were.",
+  didnt: "After didn't the verb goes back to its normal form: didn't go (not didn't went).",
+  did: "Past questions start with Did, and the verb goes back to its normal form: Did he take…?",
+  cat: {p:"every day, on Mondays → simple present.", c:"now, right now → present continuous (am / is / are + ing).", x:"yesterday, last week → simple past."},
+  pron: {I:"I is for me, the person talking.",You:"You is for the person (or people) I talk to.",He:"He is for one boy or man.",She:"She is for one girl or woman.",It:"It is for one animal or thing.",They:"They is for two or more people, animals or things.",We:"We is for me and other people."}
+};
+
+/* question builders */
+const Qc = o => ({type:"choose", pts:1, ...o, options: shuffle(o.options)});
+const Qw = o => ({type:"write", pts:(o.rows||[]).length, ...o});
+const W1 = (prompt, text, alts, hint, cue) => Qw({prompt, rows:[{text, blanks:[alts]}], hint, cue});
+
+/* --- Era 1: pronouns & verb to be --- */
+const PRONS = [
+  {p:"I",be:"am",clues:["me"]},
+  {p:"You",be:"are",clues:["you","you and Alicia"]},
+  {p:"He",be:"is",clues:["Betilio","Froy","Jorge","Grandpa","Dad"]},
+  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Tina","Fafis","Grandma","Mom"]},
+  {p:"It",be:"is",clues:["the dog","the cat","the frappé","the ice cream","the beach","the castle"],thing:1},
+  {p:"We",be:"are",clues:["Tina and I","Fafis and I","Mom and I","my school friends and I"]},
+  {p:"They",be:"are",clues:["Tina and Fafis","Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
+];
+const THING_COMP = {"the dog":["very fluffy","hungry","asleep on the sofa"],"the cat":["on the roof","black and white"],"the frappé":["cold and sweet","on the table"],"the ice cream":["delicious","very cold"],"the beach":["sunny today","beautiful"],"the castle":["big and pink","in the middle of the park"]};
+const PEOPLE_COMP = ["happy today","at the beach","in the kitchen","very funny","ready for school","excited about the trip to Disney","good at soccer","tired after school","at the ice cream shop","in the pool","on the bus","at Grandma's house"];
+const comp = (P, clue) => THING_COMP[clue] ? R(THING_COMP[clue]) : P.thing ? R(["happy","hungry","in the garden"]) : R(PEOPLE_COMP);
+const GROUP = {am:["I"], is:["He","She","It"], are:["You","We","They"]};
+function pronChoose(){
+  const Pn = R(PRONS), clue = R(Pn.clues);
+  let opts = GROUP[Pn.be].slice();
+  if(opts.length<3) opts = ["I", ...shuffle(["You","He","She","We","They"]).slice(0,2)];
+  return Qc({key:"pc"+clue, prompt:"Choose the pronoun.", text:`___ ${Pn.be} ${comp(Pn,clue)}.`, cue:`(${clue})`, options:opts, answers:[Pn.p], show:Pn.p, hint:`${clue} → ${Pn.p}. ${H.pron[Pn.p]}`});
+}
+function pronWrite(){
+  const Pn = R(PRONS), clue = R(Pn.clues);
+  return {...W1("Write the pronoun.", `___ ${Pn.be} ${comp(Pn,clue)}.`, [Pn.p], `${clue} → ${Pn.p}. ${H.pron[Pn.p]}`, `(${clue})`), key:"pw"+clue};
+}
+function beSubj(){
+  const Pn = R(PRONS);
+  if(Math.random()<.3 && Pn.p!=="I" && Pn.p!=="You"){ const clue = R(Pn.clues); return {Pn, subj:cap(clue), c:comp(Pn,clue), who:`${cap(clue)} = ${Pn.p.toLowerCase()}. `}; }
+  return {Pn, subj:Pn.p, c:comp(Pn,""), who:""};
+}
+function beChoose(){
+  const {Pn,subj,c,who} = beSubj();
+  return Qc({key:"bc"+subj+c, prompt:"Choose am, is or are.", text:`${subj} ___ ${c}.`, options:["am","is","are"], answers:[Pn.be], show:Pn.be, hint:who+H.be});
+}
+function beWrite(){
+  const {Pn,subj,c,who} = beSubj();
+  return {...W1("Write am, is or are.", `${subj} ___ ${c}.`, [Pn.be], who+H.be), key:"bw"+subj+c};
+}
+function beGrid(){
+  const c = R(["happy","ready","hungry","at the beach","excited"]);
+  const rows = PRONS.map(Pn => ({text:`${Pn.p} ___ ${c}.`, blanks:[[Pn.be]]}));
+  return Qw({key:"grid", prompt:"Put the verb to be with each pronoun.", rows, hint:H.be});
+}
+
+/* --- Era 2: simple present --- */
+function presChoose(){
+  const {a,s,o} = pair(null,{bias:1}); const t = R(T_PRES);
+  return Qc({prompt:"Choose the correct verb.", text:sent(s, `___ ${o}`, t), options:[a.v, a.s, a.ing||a.past], answers:[pres(a,s)], show:pres(a,s), hint:H.third(a,s)});
+}
+function doChoose(){
+  const {a,s,o} = pair(null,{bias:1});
+  const opts = ["Do","Does","don't","doesn't"];
+  if(Math.random()<.5) return Qc({prompt:"Choose Do, Does, don't or doesn't.", text:`___ ${s.q} ${a.v} ${o}?`, options:opts, answers:[s.t?"Does":"Do"], show:s.t?"Does":"Do", hint:whoIs(s)+H.q});
+  const t = Math.random()<.5 ? R(T_PRES) : null;
+  return Qc({prompt:"Choose Do, Does, don't or doesn't.", text:sent(s, `___ ${a.v} ${o}`, t), options:opts, answers:[presNeg(s)], show:presNeg(s), hint:whoIs(s)+H.neg});
+}
+function presWrite(){
+  const {a,s,o} = pair(null,{bias:1}); const r = Math.random();
+  if(r<.6) return W1("Complete with the correct form of the verb.", sent(s, `___ ${o}`, R(T_PRES)), [pres(a,s)], H.third(a,s), `(${a.v})`);
+  if(r<.8) return W1("Complete with the verb.", `${s.s} ${presNeg(s)} ___ ${o}.`, [a.v], "After don't / doesn't the verb has no -s.", `(${a.v})`);
+  return W1("Complete with the verb.", `${s.t?"Does":"Do"} ${s.q} ___ ${o}?`, [a.v], "After Do / Does the verb has no -s.", `(${a.v})`);
+}
+function presFlip(){
+  const {a,s,o} = pair(null,{bias:1});
+  const n = presNeg(s);
+  return Qw({prompt:"Make it negative and interrogative.", source:`${s.s} ${pres(a,s)} ${o}.`, rows:[
+    {label:"Negative", text:`${s.s} ___ ___ ${o}.`, blanks:[negAlts(n),[a.v]], picks:{0:["don't","doesn't"]}},
+    {label:"Interrogative", text:`___ ${s.q} ___ ${o}?`, blanks:[[s.t?"Does":"Do"],[a.v]], picks:{0:["Do","Does"]}}
+  ], hint:whoIs(s)+H.neg+" "+H.q});
+}
+
+/* --- Era 3: present continuous --- */
+const hasIng = a => !!a.ing;
+function contChoose(){
+  const r = Math.random(); const {a,s,o} = pair(hasIng); const t = R(T_CONT);
+  if(r<.35) return Qc({prompt:"Choose am, is or are.", text:sent(s, `___ ${a.ing} ${o}`, t), options:["am","is","are"], answers:[s.be], show:s.be, hint:whoIs(s)+H.be});
+  if(r<.6) return Qc({prompt:"Choose the correct verb.", text:sent(s, `${s.be} ___ ${o}`, t), options:[a.v,a.s,a.ing], answers:[a.ing], show:a.ing, hint:H.ing});
+  if(r<.8) return Qc({prompt:"Choose the correct word.", text:`___ ${s.q} ${a.ing} ${o}?`, options:["Am","Is","Are"], answers:[cap(s.be)], show:cap(s.be), hint:whoIs(s)+H.cq});
+  const opts = s.be==="am" ? ["am not","isn't","don't"] : s.be==="is" ? ["isn't","aren't","doesn't"] : ["aren't","isn't","don't"];
+  return Qc({prompt:"Choose the correct word.", text:`${s.s} ___ ${a.ing} ${o}.`, options:opts, answers:[contNeg(s)], show:contNeg(s), hint:whoIs(s)+H.cneg});
+}
+function contWrite(){
+  const {a,s,o} = pair(hasIng); const r = Math.random();
+  if(r<.5) return Qw({prompt:"Complete with am, is or are + verb-ing.", rows:[{text:sent(s, `___ ___ ${o}`, R(T_CONT)), blanks:[[s.be],[a.ing]]}], hint:whoIs(s)+H.ing, cue:`(${a.v})`});
+  if(r<.75) return W1("Write the verb + ing.", sent(s, `${s.be} ___ ${o}`, R(T_CONT)), [a.ing], H.ing, `(${a.v})`);
+  return W1("Write am, is or are.", sent(s, `___ ${a.ing} ${o}`, R(T_CONT)), [s.be], whoIs(s)+H.be);
+}
+function contFlip(){
+  const {a,s,o} = pair(hasIng);
+  return Qw({prompt:"Make it negative and interrogative.", source:`${s.s} ${s.be} ${a.ing} ${o}.`, rows:[
+    {label:"Negative", text:`${s.s} ___ ${a.ing} ${o}.`, blanks:[negAlts(contNeg(s))], picks:{0:["am not","isn't","aren't"]}},
+    {label:"Interrogative", text:`___ ${s.q} ${a.ing} ${o}?`, blanks:[[cap(s.be)]], picks:{0:["Am","Is","Are"]}}
+  ], hint:whoIs(s)+H.cneg+" "+H.cq});
+}
+
+/* --- Era 4: verb forms (editable list) --- */
+const KNOWN_ING = {begin:"beginning",bite:"biting",bleed:"bleeding",become:"becoming",go:"going",take:"taking",eat:"eating",run:"running",swim:"swimming",write:"writing",come:"coming",get:"getting",sit:"sitting",make:"making"};
+const ingOf = p => KNOWN_ING[p] || (/[^e]e$/.test(p) ? p.slice(0,-1)+"ing" : p+"ing");
+function verbOpts(v, which){
+  const ans = v[which];
+  let c = ["am","is","are"].includes(v.p) ? ["was","were","been","being"] : [v.p, v.past, v.pp, ingOf(v.p)];
+  c = [...new Set(c)].filter(x => x!==ans);
+  return [ans, ...shuffle(c).slice(0,2)];
+}
+const vHint = v => `${v.p} → ${v.past} → ${v.pp}`;
+function vChoose(w){
+  const v = R(S.verbs), which = w || R(["past","pp"]);
+  return Qc({key:"vc"+which+v.p, prompt: which==="past" ? `Circle the past of “${v.p}”.` : `Circle the past participle of “${v.p}”.`, text:`${v.p} → ___`, options:verbOpts(v,which), answers:[v[which]], show:v[which], hint:vHint(v)});
+}
+function vTable(){
+  const v = R(S.verbs);
+  return Qw({key:"vt"+v.p, prompt:"Complete the table: past and past participle.", rows:[
+    {label:"Past", text:`${v.p} → ___`, blanks:[[v.past]], picks:{0:shuffle(verbOpts(v,"past"))}},
+    {label:"Past participle", text:`${v.p} → ${v.past} → ___`, blanks:[[v.pp]], picks:{0:shuffle(verbOpts(v,"pp"))}}
+  ], hint:vHint(v)});
+}
+
+/* --- Era 5: simple past --- */
+const FIXED_PAST = [
+  {text:"We ___ friends [[last year]].", options:["became","become","becoming"], a:"became", hint:"become → became → become"},
+  {text:"Our English class ___ at eight o'clock [[yesterday]].", options:["began","beginning","begin"], a:"began", hint:"begin → began → begun"},
+  {text:"[[Last summer]] we ___ to Disney with Grandma.", options:["go","went","goes"], a:"went", hint:"go → went → gone"},
+  {text:"[[Yesterday]] Mom and I ___ to the frappé shop.", options:["go","went","going"], a:"went", hint:"go → went → gone"},
+  {text:"Cin and Kikona ___ at the beach [[last weekend]].", options:["was","were","are"], a:"were", hint:H.was},
+  {text:"[[Last week]] the dog ___ the cat.", options:["biting","bit","bite"], a:"bit", hint:"bite → bit → bitten"},
+  {text:"[[Yesterday]] I cut my finger and it ___.", options:["bleeds","bleeding","bled"], a:"bled", hint:"bleed → bled → bled"},
+  {text:"I ___ happy [[yesterday]].", options:["am","was","were"], a:"was", hint:H.was},
+  {text:"Froy and Jorge ___ at the park [[last Saturday]].", options:["are","was","were"], a:"were", hint:H.was},
+  {text:"[[Yesterday]] we ___ to the park.", options:["go","went","going"], a:"went", hint:"go → went → gone"},
+  {text:"[[Last summer]] Grandpa and Grandma ___ to the beach.", options:["went","gone","goes"], a:"went", hint:"go → went → gone"},
+  {text:"The movie ___ at seven o'clock [[last night]].", options:["begins","began","begun"], a:"began", hint:"begin → began → begun"},
+  {text:"[[Last year]] Fafis ___ the best reader in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
+  {text:"[[Two days ago]] a mosquito ___ my arm.", options:["bite","bit","bites"], a:"bit", hint:"bite → bit → bitten"},
+  {text:"[[Yesterday]] the kids ___ very tired after the race.", options:["are","were","was"], a:"were", hint:H.was},
+  {text:"Tina ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"was", hint:H.was}
+];
+const isPz = a => !!a.pz;
+function pastChoose(){
+  const r = Math.random(); const t = R(T_PAST);
+  if(r<.3){ const f = R(FIXED_PAST); return Qc({key:"fp"+f.text, prompt:"Circle the correct answer in simple past.", text:f.text, options:f.options, answers:[f.a], show:f.a, hint:f.hint}); }
+  if(r<.55){ const {a,s,o} = pair(isPz); return Qc({prompt:"Circle the correct answer in simple past.", text:sent(s, `___ ${o}`, t), options:[a.past,a.v,a.ing||a.s], answers:[a.past], show:a.past, hint:H.past(a)}); }
+  if(r<.7){ const {s} = pair(null,{people:1}); return Qc({prompt:"Circle was or were.", text:sent(s, `___ ${R(ADJ)}`, t), options:[...new Set(["was","were",s.be])], answers:[s.was], show:s.was, hint:whoIs(s)+H.was}); }
+  if(r<.85){ const {a,s,o} = pair(isPz); return Qc({prompt:"Circle the correct verb.", text:sent(s, `didn't ___ ${o}`, t), options:[a.v,a.past,a.s], answers:[a.v], show:a.v, hint:H.didnt}); }
+  const {a,s,o} = pair(isPz);
+  return Qc({prompt:"Circle the correct word.", text:`___ ${s.q} ${a.v} ${o} [[${t}]]?`, options:["Did","Does","Do"], answers:["Did"], show:"Did", hint:H.did});
+}
+function pastWrite(){
+  const {a,s,o} = pair(isPz); const t = R(T_PAST); const r = Math.random();
+  if(r<.55) return W1("Complete with the verb in simple past.", sent(s, `___ ${o}`, t), [a.past], H.past(a), `(${a.v})`);
+  if(r<.8) return W1("Complete with the verb.", sent(s, `didn't ___ ${o}`, t), [a.v], H.didnt, `(${a.v})`);
+  const {s:s2} = pair(null,{people:1});
+  return W1("Write was or were.", sent(s2, `___ ${R(ADJ)}`, t), [s2.was], whoIs(s2)+H.was);
+}
+function pastFlip(){
+  const {a,s,o} = pair(isPz); const t = R(T_PAST);
+  return Qw({prompt:"Make it negative and interrogative.", source:`${s.s} ${a.past} ${o} [[${t}]].`, rows:[
+    {label:"Negative", text:`${s.s} ___ ___ ${o} [[${t}]].`, blanks:[negAlts("didn't"),[a.v]], picks:{0:["didn't","don't","doesn't"]}},
+    {label:"Interrogative", text:`___ ${s.q} ___ ${o} [[${t}]]?`, blanks:[["Did"],[a.v]], picks:{0:["Did","Do","Does"]}}
+  ], hint:H.didnt+" "+H.did});
+}
+
+/* --- Era 6: time mix --- */
+const mixAct = a => a.pz && a.ing;
+function mixParts(){
+  const {a,s,o} = pair(mixAct,{bias:1}); const c = R(["p","c","x"]);
+  const t = c==="p" ? R(T_PRES) : c==="c" ? R(T_CONT) : R(T_PAST);
+  return {a,s,o,c,t,forms:{p:pres(a,s), c:`${s.be} ${a.ing}`, x:a.past}};
+}
+function mixChoose(){
+  const {s,o,c,t,forms} = mixParts();
+  return Qc({prompt:"Look at the time words. Circle the verb.", text:sent(s, `___ ${o}`, t), options:[forms.p,forms.c,forms.x], answers:[forms[c]], show:forms[c], hint:whoIs(s)+H.cat[c]});
+}
+function mixWrite(){
+  const {a,s,o,c,t,forms} = mixParts();
+  if(c==="c") return Qw({prompt:"Look at the time words. Write the verb.", rows:[{text:sent(s, `___ ___ ${o}`, t), blanks:[[s.be],[a.ing]]}], hint:whoIs(s)+H.cat[c], cue:`(${a.v})`});
+  return W1("Look at the time words. Write the verb.", sent(s, `___ ${o}`, t), [forms[c]], whoIs(s)+H.cat[c], `(${a.v})`);
+}
+const FIXERS = [
+  () => { const {a,s,o}=pair(null,{t:1}); const t=R(T_PRES); return [`${s.s} ${a.v} ${o} [[${t}]].`, `${s.s} ___ ${o} [[${t}]].`, [a.s], whoIs(s)+"With he, she, it the verb takes -s."]; },
+  () => { const {a,s,o}=pair(null,{t:1}); return [`${s.s} don't ${a.v} ${o}.`, `${s.s} ___ ${a.v} ${o}.`, negAlts("doesn't"), whoIs(s)+"Use doesn't with he, she, it.", ["don't","doesn't"]]; },
+  () => { const {a,s,o}=pair(null,{t:0}); return [`${s.s} doesn't ${a.v} ${o}.`, `${s.s} ___ ${a.v} ${o}.`, negAlts("don't"), whoIs(s)+"Use don't with I, you, we, they.", ["don't","doesn't"]]; },
+  () => { const {a,s,o}=pair(null,{t:1}); return [`Do ${s.q} ${a.v} ${o}?`, `___ ${s.q} ${a.v} ${o}?`, ["Does"], whoIs(s)+"Use Does with he, she, it.", ["Do","Does"]]; },
+  () => { const {a,s,o}=pair(null,{t:1}); return [`Does ${s.q} ${a.s} ${o}?`, `Does ${s.q} ___ ${o}?`, [a.v], "After Does the verb has no -s."]; },
+  () => { const {a,s,o}=pair(isPz); const t=R(T_PAST); return [`${s.s} didn't ${a.past} ${o} [[${t}]].`, `${s.s} didn't ___ ${o} [[${t}]].`, [a.v], H.didnt]; },
+  () => { const {a,s,o}=pair(isPz); const t=R(T_PAST); return [`Did ${s.q} ${a.past} ${o} [[${t}]]?`, `Did ${s.q} ___ ${o} [[${t}]]?`, [a.v], H.did]; },
+  () => { const {a,s,o}=pair(hasIng); return [`${s.s} ${s.be} ${a.v} ${o} [[now]].`, `${s.s} ${s.be} ___ ${o} [[now]].`, [a.ing], H.ing]; },
+  () => { const {a,s,o}=pair(hasIng); return [`${s.s} ${a.ing} ${o} [[now]].`, `${s.s} ___ ${a.ing} ${o} [[now]].`, [s.be], whoIs(s)+H.ing]; },
+  () => { const {s}=pair(null,{people:1}); const ad=R(ADJ), t=R(T_PAST); return [`${s.s} ${s.was==="was"?"were":"was"} ${ad} [[${t}]].`, `${s.s} ___ ${ad} [[${t}]].`, [s.was], whoIs(s)+H.was]; },
+  () => { const {a,s,o}=pair(isPz); const t=R(T_PAST); return [`${s.s} ${pres(a,s)} ${o} [[${t}]].`, `${s.s} ___ ${o} [[${t}]].`, [a.past], H.cat.x]; }
+];
+function mixFix(){
+  const [wrong, text, alts, hint, pk] = R(FIXERS)();
+  return Qw({prompt: pk ? "Find the mistake. Choose the correct word." : "Find the mistake. Write the correct word.", source:wrong, sourceLabel:"Mistake", rows:[{label:"Correct", text, blanks:[alts], picks: pk ? {0:pk} : undefined}], hint});
+}
+
+
+/* --- conjugation practice (tap, no typing) --- */
+const PR7 = ["I","You","He","She","It","We","They"];
+const BE7 = {I:"am",You:"are",He:"is",She:"is",It:"is",We:"are",They:"are"};
+const T3 = p => ["He","She","It"].includes(p);
+function presConj(){
+  const a = R(ACTS.filter(x => !x.np && x.o.length && !USED.has("conj"+x.v))); USED.add("conj"+a.v);
+  return Qw({key:"pcj"+a.v, prompt:`Conjugate the verb “${a.v}” in simple present.`, rows:PR7.map(p => ({text:`${p} ___`, blanks:[[T3(p)?a.s:a.v]], picks:{0:[a.v,a.s]}})), hint:"He, she, it → verb + s. I, you, we, they → no -s."});
+}
+function contConj(){
+  const a = R(ACTS.filter(x => x.ing && x.o.length && !USED.has("conj"+x.v))); USED.add("conj"+a.v);
+  return Qw({key:"ccj"+a.v, prompt:`Conjugate “${a.v}” in present continuous.`, rows:PR7.map(p => ({text:`${p} ___ ___`, blanks:[[BE7[p]],[a.ing]], picks:{0:["am","is","are"],1:[a.v,a.ing]}})), hint:H.be+" Then the verb + ing."});
+}
+function pastConj(){
+  const a = R(ACTS.filter(x => x.pz && x.o.length && !x.np && !USED.has("conj"+x.v))); USED.add("conj"+a.v);
+  const rows = shuffle(PR7.filter(x => x!=="It")).map((p,i) => {
+    const kind = i%3; const q = p==="I" ? "I" : p.toLowerCase();
+    if(kind===0) return {label:"Affirmative", text:`${p} ___ ${R(a.o)}.`, blanks:[[a.past]], picks:{0:[a.v,a.past]}};
+    if(kind===1) return {label:"Negative", text:`${p} didn't ___ ${R(a.o)}.`, blanks:[[a.v]], picks:{0:[a.v,a.past]}};
+    return {label:"Interrogative", text:`Did ${q} ___ ${R(a.o)}?`, blanks:[[a.v]], picks:{0:[a.v,a.past]}};
+  });
+  return Qw({key:"xcj"+a.v, prompt:`Simple past of “${a.v}”: tap the right form.`, rows, hint:`${a.v} → ${a.past}. After didn't and Did use ${a.v}.`});
+}
+function wasConj(){
+  return Qw({key:"wcj", prompt:"Choose was or were.", rows:PR7.map(p => ({text:`${p} ___ happy [[yesterday]].`, blanks:[[BE7[p]==="are"?"were":"was"]], picks:{0:["was","were"]}})), hint:H.was});
+}
+
+function makeSet(gen, n){
+  const out=[], keys=new Set(); let k=0;
+  while(out.length<n && k<400){ k++; const q=gen();
+    const key = q.key || `${q.source||""}|${q.text||""}|${(q.rows||[]).map(r=>r.text).join("/")}|${q.cue||""}`;
+    if(keys.has(key)) continue; keys.add(key); out.push(q); }
+  return out;
+}
+const mixGen = (...gens) => () => R(gens)();
+
+const ERAS = [
+  {id:"dino", name:"Dino Valley", topic:"Pronouns & Verb To Be", year:"66 million years ago", hat:"shell", hatName:"Eggshell Cap",
+    levels:[{n:"Pronouns", make:()=>makeSet(pronChoose,8)}, {n:"To be: choose", make:()=>makeSet(beChoose,8)}, {n:"To be: write", make:()=>[beGrid(), ...makeSet(mixGen(beWrite,pronWrite),6)]}],
+    boss:()=>[...makeSet(pronChoose,4), ...makeSet(beChoose,3), ...makeSet(mixGen(beWrite,pronWrite),3)]},
+  {id:"egypt", name:"Pyramid Sands", topic:"Simple Present", year:"2560 BC", hat:"nemes", hatName:"Pharaoh Headdress",
+    levels:[{n:"Conjugate", make:()=>makeSet(presConj,3)}, {n:"Choose", make:()=>makeSet(presChoose,8)}, {n:"Do · Does · Don't · Doesn't", make:()=>makeSet(doChoose,8)}, {n:"Write", make:()=>makeSet(presWrite,8)}, {n:"Negative & ?", make:()=>makeSet(presFlip,5)}],
+    boss:()=>[...makeSet(presChoose,3), ...makeSet(doChoose,2), ...makeSet(presWrite,3), ...makeSet(presFlip,1)]},
+  {id:"castle", name:"Castle Hill", topic:"Present Continuous", year:"1250 AD", hat:"crown", hatName:"Royal Crown",
+    levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(contChoose,8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}],
+    boss:()=>[...makeSet(contChoose,5), ...makeSet(contWrite,3), ...makeSet(contFlip,1)]},
+  {id:"pirates", name:"Pirate Cove", topic:"Verbs: Present · Past · Past Participle", year:"1715", hat:"pirate", hatName:"Pirate Hat",
+    levels:[{n:"Past", make:()=>makeSet(()=>vChoose("past"),Math.min(8,S.verbs.length))}, {n:"Past participle", make:()=>makeSet(()=>vChoose("pp"),Math.min(8,S.verbs.length))}, {n:"Table", make:()=>makeSet(vTable,Math.min(6,S.verbs.length))}],
+    boss:()=>[...makeSet(()=>vChoose(),4), ...makeSet(vTable,3)]},
+  {id:"west", name:"Dusty Town", topic:"Simple Past", year:"1870", hat:"cowboy", hatName:"Cowboy Hat",
+    levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(pastChoose,8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}],
+    boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(pastFlip,1)]},
+  {id:"space", name:"Moon Base", topic:"Time Mix: which tense?", year:"3026", hat:"helmet", hatName:"Space Helmet",
+    levels:[{n:"Time words", make:()=>makeSet(mixChoose,8)}, {n:"Write", make:()=>makeSet(mixWrite,8)}, {n:"Fix it", make:()=>makeSet(mixFix,8)}],
+    boss:()=>[...makeSet(mixChoose,5), ...makeSet(mixWrite,3), ...makeSet(mixFix,2)]}
+];
+
+/* ---------------- pets (chibi bear & otter) ---------------- */
+const COLORS = {
+  cocoa:{m:"#A9744F",d:"#6E4529",l:"#EED5BD",n:"Cocoa"}, honey:{m:"#E7B05A",d:"#A06A22",l:"#FBE7C4",n:"Honey"},
+  cream:{m:"#F2E3CC",d:"#A88E6C",l:"#FFF9F0",n:"Cream"}, gray:{m:"#A9AFBA",d:"#666E7C",l:"#E8EBEF",n:"Cloud"},
+  pink:{m:"#F4A7C0",d:"#BF6587",l:"#FFE4EE",n:"Pink"}, sky:{m:"#8CC4F0",d:"#4A86BF",l:"#E2F0FD",n:"Sky"},
+  lilac:{m:"#C2A8F0",d:"#7F62C2",l:"#F1E9FF",n:"Lilac"}, mint:{m:"#8FD8BD",d:"#3C997A",l:"#E1F7EE",n:"Mint"}
+};
+/* the pet grows with progress through the app: every level passed (1+ star) counts 1, every Time Quiz passed counts 2 */
+const STAGES = [["Egg",0],["Baby",1],["Little",4],["Kid",8],["Junior",13],["Grown-up",19],["Legend",26]];
+const ITEMS = [
+  {n:1,id:"hatch",name:"hatching"},{n:2,id:"bow",name:"a bow"},{n:3,id:"heart",name:"a heart on the tummy"},
+  {n:5,id:"scarf",name:"a red scarf"},{n:7,id:"shoes",name:"red sneakers"},{n:9,id:"bag",name:"a backpack"},
+  {n:11,id:"star",name:"star cheeks"},{n:13,id:"cape",name:"a cape"},{n:16,id:"medal",name:"a gold medal"},
+  {n:19,id:"watch",name:"a time watch"},{n:22,id:"wings",name:"little wings"},{n:26,id:"aura",name:"a golden glow"}
+];
+function growthN(p){
+  let n = 0;
+  ERAS.forEach(e => { const pr = (p.progress||{})[e.id]; if(!pr) return; n += (pr.l||[]).filter(x => x>=1).length; if(pr.boss>=7) n += 2; });
+  return n;
+}
+const stageOfN = n => { let i=0; STAGES.forEach((s,k)=>{ if(n>=s[1]) i=k; }); return i; };
+const stageOf = p => stageOfN(growthN(p));
+const isEgg = p => growthN(p)===0;
+const petTitle = p => isEgg(p) ? `${p.pet} the Mystery Egg` : `${p.pet} the ${STAGES[stageOf(p)][0]} ${cap(p.species)}`;
+const nextItem = p => ITEMS.find(i => i.n > growthN(p));
+const LINES = [
+  "Knock knock! I'm a mystery egg. Answer questions to help me hatch!",
+  "Surprise! I hatched! Let's travel in time together.",
+  "I'm getting bigger! Every level gives me something new.",
+  "Look at my new things! Keep going!",
+  "I'm a Junior time traveler now!",
+  "I'm almost a legend. Let's finish the time trip!",
+  "We are Time Legends!"
+];
+const SPECIES = {bear:"bear", otter:"otter"};
+
+function hatSVG(id){
+  switch(id){
+    case "shell": return '<path d="M64 86 C66 50 134 50 136 86 L126 77 L116 88 L106 77 L96 88 L86 77 L76 88 Z" fill="#FFFDF5" stroke="#A8956A" stroke-width="3" stroke-linejoin="round"/><circle cx="90" cy="66" r="4" fill="#7FB24A"/><circle cx="113" cy="62" r="5" fill="#7FB24A"/>';
+    case "nemes": return '<path d="M56 130 L64 78 Q100 48 136 78 L144 130 L128 130 L122 92 L78 92 L72 130 Z" fill="#F2C14E" stroke="#A97A1E" stroke-width="3" stroke-linejoin="round"/><path d="M66 100 L76 100 M64 114 L74 114 M124 100 L134 100 M126 114 L136 114 M76 78 Q100 62 124 78" stroke="#2F5DA8" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="100" cy="70" r="5" fill="#2F5DA8"/>';
+    case "crown": return '<path d="M70 84 L68 50 L84 66 L100 44 L116 66 L132 50 L130 84 Z" fill="#F7C948" stroke="#A97A12" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="72" r="5" fill="#D9434B"/><circle cx="83" cy="76" r="4" fill="#3A7FC0"/><circle cx="117" cy="76" r="4" fill="#3A7FC0"/>';
+    case "pirate": return '<path d="M48 86 Q100 28 152 86 Q100 70 48 86Z" fill="#2B2D3A" stroke="#15161F" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="64" r="7" fill="#fff"/><circle cx="97.5" cy="63" r="1.6" fill="#2B2D3A"/><circle cx="102.5" cy="63" r="1.6" fill="#2B2D3A"/>';
+    case "cowboy": return '<path d="M74 84 Q72 48 100 54 Q128 48 126 84 Z" fill="#B06F3C" stroke="#6E3D1A" stroke-width="3"/><rect x="75" y="72" width="50" height="8" fill="#5A3417"/><ellipse cx="100" cy="86" rx="58" ry="10" fill="#9A5B2E" stroke="#6E3D1A" stroke-width="3"/>';
+    case "helmet": return '<circle cx="100" cy="100" r="78" fill="#BEE1FF55" stroke="#BFDFFF" stroke-width="5"/><path d="M48 62 Q64 36 92 30" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".8"/><line x1="100" y1="22" x2="100" y2="6" stroke="#BFDFFF" stroke-width="4"/><circle cx="100" cy="5" r="6" fill="#D9434B"/>';
+  }
+  return "";
+}
+function petSVG(p, mood){
+  mood = mood || "idle";
+  const N = growthN(p), st = stageOfN(N), ot = p.species==="otter";
+  const has = id => N >= ITEMS.find(i => i.id===id).n;
+  const c = COLORS[p.color] || COLORS.mint;
+  if(st===0){
+    const crack = p.xp>=5 ? `<path d="M60 124 L75 114 L87 126 L99 111 L112 126 L125 114 L140 124" fill="none" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>` : "";
+    return `<svg class="pm ${mood}" viewBox="0 0 200 200" role="img" aria-label="a mystery egg"><ellipse cx="100" cy="192" rx="50" ry="7" fill="rgba(30,42,58,.18)"/><g class="pg"><g class="egg"><path d="M100 40 C141 40 158 100 158 134 C158 168 132 189 100 189 C68 189 42 168 42 134 C42 100 59 40 100 40Z" fill="${c.l}" stroke="${c.d}" stroke-width="4"/><circle cx="80" cy="92" r="11" fill="${c.m}"/><circle cx="123" cy="118" r="15" fill="${c.m}"/><circle cx="85" cy="155" r="9" fill="${c.m}"/><circle cx="127" cy="163" r="6" fill="${c.m}"/><path d="M114 66 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#fff" opacity=".85"/>${crack}</g></g></svg>`;
+  }
+  const sc = .64 + .36*Math.min(N,26)/26;
+  const ink = "#1E2A3A", sw = 'stroke-width="4"';
+  let g = "";
+  if(has("aura")) g += `<circle class="aura" cx="100" cy="112" r="92" fill="none" stroke="#F5C84C" stroke-width="5" stroke-dasharray="3 15" stroke-linecap="round"/>`;
+  if(has("wings")) g += `<ellipse cx="50" cy="150" rx="26" ry="15" transform="rotate(-30 50 150)" fill="#fff" stroke="#9FC4E8" stroke-width="3.5"/><ellipse cx="150" cy="150" rx="26" ry="15" transform="rotate(30 150 150)" fill="#fff" stroke="#9FC4E8" stroke-width="3.5"/>`;
+  if(has("bag")) g += `<rect x="62" y="134" width="76" height="46" rx="14" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5"/>`;
+  if(has("cape")) g += `<path d="M64 140 Q44 182 68 192 L132 192 Q156 182 136 140Z" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5" stroke-linejoin="round"/>`;
+  if(ot) g += `<path d="M128 178 Q178 184 186 140 Q172 164 132 162 Z" fill="${c.m}" stroke="${c.d}" ${sw} stroke-linejoin="round"/>`;
+  if(ot) g += `<circle cx="58" cy="48" r="13" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="142" cy="48" r="13" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="58" cy="48" r="6" fill="${c.d}"/><circle cx="142" cy="48" r="6" fill="${c.d}"/>`;
+  else g += `<circle cx="50" cy="50" r="21" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="150" cy="50" r="21" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="50" cy="50" r="11" fill="#F6B7C6"/><circle cx="150" cy="50" r="11" fill="#F6B7C6"/>`;
+  if(has("shoes")) g += `<ellipse cx="80" cy="186" rx="17" ry="10" fill="#D9434B" stroke="#9E2B32" ${sw}/><ellipse cx="120" cy="186" rx="17" ry="10" fill="#D9434B" stroke="#9E2B32" ${sw}/><path d="M68 189 H92 M108 189 H132" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`;
+  else g += `<ellipse cx="80" cy="186" rx="15" ry="9" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="120" cy="186" rx="15" ry="9" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
+  g += `<ellipse cx="100" cy="160" rx="40" ry="32" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="100" cy="167" rx="24" ry="19" fill="${c.l}"/>`;
+  if(has("heart")) g += `<path d="M100 178 C88 170 90 160 96 160 C98 160 100 162 100 164 C100 162 102 160 104 160 C110 160 112 170 100 178Z" fill="#FF8FA3"/>`;
+  if(ot) g += `<ellipse cx="100" cy="158" rx="10" ry="7" fill="#9AA3B0" stroke="#6B7280" stroke-width="2.5"/><ellipse cx="86" cy="160" rx="9" ry="7.5" fill="${c.m}" stroke="${c.d}" stroke-width="3"/><ellipse cx="114" cy="160" rx="9" ry="7.5" fill="${c.m}" stroke="${c.d}" stroke-width="3"/>`;
+  else g += `<ellipse cx="64" cy="160" rx="11" ry="15" transform="rotate(22 64 160)" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="136" cy="160" rx="11" ry="15" transform="rotate(-22 136 160)" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
+  if(has("bag")) g += `<path d="M76 142 L80 178 M124 142 L120 178" stroke="#24578A" stroke-width="6" stroke-linecap="round"/>`;
+  if(has("scarf")) g += `<path d="M66 144 Q100 160 134 144 L133 155 Q100 171 67 155Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/><path d="M116 156 L124 178 L134 174 L128 153Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/>`;
+  if(has("medal")) g += `<circle cx="84" cy="158" r="7" fill="#F5C84C" stroke="#A97A12" stroke-width="2.5"/>`;
+  if(has("watch")) g += `<path d="M100 150 Q108 160 114 166" stroke="#A97A12" stroke-width="2" fill="none"/><circle cx="117" cy="172" r="9" fill="#FFF6D6" stroke="#A97A12" stroke-width="3"/><path d="M117 172 V166 M117 172 L121 174" stroke="#1E2A3A" stroke-width="1.8" stroke-linecap="round"/>`;
+  g += `<ellipse cx="100" cy="92" rx="64" ry="56" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
+  g += `<path d="M88 41 Q93 28 100 38 Q107 28 112 41" fill="${c.m}" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  g += `<path d="M37 98 L30 104 L40 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M163 98 L170 104 L160 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(ot) g += `<ellipse cx="100" cy="116" rx="42" ry="27" fill="${c.l}"/>`;
+  else g += `<ellipse cx="100" cy="117" rx="24" ry="17" fill="${c.l}"/>`;
+  if(p.hat && p.hat!=="helmet") g += `<g transform="translate(0 -40)">${hatSVG(p.hat)}</g>`;
+  else if(has("bow")) g += `<path d="M122 44 L108 34 L108 54Z M122 44 L136 34 L136 54Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="122" cy="44" r="5" fill="#FF6FA5" stroke="#C2457A" stroke-width="3"/>`;
+  let eyes;
+  if(mood==="happy") eyes = `<path d="M61 99 Q74 84 87 99" stroke="${ink}" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M113 99 Q126 84 139 99" stroke="${ink}" stroke-width="6" fill="none" stroke-linecap="round"/>`;
+  else { const py = mood==="sad" ? 101 : 98;
+    eyes = `<ellipse cx="74" cy="96" rx="13" ry="15" fill="#fff" stroke="${c.d}" stroke-width="2.5"/><ellipse cx="126" cy="96" rx="13" ry="15" fill="#fff" stroke="${c.d}" stroke-width="2.5"/><circle cx="75" cy="${py}" r="9.5" fill="${ink}"/><circle cx="127" cy="${py}" r="9.5" fill="${ink}"/><circle cx="78.5" cy="${py-4}" r="3.6" fill="#fff"/><circle cx="130.5" cy="${py-4}" r="3.6" fill="#fff"/><circle cx="72" cy="${py+4}" r="1.6" fill="#fff"/><circle cx="124" cy="${py+4}" r="1.6" fill="#fff"/>`;
+    if(mood==="sad") eyes += `<path d="M60 76 L84 82 M140 76 L116 82" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`; }
+  g += eyes;
+  g += `<ellipse cx="54" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/><ellipse cx="146" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/>`;
+  if(has("star")) g += `<path d="M48 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z M152 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z" fill="#F5C84C" stroke="#A97A12" stroke-width="1.2"/>`;
+  g += ot ? `<path d="M91 106 Q100 101 109 106 Q105 114 100 114 Q95 114 91 106Z" fill="${ink}"/>` : `<ellipse cx="100" cy="110" rx="8" ry="5.5" fill="${ink}"/>`;
+  g += mood==="happy" ? `<path d="M89 119 Q100 136 111 119 Z" fill="#8A2E3B" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>`
+     : mood==="sad" ? `<path d="M92 127 Q100 120 108 127" stroke="${ink}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`
+     : `<path d="M91 119 Q95.5 125 100 119 Q104.5 125 109 119" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  if(ot) g += `<path d="M80 112 L58 108 M80 117 L58 119 M120 112 L142 108 M120 117 L142 119" stroke="${c.d}" stroke-width="2" stroke-linecap="round"/>`;
+  if(p.hat==="helmet") g += hatSVG("helmet");
+  return `<svg class="pm ${mood}" viewBox="0 0 200 200" role="img" aria-label="${esc(p.pet)} the ${SPECIES[p.species]||"pet"}"><ellipse cx="100" cy="194" rx="48" ry="6" fill="rgba(30,42,58,.18)"/><g class="pg"><g transform="translate(100 192) scale(${sc}) translate(-100 -192)">${g}</g></g></svg>`;
+}
+
+/* ---------------- scenes ---------------- */
+function scene(id){
+  const W = '<svg class="scene" viewBox="0 0 400 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">';
+  const stars = [[20,20],[60,50],[110,18],[160,44],[220,24],[270,60],[330,20],[370,48],[40,90],[300,95],[190,80],[90,70]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="1.8" fill="#fff"/>`).join("");
+  switch(id){
+    case "dino": return W+'<rect width="400" height="220" fill="#FFD7A3"/><circle cx="330" cy="52" r="26" fill="#FFF2CF"/><circle cx="120" cy="38" r="11" fill="#C9B6A8" opacity=".8"/><circle cx="136" cy="22" r="15" fill="#C9B6A8" opacity=".6"/><path d="M30 176 L112 66 L138 66 L220 176Z" fill="#9B5E3C"/><path d="M112 66 Q125 54 138 66 L132 84 Q125 74 118 84Z" fill="#D9434B"/><rect y="168" width="400" height="52" fill="#7FB24A"/><rect x="306" y="106" width="9" height="66" rx="4" fill="#8A5A2B"/><ellipse cx="292" cy="106" rx="27" ry="9" fill="#4E8F34" transform="rotate(-20 292 106)"/><ellipse cx="330" cy="106" rx="27" ry="9" fill="#4E8F34" transform="rotate(20 330 106)"/><ellipse cx="311" cy="98" rx="9" ry="22" fill="#4E8F34"/></svg>';
+    case "egypt": return W+'<rect width="400" height="220" fill="#FFE6A6"/><circle cx="70" cy="56" r="28" fill="#FFF6D6"/><path d="M150 180 L238 68 L326 180Z" fill="#D9A54C"/><path d="M238 68 L326 180 L276 180Z" fill="#BE8832"/><path d="M58 180 L115 108 L172 180Z" fill="#E2B35E"/><path d="M115 108 L172 180 L142 180Z" fill="#C79842"/><rect y="172" width="400" height="48" fill="#E9C277"/><path d="M0 192 Q100 180 200 192 T400 186 V220 H0Z" fill="#DBAE62"/></svg>';
+    case "castle": return W+'<rect width="400" height="220" fill="#BFE3FF"/><ellipse cx="80" cy="48" rx="34" ry="12" fill="#fff"/><ellipse cx="310" cy="36" rx="28" ry="10" fill="#fff"/><path d="M0 182 Q200 132 400 182 V220 H0Z" fill="#79B95B"/><g fill="#AAB3C7" stroke="#6E7891" stroke-width="2"><rect x="150" y="92" width="100" height="72"/><rect x="128" y="66" width="34" height="98"/><rect x="238" y="66" width="34" height="98"/><rect x="128" y="56" width="8" height="10"/><rect x="141" y="56" width="8" height="10"/><rect x="154" y="56" width="8" height="10"/><rect x="238" y="56" width="8" height="10"/><rect x="251" y="56" width="8" height="10"/><rect x="264" y="56" width="8" height="10"/></g><path d="M185 164 V134 Q200 118 215 134 V164Z" fill="#4C5468"/><line x1="145" y1="56" x2="145" y2="30" stroke="#4C5468" stroke-width="3"/><path d="M145 30 L166 36 L145 42Z" fill="#D9434B"/></svg>';
+    case "pirates": return W+'<rect width="400" height="220" fill="#A9E2F2"/><circle cx="340" cy="46" r="24" fill="#FFF3C4"/><rect y="150" width="400" height="70" fill="#2C8FB8"/><path d="M0 160 Q25 150 50 160 T100 160 T150 160 T200 160 T250 160 T300 160 T350 160 T400 160" stroke="#BDE8F5" stroke-width="4" fill="none"/><path d="M110 150 L290 150 L268 182 L132 182Z" fill="#8A5A2B" stroke="#5A3417" stroke-width="3"/><line x1="200" y1="150" x2="200" y2="44" stroke="#5A3417" stroke-width="5"/><path d="M204 54 Q250 92 204 132Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M196 58 Q156 94 196 130Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M200 44 L226 50 L200 58Z" fill="#2B2D3A"/></svg>';
+    case "west": return W+'<rect width="400" height="220" fill="#FFC49B"/><circle cx="200" cy="96" r="44" fill="#FFE1B0"/><path d="M0 150 L30 150 L44 108 L130 108 L146 150 L400 150 V220 H0Z" fill="#C0663E"/><path d="M260 150 L272 124 L330 124 L344 150Z" fill="#B05A35"/><rect y="164" width="400" height="56" fill="#E2A266"/><g fill="#3F9B5C"><rect x="318" y="112" width="16" height="64" rx="8"/><rect x="300" y="128" width="12" height="28" rx="6"/><rect x="300" y="148" width="22" height="10" rx="5"/><rect x="340" y="120" width="12" height="26" rx="6"/><rect x="330" y="138" width="22" height="10" rx="5"/></g></svg>';
+    case "space": return W+'<rect width="400" height="220" fill="#1B2350"/>'+stars+'<circle cx="310" cy="64" r="28" fill="#F5C84C"/><ellipse cx="310" cy="64" rx="48" ry="10" fill="none" stroke="#FFE3A0" stroke-width="4" transform="rotate(-14 310 64)"/><circle cx="70" cy="58" r="14" fill="#6BB7F2"/><path d="M62 52 q6 -4 10 2 q4 6 -4 8z" fill="#7FB24A"/><ellipse cx="200" cy="232" rx="300" ry="70" fill="#A9AFC7"/><ellipse cx="120" cy="190" rx="22" ry="6" fill="#8A90A8"/><ellipse cx="280" cy="198" rx="30" ry="7" fill="#8A90A8"/></svg>';
+  }
+  return W+'</svg>';
+}
+
+/* ---------------- icons ---------------- */
+const GEM = '<svg class="gem" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12l4 6-10 12L2 9z" fill="#7FD3F5" stroke="#1E2A3A" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 9h20M9 3l3 6 3-6M12 9v12" stroke="#1E2A3A" stroke-width="1.2" fill="none"/></svg>';
+const star = on => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.8 5.7 21.4l1.5-7.1L1.8 9.4 9 8.6z" fill="${on?"#F5C84C":"#E3E8EF"}" stroke="#1E2A3A" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const stars = n => `<span class="stars" aria-label="${n} of 3 stars">${star(n>=1)}${star(n>=2)}${star(n>=3)}</span>`;
+const TICK = '<svg class="tick" viewBox="0 0 40 40" aria-hidden="true"><path d="M6 22 L15 32 L36 6" fill="none" stroke="#2E9E6B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+/* ---------------- sound ---------------- */
+let actx = null;
+function tone(fs){
+  if(!S.sound) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const t0 = actx.currentTime;
+    fs.forEach((f,i) => { const o=actx.createOscillator(), g=actx.createGain(); o.type="triangle"; o.frequency.value=f; const st=t0+i*.1;
+      g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.16,st+.02); g.gain.exponentialRampToValueAtTime(.0001,st+.28);
+      o.connect(g); g.connect(actx.destination); o.start(st); o.stop(st+.3); });
+  }catch(e){}
+}
+
+/* ---------------- progress ---------------- */
+const prog = (p,id) => { p.progress = p.progress || {}; return p.progress[id] = p.progress[id] || {l:[], boss:0}; };
+const eraOpen = (p,i) => i===0 || prog(p, ERAS[i-1].id).boss >= 7;
+const levelOpen = (p,i,l) => eraOpen(p,i) && (l===0 || (prog(p, ERAS[i].id).l[l-1]||0) >= 1);
+const bossOpen = (p,i) => eraOpen(p,i) && (prog(p, ERAS[i].id).l[ERAS[i].levels.length-1]||0) >= 1;
+
+/* ---------------- screens ---------------- */
+const app = document.getElementById("app");
+
+function topBar(p){
+  return `<div class="top"><div class="row"><button class="btn small white" data-act="home">Players</button>${V.screen!=="map"?'<button class="btn small white" data-act="map">Time map</button>':""}</div>
+  <div class="row"><span class="chip">${esc(p.name)}</span><span class="chip" title="Time crystals">${GEM}${p.xp}</span><button class="btn small white" data-act="sound" aria-pressed="${S.sound}">${S.sound?"Sound on":"Sound off"}</button></div></div>`;
+}
+function growBar(p){
+  const n = growthN(p), nx = nextItem(p);
+  if(!nx) return `<div class="muted">${esc(p.pet)} is a Legend! The biggest a time pet can be.</div>`;
+  const prev = [...ITEMS].reverse().find(i => i.n <= n); const from = prev ? prev.n : 0;
+  const pct = Math.round((n-from)/(nx.n-from)*100), left = nx.n-n;
+  const msg = n===0 ? "Finish a level with at least 1 star to hatch the egg. Who is inside?" : `${left} more level${left>1?"s":""} to get ${nx.name}. A Time Quiz counts as 2!`;
+  return `<div class="bar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><div class="muted" style="font-size:15px">${msg}</div>`;
+}
+function stageBox(p, mood, bubble){
+  const era = ERAS.find(e => e.id===p.era) || ERAS[0];
+  return `<div class="stage">${scene(era.id)}<div class="era-label"><b>${era.name}</b><small>${era.year}</small></div>${bubble?`<div class="bubble">${esc(bubble)}</div>`:""}<div class="petbox">${petSVG(p,mood)}</div></div>`;
+}
+
+function homeHTML(){
+  const cards = S.players.map(p => `<button class="pcard" data-act="pick" data-id="${p.id}"><span class="pw">${petSVG(p,"idle")}</span><span><h3>${esc(p.name)}</h3><span class="sub">${esc(petTitle(p))}</span><br><span class="sub">${p.xp} time crystals</span></span></button>`).join("");
+  return `<div class="row" style="justify-content:space-between"><div class="brand"><img class="appicon" src="${ICON}" alt="Time Pets app icon"><div><div class="logo">Time <span>Pets</span></div><div class="tag">Grammar adventures through time</div></div></div><button class="btn small white" data-act="grown">Grown-ups</button></div>
+  <h2 style="font-size:26px">Who is playing?</h2><div class="players">${cards}</div>`;
+}
+
+function colorHTML(){
+  const p = P(); const c = V.pick || {color:p.color || "mint", pet:p.pet};
+  const egg = isEgg(p), who = egg ? "egg" : p.species;
+  const sw = Object.keys(COLORS).map(k => `<button class="sw" style="background:${COLORS[k].m}" data-act="col" data-c="${k}" aria-label="${COLORS[k].n}" aria-pressed="${c.color===k}"></button>`).join("");
+  return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
+  <div class="panel"><h2>Hi ${esc(p.name)}! Choose your ${who}'s color</h2>
+  ${egg?'<div class="muted">A time pet is inside this egg. Answer questions and it will hatch. Who will it be?</div>':""}
+  <div class="newgrid"><div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <div class="f" style="font-weight:700">${egg?"Color":"Fur color"}<div class="swatches">${sw}</div></div>
+    <label class="f" for="pk-pet">Your pet's name<input class="inp" id="pk-pet" maxlength="16" autocomplete="off" autocorrect="off" spellcheck="false" value="${esc(c.pet)}"></label>
+  </div><div class="prev" id="pk-prev">${petSVG({...p, color:c.color}, egg?"idle":"happy")}</div></div>
+  <div><button class="btn" data-act="savecol">${p.color?"Save":"Start the adventure"}</button></div></div>`;
+}
+
+function mapHTML(){
+  const p = P(); const st = stageOf(p);
+  let track = "";
+  ERAS.forEach((e,i) => {
+    const open = eraOpen(p,i), pr = prog(p,e.id);
+    const lv = e.levels.map((L,l) => `<button class="lvb" data-act="play" data-e="${i}" data-l="${l}" ${levelOpen(p,i,l)?"":"disabled"}>${l+1}. ${L.n}${stars(pr.l[l]||0)}</button>`).join("");
+    const boss = `<button class="lvb boss" data-act="play" data-e="${i}" data-l="-1" ${bossOpen(p,i)?"":"disabled"}>Time Quiz<span style="font-size:13px">${pr.boss?`best ${pr.boss}/10`:"need 7/10"}</span></button>`;
+    const here = p.era===e.id ? `<span class="mini">${petSVG(p,"idle")}</span>` : "";
+    track += `${i?'<div class="link" aria-hidden="true"><span></span></div>':""}<div class="era ${open?"":"locked"}"><div class="thumb">${scene(e.id)}${here}</div><div class="body"><div><h3>${e.name}</h3><div class="year">${e.year}</div></div><div class="topic">${e.topic}</div>${open?`<div class="lv">${lv}${boss}</div>`:`<div class="muted">Get 7 or more in the ${ERAS[i-1].name} Time Quiz to travel here.</div>`}</div></div>`;
+  });
+  return topBar(p) + `${stageBox(p,"idle",LINES[st])}
+  <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}</div><button class="btn white" data-act="room">Pet room</button></div>
+  <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>`;
+}
+
+function roomHTML(){
+  const p = P();
+  const hats = `<button class="hat" data-act="hat" data-h="" aria-pressed="${!p.hat}"><svg viewBox="0 0 200 200"></svg>No hat</button>` + ERAS.map(e => { const got = (p.hats||[]).includes(e.hat);
+    const vb = e.hat==="helmet" ? "0 0 200 200" : "30 10 140 140";
+    return `<button class="hat" data-act="hat" data-h="${e.hat}" ${got?"":"disabled"} aria-pressed="${p.hat===e.hat}"><svg viewBox="${vb}">${got?hatSVG(e.hat):'<text x="100" y="100" text-anchor="middle" font-size="44" font-family="Lilita One, sans-serif" fill="#9AA6B5">?</text>'}</svg>${got?e.hatName:`Win the ${e.name} quiz`}</button>`; }).join("");
+  const trav = ERAS.map((e,i) => eraOpen(p,i) ? `<button class="btn small ${p.era===e.id?"":"white"}" data-act="travel" data-e="${e.id}" aria-pressed="${p.era===e.id}">${e.name} · ${e.year}</button>` : "").join("");
+  return topBar(p) + `${stageBox(p, V.roomMood||"idle", V.roomSay||`Hi ${p.name.split(" ")[0]}! Where are we going today?`)}
+  <div class="panel"><h2>Time machine</h2><div class="muted">Pick a time to visit. Win each Time Quiz to unlock a new one.</div><div class="travel">${trav}</div></div>
+  <div class="panel"><h2>Hat closet</h2><div class="closet">${hats}</div></div>
+  <div><button class="btn white" data-act="recolor">Change color or name</button></div>`;
+}
+
+/* ---------- play ---------- */
+function startLevel(ei, l){
+  const e = ERAS[ei];
+  USED = new Set(); USEDO = new Set();
+  const qs = l>=0 ? e.levels[l].make() : e.boss();
+  const max = qs.reduce((a,q)=>a+q.pts,0);
+  V.sess = {ei, l, boss:l<0, hl:l>=0, qs, i:0, points:0, max, gems:0, startN:growthN(P())};
+  V.fb = null; V.picks = {}; V.screen = "play"; V.mood = "idle"; V.say = "You can do it!";
+  render(); focusInput();
+}
+function focusInput(){ const i = app.querySelector(".inl"); if(i && !V.fb) try{ i.focus({preventScroll:true}); }catch(e){} }
+
+const ac = 'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="next"';
+function rowHTML(r, ri, hl, fb){
+  const parts = r.text.split("___");
+  let h = "";
+  parts.forEach((part,k) => {
+    h += hlText(part, hl);
+    if(k < parts.length-1 && r.picks && r.picks[k]){
+      const key = `${ri}_${k}`, sel = fb ? fb.vals[ri][k] : (V.picks[key]||"");
+      h += `<span class="pick" role="group" aria-label="choose a word">${r.picks[k].map(o => { const on = o===sel; const cls = on ? (fb ? (fb.rows[ri].cells[k]?"on ok":"on no") : "on") : "";
+        return `<button class="pk ${cls}" data-act="pk" data-b="${key}" data-v="${esc(o)}" ${fb?"disabled":""} aria-pressed="${on}">${esc(o)}</button>`; }).join("")}</span>`;
+    } else if(k < parts.length-1){
+      const alts = r.blanks[k]; const w = Math.max(6, ...alts.map(a=>a.length)) + 2;
+      const val = fb ? fb.vals[ri][k] : ""; const cls = fb ? (fb.rows[ri].cells[k] ? "ok" : "no") : "";
+      h += `<input class="inl ${cls}" id="b${ri}_${k}" style="width:${w}ch" ${ac} ${fb?"readonly":""} value="${esc(val)}" aria-label="blank ${k+1}">`;
+    }
+  });
+  return h;
+}
+const fixedHTML = (r, hl) => { const parts = r.text.split("___"); return parts.map((p,k) => hlText(p,hl) + (k<parts.length-1 ? `<span class="goal">${esc(r.blanks[k][0])}</span>` : "")).join(""); };
+
+function qHTML(q, fb){
+  const hl = V.sess.hl;
+  let h = `<div class="q-prompt">${esc(q.prompt)}</div>`;
+  if(q.source) h += `<div class="rowlabel">${q.sourceLabel||"Affirmative"}</div><div class="q-src">${hlText(q.source,hl)}</div>`;
+  if(q.type==="choose"){
+    h += `<div class="q-text">${fmtChoose(q.text,hl)}${q.cue?` <span class="cue">${esc(q.cue)}</span>`:""}</div>`;
+    h += `<div class="opts">${q.options.map(o => { let cls=""; if(fb){ if(o===q.answers[0]) cls="right"; else if(o===fb.pick) cls="wrong"; }
+      return `<button class="opt ${cls}" data-act="opt" data-v="${esc(o)}" ${fb?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>`;
+  } else if(q.type==="write"){
+    q.rows.forEach((r,ri) => { h += `${r.label?`<div class="rowlabel">${r.label}</div>`:""}<div class="q-text">${rowHTML(r,ri,hl,fb)}${ri===0&&q.cue?` <span class="cue">${esc(q.cue)}</span>`:""}</div>`; });
+  } else {
+    const c1 = fb ? (fb.cells[0]?"ok":"no") : "", c2 = fb ? (fb.cells[1]?"ok":"no") : "";
+    h += `<div class="vt"><div class="vh">Present</div><div class="vh">Past</div><div class="vh">Past Participle</div><div class="vp">${esc(q.v.p)}</div><input class="inl ${c1}" id="t0" ${ac} ${fb?"readonly":""} value="${fb?esc(fb.vals[0]):""}" aria-label="Past"><input class="inl ${c2}" id="t1" ${ac} ${fb?"readonly":""} value="${fb?esc(fb.vals[1]):""}" aria-label="Past participle"></div>`;
+  }
+  if(!fb && q.type!=="choose") h += `<div class="actions"><button class="btn" data-act="check">Check</button></div>`;
+  if(fb){
+    if(fb.ok) h += `<div class="fb ok" role="status">${TICK}<div><b>${esc(fb.praise)}</b> <span class="chip" style="padding:0 8px">${GEM}+${fb.gain}</span>${fb.tip?`<div class="tip">${esc(fb.tip)}</div>`:""}</div></div>`;
+    else {
+      let ans;
+      if(q.type==="choose") ans = `<div class="fix">The answer is <span class="goal">${esc(q.show)}</span>.</div>`;
+      else if(q.type==="table") ans = `<div class="fix">${esc(q.v.p)} → <span class="goal">${esc(q.v.past)}</span> → <span class="goal">${esc(q.v.pp)}</span></div>`;
+      else ans = q.rows.map((r,ri) => fb.rows[ri].ok ? "" : `<div class="fix">${fixedHTML(r,hl)}</div>`).join("");
+      h += `<div class="fb no" role="status"><span class="x" aria-hidden="true">✗</span><div><b>${esc(fb.title)}</b> ${fb.gain?`<span class="chip" style="padding:0 8px">${GEM}+${fb.gain}</span>`:""}${ans}<div class="hint">${esc(fb.hint)}</div>${fb.again?'<div class="hint muted">We will try this one again at the end.</div>':""}</div></div>`;
+    }
+    h += `<div class="actions"><button class="btn" data-act="next" id="next">${V.sess.i+1>=V.sess.qs.length?"See results":"Next"}</button></div>`;
+  }
+  return h;
+}
+
+function playHTML(){
+  const p = P(), s = V.sess, e = ERAS[s.ei], q = s.qs[s.i];
+  const title = s.boss ? "Time Quiz" : e.levels[s.l].n;
+  const pct = Math.round(s.i / s.qs.length * 100);
+  return `<div class="top"><button class="btn small white" data-act="map">Stop</button><span class="chip">${GEM}${p.xp}</span></div>
+  <div><h2 style="font-size:26px">${e.name}: ${title}</h2><div class="muted">${e.topic}${s.boss?" · Score to travel: 7 out of 10":""}</div></div>
+  <div class="prog"><div class="bar"><i style="width:${pct}%"></i></div><span>${s.i+1} / ${s.qs.length}</span></div>
+  <div class="play"><div class="note">${qHTML(q, V.fb)}</div><div class="side"><div class="pw">${petSVG(p, V.mood)}</div><div class="say">${esc(V.say)}</div><div class="nextitem">${isEgg(p)?"Finish this level to hatch me!":nextItem(p)?`Next: ${nextItem(p).name}`:"Legend!"}</div></div></div>`;
+}
+
+const PRAISE = ["Correct!","Great job!","Yes!","Perfect!","You got it!","Super!"];
+const PET_OK = ["Yay! I grew a little!","Correct! Hug time!","Yum, crystals!","You are a time star!","Wow!"];
+const PET_NO = ["Oops! Let's look.","Almost! Read the hint.","We can fix this!","Look at the answer."];
+
+function evaluate(q, vals){
+  if(q.type==="choose"){ const ok = vals===q.answers[0]; return {ok, pick:vals, gain:ok?1:0, pts:ok?1:0}; }
+  if(q.type==="table"){
+    const cells = [norm(vals[0])===norm(q.v.past), norm(vals[1])===norm(q.v.pp)];
+    const n = cells.filter(Boolean).length;
+    return {ok:n===2, cells, vals, gain:n, pts:n};
+  }
+  let apos = false; const tips = new Set();
+  const rows = q.rows.map((r,ri) => {
+    const cells = r.blanks.map((alts,k) => {
+      const v = vals[ri][k] || "";
+      const ok = alts.some(a => norm(a)===norm(v));
+      if(!ok && v.trim() && alts.some(a => norm(a)===norm(fixApos(v)))) apos = true;
+      if(ok && k===0 && r.text.startsWith("___") && /^[a-z]/.test(v.trim())) tips.add("Remember: a sentence starts with a capital letter.");
+      return ok;
+    });
+    return {ok:cells.every(Boolean), cells};
+  });
+  const n = rows.filter(r => r.ok).length;
+  return {ok:n===rows.length, rows, vals, gain:n*2, pts:n, apos, tip:[...tips].join(" ")};
+}
+
+function readVals(q){
+  if(q.type==="table") return [document.getElementById("t0").value, document.getElementById("t1").value];
+  return q.rows.map((r,ri) => r.blanks.map((_,k) => { if(r.picks && r.picks[k]) return V.picks[`${ri}_${k}`] || ""; const el = document.getElementById(`b${ri}_${k}`); return el ? el.value : ""; }));
+}
+
+function doCheck(vals){
+  const s = V.sess, q = s.qs[s.i], p = P();
+  if(V.fb) return;
+  if(q.type!=="choose" && vals.flat().every(v => !v.trim())){ V.say = "Write your answer first!"; render(); focusInput(); return; }
+  const r = evaluate(q, vals);
+  const gain = q.retry ? Math.min(r.gain,1) : r.gain;
+  if(!q.retry) s.points += r.pts;
+  p.xp += gain; s.gems += gain; save();
+  const again = !r.ok && !s.boss && !q.retry;
+  if(again) s.qs.push({...q, retry:true, options: q.options ? shuffle(q.options) : undefined});
+  const partial = r.pts>0 && !r.ok;
+  V.fb = {...r, gain, hint: r.apos ? `Remember the apostrophe ( ' ). ${q.hint}` : q.hint, praise:R(PRAISE), title: r.apos ? "So close!" : partial ? "Half right!" : "Not quite!", again};
+  V.mood = r.ok ? "happy" : "sad"; V.say = r.ok ? R(PET_OK) : R(PET_NO);
+  tone(r.ok ? [660,880] : [300,220]);
+  render();
+  const n = document.getElementById("next"); if(n) try{ n.focus({preventScroll:true}); }catch(e){}
+}
+
+function nextQ(){
+  const s = V.sess; s.i++; V.fb = null; V.picks = {}; V.mood = "idle"; V.say = R(["Next one!","You can do it!","Ready?","Let's go!"]);
+  if(s.i >= s.qs.length) return finish();
+  render(); focusInput();
+}
+
+function finish(){
+  const s = V.sess, p = P(), e = ERAS[s.ei], pr = prog(p, e.id);
+  const before = s.startN;
+  const res = {ei:s.ei, l:s.l, boss:s.boss, points:s.points, max:s.max, gems:s.gems};
+  if(!s.boss){
+    const pct = s.points/s.max; const st = pct>=.9?3:pct>=.7?2:pct>=.5?1:0;
+    res.stars = st; pr.l[s.l] = Math.max(pr.l[s.l]||0, st);
+  } else {
+    const score = Math.round(s.points/s.max*10);
+    res.score = score; res.pass = score>=7;
+    const first = pr.boss < 7;
+    pr.boss = Math.max(pr.boss, score);
+    if(res.pass && first){
+      p.xp += 10; res.gems += 10; res.bonus = true;
+      p.hats = p.hats || []; if(!p.hats.includes(e.hat)) p.hats.push(e.hat);
+      res.hat = e.hat;
+      const nx = ERAS[s.ei+1]; if(nx){ p.era = nx.id; res.next = nx; }
+    }
+  }
+  const after = growthN(p);
+  res.grew = after > before; res.stage = STAGES[stageOf(p)][0]; res.hatched = before===0 && res.grew;
+  res.items = ITEMS.filter(i => i.n>before && i.n<=after && i.id!=="hatch").map(i => i.name);
+  save(); V.res = res; V.screen = "result";
+  tone(res.grew || res.pass || res.stars>=2 ? [523,659,784,1046] : [440,523]);
+  render(); window.scrollTo(0,0);
+}
+
+function resultHTML(){
+  const p = P(), r = V.res;
+  let main;
+  if(!r.boss){
+    const msg = r.stars===3 ? "Amazing!" : r.stars===2 ? "Great work!" : r.stars===1 ? "Good job!" : "Keep practicing!";
+    main = `<h2 style="font-size:34px">${msg}</h2><div class="bigstars">${star(r.stars>=1)}${star(r.stars>=2)}${star(r.stars>=3)}</div><div>You got <b>${r.points}</b> of <b>${r.max}</b> points the first time.</div>${r.stars===0?'<div class="muted">You need 1 star to open the next level.</div>':""}`;
+  } else {
+    main = `<h2 style="font-size:34px">${r.pass?"You passed the Time Quiz!":"Time Quiz"}</h2><div class="score ${r.pass?"":"low"}">${r.score}/10</div>${r.pass?"":'<div>You need 7 to travel. Practice the levels and try again!</div>'}`;
+  }
+  let celeb = "";
+  if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
+  if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${p.species==="otter"?"otter":"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
+  else if(r.grew) celeb += `<div class="celebrate"><h3 style="font-size:22px">${esc(p.pet)} grew${r.items.length?` and got ${r.items.join(" and ")}`:""}!</h3><div class="pw">${petSVG(p,"happy")}</div></div>`;
+  return topBar(p) + `<div class="result">${main}<div class="chip" style="font-size:20px">${GEM}+${r.gems} time crystals${r.bonus?" (10 bonus)":""}</div>${celeb}
+  ${r.grew?"":`<div style="width:160px">${petSVG(p,"happy")}</div>`}
+  <div class="grow">${growBar(p)}</div>
+  <div class="row" style="justify-content:center"><button class="btn white" data-act="play" data-e="${r.ei}" data-l="${r.l}">${r.boss?"Try again":"Play again"}</button><button class="btn" data-act="map">Time map</button></div></div>`;
+}
+
+/* ---------- grown-ups ---------- */
+function grownHTML(){
+  if(!V.grownOpen) return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
+    <div class="panel"><h2>Grown-ups</h2><div>Press and hold the button for 2 seconds to open the settings.</div><div><button class="btn white gate" id="gate">Hold to open<span class="fill"></span></button></div></div>`;
+  const rows = S.verbs.map((v,i) => `<input class="inp" data-vi="${i}" data-f="p" value="${esc(v.p)}" aria-label="Present ${i+1}"><input class="inp" data-vi="${i}" data-f="past" value="${esc(v.past)}" aria-label="Past ${i+1}"><input class="inp" data-vi="${i}" data-f="pp" value="${esc(v.pp)}" aria-label="Past participle ${i+1}"><button class="btn small white" data-act="vdel" data-i="${i}" aria-label="Delete ${esc(v.p)}">Delete</button>`).join("");
+  const players = S.players.map(p => `<div class="row" style="justify-content:space-between"><span><b>${esc(p.name)}</b> · ${esc(p.pet)} · ${p.xp} crystals</span><button class="btn small white" data-act="preset" data-id="${p.id}">${V.arm==="r"+p.id?"Tap again to reset":"Reset progress"}</button></div>`).join("");
+  const na = 'autocapitalize="off" autocorrect="off" spellcheck="false"';
+  return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
+  <div class="panel"><h2>Verb list (Pirate Cove)</h2><div class="muted">Add the verbs from the notebook each week. Changes save as you type.</div>
+  <div class="vedit"><span class="h">Present</span><span class="h">Past</span><span class="h">Past participle</span><span></span>${rows}
+  <input class="inp" id="nv-p" placeholder="take" ${na} aria-label="New present"><input class="inp" id="nv-past" placeholder="took" ${na} aria-label="New past"><input class="inp" id="nv-pp" placeholder="taken" ${na} aria-label="New past participle"><button class="btn small" data-act="vadd">Add</button></div>
+  <div class="row"><button class="btn small white" data-act="vreset">${V.arm==="v"?"Tap again to restore":"Restore notebook list"}</button><span class="muted" id="v-msg"></span></div></div>
+  <div class="panel"><h2>Players</h2>${players}</div>`;
+}
+
+/* ---------- render & events ---------- */
+function render(){
+  const map = {home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
+  if(["map","room","play","result","color"].includes(V.screen) && !P()) V.screen = "home";
+  app.innerHTML = (map[V.screen]||homeHTML)();
+  if(V.screen==="grown" && !V.grownOpen) bindGate();
+}
+function bindGate(){
+  const g = document.getElementById("gate"); if(!g) return; let tm = null;
+  const start = ev => { ev.preventDefault(); g.classList.add("holding"); tm = setTimeout(() => { V.grownOpen = true; render(); }, 1500); };
+  const stop = () => { g.classList.remove("holding"); clearTimeout(tm); };
+  g.addEventListener("pointerdown", start); ["pointerup","pointerleave","pointercancel"].forEach(t => g.addEventListener(t, stop));
+}
+function go(screen){ V.screen = screen; V.arm = null; render(); window.scrollTo(0,0); }
+
+const ACT = {
+  home(){ V.pid = null; V.grownOpen = false; go("home"); },
+  pick(el){ V.pid = el.dataset.id; V.pick = null; go(P().color ? "map" : "color"); },
+  recolor(){ V.pick = null; go("color"); },
+  col(el){ const p = P(); V.pick = {color:el.dataset.c, pet:document.getElementById("pk-pet").value};
+    app.querySelectorAll(".sw").forEach(b => b.setAttribute("aria-pressed", b.dataset.c===V.pick.color));
+    document.getElementById("pk-prev").innerHTML = petSVG({...p, color:V.pick.color}, isEgg(p)?"idle":"happy"); },
+  savecol(){ const p = P(); const pet = document.getElementById("pk-pet").value.trim();
+    p.color = (V.pick && V.pick.color) || p.color || "mint"; if(pet) p.pet = pet; save(); go("map"); },
+  map(){ V.fb = null; go("map"); },
+  room(){ V.roomSay = null; V.roomMood = "idle"; go("room"); },
+  sound(){ S.sound = !S.sound; save(); render(); },
+  play(el){ startLevel(+el.dataset.e, +el.dataset.l); window.scrollTo(0,0); },
+  opt(el){ doCheck(el.dataset.v); },
+  pk(el){ V.picks[el.dataset.b] = el.dataset.v;
+    el.parentNode.querySelectorAll(".pk").forEach(b => { const on = b===el; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }); },
+  check(){ doCheck(readVals(V.sess.qs[V.sess.i])); },
+  next(){ nextQ(); },
+  hat(el){ const p = P(); p.hat = el.dataset.h || null; save(); V.roomMood = "happy"; V.roomSay = p.hat ? "I love my new hat!" : "No hat today."; render(); },
+  travel(el){ const p = P(); p.era = el.dataset.e; save(); const e = ERAS.find(x => x.id===p.era); V.roomMood = "happy"; V.roomSay = `Whoosh! We are in ${e.name}, ${e.year}!`; tone([392,523,659]); render(); },
+  grown(){ V.grownOpen = false; go("grown"); },
+  vdel(el){ S.verbs.splice(+el.dataset.i,1); if(!S.verbs.length) S.verbs = DEFAULT_VERBS.map(v=>({...v})); save(); render(); },
+  vadd(){ const a = document.getElementById("nv-p").value.trim().toLowerCase(), b = document.getElementById("nv-past").value.trim().toLowerCase(), c = document.getElementById("nv-pp").value.trim().toLowerCase();
+    if(!a||!b||!c){ document.getElementById("v-msg").textContent = "Fill in all three forms."; return; }
+    S.verbs.push({p:a,past:b,pp:c}); save(); render(); },
+  vreset(){ if(V.arm!=="v"){ V.arm = "v"; render(); return; } S.verbs = DEFAULT_VERBS.map(v=>({...v})); save(); V.arm = null; render(); },
+  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; } save(); V.arm = null; render(); }
+};
+
+app.addEventListener("click", ev => { const el = ev.target.closest("[data-act]"); if(!el || el.disabled) return; const f = ACT[el.dataset.act]; if(f) f(el); });
+app.addEventListener("keydown", ev => {
+  if(ev.key!=="Enter" || !ev.target.classList || !ev.target.classList.contains("inl")) return;
+  ev.preventDefault();
+  if(V.fb){ nextQ(); return; }
+  const all = [...app.querySelectorAll(".inl")]; const i = all.indexOf(ev.target);
+  if(i>=0 && i<all.length-1){ all[i+1].focus(); return; }
+  ACT.check();
+});
+app.addEventListener("input", ev => {
+  const t = ev.target; if(t.dataset && t.dataset.vi!=null){ const v = S.verbs[+t.dataset.vi]; if(v){ v[t.dataset.f] = t.value.trim().toLowerCase(); save(); } }
+});
+
+render();
+})();
+</script>
+
+</body>
+</html>

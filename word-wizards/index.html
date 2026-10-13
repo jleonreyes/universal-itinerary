@@ -251,6 +251,13 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .pchips{display:flex;gap:8px;flex-wrap:wrap}
 .pchip{min-height:42px;padding:0 14px;border-radius:999px;background:var(--paper-2);font-weight:700}
 .pchip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.def-label{display:block;width:max-content;margin-bottom:4px;padding:2px 10px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
+.q-sent.is-def{font-size:clamp(1.1rem,3.8vw,1.35rem)}
+.fb-def{margin:0;max-width:34em;font-size:1.1rem;color:var(--paper)}
+.b-vocab{background:var(--lilac);box-shadow:0 7px 0 var(--sky-3)}
+.sec-title{font-size:1.45rem;margin-top:6px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.sec-title small{font-family:var(--body);font-weight:400;font-size:.95rem;color:var(--lilac)}
+.bcard.vocab h3::after{content:"MEANINGS";margin-left:8px;vertical-align:middle;font-family:var(--body);font-size:.7rem;letter-spacing:.08em;padding:2px 8px;border-radius:999px;background:var(--lilac);color:var(--ink)}
 
 /* confetti */
 .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
@@ -288,7 +295,8 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
     </div>
   </div>
   <nav class="menu">
-    <button class="big b-map" data-act="go" data-to="map"><span class="big-ico">🗺️</span><span><b>Adventure</b><small>Play level by level</small></span></button>
+    <button class="big b-map" data-act="go" data-to="map" data-track="spell"><span class="big-ico">🗺️</span><span><b>Spelling</b><small>Spell words level by level</small></span></button>
+    <button class="big b-vocab" data-act="go" data-to="map" data-track="vocab"><span class="big-ico">📚</span><span><b>Vocabulary</b><small>Learn what words mean</small></span></button>
     <button class="big b-prac" data-act="go" data-to="practice"><span class="big-ico">🎯</span><span><b>Practice</b><small>Pick one block of words</small></span></button>
     <button class="big b-album" data-act="go" data-to="album"><span class="big-ico">📒</span><span><b>Sticker Album</b><small id="home-stickers">0 stickers</small></span></button>
   </nav>
@@ -296,13 +304,13 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 </section>
 
 <section class="screen" id="s-map" hidden>
-  <div class="bar"><button class="back" data-act="go" data-to="home">← Home</button><h2>Adventure Map</h2></div>
+  <div class="bar"><button class="back" data-act="go" data-to="home">← Home</button><h2 id="map-title">Spelling Map</h2></div>
   <ol class="path" id="map-list"></ol>
 </section>
 
 <section class="screen" id="s-practice" hidden>
   <div class="bar"><button class="back" data-act="go" data-to="home">← Home</button><h2>Practice</h2></div>
-  <div class="cards" id="practice-list"></div>
+  <div id="practice-list" style="display:flex;flex-direction:column;gap:14px"></div>
 </section>
 
 <section class="screen" id="s-look" hidden>
@@ -329,6 +337,7 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
   <div class="feedback" id="feedback" hidden>
     <div class="fb-head" id="fb-head"></div>
     <div class="fb-word" id="fb-word"></div>
+    <p class="fb-def" id="fb-def" hidden></p>
     <p class="fb-pts" id="fb-pts"></p>
     <button class="btn gold" data-act="next" id="next-btn">Next ➜</button>
   </div>
@@ -434,6 +443,39 @@ const BLOCKS=[
   ['unkind','😠','It is ___ to laugh at others.'],
   ['war','⚔️','Everyone wants peace, not ___.']]}
 ];
+BLOCKS.forEach(b=>b.track='spell');
+
+/* ---------- VOCABULARY: [word, picture, meaning] (meanings from class notes) ---------- */
+const VOCAB=[
+ {id:'v1',name:'Vocab 1',track:'vocab',words:[
+  ['buffalo','🦬','An animal with horns and thick fur. A bison.'],
+  ['flood','🌊','Water covering an area.'],
+  ['hide','🐄','The skin of an animal.'],
+  ['honor','🎖️','To treat someone with respect.'],
+  ['protect','🛡️','To keep someone safe.'],
+  ['shelter','⛺','A safe place.'],
+  ['smoke','💨','A grey, white or black gas.'],
+  ['sport','⚽','Something fun that exercises the body.']]},
+ {id:'v2',name:'Vocab 2',track:'vocab',words:[
+  ['bonfire','🔥','A large outdoor fire.'],
+  ['bucket','🪣','A container for water.'],
+  ['costume','🦸','Clothes we wear to look like someone or something.'],
+  ['flag','🇲🇽','A piece of cloth that represents a country.'],
+  ['huge','🐋','Very large in size.'],
+  ['mask','👺','A face cover.'],
+  ['parade','🥁','People marching in the streets.']]},
+ {id:'v3',name:'Vocab 3',track:'vocab',words:[
+  ['battle','⚔️','A fight between two groups.'],
+  ['cheer','📣','A shout for support.'],
+  ['crop','🌽','Plants grown by farmers for food.'],
+  ['crowd','👥','A large group of people in one place.'],
+  ['knight','🗡️','A soldier who served a king or a queen.'],
+  ['play','🎭','A performance with actors.'],
+  ['prize','🏆','A reward for winning.'],
+  ['seeds','🌻','Small parts of a plant that grow into new plants.']]}
+];
+const BASE=BLOCKS.concat(VOCAB);
+const TRACK_NAME={spell:'Spelling',vocab:'Vocabulary'};
 
 /* ---------- STICKERS ---------- */
 const PAGES=[
@@ -451,7 +493,17 @@ const PAGES=[
   ['m1','🦖','Dino Valley'],['m2','🦈','Big Shark'],['m3','🎬','Movie Set'],['m4','🍿','Popcorn Bucket'],
   ['m5','🎢','Roller Coaster'],['m6','🦍','Giant Ape'],['m7','🍌','Banana Party'],['m8','🦄','Fluffy Unicorn'],
   ['m9','🍩','Giant Donut'],['m10','🚗','Time Car'],['m11','🎡','Big Wheel'],['m12','🦕','Long Neck']],
-  gold:[['mg1','🌌','Star Portal'],['mg2','🍄','Power-Up Mushroom'],['mg3','🌋','Fire Volcano'],['mg4','🎟️','Golden Ticket']]}
+  gold:[['mg1','🌌','Star Portal'],['mg2','🍄','Power-Up Mushroom'],['mg3','🌋','Fire Volcano'],['mg4','🎟️','Golden Ticket']]},
+ {id:'village',name:'Magic Village',tint:'#ffb84d',items:[
+  ['v1','🧣','Striped Scarf'],['v2','🥤','Butter Fizz'],['v3','🍭','Sweet Shop'],['v4','🪶','Quill Pen'],
+  ['v5','📚','Spell Books'],['v6','🏦','Goblin Bank'],['v7','🚌','Night Bus'],['v8','♟️','Giant Chess'],
+  ['v9','🦡','Brave Badger'],['v10','🦅','Wise Eagle'],['v11','🐍','Clever Snake'],['v12','🎩','Talking Hat']],
+  gold:[['vg1','🪞','Wishing Mirror'],['vg2','⏳','Time Spinner'],['vg3','🗡️','Silver Sword'],['vg4','💎','Magic Stone']]},
+ {id:'epic',name:'Epic Worlds',tint:'#7fb4ff',items:[
+  ['e1','🐲','Dragon Rider'],['e2','🧱','Coin Block'],['e3','🐢','Spiky Shell'],['e4','🏎️','Kart Race'],
+  ['e5','🐺','Night Wolf'],['e6','🦇','Bat Castle'],['e7','🧞','Lamp Genie'],['e8','🐠','Reef Fish'],
+  ['e9','🌺','Island Flower'],['e10','🍯','Honey Pot'],['e11','🎪','Big Top'],['e12','🛸','Flying Saucer']],
+  gold:[['eg1','🌠','Shooting Star'],['eg2','🪐','Ringed Planet'],['eg3','🌈','Rainbow Road'],['eg4','🧭','Treasure Compass']]}
 ];
 const STICK={};
 PAGES.forEach(p=>{p.items.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:false,page:p});p.gold.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:true,page:p})});
@@ -464,7 +516,7 @@ const PTS=60, KEY='word-wizards-v1';
 const uid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{}});
 const blankState=()=>({players:[mkPlayer('Player 1','🐻'),mkPlayer('Player 2','🦦')],avatarsV2:true,current:null,custom:[]});
-function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
+function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.players)&&s.players.length)return fix(s)}catch(e){}return blankState()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 let state=load();
@@ -476,8 +528,10 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const rand=a=>a[Math.floor(Math.random()*a.length)];
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0)}
-const allBlocks=()=>BLOCKS.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,words:c.words.map(w=>[w,'✏️',''])})));
-const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s])=>({key:w,word:w,emoji:e,sent:s,block:b.id})));
+const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,track:c.track||'spell',words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
+const keyOf=(b,w)=>b.track==='vocab'?'v:'+w:w;
+const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',block:b.id})));
+const plain=k=>k.replace(/^v:/,'');
 const st=(k,p=me())=>p.words[k]||{box:0,r:0,w:0,seen:0};
 const starHTML=n=>[0,1,2].map(i=>`<span class="${i<n?'on':'off'}">★</span>`).join('');
 function pickWeighted(list,n){const pool=list.slice(),out=[];while(out.length<n&&pool.length){const ws=pool.map(w=>{const b=st(w.key).box;return (6-b)*(6-b)+1});let r=Math.random()*ws.reduce((a,b)=>a+b,0),j=0;while(j<pool.length-1&&r>ws[j]){r-=ws[j];j++}out.push(pool.splice(j,1)[0])}return out}
@@ -495,7 +549,7 @@ let voice=null;
 function pickVoice(){try{const vs=speechSynthesis.getVoices();voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/Samantha|Ava|Allison|Nicky|Google US/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}catch(e){}}
 try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
 function say(text,rate=.85){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
-const spellOut=w=>say(`${w}. ${[...w].filter(c=>c!==' ').map(c=>c.toUpperCase()).join(', ')}. ${w}.`,.8);
+const spellOut=(w,extra='')=>say(`${w}. ${[...w].filter(c=>c!==' ').map(c=>c.toUpperCase()).join(', ')}. ${w}. ${extra}`,.8);
 
 function confetti(n=46){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const box=document.createElement('div');box.className='confetti';const cs=['var(--gold)','var(--berry)','var(--mint)','var(--lilac)','var(--white)'];for(let i=0;i<n;i++){const p=document.createElement('i');p.style.setProperty('--x',Math.random()*100+'%');p.style.setProperty('--d',Math.random()*.5+'s');p.style.setProperty('--c',rand(cs));p.style.setProperty('--r',(Math.random()*900-450)+'deg');box.appendChild(p)}document.body.appendChild(box);setTimeout(()=>box.remove(),2600)}
 
@@ -516,19 +570,22 @@ function renderHome(){
 }
 
 /* ---------- LEVELS ---------- */
-function getLevels(){
-  const bl=allBlocks(),L=[];
+let mapTrack='spell';
+function getLevels(track=mapTrack){
+  const bl=allBlocks(track),L=[];
   bl.forEach(b=>L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`}));
   const groups=[];for(let i=0;i<bl.length;i+=2)groups.push(bl.slice(i,i+2));
   if(groups.length>1&&groups[groups.length-1].length===1){const last=groups.pop();groups[groups.length-1].push(...last)}
   if(bl.length>1)groups.forEach(g=>L.push({id:'m:'+g.map(b=>b.id).join('+'),kind:'mix',blocks:g.map(b=>b.id),sub:g.map(b=>b.name).join(' + ')+' mixed'}));
-  L.push({id:'final',kind:'final',blocks:bl.map(b=>b.id),sub:'All the words · Beat the Spelling Dragon!'});
+  if(!bl.length)return L;
+  L.push({id:track==='spell'?'final':'final:'+track,kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
   L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:`Level ${i+1}`);
   return L;
 }
 const isOpen=(i,L)=>i===0||(me().levels[L[i-1].id]||0)>0;
 function renderMap(){
   const L=getLevels(),p=me();
+  $('#map-title').textContent=TRACK_NAME[mapTrack]+' Map';
   $('#map-list').innerHTML=L.map((lv,i)=>{const s=p.levels[lv.id]||0,open=isOpen(i,L);
     return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
   show('s-map');
@@ -542,24 +599,28 @@ function startLevel(i){
 function owlToast(){sBonk()}
 
 /* ---------- PRACTICE ---------- */
-function trickyWords(){const all=wordsOf(allBlocks().map(b=>b.id)),seen={};return all.filter(w=>{if(seen[w.key])return false;seen[w.key]=1;const s=st(w.key);return s.seen>0&&(s.box<=1||s.w>s.r)}).sort((a,b)=>st(a.key).box-st(b.key).box).slice(0,10)}
+function trickyWords(track){const all=wordsOf(allBlocks(track).map(b=>b.id)),seen={};return all.filter(w=>{if(seen[w.key])return false;seen[w.key]=1;const s=st(w.key);return s.seen>0&&(s.box<=1||s.w>s.r)}).sort((a,b)=>st(a.key).box-st(b.key).box).slice(0,10)}
 function renderPractice(){
-  const tr=trickyWords();
-  let h='';
-  if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky">Play ▶</button></div></div>`;
-  h+=allBlocks().map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(k=>st(k).box>=4).length;
-    return `<div class="bcard"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button><button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
-  $('#practice-list').innerHTML=h;show('s-practice');
+  const sec=(track,title,note)=>{
+    const tr=trickyWords(track),bl=allBlocks(track);if(!bl.length)return'';
+    let h=`<h3 class="sec-title">${title}<small>${note}</small></h3><div class="cards">`;
+    if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
+    h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
+      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button><button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
+    return h+'</div>'};
+  $('#practice-list').innerHTML=sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean');
+  show('s-practice');
 }
 let lookBlock=null;
 function renderLook(id){
   lookBlock=id;const b=allBlocks().find(x=>x.id===id);if(!b)return renderPractice();
   $('#look-title').textContent=b.name;
-  $('#look-list').innerHTML=b.words.map(([w,e,s])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${s?`<span class="look-sent">${esc(s.replace('___',w))}</span>`:''}</span></button>`).join('');
+  const vocab=b.track==='vocab';
+  $('#look-list').innerHTML=b.words.map(([w,e,s])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}" data-def="${vocab?esc(s):''}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${s?`<span class="look-sent">${esc(vocab?s:s.replace('___',w))}</span>`:''}</span></button>`).join('');
   show('s-look');
 }
 const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice')};
-const playTricky=()=>{const t=trickyWords();if(!t.length)return renderPractice();start('practice',t,null,playTricky,'practice')};
+const playTricky=track=>{const t=trickyWords(track);if(!t.length)return renderPractice();start('practice',t,null,()=>playTricky(track),'practice')};
 
 /* ---------- GAME ---------- */
 let S=null,Q=null;
@@ -608,7 +669,8 @@ function nextQ(){
   $('#g-pts').textContent=me().points;
   const sk=$('#g-streak');sk.hidden=S.streak<2;sk.textContent=`🔥 ${S.streak} in a row!`;
   $('#q-emoji').textContent=Q.w.emoji;
-  $('#q-sent').innerHTML=Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
+  const qs=$('#q-sent');qs.classList.toggle('is-def',!!Q.w.def);
+  qs.innerHTML=Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
   $('#q-inst').textContent=INST[Q.mode];
   $('#hint-btn').disabled=false;
   $('#feedback').hidden=true;$('#input').hidden=false;
@@ -667,9 +729,11 @@ function complete(){
   $('#g-pts').textContent=p.points;
   const sk=$('#g-streak');sk.hidden=S.streak<2;sk.textContent=`🔥 ${S.streak} in a row!`;
   const head=$('#fb-head');
-  if(perfect){head.textContent='Perfect!';head.className='fb-head perfect';sWin();confetti(30);owl(rand(OWL.good));setTimeout(()=>say(Q&&Q.w?Q.w.word:''),350)}
-  else{head.textContent='Good try!';head.className='fb-head try';sSoft();owl(rand(OWL.soso));setTimeout(()=>spellOut(Q.w.word),300)}
-  $('#fb-word').textContent=Q.w.word;
+  const w=Q.w,def=w.def||'';
+  if(perfect){head.textContent='Perfect!';head.className='fb-head perfect';sWin();confetti(30);owl(rand(OWL.good));setTimeout(()=>say(def?`${w.word}. ${def}`:w.word),350)}
+  else{head.textContent='Good try!';head.className='fb-head try';sSoft();owl(rand(OWL.soso));setTimeout(()=>spellOut(w.word,def),300)}
+  $('#fb-word').textContent=w.word;
+  const fd=$('#fb-def');fd.hidden=!def;fd.textContent=def?`${w.word[0].toUpperCase()+w.word.slice(1)}: ${def}`:'';
   $('#fb-pts').textContent=`+${pts} points`+(perfect&&S.streak>1?` (streak bonus!)`:'');
   $('#feedback').hidden=false;
   $('#next-btn').focus({preventScroll:true});
@@ -681,7 +745,9 @@ function finish(){
   if(S.levelId)p.levels[S.levelId]=Math.max(p.levels[S.levelId]||0,stars);
   const got=[];
   while(p.toward>=PTS){const s=awardFrom(REG_IDS,p);if(!s){p.toward=PTS;break}p.toward-=PTS;got.push(s)}
-  if(pct===1&&keys.length>=5){const g=awardFrom(GOLD_IDS,p);if(g)got.push(g)}
+  let goldLevel=false;
+  if(S.levelId&&stars===3&&!p.goldLevels.includes(S.levelId)){const g=awardFrom(GOLD_IDS,p);if(g){p.goldLevels.push(S.levelId);got.push(g);goldLevel=true}}
+  if(!goldLevel&&pct===1&&keys.length>=5){const g=awardFrom(GOLD_IDS,p);if(g)got.push(g)}
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
@@ -690,7 +756,7 @@ function finish(){
   $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
   $('#r-packs').innerHTML=got.map(s=>`<button class="pack ${s.gold?'goldpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':'🎁'}</span>${s.gold?'Gold!':'Open me'}</button>`).join('');
   const miss=keys.filter(k=>!S.first[k]);
-  $('#r-miss-wrap').hidden=!miss.length;$('#r-miss').innerHTML=miss.map(k=>`<span>${esc(k)}</span>`).join('');
+  $('#r-miss-wrap').hidden=!miss.length;$('#r-miss').innerHTML=miss.map(k=>`<span>${esc(plain(k))}</span>`).join('');
   show('s-results');
   if(stars===3){sWin();confetti(70)}else sSoft();
   say(stars===3?'Amazing!':'Great job!');
@@ -714,19 +780,22 @@ function renderAlbum(){
   const have=[...pg.items,...pg.gold].filter(i=>p.stickers.includes(i[0])).length;
   $('#album-page').innerHTML=`<div class="album-head"><h3>${pg.name}</h3><span>${have} / ${pg.items.length+pg.gold.length}</span></div>
    <div class="grid">${pg.items.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>
-   <p class="gold-title">Gold stickers</p><p class="note" style="text-align:left;margin-top:-8px">Win one when you spell every word perfectly in a game.</p>
+   <p class="gold-title">Gold stickers</p><p class="note" style="text-align:left;margin-top:-8px">Win one when you get 3 stars on a level for the first time, or spell every word perfectly in a game.</p>
    <div class="grid">${pg.gold.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>`;
   show('s-album');
 }
 
 /* ---------- GROWN-UPS ---------- */
-let parentPlayer=null,parentMsg='';
+let parentPlayer=null,parentMsg='',nbTrack='spell';
+const NB_HELP={spell:'Spelling block: write one word per line.',vocab:'Vocabulary block: write one word per line, then a dash and its meaning. Example: crop - plants grown by farmers for food'};
+const NB_PH={spell:'dragonfly\nsandcastle\nteapot',vocab:'crop - plants grown by farmers for food\nprize - a reward for winning'};
+const nbDefaultName=t=>`${t==='vocab'?'Vocab':'Block'} ${allBlocks(t).length+1}`;
 function chipClass(s){if(!s.seen)return'';if(s.box>=4)return'good';if(s.box===0||s.w>s.r)return'weak';return'learn'}
 function renderParents(){
   if(!state.players.find(p=>p.id===parentPlayer))parentPlayer=me().id;
   const pp=state.players.find(p=>p.id===parentPlayer);
-  const prog=allBlocks().map(b=>`<p class="blk-title">${esc(b.name)}</p><div class="wchips">${b.words.map(([w])=>`<span class="wchip ${chipClass(st(w,pp))}">${esc(w)}</span>`).join('')}</div>`).join('');
-  const L=getLevels();
+  const prog=['spell','vocab'].map(t=>`<p class="blk-title" style="font-size:1.1rem;margin-top:10px">${TRACK_NAME[t]}</p>`+allBlocks(t).map(b=>`<p class="blk-title">${esc(b.name)}</p><div class="wchips">${b.words.map(([w])=>`<span class="wchip ${chipClass(st(keyOf(b,w),pp))}">${esc(w)}</span>`).join('')}</div>`).join('')).join('');
+  const L=getLevels('spell').concat(getLevels('vocab'));
   const doneLv=L.filter(l=>pp.levels[l.id]).length;
   $('#parents-body').innerHTML=`
   <div class="panel"><h3>Progress</h3>
@@ -740,9 +809,10 @@ function renderParents(){
     <div class="row" style="justify-content:flex-start"><button class="btn gold small" data-act="savenames">Save names</button><button class="btn small" data-act="addplayer">Add player</button></div>
   </div>
   <div class="panel"><h3>Add a new block of words</h3>
-    <p class="muted">Write one word per line. The new block appears in Practice and on the Adventure Map.</p>
-    <input type="text" id="nb-name" placeholder="Block ${allBlocks().length+1}" maxlength="30" aria-label="Block name">
-    <textarea id="nb-words" placeholder="dragonfly&#10;sandcastle&#10;teapot" aria-label="Words"></textarea>
+    <div class="pchips"><button class="pchip" data-act="nbtrack" data-t="spell" aria-pressed="${nbTrack==='spell'}">Spelling</button><button class="pchip" data-act="nbtrack" data-t="vocab" aria-pressed="${nbTrack==='vocab'}">Vocabulary</button></div>
+    <p class="muted" id="nb-help">${esc(NB_HELP[nbTrack])} It appears in Practice and on its map.</p>
+    <input type="text" id="nb-name" placeholder="${nbDefaultName(nbTrack)}" maxlength="30" aria-label="Block name">
+    <textarea id="nb-words" placeholder="${esc(NB_PH[nbTrack])}" aria-label="Words"></textarea>
     <div class="row" style="justify-content:flex-start"><button class="btn gold small" data-act="addblock">Add block</button></div>
     ${state.custom.length?`<p class="blk-title">Blocks you added</p>`+state.custom.map(c=>`<div class="prow"><span style="flex:1;min-width:0"><b>${esc(c.name)}</b> · ${c.words.length} words</span><button class="btn small" data-act="delblock" data-id="${c.id}">Remove</button></div>`).join(''):''}
   </div>
@@ -767,13 +837,13 @@ function encodeState(){return btoa(unescape(encodeURIComponent(JSON.stringify(st
 const acts={
   pick:b=>{state.current=b.dataset.id;save();renderHome()},
   switch:()=>renderPlayers(),
-  go:b=>({home:renderHome,map:renderMap,practice:renderPractice,album:()=>{albumPage=0;renderAlbum()}})[b.dataset.to](),
+  go:b=>(b.dataset.track&&(mapTrack=b.dataset.track),{home:renderHome,map:renderMap,practice:renderPractice,album:()=>{albumPage=0;renderAlbum()}})[b.dataset.to](),
   level:b=>startLevel(+b.dataset.i),
   play:b=>playBlock(b.dataset.b),
   look:b=>renderLook(b.dataset.b),
   lookplay:()=>lookBlock&&playBlock(lookBlock),
-  tricky:()=>playTricky(),
-  sayword:b=>spellOut(b.dataset.w),
+  tricky:b=>playTricky(b.dataset.track),
+  sayword:b=>spellOut(b.dataset.w,b.dataset.def||''),
   tile:b=>{if(!b.classList.contains('used'))press(b.textContent,b)},
   key:b=>press(b.dataset.k,b),
   hint:()=>hint(),
@@ -790,10 +860,15 @@ const acts={
   savenames:()=>{state.players.forEach(p=>{const i=$('#name-'+p.id);if(i&&i.value.trim())p.name=i.value.trim().slice(0,20)});save();parentMsg='Names saved.';renderParents()},
   addplayer:()=>{if(state.players.length>=6){status('Up to 6 players.');return}state.players.push(mkPlayer('Player '+(state.players.length+1),AVATARS[state.players.length%AVATARS.length]));save();parentMsg='Player added. Type a name and tap Save names.';renderParents()},
   delplayer:b=>{if(!armed(b))return;state.players=state.players.filter(p=>p.id!==b.dataset.id);if(!state.players.find(p=>p.id===state.current))state.current=state.players[0].id;save();parentMsg='Player removed.';renderParents()},
-  addblock:()=>{const name=($('#nb-name').value.trim()||`Block ${allBlocks().length+1}`).slice(0,30);
-    const words=[...new Set($('#nb-words').value.split(/\n|,/).map(w=>w.trim().toLowerCase().replace(/[^a-z' -]/g,'').replace(/\s+/g,' ')).filter(w=>w.length>0))];
+  nbtrack:b=>{nbTrack=b.dataset.t;document.querySelectorAll('[data-act="nbtrack"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===nbTrack));$('#nb-help').textContent=NB_HELP[nbTrack]+' It appears in Practice and on its map.';$('#nb-words').placeholder=NB_PH[nbTrack];$('#nb-name').placeholder=nbDefaultName(nbTrack)},
+  addblock:()=>{const name=($('#nb-name').value.trim()||nbDefaultName(nbTrack)).slice(0,30);
+    const clean=w=>w.trim().toLowerCase().replace(/[^a-z' -]/g,'').replace(/\s+/g,' ').trim();
+    let words;
+    if(nbTrack==='vocab'){const seen={};words=$('#nb-words').value.split('\n').map(l=>{const m=l.match(/^\s*([^\-–—:]+?)\s*[-–—:]\s*(.+)$/);if(m)return[clean(m[1]),m[2].trim()];const w=clean(l);return w?[w,'']:null}).filter(x=>x&&x[0]&&!seen[x[0]]&&(seen[x[0]]=1));
+      if(words.length){const miss=words.filter(x=>!x[1]).length;if(miss)parentMsg=`${miss} word(s) have no meaning yet. `}}
+    else words=[...new Set($('#nb-words').value.split(/\n|,/).map(clean).filter(w=>w.length>0))];
     if(!words.length){status('Write at least one word.');return}
-    state.custom.push({id:'c'+uid(),name,words});save();parentMsg=`${name} added with ${words.length} words.`;renderParents()},
+    state.custom.push({id:'c'+uid(),name,track:nbTrack,words});save();parentMsg+=`${name} added with ${words.length} words.`;renderParents()},
   delblock:b=>{if(!armed(b))return;state.custom=state.custom.filter(c=>c.id!==b.dataset.id);save();parentMsg='Block removed.';renderParents()},
   mkbackup:()=>{$('#backup-code').value=encodeState();status('Backup code ready. Tap Copy.')},
   copybackup:()=>{const ta=$('#backup-code');if(!ta.value)ta.value=encodeState();const ok=()=>status('Copied. Paste it in Notes.');const fb=()=>{ta.focus();ta.select();try{document.execCommand('copy');ok()}catch(e){status('Select the code and copy it.')}};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}},

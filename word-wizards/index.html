@@ -226,6 +226,27 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .album-head span{color:var(--lilac);font-weight:700;font-variant-numeric:tabular-nums}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 10px}
 .cell{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.sgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px;align-items:end}
+.scell{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;text-align:center}
+.s-how{font-size:.8rem;color:var(--lilac);line-height:1.2}
+.spc{position:relative;display:grid;place-items:center;width:110px;height:110px;margin:0 auto}
+.spe{position:relative;font-size:3rem;line-height:1;z-index:1}
+.spc.diamond::before{content:"";position:absolute;inset:19px;transform:rotate(45deg);border-radius:14px;background:linear-gradient(135deg,#e9fdff,#8fe7ff 40%,#4fb8ff 70%,#c6f4ff);border:5px solid #fff;box-shadow:0 0 0 3px #4fb8ff,0 0 24px #8fe7ff}
+.spc.rainbow::before{content:"";position:absolute;inset:0;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);background:conic-gradient(#ff5f93,#ffb84d,#f7c54a,#3fd09d,#7fb4ff,#bdb6ff,#ff5f93);filter:drop-shadow(0 0 10px #fff)}
+.spc.rainbow .spe{font-size:2.4rem;margin-top:10px}
+.spc.diamond,.spc.rainbow{animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:drop-shadow(0 0 4px #fff)}50%{filter:drop-shadow(0 0 16px #8fe7ff)}}
+@media (prefers-reduced-motion:reduce){.spc.diamond,.spc.rainbow{animation:none}}
+.spc.trophy{width:130px;height:150px}.spc.trophy svg{position:absolute;inset:0;width:100%;height:100%}.spc.trophy .spe{position:absolute;left:50%;top:39%;transform:translate(-50%,-50%);font-size:2.2rem}
+.spc.legend{width:170px;height:196px;filter:drop-shadow(0 0 14px #ffe27a)}.spc.legend .spe{font-size:2.8rem}
+.scell.legend{grid-column:1 / -1}
+.spc.empty{border:4px dashed var(--sky-line);border-radius:22px;color:var(--sky-line);font-family:var(--display);font-size:2.4rem;font-weight:800;width:110px;height:110px;filter:grayscale(1);opacity:.7}
+.spc.empty.legend{width:150px;height:150px}
+.pack.specpack{background:linear-gradient(135deg,#e9fdff,#8fe7ff,#4fb8ff);color:var(--ink)}
+.pack.specpack.rainbow{background:conic-gradient(#ff5f93,#ffb84d,#f7c54a,#3fd09d,#7fb4ff,#bdb6ff,#ff5f93)}
+.pack.specpack.trophy,.pack.specpack.legend{background:linear-gradient(135deg,#ffe27a,#f7c54a,#c98a12);width:150px;height:180px}
+.pack.specpack.legend{background:linear-gradient(135deg,#fff6c0,#ffd84a,#ffb3d1,#9ff3ff);width:170px;height:200px}
+.trophytab{border-color:var(--gold)}
 .gold-title{font-family:var(--display);font-weight:800;color:var(--gold);font-size:1.25rem;margin:4px 0 0}
 
 /* parents */
@@ -514,9 +535,9 @@ const PTS=60, KEY='word-wizards-v1';
 
 /* ---------- STATE ---------- */
 const uid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{}});
+const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[]});
 const blankState=()=>({players:[mkPlayer('Player 1','🐻'),mkPlayer('Player 2','🦦')],avatarsV2:true,current:null,custom:[]});
-function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
+function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.players)&&s.players.length)return fix(s)}catch(e){}return blankState()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 let state=load();
@@ -738,6 +759,38 @@ function complete(){
   $('#feedback').hidden=false;
   $('#next-btn').focus({preventScroll:true});
 }
+/* ---------- SPECIAL STICKERS & TROPHIES ---------- */
+const buddy=p=>p.avatar==='🦦'?'🦦':p.avatar==='🐻'?'🐻':p.avatar;
+const buddyName=p=>p.avatar==='🦦'?'Otter':p.avatar==='🐻'?'Bear':'Buddy';
+const SPECIAL=[
+  {id:'sp1',kind:'diamond',name:p=>`Diamond ${buddyName(p)}`,how:'Get 3 stars on a level for the first time.'},
+  {id:'sp2',kind:'rainbow',name:p=>`Rainbow Star ${buddyName(p)}`,how:'Get 3 stars on 3 different levels.'},
+  {id:'tr1',kind:'trophy',name:()=>'Super Trophy',how:'Finish every level on both maps.'},
+  {id:'tr2',kind:'legend',name:()=>'Legend Trophy',how:'Get 3 stars on every level on both maps.'}
+];
+const SPEC=Object.fromEntries(SPECIAL.map(x=>[x.id,x]));
+function specArt(x,p){const a=buddy(p);
+  if(x.kind==='diamond')return`<div class="spc diamond"><span class="spe">${a}</span></div>`;
+  if(x.kind==='rainbow')return`<div class="spc rainbow"><span class="spe">${a}</span></div>`;
+  const big=x.kind==='legend';
+  return`<div class="spc trophy ${big?'legend':''}"><svg viewBox="0 0 120 140" aria-hidden="true">
+   ${big?'<path d="M34 22 L42 6 L52 18 L60 2 L68 18 L78 6 L86 22 Z" fill="#ffe27a" stroke="#c98a12" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="10" r="4" fill="#ff5f93"/>':''}
+   <path d="M30 26 H90 V54 C90 76 76 88 60 88 C44 88 30 76 30 54 Z" fill="url(#tg${big?2:1})" stroke="#c98a12" stroke-width="3"/>
+   <path d="M30 34 H16 C14 52 22 62 34 64 M90 34 H104 C106 52 98 62 86 64" fill="none" stroke="#c98a12" stroke-width="6" stroke-linecap="round"/>
+   <rect x="52" y="88" width="16" height="16" fill="#e9a91f" stroke="#c98a12" stroke-width="3"/>
+   <rect x="34" y="104" width="52" height="16" rx="4" fill="#e9a91f" stroke="#c98a12" stroke-width="3"/>
+   <rect x="28" y="120" width="64" height="14" rx="4" fill="${big?'#7fb4ff':'#ff5f93'}" stroke="#1d1a47" stroke-width="3"/>
+   ${big?'<path d="M40 112 l4 -5 4 5 -4 5z M56 112 l4 -5 4 5 -4 5z M72 112 l4 -5 4 5 -4 5z" fill="#9ff3ff" stroke="#3a7fc0" stroke-width="1.5"/>':''}
+   <defs><linearGradient id="tg1" x1="0" x2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".5" stop-color="#f7c54a"/><stop offset="1" stop-color="#c98a12"/></linearGradient>
+   <linearGradient id="tg2" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#fff6c0"/><stop offset=".35" stop-color="#ffd84a"/><stop offset=".7" stop-color="#ffb3d1"/><stop offset="1" stop-color="#9ff3ff"/></linearGradient></defs>
+  </svg><span class="spe">${a}</span></div>`}
+function checkSpecial(p){
+  p.special=p.special||[];
+  const L=getLevels('spell').concat(getLevels('vocab')),three=L.filter(l=>(p.levels[l.id]||0)>=3).length,out=[];
+  const want={sp1:three>=1,sp2:three>=3,tr1:L.length>0&&L.every(l=>(p.levels[l.id]||0)>0),tr2:L.length>0&&three===L.length};
+  SPECIAL.forEach(x=>{if(want[x.id]&&!p.special.includes(x.id)){p.special.push(x.id);out.push({id:x.id,special:true})}});
+  return out;
+}
 function awardFrom(ids,p){const pool=ids.filter(id=>!p.stickers.includes(id));if(!pool.length)return null;const id=rand(pool);p.stickers.push(id);return STICK[id]}
 function finish(){
   const p=me(),keys=Object.keys(S.first),good=keys.filter(k=>S.first[k]).length,pct=keys.length?good/keys.length:0;
@@ -748,13 +801,16 @@ function finish(){
   let goldLevel=false;
   if(S.levelId&&stars===3&&!p.goldLevels.includes(S.levelId)){const g=awardFrom(GOLD_IDS,p);if(g){p.goldLevels.push(S.levelId);got.push(g);goldLevel=true}}
   if(!goldLevel&&pct===1&&keys.length>=5){const g=awardFrom(GOLD_IDS,p);if(g)got.push(g)}
+  const spec=checkSpecial(p);
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
   $('#r-line').textContent=`You spelled ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
   $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
-  $('#r-packs').innerHTML=got.map(s=>`<button class="pack ${s.gold?'goldpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':'🎁'}</span>${s.gold?'Gold!':'Open me'}</button>`).join('');
+  const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
+  if(spec.length)$('#r-packs-label').textContent=spec.some(x=>x.id[0]==='t')?'WOW! You won a trophy! Tap to open.':'WOW! A special sticker! Tap to open.';
+  $('#r-packs').innerHTML=spec.map(x=>{const k=SPEC[x.id].kind;return`<button class="pack specpack ${k}" data-act="open" data-s="${x.id}"><span class="p-ico">${SPL[k][0]}</span>${SPL[k][1]}</button>`}).join('')+got.map(s=>`<button class="pack ${s.gold?'goldpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':'🎁'}</span>${s.gold?'Gold!':'Open me'}</button>`).join('');
   const miss=keys.filter(k=>!S.first[k]);
   $('#r-miss-wrap').hidden=!miss.length;$('#r-miss').innerHTML=miss.map(k=>`<span>${esc(plain(k))}</span>`).join('');
   show('s-results');
@@ -763,6 +819,8 @@ function finish(){
   Q=null;
 }
 function openPack(btn){
+  const x=SPEC[btn.dataset.s];
+  if(x){const p=me(),d=document.createElement('div');d.className='opened';d.innerHTML=`${specArt(x,p)}<span class="s-name">${esc(x.name(p))}</span>`;btn.replaceWith(d);sSparkle();sWin();confetti(x.kind==='legend'?160:110);say(x.name(p));return}
   const s=STICK[btn.dataset.s];if(!s)return;
   const d=document.createElement('div');d.className='opened';
   d.innerHTML=`<div class="sticker ${s.gold?'gold':''}" style="--tint:${s.page.tint}"><span class="s-emoji">${s.e}</span></div><span class="s-name">${esc(s.n)}</span>`;
@@ -776,7 +834,11 @@ function stickerCell(id,owned){const s=STICK[id];
   return`<div class="cell"><div class="sticker empty ${s.gold?'gslot':''}">${s.gold?'★':'?'}</div><span class="s-name" style="color:var(--lilac)">${s.gold?'Gold':'???'}</span></div>`}
 function renderAlbum(){
   const p=me(),pg=PAGES[albumPage];
-  $('#album-tabs').innerHTML=PAGES.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===albumPage}" data-act="tab" data-i="${i}">${x.name}</button>`).join('');
+  $('#album-tabs').innerHTML=PAGES.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===albumPage}" data-act="tab" data-i="${i}">${x.name}</button>`).join('')+`<button class="tab trophytab" role="tab" aria-selected="${albumPage===PAGES.length}" data-act="tab" data-i="${PAGES.length}">🏆 Trophy Room</button>`;
+  if(!pg){
+    $('#album-page').innerHTML=`<div class="album-head"><h3>Trophy Room</h3><span>${p.special.length} / ${SPECIAL.length}</span></div>
+     <div class="sgrid">${SPECIAL.map(x=>{const own=p.special.includes(x.id);return`<div class="scell ${x.kind}">${own?specArt(x,p):`<div class="spc empty ${x.kind}">${x.kind==='trophy'||x.kind==='legend'?'🏆':'?'}</div>`}<span class="s-name">${own?esc(x.name(p)):'???'}</span><span class="s-how">${esc(x.how)}</span></div>`}).join('')}</div>`;
+    show('s-album');return}
   const have=[...pg.items,...pg.gold].filter(i=>p.stickers.includes(i[0])).length;
   $('#album-page').innerHTML=`<div class="album-head"><h3>${pg.name}</h3><span>${have} / ${pg.items.length+pg.gold.length}</span></div>
    <div class="grid">${pg.items.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>
@@ -874,7 +936,7 @@ const acts={
   copybackup:()=>{const ta=$('#backup-code');if(!ta.value)ta.value=encodeState();const ok=()=>status('Copied. Paste it in Notes.');const fb=()=>{ta.focus();ta.select();try{document.execCommand('copy');ok()}catch(e){status('Select the code and copy it.')}};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}},
   restore:b=>{const code=$('#backup-code').value.trim();if(!code){status('Paste a backup code first.');return}
     try{const s=JSON.parse(decodeURIComponent(escape(atob(code))));if(!s||!Array.isArray(s.players)||!s.players.length)throw 0;if(!armed(b))return;state=fix(s);save();parentMsg='Progress restored.';renderParents()}catch(e){status('That code did not work. Check that it was copied completely.')}},
-  reset:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p){Object.assign(p,{points:0,toward:0,stickers:[],words:{},levels:{}});save()}parentMsg='Progress erased.';renderParents()}
+  reset:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p){Object.assign(p,{points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[]});save()}parentMsg='Progress erased.';renderParents()}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;unlockAudio();const f=acts[b.dataset.act];if(f)f(b,e)});
 document.addEventListener('keydown',e=>{

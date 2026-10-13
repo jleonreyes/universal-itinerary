@@ -258,14 +258,18 @@ const SUBJ = [
   {s:"Betilio",q:"Betilio",t:1,be:"is",was:"was",g:"He"},
   {s:"Froy",q:"Froy",t:1,be:"is",was:"was",g:"He"},
   {s:"Jorge",q:"Jorge",t:1,be:"is",was:"was",g:"He"},
+  {s:"Tina",q:"Tina",t:1,be:"is",was:"was",g:"She"},
+  {s:"Fafis",q:"Fafis",t:1,be:"is",was:"was",g:"She"},
   {s:"Grandpa",q:"Grandpa",t:1,be:"is",was:"was",g:"He"},
   {s:"Grandma",q:"Grandma",t:1,be:"is",was:"was",g:"She"},
   {s:"Mom",q:"Mom",t:1,be:"is",was:"was",g:"She"},
   {s:"Dad",q:"Dad",t:1,be:"is",was:"was",g:"He"},
-  {s:"Tina and Fafis",q:"Tina and Fafis",t:0,be:"are",was:"were",g:"We"},
+  {s:"Tina and Fafis",q:"Tina and Fafis",t:0,be:"are",was:"were",g:"They"},
   {s:"Grandpa and Grandma",q:"Grandpa and Grandma",t:0,be:"are",was:"were",g:"They"},
   {s:"Cin and Froy",q:"Cin and Froy",t:0,be:"are",was:"were",g:"They"},
   {s:"My school friends",q:"my school friends",t:0,be:"are",was:"were",g:"They"},
+  {s:"Tina and I",q:"Tina and I",t:0,be:"are",was:"were",g:"We"},
+  {s:"Fafis and I",q:"Fafis and I",t:0,be:"are",was:"were",g:"We"},
   {s:"Mom and I",q:"Mom and I",t:0,be:"are",was:"were",g:"We"},
   {s:"The dog",q:"the dog",t:1,be:"is",was:"was",an:1,g:"It"},
   {s:"The cat",q:"the cat",t:1,be:"is",was:"was",an:1,g:"It"}
@@ -369,10 +373,10 @@ const PRONS = [
   {p:"I",be:"am",clues:["me"]},
   {p:"You",be:"are",clues:["you","you and Alicia"]},
   {p:"He",be:"is",clues:["Betilio","Froy","Jorge","Grandpa","Dad"]},
-  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Grandma","Mom"]},
+  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Tina","Fafis","Grandma","Mom"]},
   {p:"It",be:"is",clues:["the dog","the cat","the frappé","the ice cream","the beach","the castle"],thing:1},
-  {p:"We",be:"are",clues:["Tina and Fafis","Mom and I","my school friends and I"]},
-  {p:"They",be:"are",clues:["Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
+  {p:"We",be:"are",clues:["Tina and I","Fafis and I","Mom and I","my school friends and I"]},
+  {p:"They",be:"are",clues:["Tina and Fafis","Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
 ];
 const THING_COMP = {"the dog":["very fluffy","hungry","asleep on the sofa"],"the cat":["on the roof","black and white"],"the frappé":["cold and sweet","on the table"],"the ice cream":["delicious","very cold"],"the beach":["sunny today","beautiful"],"the castle":["big and pink","in the middle of the park"]};
 const PEOPLE_COMP = ["happy today","at the beach","in the kitchen","very funny","ready for school","excited about the trip to Disney","good at soccer","tired after school","at the ice cream shop","in the pool","on the bus","at Grandma's house"];
@@ -525,10 +529,10 @@ const FIXED_PAST = [
   {text:"[[Yesterday]] we ___ to the park.", options:["go","went","going"], a:"went", hint:"go → went → gone"},
   {text:"[[Last summer]] Grandpa and Grandma ___ to the beach.", options:["went","gone","goes"], a:"went", hint:"go → went → gone"},
   {text:"The movie ___ at seven o'clock [[last night]].", options:["begins","began","begun"], a:"began", hint:"begin → began → begun"},
-  {text:"[[Last year]] Tina and Fafis ___ the best readers in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
+  {text:"[[Last year]] Fafis ___ the best reader in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
   {text:"[[Two days ago]] a mosquito ___ my arm.", options:["bite","bit","bites"], a:"bit", hint:"bite → bit → bitten"},
   {text:"[[Yesterday]] the kids ___ very tired after the race.", options:["are","were","was"], a:"were", hint:H.was},
-  {text:"Tina and Fafis ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"were", hint:H.was}
+  {text:"Tina ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"was", hint:H.was}
 ];
 const isPz = a => !!a.pz;
 function pastChoose(){
@@ -675,7 +679,8 @@ const ITEMS = [
   {n:11,id:"star",name:"star cheeks"},{n:13,id:"cape",name:"a cape"},{n:16,id:"medal",name:"a gold medal"},
   {n:19,id:"watch",name:"a time watch"},{n:22,id:"wings",name:"little wings"},{n:26,id:"aura",name:"a golden glow"},
   {n:28,id:"hair",name:"crazy rock-star hair"},{n:30,id:"shades",name:"rocker sunglasses"},
-  {n:33,id:"robe",name:"a wizard robe and wand",sp:"otter"},{n:33,id:"band",name:"a sparkly heart headband",sp:"bear"}
+  {n:33,id:"robe",name:"a wizard robe and wand",sp:"otter"},{n:33,id:"band",name:"a sparkly heart headband",sp:"bear"},
+  {n:33,id:"crown2",name:"a rainbow superstar crown",sp:["dog","koala","monkey","owl"]}
 ];
 function growthN(p){
   let n = 0;
@@ -686,7 +691,7 @@ const stageOfN = n => { let i=0; STAGES.forEach((s,k)=>{ if(n>=s[1]) i=k; }); re
 const stageOf = p => stageOfN(growthN(p));
 const isEgg = p => growthN(p)===0;
 const petTitle = p => isEgg(p) ? `${p.pet} the Mystery Egg` : `${p.pet} the ${STAGES[stageOf(p)][0]} ${cap(p.species)}`;
-const nextItem = p => ITEMS.find(i => i.n > growthN(p) && (!i.sp || i.sp===p.species));
+const nextItem = p => ITEMS.find(i => i.n > growthN(p) && spOk(i,p));
 const LINES = [
   "Knock knock! I'm a mystery egg. Answer questions to help me hatch!",
   "Surprise! I hatched! Let's travel in time together.",
@@ -696,7 +701,9 @@ const LINES = [
   "I'm almost a legend. Let's finish the time trip!",
   "We are Time Legends!"
 ];
-const SPECIES = {bear:"bear", otter:"otter"};
+const SPECIES = {bear:"bear", otter:"otter", dog:"puppy", koala:"koala", monkey:"monkey", owl:"owl"};
+const NEW_SPECIES = ["dog","koala","monkey","owl"];
+const spOk = (i,p) => !i.sp || (Array.isArray(i.sp) ? i.sp.includes(p.species) : i.sp===p.species);
 
 function hatSVG(id){
   switch(id){
@@ -711,7 +718,7 @@ function hatSVG(id){
 }
 function petSVG(p, mood){
   mood = mood || "idle";
-  const N = growthN(p), st = stageOfN(N), ot = p.species==="otter";
+  const N = growthN(p), st = stageOfN(N), sp = p.species, ot = sp==="otter";
   const has = id => N >= ITEMS.find(i => i.id===id).n;
   const c = COLORS[p.color] || COLORS.mint;
   if(st===0){
@@ -726,16 +733,25 @@ function petSVG(p, mood){
   if(has("bag")) g += `<rect x="62" y="134" width="76" height="46" rx="14" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5"/>`;
   if(has("cape")) g += `<path d="M64 140 Q44 182 68 192 L132 192 Q156 182 136 140Z" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5" stroke-linejoin="round"/>`;
   if(ot) g += `<path d="M128 178 Q178 184 186 140 Q172 164 132 162 Z" fill="${c.m}" stroke="${c.d}" ${sw} stroke-linejoin="round"/>`;
-  if(ot) g += `<circle cx="58" cy="48" r="13" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="142" cy="48" r="13" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="58" cy="48" r="6" fill="${c.d}"/><circle cx="142" cy="48" r="6" fill="${c.d}"/>`;
+  if(sp==="dog") g += `<path d="M134 168 Q166 160 168 128" fill="none" stroke="${c.d}" stroke-width="15" stroke-linecap="round"/><path d="M134 168 Q166 160 168 128" fill="none" stroke="${c.m}" stroke-width="8" stroke-linecap="round"/>`;
+  if(sp==="monkey") g += `<path d="M132 176 Q182 178 178 140 Q174 118 156 126 Q144 134 158 142" fill="none" stroke="${c.d}" stroke-width="12" stroke-linecap="round"/><path d="M132 176 Q182 178 178 140 Q174 118 156 126 Q144 134 158 142" fill="none" stroke="${c.m}" stroke-width="6" stroke-linecap="round"/>`;
+  if(sp==="koala") g += `<circle cx="40" cy="58" r="30" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="160" cy="58" r="30" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="42" cy="60" r="17" fill="${c.l}"/><circle cx="158" cy="60" r="17" fill="${c.l}"/><path d="M18 50 l-6 -4 M16 64 l-7 1 M162 30 l4 -6" stroke="${c.d}" stroke-width="3" stroke-linecap="round"/>`;
+  else if(sp==="monkey") g += `<circle cx="36" cy="98" r="20" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="164" cy="98" r="20" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="38" cy="98" r="11" fill="${c.l}"/><circle cx="162" cy="98" r="11" fill="${c.l}"/>`;
+  else if(sp==="owl") g += `<path d="M48 62 L42 22 L76 46Z M152 62 L158 22 L124 46Z" fill="${c.m}" stroke="${c.d}" ${sw} stroke-linejoin="round"/>`;
+  else if(sp==="dog") {}
+  else if(ot) g += `<circle cx="58" cy="48" r="13" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="142" cy="48" r="13" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="58" cy="48" r="6" fill="${c.d}"/><circle cx="142" cy="48" r="6" fill="${c.d}"/>`;
   else g += `<circle cx="50" cy="50" r="21" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="150" cy="50" r="21" fill="${c.m}" stroke="${c.d}" ${sw}/><circle cx="50" cy="50" r="11" fill="#F6B7C6"/><circle cx="150" cy="50" r="11" fill="#F6B7C6"/>`;
   if(has("shoes")) g += `<ellipse cx="80" cy="186" rx="17" ry="10" fill="#D9434B" stroke="#9E2B32" ${sw}/><ellipse cx="120" cy="186" rx="17" ry="10" fill="#D9434B" stroke="#9E2B32" ${sw}/><path d="M68 189 H92 M108 189 H132" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`;
+  else if(sp==="owl") g += `<path d="M70 184 l4 8 4 -6 4 6 4 -8Z M110 184 l4 8 4 -6 4 6 4 -8Z" fill="#F5A623" stroke="#B5741A" stroke-width="3" stroke-linejoin="round"/>`;
   else g += `<ellipse cx="80" cy="186" rx="15" ry="9" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="120" cy="186" rx="15" ry="9" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
   g += `<ellipse cx="100" cy="160" rx="40" ry="32" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="100" cy="167" rx="24" ry="19" fill="${c.l}"/>`;
   if(ot && has("robe")) g += `<path d="M64 146 Q60 176 66 190 L134 190 Q140 176 136 146 Q100 132 64 146Z" fill="#3B3F7A" stroke="#23264F" stroke-width="3.5" stroke-linejoin="round"/><path d="M100 140 V190" stroke="#F5C84C" stroke-width="3"/><path d="M66 188 H134" stroke="#F5C84C" stroke-width="4"/><circle cx="84" cy="164" r="2.5" fill="#F5C84C"/><circle cx="118" cy="174" r="2.5" fill="#F5C84C"/>`;
+  if(sp==="owl") g += `<path d="M86 156 q4 5 8 0 M98 156 q4 5 8 0 M110 156 q4 5 8 0 M92 168 q4 5 8 0 M104 168 q4 5 8 0" fill="none" stroke="${c.d}" stroke-width="2.5" stroke-linecap="round"/>`;
   if(has("heart")) g += `<path d="M100 178 C88 170 90 160 96 160 C98 160 100 162 100 164 C100 162 102 160 104 160 C110 160 112 170 100 178Z" fill="#FF8FA3"/>`;
   if(ot) g += `<ellipse cx="100" cy="158" rx="10" ry="7" fill="#9AA3B0" stroke="#6B7280" stroke-width="2.5"/><ellipse cx="86" cy="160" rx="9" ry="7.5" fill="${c.m}" stroke="${c.d}" stroke-width="3"/><ellipse cx="114" cy="160" rx="9" ry="7.5" fill="${c.m}" stroke="${c.d}" stroke-width="3"/>`;
   if(ot && has("robe")) g += `<path d="M116 158 L150 128" stroke="#7A4A22" stroke-width="5" stroke-linecap="round"/><path d="M154 116 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#F5C84C" stroke="#A97A12" stroke-width="1.5"/>`;
-  else g += `<ellipse cx="64" cy="160" rx="11" ry="15" transform="rotate(22 64 160)" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="136" cy="160" rx="11" ry="15" transform="rotate(-22 136 160)" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
+  if(sp==="owl") g += `<path d="M62 138 Q40 160 58 184 Q70 168 70 146Z M138 138 Q160 160 142 184 Q130 168 130 146Z" fill="${c.d}" stroke="${c.d}" stroke-width="3" stroke-linejoin="round"/><path d="M58 152 q6 4 8 10 M142 152 q-6 4 -8 10" stroke="${c.l}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  else if(!ot) g += `<ellipse cx="64" cy="160" rx="11" ry="15" transform="rotate(22 64 160)" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="136" cy="160" rx="11" ry="15" transform="rotate(-22 136 160)" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
   if(has("bag")) g += `<path d="M76 142 L80 178 M124 142 L120 178" stroke="#24578A" stroke-width="6" stroke-linecap="round"/>`;
   if(has("scarf")) g += `<path d="M66 144 Q100 160 134 144 L133 155 Q100 171 67 155Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/><path d="M116 156 L124 178 L134 174 L128 153Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/>`;
   if(has("medal")) g += `<circle cx="84" cy="158" r="7" fill="#F5C84C" stroke="#A97A12" stroke-width="2.5"/>`;
@@ -744,10 +760,15 @@ function petSVG(p, mood){
   if(has("hair")) g += `<path d="M62 56 L58 30 L76 44 L80 14 L92 38 L100 8 L108 38 L120 14 L124 44 L142 30 L138 56 Q100 34 62 56Z" fill="#FF6FA5" stroke="#B83C78" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 14 L86 32 M120 14 L114 32 M100 8 V30" stroke="#B79AF0" stroke-width="4" stroke-linecap="round"/>`;
   else g += `<path d="M88 41 Q93 28 100 38 Q107 28 112 41" fill="${c.m}" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
   g += `<path d="M37 98 L30 104 L40 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M163 98 L170 104 L160 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(sp==="dog") g += `<path d="M48 54 Q22 62 28 108 Q34 124 48 112 Q56 86 62 64Z M152 54 Q178 62 172 108 Q166 124 152 112 Q144 86 138 64Z" fill="${c.d}" stroke="${c.d}" stroke-width="3" stroke-linejoin="round"/>`;
   if(ot) g += `<ellipse cx="100" cy="116" rx="42" ry="27" fill="${c.l}"/>`;
+  else if(sp==="monkey") g += `<path d="M100 74 C88 60 52 62 54 96 C54 120 74 138 100 138 C126 138 146 120 146 96 C148 62 112 60 100 74Z" fill="${c.l}"/>`;
+  else if(sp==="owl") g += `<circle cx="74" cy="97" r="24" fill="${c.l}" stroke="${c.d}" stroke-width="2.5"/><circle cx="126" cy="97" r="24" fill="${c.l}" stroke="${c.d}" stroke-width="2.5"/>`;
+  else if(sp==="koala") {}
   else g += `<ellipse cx="100" cy="117" rx="24" ry="17" fill="${c.l}"/>`;
   if(p.hat && p.hat!=="helmet") g += `<g transform="translate(0 -40)">${hatSVG(p.hat)}</g>`;
-  else if(!ot && has("band")) g += `<path d="M48 70 Q100 18 152 70" fill="none" stroke="#FF6FA5" stroke-width="7" stroke-linecap="round"/><path d="M78 40 C66 28 70 14 80 18 C84 19 86 23 86 26 C86 23 88 19 92 18 C102 14 106 28 94 40 L86 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><path d="M114 40 C102 28 106 14 116 18 C120 19 122 23 122 26 C122 23 124 19 128 18 C138 14 142 28 130 40 L122 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="76" cy="24" r="2.5" fill="#fff"/><circle cx="112" cy="24" r="2.5" fill="#fff"/>`;
+  else if(sp==="bear" && has("band")) g += `<path d="M48 70 Q100 18 152 70" fill="none" stroke="#FF6FA5" stroke-width="7" stroke-linecap="round"/><path d="M78 40 C66 28 70 14 80 18 C84 19 86 23 86 26 C86 23 88 19 92 18 C102 14 106 28 94 40 L86 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><path d="M114 40 C102 28 106 14 116 18 C120 19 122 23 122 26 C122 23 124 19 128 18 C138 14 142 28 130 40 L122 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="76" cy="24" r="2.5" fill="#fff"/><circle cx="112" cy="24" r="2.5" fill="#fff"/>`;
+  else if(spOk({sp:["dog","koala","monkey","owl"]},p) && has("crown2")) g += `<path d="M64 52 L60 18 L80 36 L100 8 L120 36 L140 18 L136 52 Z" fill="url(#rbw)" stroke="#A97A12" stroke-width="3.5" stroke-linejoin="round"/><defs><linearGradient id="rbw" x1="0" x2="1"><stop offset="0" stop-color="#FF8FA3"/><stop offset=".3" stop-color="#F5C84C"/><stop offset=".6" stop-color="#8FD8BD"/><stop offset="1" stop-color="#B79AF0"/></linearGradient></defs><circle cx="100" cy="12" r="5" fill="#fff" stroke="#A97A12" stroke-width="2"/><circle cx="82" cy="40" r="4" fill="#fff"/><circle cx="118" cy="40" r="4" fill="#fff"/>`;
   else if(has("bow")) g += `<path d="M122 44 L108 34 L108 54Z M122 44 L136 34 L136 54Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="122" cy="44" r="5" fill="#FF6FA5" stroke="#C2457A" stroke-width="3"/>`;
   let eyes;
   if(mood==="happy") eyes = `<path d="M61 99 Q74 84 87 99" stroke="${ink}" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M113 99 Q126 84 139 99" stroke="${ink}" stroke-width="6" fill="none" stroke-linecap="round"/>`;
@@ -758,10 +779,17 @@ function petSVG(p, mood){
   g += `<ellipse cx="54" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/><ellipse cx="146" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/>`;
   if(has("shades")) g += `<rect x="56" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><rect x="106" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><path d="M94 92 Q100 88 106 92" stroke="#D9434B" stroke-width="3" fill="none"/><path d="M64 90 L72 90 M114 90 L122 90" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>`;
   if(has("star")) g += `<path d="M48 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z M152 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z" fill="#F5C84C" stroke="#A97A12" stroke-width="1.2"/>`;
-  g += ot ? `<path d="M91 106 Q100 101 109 106 Q105 114 100 114 Q95 114 91 106Z" fill="${ink}"/>` : `<ellipse cx="100" cy="110" rx="8" ry="5.5" fill="${ink}"/>`;
-  g += mood==="happy" ? `<path d="M89 119 Q100 136 111 119 Z" fill="#8A2E3B" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>`
+  const nose = ot ? `<path d="M91 106 Q100 101 109 106 Q105 114 100 114 Q95 114 91 106Z" fill="${ink}"/>`
+    : sp==="koala" ? `<ellipse cx="100" cy="108" rx="12" ry="15" fill="#3A3F4B"/><ellipse cx="96" cy="101" rx="3" ry="4" fill="#fff" opacity=".5"/>`
+    : sp==="dog" ? `<ellipse cx="100" cy="108" rx="10" ry="7" fill="${ink}"/><circle cx="97" cy="105" r="2.2" fill="#fff" opacity=".6"/>`
+    : sp==="monkey" ? `<circle cx="96" cy="110" r="2.5" fill="${ink}"/><circle cx="104" cy="110" r="2.5" fill="${ink}"/>`
+    : sp==="owl" ? `<path d="M92 108 L108 108 L100 124Z" fill="#F5A623" stroke="#B5741A" stroke-width="2.5" stroke-linejoin="round"/>`
+    : `<ellipse cx="100" cy="110" rx="8" ry="5.5" fill="${ink}"/>`;
+  g += nose;
+  if(sp!=="owl") g += mood==="happy" ? `<path d="M89 119 Q100 136 111 119 Z" fill="#8A2E3B" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>`
      : mood==="sad" ? `<path d="M92 127 Q100 120 108 127" stroke="${ink}" stroke-width="3.5" fill="none" stroke-linecap="round"/>`
      : `<path d="M91 119 Q95.5 125 100 119 Q104.5 125 109 119" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  if(sp==="dog" && mood==="happy") g += `<path d="M95 128 Q100 140 105 128Z" fill="#FF8FA3" stroke="#C2457A" stroke-width="2"/>`;
   if(ot) g += `<path d="M80 112 L58 108 M80 117 L58 119 M120 112 L142 108 M120 117 L142 119" stroke="${c.d}" stroke-width="2" stroke-linecap="round"/>`;
   if(p.hat==="helmet") g += hatSVG("helmet");
   return `<svg class="pm ${mood}" viewBox="0 0 200 200" role="img" aria-label="${esc(p.pet)} the ${SPECIES[p.species]||"pet"}"><ellipse cx="100" cy="194" rx="48" ry="6" fill="rgba(30,42,58,.18)"/><g class="pg"><g transform="translate(100 192) scale(${sc}) translate(-100 -192)">${g}</g></g></svg>`;
@@ -830,7 +858,18 @@ function stageBox(p, mood, bubble){
 function homeHTML(){
   const cards = S.players.map(p => `<button class="pcard" data-act="pick" data-id="${p.id}"><span class="pw">${petSVG(p,"idle")}</span><span><h3>${esc(p.name)}</h3><span class="sub">${esc(petTitle(p))}</span><br><span class="sub">${p.xp} time crystals</span></span></button>`).join("");
   return `<div class="row" style="justify-content:space-between"><div class="brand"><img class="appicon" src="${ICON}" alt="Time Pets app icon"><div><div class="logo">Time <span>Pets</span></div><div class="tag">Grammar adventures through time</div></div></div><button class="btn small white" data-act="grown">Grown-ups</button></div>
-  <h2 style="font-size:26px">Who is playing?</h2><div class="players">${cards}</div>`;
+  <h2 style="font-size:26px">Who is playing?</h2><div class="players">${cards}</div>
+  <div><button class="btn white" data-act="newp">+ New player</button></div>`;
+}
+const PET_NAMES = ["Kiwi","Coco","Peanut","Sunny","Pip","Nugget","Maple","Bean"];
+function newpHTML(){
+  return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
+  <div class="panel"><h2>New player</h2>
+  <div class="muted">A new mystery egg is waiting for you. Answer questions and it will hatch. Who will be inside?</div>
+  <div class="newgrid"><div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+    <label class="f" for="np-name">Your name<input class="inp" id="np-name" maxlength="20" autocomplete="off" autocorrect="off" spellcheck="false"></label>
+  </div><div class="prev">${petSVG({xp:0,progress:{},color:"lilac",pet:"?"},"idle")}</div></div>
+  <div><button class="btn" data-act="createp">Next: choose your egg's color</button></div><div id="np-err" class="muted"></div></div>`;
 }
 
 function colorHTML(){
@@ -1058,7 +1097,7 @@ function finish(){
   }
   const after = growthN(p);
   res.grew = after > before; res.stage = STAGES[stageOf(p)][0]; res.hatched = before===0 && res.grew;
-  res.items = ITEMS.filter(i => i.n>before && i.n<=after && i.id!=="hatch" && (!i.sp || i.sp===p.species)).map(i => i.name);
+  res.items = ITEMS.filter(i => i.n>before && i.n<=after && i.id!=="hatch" && spOk(i,p)).map(i => i.name);
   save(); V.res = res; V.screen = "result";
   tone(res.grew || res.pass || res.stars>=2 ? [523,659,784,1046] : [440,523]);
   render(); window.scrollTo(0,0);
@@ -1075,7 +1114,7 @@ function resultHTML(){
   }
   let celeb = "";
   if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
-  if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${p.species==="otter"?"otter":"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
+  if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${SPECIES[p.species]||"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   else if(r.grew) celeb += `<div class="celebrate"><h3 style="font-size:22px">${esc(p.pet)} grew${r.items.length?` and got ${r.items.join(" and ")}`:""}!</h3><div class="pw">${petSVG(p,"happy")}</div></div>`;
   return topBar(p) + `<div class="result">${main}<div class="chip" style="font-size:20px">${GEM}+${r.gems} time crystals${r.bonus?" (10 bonus)":""}</div>${celeb}
   ${r.grew?"":`<div style="width:160px">${petSVG(p,"happy")}</div>`}
@@ -1088,7 +1127,7 @@ function grownHTML(){
   if(!V.grownOpen) return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
     <div class="panel"><h2>Grown-ups</h2><div>Press and hold the button for 2 seconds to open the settings.</div><div><button class="btn white gate" id="gate">Hold to open<span class="fill"></span></button></div></div>`;
   const rows = S.verbs.map((v,i) => `<input class="inp" data-vi="${i}" data-f="p" value="${esc(v.p)}" aria-label="Present ${i+1}"><input class="inp" data-vi="${i}" data-f="past" value="${esc(v.past)}" aria-label="Past ${i+1}"><input class="inp" data-vi="${i}" data-f="pp" value="${esc(v.pp)}" aria-label="Past participle ${i+1}"><button class="btn small white" data-act="vdel" data-i="${i}" aria-label="Delete ${esc(v.p)}">Delete</button>`).join("");
-  const players = S.players.map(p => `<div class="row" style="justify-content:space-between"><span><b>${esc(p.name)}</b> · ${esc(p.pet)} · ${p.xp} crystals</span><button class="btn small white" data-act="preset" data-id="${p.id}">${V.arm==="r"+p.id?"Tap again to reset":"Reset progress"}</button></div>`).join("");
+  const players = S.players.map(p => `<div class="row" style="justify-content:space-between"><span><b>${esc(p.name)}</b> · ${esc(p.pet)} · ${p.xp} crystals</span><span class="row"><button class="btn small white" data-act="preset" data-id="${p.id}">${V.arm==="r"+p.id?"Tap again to reset":"Reset progress"}</button>${p.id==="pelonchis"||p.id==="pillus"?"":`<button class="btn small white" data-act="pdel" data-id="${p.id}">${V.arm==="d"+p.id?"Tap again to delete":"Delete player"}</button>`}</span></div>`).join("");
   const na = 'autocapitalize="off" autocorrect="off" spellcheck="false"';
   return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
   <div class="panel"><h2>Verb list (Pirate Cove)</h2><div class="muted">Add the verbs from the notebook each week. Changes save as you type.</div>
@@ -1100,7 +1139,7 @@ function grownHTML(){
 
 /* ---------- render & events ---------- */
 function render(){
-  const map = {learn:learnHTML, home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
+  const map = {newp:newpHTML, learn:learnHTML, home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
   if(["map","room","play","result","color"].includes(V.screen) && !P()) V.screen = "home";
   app.innerHTML = (map[V.screen]||homeHTML)();
   if(V.screen==="grown" && !V.grownOpen) bindGate();
@@ -1116,6 +1155,16 @@ function go(screen){ V.screen = screen; V.arm = null; render(); window.scrollTo(
 const ACT = {
   home(){ V.pid = null; V.grownOpen = false; go("home"); },
   pick(el){ V.pid = el.dataset.id; V.pick = null; go(P().color ? "map" : "color"); },
+  newp(){ go("newp"); try{ document.getElementById("np-name").focus(); }catch(e){} },
+  createp(){ const name = document.getElementById("np-name").value.trim();
+    if(!name){ document.getElementById("np-err").textContent = "Write your name first."; return; }
+    const extra = S.players.filter(x => NEW_SPECIES.includes(x.species)).length;
+    const used = S.players.map(x => x.species);
+    const species = NEW_SPECIES.find(x => !used.includes(x)) || NEW_SPECIES[extra % NEW_SPECIES.length];
+    const pet = PET_NAMES.find(n => !S.players.some(x => x.pet===n)) || "Pip";
+    const p = {id:"p"+Date.now().toString(36), name, pet, species, color:null, xp:0, progress:{}, hats:[], hat:null, era:"dino"};
+    S.players.push(p); save(); V.pid = p.id; V.pick = null; go("color"); },
+  pdel(el){ const k = "d"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } S.players = S.players.filter(x => x.id!==el.dataset.id); save(); V.arm = null; render(); },
   recolor(){ V.pick = null; go("color"); },
   col(el){ const p = P(); V.pick = {color:el.dataset.c, pet:document.getElementById("pk-pet").value};
     app.querySelectorAll(".sw").forEach(b => b.setAttribute("aria-pressed", b.dataset.c===V.pick.color));

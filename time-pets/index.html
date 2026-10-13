@@ -162,6 +162,9 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .grow{width:100%;max-width:420px;display:flex;flex-direction:column;gap:6px}
 .celebrate{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:12px 16px;width:100%;max-width:520px}
 .celebrate .pw{width:160px;margin:0 auto}
+.ward{min-height:84px;justify-content:center}
+.ward .wstate{font-family:var(--f-display);font-size:15px;border:2px solid var(--ink);border-radius:999px;padding:0 10px;background:var(--card)}
+.ward[aria-pressed="true"] .wstate{background:#BDEBD2}
 .closet{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
 .hat{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:8px;box-shadow:0 3px 0 var(--ink);cursor:pointer;font-size:14px;font-weight:700;text-align:center;line-height:1.2}
 .hat svg{width:70px;height:70px}
@@ -708,9 +711,12 @@ const OUTFITS = [
   {n:9, id:"plumber", name:"Red cap & overalls"},
   {n:12, id:"monster", name:"Monster costume"},
   {n:15, id:"mardi", name:"Mardi Gras costume"},
-  {n:18, id:"striped", name:"Tall striped hat"}
+  {n:18, id:"striped", name:"Tall striped hat"},
+  {n:24, id:"furry", name:"Furry explorer suit"}
 ];
-const OUTFIT_HEAD = {plumber:1, monster:1, mardi:1, striped:1};
+const OUTFIT_HEAD = {plumber:1, monster:1, mardi:1, striped:1, furry:1};
+const SWIRL_AT = 21;
+const swirlOn = p => threes(p) >= SWIRL_AT && !(p.off||[]).includes("swirl");
 const threes = p => p.threes || 0;
 const nextOutfit = p => OUTFITS.find(o => o.n > threes(p));
 function outfitBody(id, c){
@@ -719,12 +725,14 @@ function outfitBody(id, c){
     case "vest": return `<path d="M70 144 Q100 136 130 144 L134 190 L66 190Z" fill="#B23A48"/><path d="M62 146 Q78 138 94 140 L94 190 L64 190 Q58 168 62 146Z M138 146 Q122 138 106 140 L106 190 L136 190 Q142 168 138 146Z" fill="#F28C28" stroke="#B35E10" stroke-width="3.5" stroke-linejoin="round"/><path d="M64 160 H94 M63 174 H94 M106 160 H137 M106 174 H137" stroke="#B35E10" stroke-width="2.5"/>`;
     case "plumber": return `<ellipse cx="64" cy="160" rx="12" ry="16" transform="rotate(22 64 160)" fill="#D9232E" stroke="#8E1219" stroke-width="3.5"/><ellipse cx="136" cy="160" rx="12" ry="16" transform="rotate(-22 136 160)" fill="#D9232E" stroke="#8E1219" stroke-width="3.5"/><path d="M68 156 Q100 150 132 156 L136 190 L64 190Z" fill="#2F5DA8" stroke="#1C3A70" stroke-width="3.5" stroke-linejoin="round"/><path d="M76 156 L72 136 M124 156 L128 136" stroke="#2F5DA8" stroke-width="8" stroke-linecap="round"/><circle cx="78" cy="160" r="5" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/><circle cx="122" cy="160" r="5" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/><path d="M90 172 H110 V184 H90Z" fill="none" stroke="#1C3A70" stroke-width="2.5"/>`;
     case "monster": return `<path d="M62 142 Q100 132 138 142 L140 192 L60 192Z" fill="#3A3F4B" stroke="#1E2A3A" stroke-width="3.5" stroke-linejoin="round"/><path d="M100 140 L90 192 M100 140 L110 192" stroke="#1E2A3A" stroke-width="3"/><path d="M84 142 L100 152 L116 142" fill="#E8E8E0" stroke="#1E2A3A" stroke-width="2.5"/>`;
+    case "furry": return `<rect x="54" y="132" width="92" height="52" rx="14" fill="#6B4A2B" stroke="#3E2A17" stroke-width="3.5"/><path d="M58 144 Q56 166 60 192 L68 186 L74 194 L82 186 L90 194 L100 186 L110 194 L118 186 L126 194 L132 186 L140 192 Q144 166 142 144 Q100 128 58 144Z" fill="#8A5A34" stroke="#5A3A1F" stroke-width="3" stroke-linejoin="round"/><path d="M70 152 l4 8 M84 160 l3 9 M116 160 l-3 9 M130 152 l-4 8 M96 172 l2 8 M108 174 l-2 8" stroke="#5A3A1F" stroke-width="2.5" stroke-linecap="round"/><path d="M70 140 L134 186" stroke="#3B2A1C" stroke-width="12" stroke-linecap="round"/><g fill="#C9D1DC" stroke="#4C5468" stroke-width="1.5"><rect x="78" y="142" width="8" height="10" rx="1.5" transform="rotate(36 82 147)"/><rect x="92" y="152" width="8" height="10" rx="1.5" transform="rotate(36 96 157)"/><rect x="106" y="162" width="8" height="10" rx="1.5" transform="rotate(36 110 167)"/><rect x="120" y="172" width="8" height="10" rx="1.5" transform="rotate(36 124 177)"/></g>`;
     case "mardi": return `<path d="M64 146 Q100 132 136 146 L138 192 L62 192Z" fill="#6A2C91" stroke="#43195E" stroke-width="3.5" stroke-linejoin="round"/><path d="M62 160 L138 160 M62 176 L138 176" stroke="#2E9E6B" stroke-width="6"/><path d="M66 140 Q100 176 134 140" fill="none" stroke="#F5C84C" stroke-width="6" stroke-dasharray="1 8" stroke-linecap="round"/><path d="M70 140 Q100 166 130 140" fill="none" stroke="#8B3FC4" stroke-width="6" stroke-dasharray="1 8" stroke-linecap="round"/><path d="M74 140 Q100 156 126 140" fill="none" stroke="#2E9E6B" stroke-width="6" stroke-dasharray="1 8" stroke-linecap="round"/>`;
   }
   return "";
 }
 function outfitHead(id){
   switch(id){
+    case "furry": return `<path d="M40 96 Q34 70 48 54 L44 40 L58 46 L60 30 L74 38 L80 22 L90 34 L100 20 L110 34 L120 22 L126 38 L140 30 L142 46 L156 40 L152 54 Q166 70 160 96 Q150 74 136 66 Q100 50 64 66 Q50 74 40 96Z" fill="#8A5A34" stroke="#5A3A1F" stroke-width="3" stroke-linejoin="round"/><path d="M36 100 Q30 120 40 136 M164 100 Q170 120 160 136" stroke="#8A5A34" stroke-width="9" stroke-linecap="round" fill="none"/>`;
     case "vest": return `<rect x="56" y="84" width="38" height="24" rx="5" fill="#1E2A3A" stroke="#3A3F4B" stroke-width="3"/><rect x="106" y="84" width="38" height="24" rx="5" fill="#1E2A3A" stroke="#3A3F4B" stroke-width="3"/><path d="M94 92 H106" stroke="#3A3F4B" stroke-width="3"/><path d="M62 90 L72 90 M112 90 L122 90" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>`;
     case "plumber": return `<path d="M44 66 Q48 22 100 20 Q152 22 156 66 Z" fill="#D9232E" stroke="#8E1219" stroke-width="3.5" stroke-linejoin="round"/><path d="M40 66 Q100 54 168 64 Q172 74 150 76 Q100 68 44 76 Q34 72 40 66Z" fill="#B81C26" stroke="#8E1219" stroke-width="3" stroke-linejoin="round"/>`;
     case "monster": return `<path d="M46 66 L46 34 Q100 24 154 34 L154 66 Q130 54 116 64 L106 52 L96 64 L84 52 L74 64 Q60 56 46 66Z" fill="#1E2A3A" stroke="#0E141E" stroke-width="3" stroke-linejoin="round"/><path d="M80 74 H120 M86 70 V78 M96 70 V78 M106 70 V78 M116 70 V78" stroke="#3A3F4B" stroke-width="2.5" stroke-linecap="round"/><rect x="30" y="124" width="14" height="10" rx="2" fill="#9AA3B0" stroke="#4C5468" stroke-width="2.5"/><rect x="156" y="124" width="14" height="10" rx="2" fill="#9AA3B0" stroke="#4C5468" stroke-width="2.5"/>`;
@@ -751,7 +759,7 @@ function hatSVG(id){
 function petSVG(p, mood){
   mood = mood || "idle";
   const N = growthN(p), st = stageOfN(N), sp = p.species, ot = sp==="otter";
-  const has = id => N >= ITEMS.find(i => i.id===id).n;
+  const has = id => N >= ITEMS.find(i => i.id===id).n && !(p.off||[]).includes(id);
   const c = COLORS[p.color] || COLORS.mint;
   if(st===0){
     const crack = p.xp>=5 ? `<path d="M60 124 L75 114 L87 126 L99 111 L112 126 L125 114 L140 124" fill="none" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>` : "";
@@ -763,6 +771,7 @@ function petSVG(p, mood){
   if(has("aura")) g += `<circle class="aura" cx="100" cy="112" r="92" fill="none" stroke="#F5C84C" stroke-width="5" stroke-dasharray="3 15" stroke-linecap="round"/>`;
   if(has("wings")) g += `<ellipse cx="50" cy="150" rx="26" ry="15" transform="rotate(-30 50 150)" fill="#fff" stroke="#9FC4E8" stroke-width="3.5"/><ellipse cx="150" cy="150" rx="26" ry="15" transform="rotate(30 150 150)" fill="#fff" stroke="#9FC4E8" stroke-width="3.5"/>`;
   if(has("bag")) g += `<rect x="62" y="134" width="76" height="46" rx="14" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5"/>`;
+  if(p.outfit==="furry" && threes(p)>=24) g += `<rect x="46" y="126" width="108" height="58" rx="12" fill="#5F6B3C" stroke="#3B4425" stroke-width="3.5"/><rect x="40" y="140" width="14" height="30" rx="5" fill="#76824A" stroke="#3B4425" stroke-width="3"/><rect x="146" y="140" width="14" height="30" rx="5" fill="#76824A" stroke="#3B4425" stroke-width="3"/>`;
   if(has("cape")) g += `<path d="M64 140 Q44 182 68 192 L132 192 Q156 182 136 140Z" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5" stroke-linejoin="round"/>`;
   if(ot) g += `<path d="M128 178 Q178 184 186 140 Q172 164 132 162 Z" fill="${c.m}" stroke="${c.d}" ${sw} stroke-linejoin="round"/>`;
   if(sp==="dog") g += `<path d="M134 168 Q166 160 168 128" fill="none" stroke="${c.d}" stroke-width="15" stroke-linecap="round"/><path d="M134 168 Q166 160 168 128" fill="none" stroke="${c.m}" stroke-width="8" stroke-linecap="round"/>`;
@@ -791,7 +800,8 @@ function petSVG(p, mood){
   const OF = p.outfit && threes(p) >= (OUTFITS.find(o => o.id===p.outfit)||{n:1e9}).n ? p.outfit : null;
   if(OF) g += outfitBody(OF, c);
   g += `<ellipse cx="100" cy="92" rx="64" ry="56" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
-  if(has("hair")) g += `<path d="M62 56 L58 30 L76 44 L80 14 L92 38 L100 8 L108 38 L120 14 L124 44 L142 30 L138 56 Q100 34 62 56Z" fill="#FF6FA5" stroke="#B83C78" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 14 L86 32 M120 14 L114 32 M100 8 V30" stroke="#B79AF0" stroke-width="4" stroke-linecap="round"/>`;
+  if(OF && OUTFIT_HEAD[OF]) {}
+  else if(has("hair")) g += `<path d="M62 56 L58 30 L76 44 L80 14 L92 38 L100 8 L108 38 L120 14 L124 44 L142 30 L138 56 Q100 34 62 56Z" fill="#FF6FA5" stroke="#B83C78" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 14 L86 32 M120 14 L114 32 M100 8 V30" stroke="#B79AF0" stroke-width="4" stroke-linecap="round"/>`;
   else g += `<path d="M88 41 Q93 28 100 38 Q107 28 112 41" fill="${c.m}" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
   g += `<path d="M37 98 L30 104 L40 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M163 98 L170 104 L160 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
   if(sp==="dog") g += `<path d="M48 54 Q22 62 28 108 Q34 124 48 112 Q56 86 62 64Z M152 54 Q178 62 172 108 Q166 124 152 112 Q144 86 138 64Z" fill="${c.d}" stroke="${c.d}" stroke-width="3" stroke-linejoin="round"/>`;
@@ -812,7 +822,7 @@ function petSVG(p, mood){
     if(mood==="sad") eyes += `<path d="M60 76 L84 82 M140 76 L116 82" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`; }
   g += eyes;
   g += `<ellipse cx="54" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/><ellipse cx="146" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/>`;
-  if(has("shades")) g += `<rect x="56" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><rect x="106" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><path d="M94 92 Q100 88 106 92" stroke="#D9434B" stroke-width="3" fill="none"/><path d="M64 90 L72 90 M114 90 L122 90" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>`;
+  if(has("shades") && !swirlOn(p)) g += `<rect x="56" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><rect x="106" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><path d="M94 92 Q100 88 106 92" stroke="#D9434B" stroke-width="3" fill="none"/><path d="M64 90 L72 90 M114 90 L122 90" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>`;
   if(has("star")) g += `<path d="M48 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z M152 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z" fill="#F5C84C" stroke="#A97A12" stroke-width="1.2"/>`;
   const nose = ot ? `<path d="M91 106 Q100 101 109 106 Q105 114 100 114 Q95 114 91 106Z" fill="${ink}"/>`
     : sp==="koala" ? `<ellipse cx="100" cy="108" rx="12" ry="15" fill="#3A3F4B"/><ellipse cx="96" cy="101" rx="3" ry="4" fill="#fff" opacity=".5"/>`
@@ -827,6 +837,7 @@ function petSVG(p, mood){
   if(sp==="dog" && mood==="happy") g += `<path d="M95 128 Q100 140 105 128Z" fill="#FF8FA3" stroke="#C2457A" stroke-width="2"/>`;
   if(ot) g += `<path d="M80 112 L58 108 M80 117 L58 119 M120 112 L142 108 M120 117 L142 119" stroke="${c.d}" stroke-width="2" stroke-linecap="round"/>`;
   if(OF) g += outfitHead(OF);
+  if(swirlOn(p)) g += `<defs><radialGradient id="swl"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#7FD3F5"/><stop offset=".5" stop-color="#FF6FA5"/><stop offset=".75" stop-color="#F5C84C"/><stop offset="1" stop-color="#8FD8BD"/></radialGradient></defs><path d="M40 70 Q58 58 74 74 M160 70 Q142 58 126 74" stroke="#FF6FA5" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M48 96 Q48 70 74 72 Q100 74 96 98 Q94 120 72 120 Q50 120 48 96Z M104 98 Q100 74 126 72 Q152 70 152 96 Q150 120 128 120 Q106 120 104 98Z" fill="url(#swl)" stroke="#B83C78" stroke-width="4" stroke-linejoin="round"/><path d="M60 96 a12 10 0 1 1 24 0 a8 7 0 1 1 -16 0 a4 3 0 1 1 8 0 M116 96 a12 10 0 1 1 24 0 a8 7 0 1 1 -16 0 a4 3 0 1 1 8 0" fill="none" stroke="#fff" stroke-width="2.5" opacity=".9"/><path d="M96 92 Q100 86 104 92" stroke="#B83C78" stroke-width="4" fill="none"/>`;
   if(p.hat==="helmet" && !(OF && OUTFIT_HEAD[OF])) g += hatSVG("helmet");
   return `<svg class="pm ${mood}" viewBox="0 0 200 200" role="img" aria-label="${esc(p.pet)} the ${SPECIES[p.species]||"pet"}"><ellipse cx="100" cy="194" rx="48" ry="6" fill="rgba(30,42,58,.18)"/><g class="pg"><g transform="translate(100 192) scale(${sc}) translate(-100 -192)">${g}</g></g></svg>`;
 }
@@ -969,6 +980,12 @@ function mapHTML(){
   <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>`;
 }
 
+function wardrobeItems(p){
+  const n = growthN(p), off = p.off||[];
+  const list = ITEMS.filter(i => i.id!=="hatch" && spOk(i,p)).map(i => ({id:i.id, name:cap(i.name.replace(/^an? /,"")), got:n>=i.n, on:!off.includes(i.id), how:`Keep passing levels: ${n} / ${i.n}`}));
+  list.push({id:"swirl", name:"Rainbow swirl glasses", got:threes(p)>=SWIRL_AT, on:!off.includes("swirl"), how:`3-star wins: ${threes(p)} / ${SWIRL_AT}`});
+  return list;
+}
 function roomHTML(){
   const p = P();
   const hats = `<button class="hat" data-act="hat" data-h="" aria-pressed="${!p.hat}"><svg viewBox="0 0 200 200"></svg>No hat</button>` + ERAS.map(e => { const got = (p.hats||[]).includes(e.hat);
@@ -978,6 +995,8 @@ function roomHTML(){
   return topBar(p) + `${stageBox(p, V.roomMood||"idle", V.roomSay||`Hi ${p.name.split(" ")[0]}! Where are we going today?`)}
   <div class="panel"><h2>Time machine</h2><div class="muted">Pick a time to visit. Win each Time Quiz to unlock a new one.</div><div class="travel">${trav}</div></div>
   <div class="panel"><h2>Hat closet</h2><div class="closet">${hats}</div></div>
+  <div class="panel"><h2>Wardrobe</h2><div class="muted">Tap a thing to put it on or take it off.</div>
+  <div class="closet">${wardrobeItems(p).map(w => w.got ? `<button class="hat ward" data-act="ward" data-w="${w.id}" aria-pressed="${w.on}"><span class="wstate">${w.on?"On":"Off"}</span>${w.name}</button>` : `<button class="hat ward" disabled><span class="wstate">?</span>${w.how}</button>`).join("")}</div></div>
   <div class="panel"><h2>Outfit closet</h2><div class="muted">You have ${threes(p)} three-star wins. ${nextOutfit(p)?`${nextOutfit(p).n - threes(p)} more for the next outfit.`:"You have every outfit!"}</div>
   <div class="closet"><button class="hat" data-act="outfit" data-o="" aria-pressed="${!p.outfit}"><svg viewBox="0 0 200 200"></svg>No outfit</button>${OUTFITS.map(o => { const got = threes(p) >= o.n;
     return `<button class="hat" data-act="outfit" data-o="${o.id}" ${got?"":"disabled"} aria-pressed="${p.outfit===o.id}"><span style="width:76px;display:block">${got?petSVG({...p, outfit:o.id, hat:null},"idle"):'<svg viewBox="0 0 200 200"><text x="100" y="120" text-anchor="middle" font-size="80" font-family="Lilita One, sans-serif" fill="#9AA6B5">?</text></svg>'}</span>${got?o.name:`Get 3 stars ${o.n} times`}</button>`; }).join("")}</div></div>
@@ -1122,7 +1141,7 @@ function finish(){
   if(!s.boss){
     const pct = s.points/s.max; const st = pct>=.9?3:pct>=.7?2:pct>=.5?1:0;
     res.stars = st; pr.l[s.l] = Math.max(pr.l[s.l]||0, st);
-    if(st===3){ const before3 = threes(p); p.threes = before3 + 1; const o = OUTFITS.find(x => x.n===p.threes); if(o){ res.outfit = o; p.outfit = o.id; } }
+    if(st===3){ const before3 = threes(p); p.threes = before3 + 1; if(p.threes===SWIRL_AT){ res.swirl = true; p.off = (p.off||[]).filter(x => x!=="swirl"); } const o = OUTFITS.find(x => x.n===p.threes); if(o){ res.outfit = o; p.outfit = o.id; } }
   } else {
     const score = Math.round(s.points/s.max*10);
     res.score = score; res.pass = score>=7;
@@ -1153,6 +1172,7 @@ function resultHTML(){
     main = `<h2 style="font-size:34px">${r.pass?"You passed the Time Quiz!":"Time Quiz"}</h2><div class="score ${r.pass?"":"low"}">${r.score}/10</div>${r.pass?"":'<div>You need 7 to travel. Practice the levels and try again!</div>'}`;
   }
   let celeb = "";
+  if(r.swirl) celeb += `<div class="celebrate"><h3 style="font-size:24px">Special accessory: Rainbow swirl glasses!</h3><div>You got 3 stars ${SWIRL_AT} times. Turn them on or off in the Wardrobe.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.outfit) celeb += `<div class="celebrate"><h3 style="font-size:24px">New outfit: ${r.outfit.name}!</h3><div>You got 3 stars ${r.outfit.n} times. ${esc(p.pet)} is wearing it now. Change it in the Pet room.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
   if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${SPECIES[p.species]||"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
@@ -1223,6 +1243,8 @@ const ACT = {
     el.parentNode.querySelectorAll(".pk").forEach(b => { const on = b===el; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }); },
   check(){ doCheck(readVals(V.sess.qs[V.sess.i])); },
   next(){ nextQ(); },
+  ward(el){ const p = P(), id = el.dataset.w; p.off = p.off||[]; const on = !p.off.includes(id);
+    p.off = on ? [...p.off, id] : p.off.filter(x => x!==id); save(); V.roomMood = "happy"; V.roomSay = on ? "Okay, I took it off." : "I love it!"; render(); },
   outfit(el){ const p = P(); p.outfit = el.dataset.o || null; save(); V.roomMood = "happy"; V.roomSay = p.outfit ? "Look at my new outfit!" : "Back to my fur!"; render(); },
   hat(el){ const p = P(); p.hat = el.dataset.h || null; save(); V.roomMood = "happy"; V.roomSay = p.hat ? "I love my new hat!" : "No hat today."; render(); },
   travel(el){ const p = P(); p.era = el.dataset.e; save(); const e = ERAS.find(x => x.id===p.era); V.roomMood = "happy"; V.roomSay = `Whoosh! We are in ${e.name}, ${e.year}!`; tone([392,523,659]); render(); },
@@ -1232,7 +1254,7 @@ const ACT = {
     if(!a||!b||!c){ document.getElementById("v-msg").textContent = "Fill in all three forms."; return; }
     S.verbs.push({p:a,past:b,pp:c}); save(); render(); },
   vreset(){ if(V.arm!=="v"){ V.arm = "v"; render(); return; } S.verbs = DEFAULT_VERBS.map(v=>({...v})); save(); V.arm = null; render(); },
-  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; p.threes=0; p.outfit=null; } save(); V.arm = null; render(); }
+  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; p.threes=0; p.outfit=null; p.off=[]; } save(); V.arm = null; render(); }
 };
 
 app.addEventListener("click", ev => { const el = ev.target.closest("[data-act]"); if(!el || el.disabled) return; const f = ACT[el.dataset.act]; if(f) f(el); });

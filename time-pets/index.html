@@ -248,18 +248,14 @@ const SUBJ = [
   {s:"Betilio",q:"Betilio",t:1,be:"is",was:"was",g:"He"},
   {s:"Froy",q:"Froy",t:1,be:"is",was:"was",g:"He"},
   {s:"Jorge",q:"Jorge",t:1,be:"is",was:"was",g:"He"},
-  {s:"Tina",q:"Tina",t:1,be:"is",was:"was",g:"She"},
-  {s:"Fafis",q:"Fafis",t:1,be:"is",was:"was",g:"She"},
   {s:"Grandpa",q:"Grandpa",t:1,be:"is",was:"was",g:"He"},
   {s:"Grandma",q:"Grandma",t:1,be:"is",was:"was",g:"She"},
   {s:"Mom",q:"Mom",t:1,be:"is",was:"was",g:"She"},
   {s:"Dad",q:"Dad",t:1,be:"is",was:"was",g:"He"},
-  {s:"Tina and Fafis",q:"Tina and Fafis",t:0,be:"are",was:"were",g:"They"},
+  {s:"Tina and Fafis",q:"Tina and Fafis",t:0,be:"are",was:"were",g:"We"},
   {s:"Grandpa and Grandma",q:"Grandpa and Grandma",t:0,be:"are",was:"were",g:"They"},
   {s:"Cin and Froy",q:"Cin and Froy",t:0,be:"are",was:"were",g:"They"},
   {s:"My school friends",q:"my school friends",t:0,be:"are",was:"were",g:"They"},
-  {s:"Tina and I",q:"Tina and I",t:0,be:"are",was:"were",g:"We"},
-  {s:"Fafis and I",q:"Fafis and I",t:0,be:"are",was:"were",g:"We"},
   {s:"Mom and I",q:"Mom and I",t:0,be:"are",was:"were",g:"We"},
   {s:"The dog",q:"the dog",t:1,be:"is",was:"was",an:1,g:"It"},
   {s:"The cat",q:"the cat",t:1,be:"is",was:"was",an:1,g:"It"}
@@ -351,10 +347,10 @@ const PRONS = [
   {p:"I",be:"am",clues:["me"]},
   {p:"You",be:"are",clues:["you","you and Alicia"]},
   {p:"He",be:"is",clues:["Betilio","Froy","Jorge","Grandpa","Dad"]},
-  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Tina","Fafis","Grandma","Mom"]},
+  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Grandma","Mom"]},
   {p:"It",be:"is",clues:["the dog","the cat","the frappé","the ice cream","the beach","the castle"],thing:1},
-  {p:"We",be:"are",clues:["Tina and I","Fafis and I","Mom and I","my school friends and I"]},
-  {p:"They",be:"are",clues:["Tina and Fafis","Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
+  {p:"We",be:"are",clues:["Tina and Fafis","Mom and I","my school friends and I"]},
+  {p:"They",be:"are",clues:["Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
 ];
 const THING_COMP = {"the dog":["very fluffy","hungry","asleep on the sofa"],"the cat":["on the roof","black and white"],"the frappé":["cold and sweet","on the table"],"the ice cream":["delicious","very cold"],"the beach":["sunny today","beautiful"],"the castle":["big and pink","in the middle of the park"]};
 const PEOPLE_COMP = ["happy today","at the beach","in the kitchen","very funny","ready for school","excited about the trip to Disney","good at soccer","tired after school","at the ice cream shop","in the pool","on the bus","at Grandma's house"];
@@ -483,10 +479,10 @@ const FIXED_PAST = [
   {text:"[[Yesterday]] we ___ to the park.", options:["go","went","going"], a:"went", hint:"go → went → gone"},
   {text:"[[Last summer]] Grandpa and Grandma ___ to the beach.", options:["went","gone","goes"], a:"went", hint:"go → went → gone"},
   {text:"The movie ___ at seven o'clock [[last night]].", options:["begins","began","begun"], a:"began", hint:"begin → began → begun"},
-  {text:"[[Last year]] Fafis ___ the best reader in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
+  {text:"[[Last year]] Tina and Fafis ___ the best readers in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
   {text:"[[Two days ago]] a mosquito ___ my arm.", options:["bite","bit","bites"], a:"bit", hint:"bite → bit → bitten"},
   {text:"[[Yesterday]] the kids ___ very tired after the race.", options:["are","were","was"], a:"were", hint:H.was},
-  {text:"Tina ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"was", hint:H.was}
+  {text:"Tina and Fafis ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"were", hint:H.was}
 ];
 const isPz = a => !!a.pz;
 function pastChoose(){

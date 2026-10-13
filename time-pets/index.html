@@ -701,6 +701,38 @@ const LINES = [
   "I'm almost a legend. Let's finish the time trip!",
   "We are Time Legends!"
 ];
+/* outfits: won by getting 3 stars on any level (counts every time) */
+const OUTFITS = [
+  {n:3, id:"wizard", name:"Wizard robe"},
+  {n:6, id:"vest", name:"Orange vest & sunglasses"},
+  {n:9, id:"plumber", name:"Red cap & overalls"},
+  {n:12, id:"monster", name:"Monster costume"},
+  {n:15, id:"mardi", name:"Mardi Gras costume"},
+  {n:18, id:"striped", name:"Tall striped hat"}
+];
+const OUTFIT_HEAD = {plumber:1, monster:1, mardi:1, striped:1};
+const threes = p => p.threes || 0;
+const nextOutfit = p => OUTFITS.find(o => o.n > threes(p));
+function outfitBody(id, c){
+  switch(id){
+    case "wizard": return `<path d="M62 146 Q56 178 64 192 L136 192 Q144 178 138 146 Q100 130 62 146Z" fill="#2B2D4F" stroke="#15162B" stroke-width="3.5" stroke-linejoin="round"/><path d="M100 140 V192" stroke="#15162B" stroke-width="3"/><path d="M66 140 Q100 158 134 140 L132 152 Q100 170 68 152Z" fill="#8E1F2C" stroke="#5E0F19" stroke-width="3" stroke-linejoin="round"/><path d="M78 146 L82 159 M92 150 L94 163 M106 150 L104 163 M120 146 L116 159" stroke="#E8B53A" stroke-width="4"/><path d="M112 156 L120 184 L130 180 L124 154Z" fill="#8E1F2C" stroke="#5E0F19" stroke-width="3" stroke-linejoin="round"/><path d="M114 164 L127 161 M117 173 L129 170" stroke="#E8B53A" stroke-width="4"/><path d="M138 166 L170 134" stroke="#6B4423" stroke-width="5" stroke-linecap="round"/><circle cx="171" cy="133" r="3" fill="#FFF6D6"/>`;
+    case "vest": return `<path d="M70 144 Q100 136 130 144 L134 190 L66 190Z" fill="#B23A48"/><path d="M62 146 Q78 138 94 140 L94 190 L64 190 Q58 168 62 146Z M138 146 Q122 138 106 140 L106 190 L136 190 Q142 168 138 146Z" fill="#F28C28" stroke="#B35E10" stroke-width="3.5" stroke-linejoin="round"/><path d="M64 160 H94 M63 174 H94 M106 160 H137 M106 174 H137" stroke="#B35E10" stroke-width="2.5"/>`;
+    case "plumber": return `<ellipse cx="64" cy="160" rx="12" ry="16" transform="rotate(22 64 160)" fill="#D9232E" stroke="#8E1219" stroke-width="3.5"/><ellipse cx="136" cy="160" rx="12" ry="16" transform="rotate(-22 136 160)" fill="#D9232E" stroke="#8E1219" stroke-width="3.5"/><path d="M68 156 Q100 150 132 156 L136 190 L64 190Z" fill="#2F5DA8" stroke="#1C3A70" stroke-width="3.5" stroke-linejoin="round"/><path d="M76 156 L72 136 M124 156 L128 136" stroke="#2F5DA8" stroke-width="8" stroke-linecap="round"/><circle cx="78" cy="160" r="5" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/><circle cx="122" cy="160" r="5" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/><path d="M90 172 H110 V184 H90Z" fill="none" stroke="#1C3A70" stroke-width="2.5"/>`;
+    case "monster": return `<path d="M62 142 Q100 132 138 142 L140 192 L60 192Z" fill="#3A3F4B" stroke="#1E2A3A" stroke-width="3.5" stroke-linejoin="round"/><path d="M100 140 L90 192 M100 140 L110 192" stroke="#1E2A3A" stroke-width="3"/><path d="M84 142 L100 152 L116 142" fill="#E8E8E0" stroke="#1E2A3A" stroke-width="2.5"/>`;
+    case "mardi": return `<path d="M64 146 Q100 132 136 146 L138 192 L62 192Z" fill="#6A2C91" stroke="#43195E" stroke-width="3.5" stroke-linejoin="round"/><path d="M62 160 L138 160 M62 176 L138 176" stroke="#2E9E6B" stroke-width="6"/><path d="M66 140 Q100 176 134 140" fill="none" stroke="#F5C84C" stroke-width="6" stroke-dasharray="1 8" stroke-linecap="round"/><path d="M70 140 Q100 166 130 140" fill="none" stroke="#8B3FC4" stroke-width="6" stroke-dasharray="1 8" stroke-linecap="round"/><path d="M74 140 Q100 156 126 140" fill="none" stroke="#2E9E6B" stroke-width="6" stroke-dasharray="1 8" stroke-linecap="round"/>`;
+  }
+  return "";
+}
+function outfitHead(id){
+  switch(id){
+    case "vest": return `<rect x="56" y="84" width="38" height="24" rx="5" fill="#1E2A3A" stroke="#3A3F4B" stroke-width="3"/><rect x="106" y="84" width="38" height="24" rx="5" fill="#1E2A3A" stroke="#3A3F4B" stroke-width="3"/><path d="M94 92 H106" stroke="#3A3F4B" stroke-width="3"/><path d="M62 90 L72 90 M112 90 L122 90" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>`;
+    case "plumber": return `<path d="M44 66 Q48 22 100 20 Q152 22 156 66 Z" fill="#D9232E" stroke="#8E1219" stroke-width="3.5" stroke-linejoin="round"/><path d="M40 66 Q100 54 168 64 Q172 74 150 76 Q100 68 44 76 Q34 72 40 66Z" fill="#B81C26" stroke="#8E1219" stroke-width="3" stroke-linejoin="round"/>`;
+    case "monster": return `<path d="M46 66 L46 34 Q100 24 154 34 L154 66 Q130 54 116 64 L106 52 L96 64 L84 52 L74 64 Q60 56 46 66Z" fill="#1E2A3A" stroke="#0E141E" stroke-width="3" stroke-linejoin="round"/><path d="M80 74 H120 M86 70 V78 M96 70 V78 M106 70 V78 M116 70 V78" stroke="#3A3F4B" stroke-width="2.5" stroke-linecap="round"/><rect x="30" y="124" width="14" height="10" rx="2" fill="#9AA3B0" stroke="#4C5468" stroke-width="2.5"/><rect x="156" y="124" width="14" height="10" rx="2" fill="#9AA3B0" stroke="#4C5468" stroke-width="2.5"/>`;
+    case "mardi": return `<path d="M52 106 Q50 80 74 82 Q88 84 100 92 Q112 84 126 82 Q150 80 148 106 Q140 116 124 110 Q112 104 100 106 Q88 104 76 110 Q60 116 52 106Z M62 96 a12 9 0 1 0 24 0 a12 9 0 1 0 -24 0Z M114 96 a12 9 0 1 0 24 0 a12 9 0 1 0 -24 0Z" fill="#6A2C91" fill-rule="evenodd" stroke="#F5C84C" stroke-width="3" stroke-linejoin="round"/><path d="M60 56 Q50 18 30 24 Q48 34 54 60Z" fill="#6A2C91" stroke="#43195E" stroke-width="3"/><path d="M100 50 Q100 8 100 4 Q112 24 112 52Z M88 52 Q88 24 100 4" fill="#2E9E6B" stroke="#1B6B46" stroke-width="3"/><path d="M140 56 Q150 18 170 24 Q152 34 146 60Z" fill="#F5C84C" stroke="#A97A12" stroke-width="3"/><path d="M54 62 Q100 40 146 62 L146 68 Q100 50 54 68Z" fill="#F5C84C" stroke="#A97A12" stroke-width="2.5"/><circle cx="30" cy="24" r="6" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/><circle cx="100" cy="5" r="6" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/><circle cx="170" cy="24" r="6" fill="#F5C84C" stroke="#A97A12" stroke-width="2"/>`;
+    case "striped": return `<path d="M62 54 Q100 46 138 54 Q144 60 138 64 Q100 56 62 64 Q56 60 62 54Z" fill="#fff" stroke="#1E2A3A" stroke-width="3"/><path d="M72 56 L66 -14 Q100 -22 134 -14 L128 56 Q100 50 72 56Z" fill="#fff" stroke="#1E2A3A" stroke-width="3" stroke-linejoin="round"/><path d="M71 44 Q100 38 129 44 L130 32 Q100 26 70 32Z M69 20 Q100 14 131 20 L132 8 Q100 2 68 8Z M67 -4 Q100 -10 133 -4 L134 -12 Q100 -20 66 -12Z" fill="#D9232E"/>`;
+  }
+  return "";
+}
 const SPECIES = {bear:"bear", otter:"otter", dog:"puppy", koala:"koala", monkey:"monkey", owl:"owl"};
 const NEW_SPECIES = ["dog","koala","monkey","owl"];
 const spOk = (i,p) => !i.sp || (Array.isArray(i.sp) ? i.sp.includes(p.species) : i.sp===p.species);
@@ -756,6 +788,8 @@ function petSVG(p, mood){
   if(has("scarf")) g += `<path d="M66 144 Q100 160 134 144 L133 155 Q100 171 67 155Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/><path d="M116 156 L124 178 L134 174 L128 153Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/>`;
   if(has("medal")) g += `<circle cx="84" cy="158" r="7" fill="#F5C84C" stroke="#A97A12" stroke-width="2.5"/>`;
   if(has("watch")) g += `<path d="M100 150 Q108 160 114 166" stroke="#A97A12" stroke-width="2" fill="none"/><circle cx="117" cy="172" r="9" fill="#FFF6D6" stroke="#A97A12" stroke-width="3"/><path d="M117 172 V166 M117 172 L121 174" stroke="#1E2A3A" stroke-width="1.8" stroke-linecap="round"/>`;
+  const OF = p.outfit && threes(p) >= (OUTFITS.find(o => o.id===p.outfit)||{n:1e9}).n ? p.outfit : null;
+  if(OF) g += outfitBody(OF, c);
   g += `<ellipse cx="100" cy="92" rx="64" ry="56" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
   if(has("hair")) g += `<path d="M62 56 L58 30 L76 44 L80 14 L92 38 L100 8 L108 38 L120 14 L124 44 L142 30 L138 56 Q100 34 62 56Z" fill="#FF6FA5" stroke="#B83C78" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 14 L86 32 M120 14 L114 32 M100 8 V30" stroke="#B79AF0" stroke-width="4" stroke-linecap="round"/>`;
   else g += `<path d="M88 41 Q93 28 100 38 Q107 28 112 41" fill="${c.m}" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -766,7 +800,8 @@ function petSVG(p, mood){
   else if(sp==="owl") g += `<circle cx="74" cy="97" r="24" fill="${c.l}" stroke="${c.d}" stroke-width="2.5"/><circle cx="126" cy="97" r="24" fill="${c.l}" stroke="${c.d}" stroke-width="2.5"/>`;
   else if(sp==="koala") {}
   else g += `<ellipse cx="100" cy="117" rx="24" ry="17" fill="${c.l}"/>`;
-  if(p.hat && p.hat!=="helmet") g += `<g transform="translate(0 -40)">${hatSVG(p.hat)}</g>`;
+  if(OF && OUTFIT_HEAD[OF]) {}
+  else if(p.hat && p.hat!=="helmet") g += `<g transform="translate(0 -40)">${hatSVG(p.hat)}</g>`;
   else if(sp==="bear" && has("band")) g += `<path d="M48 70 Q100 18 152 70" fill="none" stroke="#FF6FA5" stroke-width="7" stroke-linecap="round"/><path d="M78 40 C66 28 70 14 80 18 C84 19 86 23 86 26 C86 23 88 19 92 18 C102 14 106 28 94 40 L86 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><path d="M114 40 C102 28 106 14 116 18 C120 19 122 23 122 26 C122 23 124 19 128 18 C138 14 142 28 130 40 L122 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="76" cy="24" r="2.5" fill="#fff"/><circle cx="112" cy="24" r="2.5" fill="#fff"/>`;
   else if(spOk({sp:["dog","koala","monkey","owl"]},p) && has("crown2")) g += `<path d="M64 52 L60 18 L80 36 L100 8 L120 36 L140 18 L136 52 Z" fill="url(#rbw)" stroke="#A97A12" stroke-width="3.5" stroke-linejoin="round"/><defs><linearGradient id="rbw" x1="0" x2="1"><stop offset="0" stop-color="#FF8FA3"/><stop offset=".3" stop-color="#F5C84C"/><stop offset=".6" stop-color="#8FD8BD"/><stop offset="1" stop-color="#B79AF0"/></linearGradient></defs><circle cx="100" cy="12" r="5" fill="#fff" stroke="#A97A12" stroke-width="2"/><circle cx="82" cy="40" r="4" fill="#fff"/><circle cx="118" cy="40" r="4" fill="#fff"/>`;
   else if(has("bow")) g += `<path d="M122 44 L108 34 L108 54Z M122 44 L136 34 L136 54Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="122" cy="44" r="5" fill="#FF6FA5" stroke="#C2457A" stroke-width="3"/>`;
@@ -791,7 +826,8 @@ function petSVG(p, mood){
      : `<path d="M91 119 Q95.5 125 100 119 Q104.5 125 109 119" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
   if(sp==="dog" && mood==="happy") g += `<path d="M95 128 Q100 140 105 128Z" fill="#FF8FA3" stroke="#C2457A" stroke-width="2"/>`;
   if(ot) g += `<path d="M80 112 L58 108 M80 117 L58 119 M120 112 L142 108 M120 117 L142 119" stroke="${c.d}" stroke-width="2" stroke-linecap="round"/>`;
-  if(p.hat==="helmet") g += hatSVG("helmet");
+  if(OF) g += outfitHead(OF);
+  if(p.hat==="helmet" && !(OF && OUTFIT_HEAD[OF])) g += hatSVG("helmet");
   return `<svg class="pm ${mood}" viewBox="0 0 200 200" role="img" aria-label="${esc(p.pet)} the ${SPECIES[p.species]||"pet"}"><ellipse cx="100" cy="194" rx="48" ry="6" fill="rgba(30,42,58,.18)"/><g class="pg"><g transform="translate(100 192) scale(${sc}) translate(-100 -192)">${g}</g></g></svg>`;
 }
 
@@ -929,7 +965,7 @@ function mapHTML(){
     track += `${i?'<div class="link" aria-hidden="true"><span></span></div>':""}<div class="era ${open?"":"locked"}"><div class="thumb">${scene(e.id)}${here}</div><div class="body"><div><h3>${e.name}</h3><div class="year">${e.year}</div></div><div class="topic">${e.topic}</div>${open?`<div><button class="btn small white" data-act="learn" data-e="${i}">Remember!</button></div><div class="lv">${lv}${boss}</div>`:`<div class="muted">Get 7 or more in the ${ERAS[i-1].name} Time Quiz to travel here.</div>`}</div></div>`;
   });
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
-  <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}</div><button class="btn white" data-act="room">Pet room</button></div>
+  <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>
   <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>`;
 }
 
@@ -942,6 +978,9 @@ function roomHTML(){
   return topBar(p) + `${stageBox(p, V.roomMood||"idle", V.roomSay||`Hi ${p.name.split(" ")[0]}! Where are we going today?`)}
   <div class="panel"><h2>Time machine</h2><div class="muted">Pick a time to visit. Win each Time Quiz to unlock a new one.</div><div class="travel">${trav}</div></div>
   <div class="panel"><h2>Hat closet</h2><div class="closet">${hats}</div></div>
+  <div class="panel"><h2>Outfit closet</h2><div class="muted">You have ${threes(p)} three-star wins. ${nextOutfit(p)?`${nextOutfit(p).n - threes(p)} more for the next outfit.`:"You have every outfit!"}</div>
+  <div class="closet"><button class="hat" data-act="outfit" data-o="" aria-pressed="${!p.outfit}"><svg viewBox="0 0 200 200"></svg>No outfit</button>${OUTFITS.map(o => { const got = threes(p) >= o.n;
+    return `<button class="hat" data-act="outfit" data-o="${o.id}" ${got?"":"disabled"} aria-pressed="${p.outfit===o.id}"><span style="width:76px;display:block">${got?petSVG({...p, outfit:o.id, hat:null},"idle"):'<svg viewBox="0 0 200 200"><text x="100" y="120" text-anchor="middle" font-size="80" font-family="Lilita One, sans-serif" fill="#9AA6B5">?</text></svg>'}</span>${got?o.name:`Get 3 stars ${o.n} times`}</button>`; }).join("")}</div></div>
   <div><button class="btn white" data-act="recolor">Change color or name</button></div>`;
 }
 
@@ -1083,6 +1122,7 @@ function finish(){
   if(!s.boss){
     const pct = s.points/s.max; const st = pct>=.9?3:pct>=.7?2:pct>=.5?1:0;
     res.stars = st; pr.l[s.l] = Math.max(pr.l[s.l]||0, st);
+    if(st===3){ const before3 = threes(p); p.threes = before3 + 1; const o = OUTFITS.find(x => x.n===p.threes); if(o){ res.outfit = o; p.outfit = o.id; } }
   } else {
     const score = Math.round(s.points/s.max*10);
     res.score = score; res.pass = score>=7;
@@ -1113,6 +1153,7 @@ function resultHTML(){
     main = `<h2 style="font-size:34px">${r.pass?"You passed the Time Quiz!":"Time Quiz"}</h2><div class="score ${r.pass?"":"low"}">${r.score}/10</div>${r.pass?"":'<div>You need 7 to travel. Practice the levels and try again!</div>'}`;
   }
   let celeb = "";
+  if(r.outfit) celeb += `<div class="celebrate"><h3 style="font-size:24px">New outfit: ${r.outfit.name}!</h3><div>You got 3 stars ${r.outfit.n} times. ${esc(p.pet)} is wearing it now. Change it in the Pet room.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
   if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${SPECIES[p.species]||"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   else if(r.grew) celeb += `<div class="celebrate"><h3 style="font-size:22px">${esc(p.pet)} grew${r.items.length?` and got ${r.items.join(" and ")}`:""}!</h3><div class="pw">${petSVG(p,"happy")}</div></div>`;
@@ -1182,6 +1223,7 @@ const ACT = {
     el.parentNode.querySelectorAll(".pk").forEach(b => { const on = b===el; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); }); },
   check(){ doCheck(readVals(V.sess.qs[V.sess.i])); },
   next(){ nextQ(); },
+  outfit(el){ const p = P(); p.outfit = el.dataset.o || null; save(); V.roomMood = "happy"; V.roomSay = p.outfit ? "Look at my new outfit!" : "Back to my fur!"; render(); },
   hat(el){ const p = P(); p.hat = el.dataset.h || null; save(); V.roomMood = "happy"; V.roomSay = p.hat ? "I love my new hat!" : "No hat today."; render(); },
   travel(el){ const p = P(); p.era = el.dataset.e; save(); const e = ERAS.find(x => x.id===p.era); V.roomMood = "happy"; V.roomSay = `Whoosh! We are in ${e.name}, ${e.year}!`; tone([392,523,659]); render(); },
   grown(){ V.grownOpen = false; go("grown"); },
@@ -1190,7 +1232,7 @@ const ACT = {
     if(!a||!b||!c){ document.getElementById("v-msg").textContent = "Fill in all three forms."; return; }
     S.verbs.push({p:a,past:b,pp:c}); save(); render(); },
   vreset(){ if(V.arm!=="v"){ V.arm = "v"; render(); return; } S.verbs = DEFAULT_VERBS.map(v=>({...v})); save(); V.arm = null; render(); },
-  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; } save(); V.arm = null; render(); }
+  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; p.threes=0; p.outfit=null; } save(); V.arm = null; render(); }
 };
 
 app.addEventListener("click", ev => { const el = ev.target.closest("[data-act]"); if(!el || el.disabled) return; const f = ACT[el.dataset.act]; if(f) f(el); });

@@ -237,6 +237,17 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .spc.diamond,.spc.rainbow{animation:glow 2.4s ease-in-out infinite}
 @keyframes glow{0%,100%{filter:drop-shadow(0 0 4px #fff)}50%{filter:drop-shadow(0 0 16px #8fe7ff)}}
 @media (prefers-reduced-motion:reduce){.spc.diamond,.spc.rainbow{animation:none}}
+.spc.galaxy::before{content:"";position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff 0 3%,transparent 4%),radial-gradient(circle at 70% 25%,#fff 0 2%,transparent 3%),radial-gradient(circle at 25% 75%,#fff 0 2%,transparent 3%),radial-gradient(circle at 78% 70%,#ffe27a 0 3%,transparent 4%),radial-gradient(circle at 50% 50%,#ff5f93 0,#7b4dff 45%,#1d1a47 80%);border:5px solid #bdb6ff;box-shadow:0 0 18px #b78cff}
+.spc.crystal::before{content:"";position:absolute;inset:6px;clip-path:path('M49 90 C20 70 2 50 2 30 C2 14 14 2 28 2 C38 2 45 8 49 15 C53 8 60 2 70 2 C84 2 96 14 96 30 C96 50 78 70 49 90Z');background:linear-gradient(135deg,#ffe0f0,#ff8fc4 35%,#9ff3ff 70%,#fff);transform:translate(0,4px)}
+.spc.sun::before{content:"";position:absolute;inset:0;clip-path:polygon(50% 0,58% 20%,75% 7%,74% 27%,93% 25%,82% 42%,100% 50%,82% 58%,93% 75%,74% 73%,75% 93%,58% 80%,50% 100%,42% 80%,25% 93%,26% 73%,7% 75%,18% 58%,0 50%,18% 42%,7% 25%,26% 27%,25% 7%,42% 20%);background:radial-gradient(circle,#fff6c0 0 30%,#ffd84a 55%,#ff9f1a)}
+.spc.galaxy,.spc.crystal,.spc.sun{animation:glow 2.4s ease-in-out infinite}
+.spc i{position:absolute;width:10px;height:10px;background:#fff;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:twinkle 1.6s ease-in-out infinite;z-index:2}
+.spc i:nth-child(1){top:6px;right:10px}.spc i:nth-child(2){bottom:14px;left:6px;animation-delay:.5s}.spc i:nth-child(3){top:40%;right:0;animation-delay:1s;width:7px;height:7px}
+@keyframes twinkle{0%,100%{transform:scale(.4);opacity:.4}50%{transform:scale(1.2);opacity:1}}
+@media (prefers-reduced-motion:reduce){.spc.galaxy,.spc.crystal,.spc.sun,.spc i{animation:none}}
+.pack.specpack.galaxy{background:radial-gradient(circle,#ff5f93,#7b4dff 60%,#1d1a47);color:#fff}
+.pack.specpack.crystal{background:linear-gradient(135deg,#ffe0f0,#ff8fc4,#9ff3ff)}
+.pack.specpack.sun{background:radial-gradient(circle,#fff6c0,#ffd84a 55%,#ff9f1a)}
 .spc.trophy{width:130px;height:150px}.spc.trophy svg{position:absolute;inset:0;width:100%;height:100%}.spc.trophy .spe{position:absolute;left:50%;top:39%;transform:translate(-50%,-50%);font-size:2.2rem}
 .spc.legend{width:170px;height:196px;filter:drop-shadow(0 0 14px #ffe27a)}.spc.legend .spe{font-size:2.8rem}
 .scell.legend{grid-column:1 / -1}
@@ -765,6 +776,9 @@ const buddyName=p=>p.avatar==='🦦'?'Otter':p.avatar==='🐻'?'Bear':'Buddy';
 const SPECIAL=[
   {id:'sp1',kind:'diamond',name:p=>`Diamond ${buddyName(p)}`,how:'Get 3 stars on a level for the first time.'},
   {id:'sp2',kind:'rainbow',name:p=>`Rainbow Star ${buddyName(p)}`,how:'Get 3 stars on 3 different levels.'},
+  {id:'sp3',kind:'galaxy',name:p=>`Galaxy ${buddyName(p)}`,how:'Get 3 stars on 6 different levels.',need:6},
+  {id:'sp4',kind:'crystal',name:p=>`Crystal Heart ${buddyName(p)}`,how:'Get 3 stars on 9 different levels.',need:9},
+  {id:'sp5',kind:'sun',name:p=>`Golden Sun ${buddyName(p)}`,how:'Get 3 stars on 12 different levels.',need:12},
   {id:'tr1',kind:'trophy',name:()=>'Super Trophy',how:'Finish every level on both maps.'},
   {id:'tr2',kind:'legend',name:()=>'Legend Trophy',how:'Get 3 stars on every level on both maps.'}
 ];
@@ -772,6 +786,7 @@ const SPEC=Object.fromEntries(SPECIAL.map(x=>[x.id,x]));
 function specArt(x,p){const a=buddy(p);
   if(x.kind==='diamond')return`<div class="spc diamond"><span class="spe">${a}</span></div>`;
   if(x.kind==='rainbow')return`<div class="spc rainbow"><span class="spe">${a}</span></div>`;
+  if(x.kind==='galaxy'||x.kind==='crystal'||x.kind==='sun')return`<div class="spc ${x.kind}"><i></i><i></i><i></i><span class="spe">${a}</span></div>`;
   const big=x.kind==='legend';
   return`<div class="spc trophy ${big?'legend':''}"><svg viewBox="0 0 120 140" aria-hidden="true">
    ${big?'<path d="M34 22 L42 6 L52 18 L60 2 L68 18 L78 6 L86 22 Z" fill="#ffe27a" stroke="#c98a12" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="10" r="4" fill="#ff5f93"/>':''}
@@ -787,7 +802,7 @@ function specArt(x,p){const a=buddy(p);
 function checkSpecial(p){
   p.special=p.special||[];
   const L=getLevels('spell').concat(getLevels('vocab')),three=L.filter(l=>(p.levels[l.id]||0)>=3).length,out=[];
-  const want={sp1:three>=1,sp2:three>=3,tr1:L.length>0&&L.every(l=>(p.levels[l.id]||0)>0),tr2:L.length>0&&three===L.length};
+  const want={sp1:three>=1,sp2:three>=3,sp3:three>=6,sp4:three>=9,sp5:three>=12,tr1:L.length>0&&L.every(l=>(p.levels[l.id]||0)>0),tr2:L.length>0&&three===L.length};
   SPECIAL.forEach(x=>{if(want[x.id]&&!p.special.includes(x.id)){p.special.push(x.id);out.push({id:x.id,special:true})}});
   return out;
 }
@@ -808,7 +823,7 @@ function finish(){
   $('#r-line').textContent=`You spelled ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
   $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
-  const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
+  const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],galaxy:['🌌','Galaxy!'],crystal:['💖','Crystal!'],sun:['☀️','Golden Sun!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
   if(spec.length)$('#r-packs-label').textContent=spec.some(x=>x.id[0]==='t')?'WOW! You won a trophy! Tap to open.':'WOW! A special sticker! Tap to open.';
   $('#r-packs').innerHTML=spec.map(x=>{const k=SPEC[x.id].kind;return`<button class="pack specpack ${k}" data-act="open" data-s="${x.id}"><span class="p-ico">${SPL[k][0]}</span>${SPL[k][1]}</button>`}).join('')+got.map(s=>`<button class="pack ${s.gold?'goldpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':'🎁'}</span>${s.gold?'Gold!':'Open me'}</button>`).join('');
   const miss=keys.filter(k=>!S.first[k]);

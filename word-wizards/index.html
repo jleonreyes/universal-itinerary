@@ -283,6 +283,15 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .pchips{display:flex;gap:8px;flex-wrap:wrap}
 .pchip{min-height:42px;padding:0 14px;border-radius:999px;background:var(--paper-2);font-weight:700}
 .pchip[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;max-width:640px;margin:0 auto}
+.opts.meaning{grid-template-columns:1fr}
+.opt{min-height:64px;padding:12px 16px;border-radius:18px;background:var(--paper);color:var(--ink);font-weight:700;font-size:clamp(1.25rem,4.6vw,1.6rem);line-height:1.25;box-shadow:0 5px 0 var(--paper-2);transition:transform .08s,box-shadow .08s;min-width:0;overflow-wrap:anywhere}
+.opts.meaning .opt{font-size:clamp(1.05rem,3.8vw,1.25rem);text-align:left}
+.opt:active{transform:translateY(4px);box-shadow:0 1px 0 var(--paper-2)}
+.opt.wrong{background:var(--oops);color:var(--white);box-shadow:none;opacity:.55;animation:shake .35s}
+.opt.right{background:var(--mint);color:var(--ink);box-shadow:0 5px 0 var(--mint-deep)}
+.opt.gone{visibility:hidden}
+.choice-word{font-size:clamp(2.2rem,10vw,3.4rem);font-weight:700;letter-spacing:.04em;color:var(--ink)}
 .def-label{display:block;width:max-content;margin-bottom:4px;padding:2px 10px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
 .q-sent.is-def{font-size:clamp(1.1rem,3.8vw,1.35rem)}
 .fb-def{margin:0;max-width:34em;font-size:1.1rem;color:var(--paper)}
@@ -504,7 +513,7 @@ const VOCAB=[
   ['protect','🛡️','Keep someone safe.'],
   ['shelter','⛺','A safe place for protection.'],
   ['smoke','💨','White, gray or black gas.'],
-  ['sport','⚽','Fun or amusement. Exercise for the body.']]},
+  ['sport','🏈','Fun or amusement. Exercise for the body.']]},
  {id:'v2',name:'Vocab 2',track:'vocab',words:[
   ['bonfire','🔥','A large outdoor fire.'],
   ['bucket','🪣','A container for water.'],
@@ -667,9 +676,10 @@ function renderPractice(){
   const sec=(track,title,note)=>{
     const tr=trickyWords(track),bl=allBlocks(track);if(!bl.length)return'';
     let h=`<h3 class="sec-title">${title}<small>${note}</small></h3><div class="cards">`;
+    if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match each word with its meaning, like the vocabulary quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
     if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
     h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
-      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button><button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
+      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
     return h+'</div>'};
   $('#practice-list').innerHTML=sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean');
   show('s-practice');
@@ -683,6 +693,7 @@ function renderLook(id){
   show('s-look');
 }
 const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice')};
+const playMatch=(ids,n)=>{const w=wordsOf(ids).filter(x=>x.def&&canChoose(x));if(!w.length)return renderPractice();start('match',n?pickWeighted(w,Math.min(n,w.length)):shuffle(w.slice()),null,()=>playMatch(ids,n),'practice')};
 const playTricky=track=>{const t=trickyWords(track);if(!t.length)return renderPractice();start('practice',t,null,()=>playTricky(track),'practice')};
 
 /* ---------- GAME ---------- */
@@ -695,8 +706,11 @@ const OWL={
   good:['Great job!','You got it!','Super speller!','Wow! Perfect!','Magic!','Amazing!'],
   soso:['Good try!','Nice work! Look at it again.','Almost! We will try it again soon.'],
   oops:['Oops! Try another letter.','Hmm, not that one.','Try again!','Look closely!'],
-  help:['Here is a little help!','I will help you!']};
-const INST={scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
+  help:['Here is a little help!','I will help you!'],
+  match:['Which word matches?','Read the meaning. Find the word!'],
+  meaning:['What does it mean?','Find the right meaning!'],
+  nope:['Not that one. Try again!','Hmm, read it again.','Almost! Try another one.']};
+const INST={match:'Tap the word that matches the meaning.',meaning:'Tap the right meaning.',scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
 function owl(t){$('#owl-msg').textContent=t}
 
 function start(kind,list,levelId,replay,from){
@@ -706,6 +720,13 @@ function start(kind,list,levelId,replay,from){
   show('s-game');nextQ();
 }
 function chooseMode(w,tries){
+  if(w.def&&canChoose(w)){
+    const pickChoice=()=>Math.random()<.6?'match':'meaning';
+    if(S.kind==='match')return pickChoice();
+    if(tries>0)return'match';
+    const bx=st(w.key).box,chance=bx<=1?.7:bx<=3?.5:.4;
+    if(Math.random()<chance)return pickChoice();
+  }
   let b=st(w.key).box;
   if(S.kind==='mix')b+=1;
   if(S.kind==='final')b=Math.max(b,2)+1;
@@ -713,8 +734,18 @@ function chooseMode(w,tries){
   const r=Math.random()<.5;
   if(b<=0)return'scramble';if(b===1)return r?'scramble':'fill1';if(b===2)return r?'fill1':'fill2';if(b===3)return r?'fill2':'spell';return'spell';
 }
+function vocabWithDefs(){return allBlocks('vocab').flatMap(b=>b.words.map(x=>({word:x[0],def:x[2],block:b.id}))).filter(x=>x.def)}
+function canChoose(w){return vocabWithDefs().filter(x=>x.word!==w.word).length>=2}
+function makeOpts(w,mode){
+  const n=mode==='match'?4:3,all=vocabWithDefs().filter(x=>x.word!==w.word&&x.def!==w.def);
+  const same=shuffle(all.filter(x=>x.block===w.block)),other=shuffle(all.filter(x=>x.block!==w.block));
+  const seen=new Set([w.word]),pick=[];
+  for(const x of same.concat(other)){if(pick.length>=n-1)break;if(!seen.has(x.word)){seen.add(x.word);pick.push(x)}}
+  return shuffle(pick.concat([{word:w.word,def:w.def,block:w.block}]));
+}
 function buildQ(it){
   const w=it.w,letters=[...w.word],mode=chooseMode(w,it.tries);
+  if(mode==='match'||mode==='meaning')return{it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
   const idx=letters.map((c,i)=>i).filter(i=>letters[i]!==' ');
   let hidden;
   if(mode==='scramble'||mode==='spell')hidden=idx;
@@ -731,16 +762,17 @@ function nextQ(){
   $('#g-bar').style.width=(Object.keys(S.first).length/S.uniq*100)+'%';
   $('#g-pts').textContent=me().points;
   const sk=$('#g-streak');sk.hidden=S.streak<2;sk.textContent=`🔥 ${S.streak} in a row!`;
-  $('#q-emoji').textContent=Q.w.emoji;
+  $('#q-emoji').textContent=Q.opts?'🤔':Q.w.emoji;
   const qs=$('#q-sent');qs.classList.toggle('is-def',!!Q.w.def);
-  qs.innerHTML=Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
+  qs.innerHTML=Q.mode==='meaning'?`<span class="def-label">Word</span>What does this word mean?`:Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
   $('#q-inst').textContent=INST[Q.mode];
   $('#hint-btn').disabled=false;
   $('#feedback').hidden=true;$('#input').hidden=false;
   renderSlots();renderInput();owl(rand(OWL[Q.mode]));
-  say(Q.w.word);
+  say(Q.mode==='match'?Q.w.def:Q.w.word);
 }
 function renderSlots(){
+  if(Q.opts){const el=$('#slots');el.className='slots';el.innerHTML=(Q.mode==='meaning'||Q.done)?`<span class="choice-word">${esc(Q.w.word)}</span>`:'';return}
   const el=$('#slots');el.className='slots'+(Q.done?(Q.mistakes?' miss':' done'):'');
   el.innerHTML=Q.letters.map((c,i)=>{
     if(c===' ')return'<span class="slot space"></span>';
@@ -751,13 +783,19 @@ function renderSlots(){
 const KB=['qwertyuiop','asdfghjkl','zxcvbnm'];
 function renderInput(){
   const el=$('#input');
+  if(Q.opts){el.innerHTML=`<div class="opts ${Q.mode}">`+Q.opts.map((o,j)=>`<button class="opt" data-act="opt" data-j="${j}">${esc(Q.mode==='match'?o.word:o.def)}</button>`).join('')+'</div>';return}
   if(Q.mode==='scramble')el.innerHTML='<div class="tiles">'+Q.tiles.map((t,j)=>`<button class="tile" data-act="tile" data-j="${j}">${esc(t.c)}</button>`).join('')+'</div>';
   else el.innerHTML=KB.map(r=>'<div class="kb-row">'+[...r].map(k=>`<button class="key" data-act="key" data-k="${k}">${k}</button>`).join('')+'</div>').join('');
 }
 function clearGlow(){document.querySelectorAll('.glow').forEach(e=>e.classList.remove('glow'))}
 function glow(c){clearGlow();const el=Q.mode==='scramble'?[...document.querySelectorAll('.tile')].find(t=>!t.classList.contains('used')&&t.textContent===c):document.querySelector(`.key[data-k="${c}"]`);if(el)el.classList.add('glow')}
+function pickOpt(j,el){
+  if(!Q||Q.done||!Q.opts||el.disabled)return;
+  if(Q.opts[j].word===Q.w.word){el.classList.add('right');sBlip();complete()}
+  else{Q.mistakes++;sBonk();owl(rand(OWL.nope));el.classList.add('wrong');el.disabled=true}
+}
 function press(c,el){
-  if(!Q||Q.done)return;
+  if(!Q||Q.done||Q.opts)return;
   const pos=Q.hidden[Q.cur],want=Q.letters[pos];
   if(c===want){
     Q.filled[pos]=c;Q.cur++;Q.wrongHere=0;
@@ -773,6 +811,11 @@ function press(c,el){
 }
 function hint(){
   if(!Q||Q.done)return;
+  if(Q.opts){const btns=[...document.querySelectorAll('.opt')],wrong=btns.filter(b=>!b.disabled&&Q.opts[+b.dataset.j].word!==Q.w.word);
+    Q.mistakes++;tone(660,0,.15);
+    if(wrong.length>1){const b=rand(wrong);b.classList.add('gone');b.disabled=true;owl(rand(OWL.help))}
+    else{const b=btns.find(b=>Q.opts[+b.dataset.j].word===Q.w.word);if(b)b.classList.add('right');complete()}
+    return}
   const pos=Q.hidden[Q.cur],want=Q.letters[pos];
   Q.filled[pos]=want;Q.hinted[pos]=1;Q.mistakes++;Q.cur++;Q.wrongHere=0;
   if(Q.mode==='scramble'){const t=[...document.querySelectorAll('.tile')].find(t=>!t.classList.contains('used')&&t.textContent===want);if(t){t.classList.add('used');Q.tiles[+t.dataset.j].used=true}}
@@ -851,7 +894,7 @@ function finish(){
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
-  $('#r-line').textContent=`You spelled ${good} of ${keys.length} words perfectly.`;
+  $('#r-line').textContent=S.kind==='match'?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
   $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
   const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],galaxy:['🌌','Galaxy!'],crystal:['💖','Crystal!'],sun:['☀️','Golden Sun!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
@@ -955,7 +998,10 @@ const acts={
   tile:b=>{if(!b.classList.contains('used'))press(b.textContent,b)},
   key:b=>press(b.dataset.k,b),
   hint:()=>hint(),
-  hear:()=>Q&&say(Q.w.word,.7),
+  hear:()=>Q&&say(Q.mode==='match'?Q.w.def:Q.w.word,.7),
+  opt:b=>pickOpt(+b.dataset.j,b),
+  matchblock:b=>playMatch([b.dataset.b]),
+  matchall:()=>playMatch(allBlocks('vocab').map(x=>x.id),10),
   next:()=>{if(!S)return;S.i++;nextQ()},
   quit:b=>{if(!armed(b))return;speechSynthesis&&speechSynthesis.cancel();S&&S.from==='map'?renderMap():S&&S.from==='practice'?renderPractice():renderHome();S=null;Q=null},
   again:()=>S&&S.replay(),

@@ -617,7 +617,9 @@ const ITEMS = [
   {n:1,id:"hatch",name:"hatching"},{n:2,id:"bow",name:"a bow"},{n:3,id:"heart",name:"a heart on the tummy"},
   {n:5,id:"scarf",name:"a red scarf"},{n:7,id:"shoes",name:"red sneakers"},{n:9,id:"bag",name:"a backpack"},
   {n:11,id:"star",name:"star cheeks"},{n:13,id:"cape",name:"a cape"},{n:16,id:"medal",name:"a gold medal"},
-  {n:19,id:"watch",name:"a time watch"},{n:22,id:"wings",name:"little wings"},{n:26,id:"aura",name:"a golden glow"}
+  {n:19,id:"watch",name:"a time watch"},{n:22,id:"wings",name:"little wings"},{n:26,id:"aura",name:"a golden glow"},
+  {n:28,id:"hair",name:"crazy rock-star hair"},{n:30,id:"shades",name:"rocker sunglasses"},
+  {n:33,id:"robe",name:"a wizard robe and wand",sp:"otter"},{n:33,id:"band",name:"a sparkly heart headband",sp:"bear"}
 ];
 function growthN(p){
   let n = 0;
@@ -628,7 +630,7 @@ const stageOfN = n => { let i=0; STAGES.forEach((s,k)=>{ if(n>=s[1]) i=k; }); re
 const stageOf = p => stageOfN(growthN(p));
 const isEgg = p => growthN(p)===0;
 const petTitle = p => isEgg(p) ? `${p.pet} the Mystery Egg` : `${p.pet} the ${STAGES[stageOf(p)][0]} ${cap(p.species)}`;
-const nextItem = p => ITEMS.find(i => i.n > growthN(p));
+const nextItem = p => ITEMS.find(i => i.n > growthN(p) && (!i.sp || i.sp===p.species));
 const LINES = [
   "Knock knock! I'm a mystery egg. Answer questions to help me hatch!",
   "Surprise! I hatched! Let's travel in time together.",
@@ -673,19 +675,23 @@ function petSVG(p, mood){
   if(has("shoes")) g += `<ellipse cx="80" cy="186" rx="17" ry="10" fill="#D9434B" stroke="#9E2B32" ${sw}/><ellipse cx="120" cy="186" rx="17" ry="10" fill="#D9434B" stroke="#9E2B32" ${sw}/><path d="M68 189 H92 M108 189 H132" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`;
   else g += `<ellipse cx="80" cy="186" rx="15" ry="9" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="120" cy="186" rx="15" ry="9" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
   g += `<ellipse cx="100" cy="160" rx="40" ry="32" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="100" cy="167" rx="24" ry="19" fill="${c.l}"/>`;
+  if(ot && has("robe")) g += `<path d="M64 146 Q60 176 66 190 L134 190 Q140 176 136 146 Q100 132 64 146Z" fill="#3B3F7A" stroke="#23264F" stroke-width="3.5" stroke-linejoin="round"/><path d="M100 140 V190" stroke="#F5C84C" stroke-width="3"/><path d="M66 188 H134" stroke="#F5C84C" stroke-width="4"/><circle cx="84" cy="164" r="2.5" fill="#F5C84C"/><circle cx="118" cy="174" r="2.5" fill="#F5C84C"/>`;
   if(has("heart")) g += `<path d="M100 178 C88 170 90 160 96 160 C98 160 100 162 100 164 C100 162 102 160 104 160 C110 160 112 170 100 178Z" fill="#FF8FA3"/>`;
   if(ot) g += `<ellipse cx="100" cy="158" rx="10" ry="7" fill="#9AA3B0" stroke="#6B7280" stroke-width="2.5"/><ellipse cx="86" cy="160" rx="9" ry="7.5" fill="${c.m}" stroke="${c.d}" stroke-width="3"/><ellipse cx="114" cy="160" rx="9" ry="7.5" fill="${c.m}" stroke="${c.d}" stroke-width="3"/>`;
+  if(ot && has("robe")) g += `<path d="M116 158 L150 128" stroke="#7A4A22" stroke-width="5" stroke-linecap="round"/><path d="M154 116 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#F5C84C" stroke="#A97A12" stroke-width="1.5"/>`;
   else g += `<ellipse cx="64" cy="160" rx="11" ry="15" transform="rotate(22 64 160)" fill="${c.m}" stroke="${c.d}" ${sw}/><ellipse cx="136" cy="160" rx="11" ry="15" transform="rotate(-22 136 160)" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
   if(has("bag")) g += `<path d="M76 142 L80 178 M124 142 L120 178" stroke="#24578A" stroke-width="6" stroke-linecap="round"/>`;
   if(has("scarf")) g += `<path d="M66 144 Q100 160 134 144 L133 155 Q100 171 67 155Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/><path d="M116 156 L124 178 L134 174 L128 153Z" fill="#D9434B" stroke="#9E2B32" stroke-width="3" stroke-linejoin="round"/>`;
   if(has("medal")) g += `<circle cx="84" cy="158" r="7" fill="#F5C84C" stroke="#A97A12" stroke-width="2.5"/>`;
   if(has("watch")) g += `<path d="M100 150 Q108 160 114 166" stroke="#A97A12" stroke-width="2" fill="none"/><circle cx="117" cy="172" r="9" fill="#FFF6D6" stroke="#A97A12" stroke-width="3"/><path d="M117 172 V166 M117 172 L121 174" stroke="#1E2A3A" stroke-width="1.8" stroke-linecap="round"/>`;
   g += `<ellipse cx="100" cy="92" rx="64" ry="56" fill="${c.m}" stroke="${c.d}" ${sw}/>`;
-  g += `<path d="M88 41 Q93 28 100 38 Q107 28 112 41" fill="${c.m}" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  if(has("hair")) g += `<path d="M62 56 L58 30 L76 44 L80 14 L92 38 L100 8 L108 38 L120 14 L124 44 L142 30 L138 56 Q100 34 62 56Z" fill="#FF6FA5" stroke="#B83C78" stroke-width="3.5" stroke-linejoin="round"/><path d="M80 14 L86 32 M120 14 L114 32 M100 8 V30" stroke="#B79AF0" stroke-width="4" stroke-linecap="round"/>`;
+  else g += `<path d="M88 41 Q93 28 100 38 Q107 28 112 41" fill="${c.m}" stroke="${c.d}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>`;
   g += `<path d="M37 98 L30 104 L40 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M163 98 L170 104 L160 106" fill="none" stroke="${c.d}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
   if(ot) g += `<ellipse cx="100" cy="116" rx="42" ry="27" fill="${c.l}"/>`;
   else g += `<ellipse cx="100" cy="117" rx="24" ry="17" fill="${c.l}"/>`;
   if(p.hat && p.hat!=="helmet") g += `<g transform="translate(0 -40)">${hatSVG(p.hat)}</g>`;
+  else if(!ot && has("band")) g += `<path d="M48 70 Q100 18 152 70" fill="none" stroke="#FF6FA5" stroke-width="7" stroke-linecap="round"/><path d="M78 40 C66 28 70 14 80 18 C84 19 86 23 86 26 C86 23 88 19 92 18 C102 14 106 28 94 40 L86 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><path d="M114 40 C102 28 106 14 116 18 C120 19 122 23 122 26 C122 23 124 19 128 18 C138 14 142 28 130 40 L122 48Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="76" cy="24" r="2.5" fill="#fff"/><circle cx="112" cy="24" r="2.5" fill="#fff"/>`;
   else if(has("bow")) g += `<path d="M122 44 L108 34 L108 54Z M122 44 L136 34 L136 54Z" fill="#FF6FA5" stroke="#C2457A" stroke-width="3" stroke-linejoin="round"/><circle cx="122" cy="44" r="5" fill="#FF6FA5" stroke="#C2457A" stroke-width="3"/>`;
   let eyes;
   if(mood==="happy") eyes = `<path d="M61 99 Q74 84 87 99" stroke="${ink}" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M113 99 Q126 84 139 99" stroke="${ink}" stroke-width="6" fill="none" stroke-linecap="round"/>`;
@@ -694,6 +700,7 @@ function petSVG(p, mood){
     if(mood==="sad") eyes += `<path d="M60 76 L84 82 M140 76 L116 82" stroke="${ink}" stroke-width="4" stroke-linecap="round"/>`; }
   g += eyes;
   g += `<ellipse cx="54" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/><ellipse cx="146" cy="116" rx="10" ry="6" fill="#FF8FA3" opacity=".6"/>`;
+  if(has("shades")) g += `<rect x="56" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><rect x="106" y="84" width="38" height="26" rx="10" fill="#1E2A3A" stroke="#D9434B" stroke-width="3"/><path d="M94 92 Q100 88 106 92" stroke="#D9434B" stroke-width="3" fill="none"/><path d="M64 90 L72 90 M114 90 L122 90" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>`;
   if(has("star")) g += `<path d="M48 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z M152 120 l2 4 4 .5 -3 3 .8 4 -3.8 -2 -3.8 2 .8 -4 -3 -3 4 -.5z" fill="#F5C84C" stroke="#A97A12" stroke-width="1.2"/>`;
   g += ot ? `<path d="M91 106 Q100 101 109 106 Q105 114 100 114 Q95 114 91 106Z" fill="${ink}"/>` : `<ellipse cx="100" cy="110" rx="8" ry="5.5" fill="${ink}"/>`;
   g += mood==="happy" ? `<path d="M89 119 Q100 136 111 119 Z" fill="#8A2E3B" stroke="${ink}" stroke-width="3" stroke-linejoin="round"/>`
@@ -963,7 +970,7 @@ function finish(){
   }
   const after = growthN(p);
   res.grew = after > before; res.stage = STAGES[stageOf(p)][0]; res.hatched = before===0 && res.grew;
-  res.items = ITEMS.filter(i => i.n>before && i.n<=after && i.id!=="hatch").map(i => i.name);
+  res.items = ITEMS.filter(i => i.n>before && i.n<=after && i.id!=="hatch" && (!i.sp || i.sp===p.species)).map(i => i.name);
   save(); V.res = res; V.screen = "result";
   tone(res.grew || res.pass || res.stars>=2 ? [523,659,784,1046] : [440,523]);
   render(); window.scrollTo(0,0);

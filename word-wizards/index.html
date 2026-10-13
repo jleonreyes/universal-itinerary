@@ -477,27 +477,40 @@ const BLOCKS=[
   ['visit','👵','We ___ Grandma every Sunday.'],
   ['present','🎁','I got a ___ for my birthday.'],
   ['meal','🍽️','Breakfast is my favorite ___ of the day.'],
-  ['photos','📸','We took lots of ___ at the beach.']]}
+  ['photos','📸','We took lots of ___ at the beach.']]},
+ {id:'b7',name:'Block 7',words:[
+  ['acorn','🌰','The squirrel eats an ___.'],
+  ['bored','🥱','I am ___. There is nothing to do.'],
+  ['circus','🎪','We saw clowns at the ___.'],
+  ['farmhouse','🚜','The farmer lives in a big ___.'],
+  ['garden','🌷','Grandma plants flowers in her ___.'],
+  ['keyboard','⌨️','I type on the ___.'],
+  ['nervous','😬','I feel ___ before a test.'],
+  ['party','🎉','We danced at the birthday ___.'],
+  ['target','🎯','Throw the ball at the ___.'],
+  ['trapdoor','🚪','The pirate opened a ___ in the floor.'],
+  ['treasure','💰','The pirates found the ___.'],
+  ['worried','😟','Dad is ___ because the dog is lost.']]}
 ];
 BLOCKS.forEach(b=>b.track='spell');
 
 /* ---------- VOCABULARY: [word, picture, meaning] (meanings from class notes) ---------- */
 const VOCAB=[
  {id:'v1',name:'Vocab 1',track:'vocab',words:[
-  ['buffalo','🦬','An animal with horns and thick fur. A bison.'],
+  ['buffalo','🦬','A large animal with horns and thick fur. A bison.'],
   ['flood','🌊','Water covering an area.'],
   ['hide','🐄','The skin of an animal.'],
-  ['honor','🎖️','To treat someone with respect.'],
-  ['protect','🛡️','To keep someone safe.'],
-  ['shelter','⛺','A safe place.'],
-  ['smoke','💨','A grey, white or black gas.'],
-  ['sport','⚽','Something fun that exercises the body.']]},
+  ['honor','🎖️','Treat someone with respect.'],
+  ['protect','🛡️','Keep someone safe.'],
+  ['shelter','⛺','A safe place for protection.'],
+  ['smoke','💨','White, gray or black gas.'],
+  ['sport','⚽','Fun or amusement. Exercise for the body.']]},
  {id:'v2',name:'Vocab 2',track:'vocab',words:[
   ['bonfire','🔥','A large outdoor fire.'],
   ['bucket','🪣','A container for water.'],
-  ['costume','🦸','Clothes we wear to look like someone or something.'],
-  ['flag','🇲🇽','A piece of cloth that represents a country.'],
-  ['huge','🐋','Very large in size.'],
+  ['costume','🦸','Clothes we wear to look like something.'],
+  ['flag','🇲🇽','A piece of cloth representing a country.'],
+  ['huge','🐋','Large in size.'],
   ['mask','👺','A face cover.'],
   ['parade','🥁','People marching in the streets.']]},
  {id:'v3',name:'Vocab 3',track:'vocab',words:[
@@ -508,7 +521,16 @@ const VOCAB=[
   ['knight','🗡️','A soldier who served a king or a queen.'],
   ['play','🎭','A performance with actors.'],
   ['prize','🏆','A reward for winning.'],
-  ['seeds','🌻','Small parts of a plant that grow into new plants.']]}
+  ['seeds','🌻','Small part of a plant.']]},
+ {id:'v4',name:'Vocab 4',track:'vocab',words:[
+  ['citizen','🏛️','A person who belongs to a country.'],
+  ['determined','💪','Wanting something very much.'],
+  ['fist','✊','A closed hand.'],
+  ['proud','🏅','Feeling happy about something done.'],
+  ['refugee','🧳','A person who leaves their country because of danger.'],
+  ['role model','🌟','Someone you admire and want to be like.'],
+  ['unkind','😠','Not nice.'],
+  ['war','🪖','Conflict between nations.']]}
 ];
 const BASE=BLOCKS.concat(VOCAB);
 const TRACK_NAME={spell:'Spelling',vocab:'Vocabulary'};
@@ -539,7 +561,12 @@ const PAGES=[
   ['e1','🐲','Dragon Rider'],['e2','🧱','Coin Block'],['e3','🐢','Spiky Shell'],['e4','🏎️','Kart Race'],
   ['e5','🐺','Night Wolf'],['e6','🦇','Bat Castle'],['e7','🧞','Lamp Genie'],['e8','🐠','Reef Fish'],
   ['e9','🌺','Island Flower'],['e10','🍯','Honey Pot'],['e11','🎪','Big Top'],['e12','🛸','Flying Saucer']],
-  gold:[['eg1','🌠','Shooting Star'],['eg2','🪐','Ringed Planet'],['eg3','🌈','Rainbow Road'],['eg4','🧭','Treasure Compass']]}
+  gold:[['eg1','🌠','Shooting Star'],['eg2','🪐','Ringed Planet'],['eg3','🌈','Rainbow Road'],['eg4','🧭','Treasure Compass']]},
+ {id:'toy',name:'Toy Land',tint:'#ff9f7a',items:[
+  ['t1','🤠','Cowboy Hat'],['t2','🦖','Toy Dino'],['t3','🐷','Piggy Bank'],['t4','🪀','Yo-Yo'],
+  ['t5','🧸','Old Teddy'],['t6','🎯','Ring Toss'],['t7','🪁','Kite'],['t8','🧩','Puzzle'],
+  ['t9','🚂','Toy Train'],['t10','🪖','Little Soldiers'],['t11','🎲','Board Game'],['t12','🤖','Wind-Up Robot']],
+  gold:[['tg1','🚀','Space Ranger'],['tg2','👽','Claw Machine Alien'],['tg3','🐴','Horse Buddy'],['tg4','⭐','Sheriff Star']]}
 ];
 const STICK={};
 PAGES.forEach(p=>{p.items.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:false,page:p});p.gold.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:true,page:p})});
@@ -611,14 +638,14 @@ function getLevels(track=mapTrack){
   const bl=allBlocks(track),L=[];
   bl.forEach(b=>L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`}));
   const groups=[];for(let i=0;i<bl.length;i+=2)groups.push(bl.slice(i,i+2));
-  if(groups.length>1&&groups[groups.length-1].length===1){const last=groups.pop();groups[groups.length-1].push(...last)}
+  if(groups.length>1&&groups[groups.length-1].length===1){groups[groups.length-1]=[bl[bl.length-2],bl[bl.length-1]]}
   if(bl.length>1)groups.forEach(g=>L.push({id:'m:'+g.map(b=>b.id).join('+'),kind:'mix',blocks:g.map(b=>b.id),sub:g.map(b=>b.name).join(' + ')+' mixed'}));
   if(!bl.length)return L;
   L.push({id:track==='spell'?'final':'final:'+track,kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
   L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:`Level ${i+1}`);
   return L;
 }
-const isOpen=(i,L)=>i===0||(me().levels[L[i-1].id]||0)>0;
+const isOpen=(i,L)=>{const lv=me().levels;return i===0||(lv[L[i-1].id]||0)>0||L.slice(i).some(l=>(lv[l.id]||0)>0)};
 function renderMap(){
   const L=getLevels(),p=me();
   $('#map-title').textContent=TRACK_NAME[mapTrack]+' Map';

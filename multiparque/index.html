@@ -144,6 +144,30 @@ button{font:inherit;color:inherit}
 .day ol{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:15px}
 .day li{display:flex;gap:8px;align-items:center}
 .day .t{font-variant-numeric:tabular-nums;color:var(--ink-soft);min-width:44px}
+/* vitrina */
+.case{background:linear-gradient(180deg,#3B2A22,#2A1D17);border:4px solid #1E1410;border-radius:22px;padding:14px 12px 18px;display:flex;flex-direction:column;gap:18px;box-shadow:inset 0 0 0 6px #5A4033}
+.shelf{background:linear-gradient(180deg,rgba(210,235,255,.16),rgba(210,235,255,.05));border-radius:14px;padding:10px 8px 0;position:relative}
+.shelf h3{color:#FFF3DF;font-size:21px;margin:0 4px 8px}
+.shelf h3 small{font-family:var(--f-body);font-size:14px;opacity:.75}
+.plank{height:14px;margin:6px -8px 0;background:linear-gradient(180deg,#C08A5A,#8B5E38);border-radius:0 0 12px 12px;box-shadow:0 4px 0 #5A3B22}
+.honor{background:linear-gradient(180deg,rgba(255,230,140,.25),rgba(255,230,140,.08))}
+.lands2{display:flex;flex-wrap:wrap;gap:10px}
+.land2{font:inherit;color:inherit;text-align:left;background:rgba(255,255,255,.08);border:2.5px solid var(--c1);border-radius:12px;padding:6px 8px;display:flex;flex-direction:column;gap:4px;max-width:100%}
+.land2 b{color:#fff;font-size:14px;display:flex;gap:6px;align-items:center}
+.land2 b::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--c1);box-shadow:0 0 0 2px var(--c2);flex:none}
+.land2 small{opacity:.7;font-weight:400}
+.land2.pickme{cursor:pointer;animation:glow 1.2s ease-in-out infinite alternate}
+@keyframes glow{from{box-shadow:0 0 0 0 rgba(255,215,90,.0)}to{box-shadow:0 0 0 5px rgba(255,215,90,.85)}}
+.cups{display:flex;flex-wrap:wrap;gap:6px 4px}
+.tro{width:78px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.tro span{font-size:11px;line-height:1.15;color:#FFF3DF;margin-top:2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tro.off{opacity:.55}
+.newt{animation:pop .5s ease-out}
+.newt svg{filter:drop-shadow(0 0 8px #FFE27A)}
+.shine .spk{animation:twinkle 1.6s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+.shine{filter:drop-shadow(0 0 6px rgba(255,214,80,.9))}
+@media (prefers-reduced-motion:reduce){.land2.pickme,.shine .spk{animation:none}}
 /* modal */
 .modal{position:fixed;inset:0;background:rgba(35,32,58,.55);display:grid;place-items:center;padding:16px;z-index:20}
 .modal .card{max-width:440px;width:100%;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
@@ -209,108 +233,44 @@ const PLAYERS0 = [
   {id:"pelonchis", name:"Pelonchis Cacatúa", av:"🐻", color:"#E0663A"},
   {id:"pillus", name:"Pillus Makakikus", av:"🦦", color:"#2F86C6"}
 ];
-const PARKS = {
-  epic:{n:"Epic Universe", short:"Epic", lands:{
-    celestial:{n:"Celestial Park",x:200,y:160,r:44,c:"#C9B8F2"},
-    nintendo:{n:"Super Nintendo World",x:70,y:212,r:42,c:"#FFB3A8"},
-    ministry:{n:"Ministry of Magic",x:316,y:70,r:42,c:"#B9C3D6"},
-    dark:{n:"Dark Universe",x:84,y:70,r:42,c:"#A9A3B8"},
-    berk:{n:"Isle of Berk",x:330,y:212,r:42,c:"#A9DFA3"}}},
-  ioa:{n:"Islands of Adventure", short:"IOA", lands:{
-    port:{n:"Port of Entry",x:200,y:270,r:26,c:"#F2D7A8"},
-    marvel:{n:"Marvel Super Hero Island",x:318,y:226,r:36,c:"#F6A9A9"},
-    toon:{n:"Toon Lagoon",x:356,y:150,r:30,c:"#FFE48A"},
-    skull:{n:"Skull Island",x:334,y:80,r:24,c:"#B9B19B"},
-    jurassic:{n:"Jurassic Park",x:244,y:44,r:38,c:"#9FD08E"},
-    hogsmeade:{n:"Hogsmeade",x:124,y:50,r:38,c:"#D7E4F2"},
-    lost:{n:"Lost Continent",x:58,y:122,r:24,c:"#E8D3B4"},
-    seuss:{n:"Seuss Landing",x:80,y:212,r:36,c:"#F5B5E0"}}},
-  usf:{n:"Universal Studios Florida", short:"Studios", lands:{
-    hollywood:{n:"Hollywood",x:205,y:262,r:22,c:"#F2D7A8"},
-    production:{n:"Production Central",x:108,y:246,r:28,c:"#C4CCD8"},
-    minion:{n:"Minion Land",x:54,y:176,r:32,c:"#FFE16B"},
-    newyork:{n:"New York",x:80,y:84,r:34,c:"#D3C6B6"},
-    sf:{n:"San Francisco",x:186,y:36,r:22,c:"#E9C9A8"},
-    london:{n:"Diagon Alley",x:284,y:50,r:40,c:"#C9D6E6"},
-    expo:{n:"World Expo",x:352,y:132,r:26,c:"#B8E3F0"},
-    springfield:{n:"Springfield",x:348,y:196,r:28,c:"#FFC7DF"},
-    dreamworks:{n:"DreamWorks Land",x:290,y:252,r:30,c:"#C8EBA6"}}}
-};
-const DAYS = {d1:"Sábado 27 feb · Epic Universe", d2:"Domingo 28 feb · Epic Universe", d3:"Lunes 1 mar · Islands of Adventure + Studios", d4:"Martes 2 mar · Studios + Islands of Adventure", d5:"Miércoles 3 mar · Epic Universe", x:"Fuera del plan"};
-// Orden = el del itinerario. plan:false = las que no haremos (van al final).
-const ATTR = [
-  ["Battle at the Ministry","epic","ministry","d1","9:10"],
-  ["Hiccup's Wing Gliders","epic","berk","d1","10:40"],
-  ["Dragon Racer's Rally","epic","berk","d1","11:30"],
-  ["Fyre Drill","epic","berk","d1","12:20"],
-  ["Viking Training Camp","epic","berk","d1","12:50"],
-  ["The Untrainable Dragon","epic","berk","d1","13:40"],
-  ["Le Cirque Arcanus","epic","ministry","d1","16:00"],
-  ["Hechizos con varita","epic","ministry","d1","19:20"],
-  ["Celestial Goodnight","epic","celestial","d1","21:30"],
-  ["Mine-Cart Madness","epic","nintendo","d2","9:10"],
-  ["Mario Kart: Bowser's Challenge","epic","nintendo","d2","10:05"],
-  ["Yoshi's Adventure","epic","nintendo","d2","11:15"],
-  ["Retos con la Power-Up Band","epic","nintendo","d2","12:10"],
-  ["Mario y Luigi","epic","nintendo","d2","12:50"],
-  ["Princess Peach","epic","nintendo","d2","13:40"],
-  ["Monsters Unchained","epic","dark","d2","18:10"],
-  ["Curse of the Werewolf","epic","dark","d2","18:50"],
-  ["Hagrid's Magical Creatures Motorbike Adventure","ioa","hogsmeade","d3","8:10"],
-  ["Harry Potter and the Forbidden Journey","ioa","hogsmeade","d3","8:55"],
-  ["Flight of the Hippogriff","ioa","hogsmeade","d3","9:30"],
-  ["Frog Choir","ioa","hogsmeade","d3","10:00"],
-  ["Hogwarts Express","ioa","hogsmeade","d3","10:15",{p:"usf",l:"london"}],
-  ["Escape from Gringotts","usf","london","d3","10:50"],
-  ["Celestina Warbeck","usf","london","d3","12:30"],
-  ["Tales of Beedle the Bard","usf","london","d3","13:00"],
-  ["Knockturn Alley","usf","london","d3","13:30"],
-  ["Ollivanders","usf","london","d3","14:00"],
-  ["Triwizard Spirit Rally","ioa","hogsmeade","d3","17:30"],
-  ["High in the Sky Seuss Trolley Train Ride!","ioa","seuss","d3","18:10"],
-  ["One Fish, Two Fish, Red Fish, Blue Fish","ioa","seuss","d3","18:50"],
-  ["Hogwarts Always","ioa","hogsmeade","d3","19:50"],
-  ["Transformers: The Ride-3D","usf","production","d4","9:30"],
-  ["Race Through New York Starring Jimmy Fallon","usf","newyork","d4","10:25"],
-  ["Despicable Me Minion Mayhem","usf","minion","d4","11:00"],
-  ["Villain-Con Minion Blast","usf","minion","d4","12:10"],
-  ["E.T. Adventure","usf","dreamworks","d4","13:20"],
-  ["Trolls Trollercoaster","usf","dreamworks","d4","14:15"],
-  ["Men in Black: Alien Attack","usf","expo","d4","16:05"],
-  ["Jurassic Park River Adventure","ioa","jurassic","d4","17:30"],
-  ["Dudley Do-Right's Ripsaw Falls","ioa","toon","d4","18:20"],
-  ["The Amazing Adventures of Spider-Man","ioa","marvel","d4","19:15"],
-  ["Bowser Jr. Shadow Showdown","epic","nintendo","d5","10:45"],
-  ["Constellation Carousel","epic","celestial","d5","20:15"],
-  // Fuera del plan
-  ["Revenge of the Mummy","usf","newyork","x",""],
-  ["Skull Island: Reign of Kong","ioa","skull","x",""],
-  ["Kang & Kodos' Twirl 'n' Hurl","usf","springfield","x",""],
-  ["Storm Force Accelatron","ioa","marvel","x",""],
-  ["Popeye & Bluto's Bilge-Rat Barges","ioa","toon","x",""],
-  ["The Cat in the Hat","ioa","seuss","x",""],
-  ["Caro-Seuss-el","ioa","seuss","x",""],
-  ["Camp Jurassic","ioa","jurassic","x",""],
-  ["The Simpsons Ride","usf","springfield","x",""],
-  ["The Bourne Stuntacular","usf","hollywood","x",""],
-  ["Pteranodon Flyers","ioa","jurassic","x",""],
-  ["Jurassic World VelociCoaster","ioa","jurassic","x",""],
-  ["The Incredible Hulk Coaster","ioa","marvel","x",""],
-  ["Doctor Doom's Fearfall","ioa","marvel","x",""],
-  ["Stardust Racers","epic","celestial","x",""]
-].map((a,i)=>({i, n:a[0], park:a[1], land:a[2], day:a[3], time:a[4], also:a[5]||null, plan:a[3]!=="x"}));
-const price = i => 8 + i;
+// Vitrina: un estante por parque; cada tierra con sus colores. Los trofeos de cada tierra aparecen en este orden.
+const PARKS = [
+ {id:"epic", n:"Epic Universe", lands:[
+  {id:"celestial",n:"Celestial Park",c1:"#26357F",c2:"#F5C84C",items:["Stardust Racers","Constellation Carousel","Astronomica","Celestial Goodnight"]},
+  {id:"nintendo",n:"Super Nintendo World",c1:"#E52521",c2:"#FBD000",items:["Mario Kart: Bowser's Challenge","Mine-Cart Madness","Yoshi's Adventure","Bowser Jr. Shadow Showdown"]},
+  {id:"berk",n:"Isle of Berk",c1:"#2E7D6B",c2:"#A86B32",items:["Hiccup's Wing Gliders","Dragon Racer's Rally","Fyre Drill","The Untrainable Dragon","Viking Training Camp"]},
+  {id:"ministry",n:"Ministry of Magic",c1:"#6E1423",c2:"#D4A93A",items:["Battle at the Ministry","Le Cirque Arcanus"]},
+  {id:"dark",n:"Dark Universe",c1:"#33244A",c2:"#7FD957",items:["Monsters Unchained","Curse of the Werewolf"]}]},
+ {id:"ioa", n:"Islands of Adventure", lands:[
+  {id:"marvel",n:"Marvel Super Hero Island",c1:"#1F4FB5",c2:"#D62828",items:["The Amazing Adventures of Spider-Man","The Incredible Hulk Coaster","Doctor Doom's Fearfall","Storm Force Accelatron"]},
+  {id:"toon",n:"Toon Lagoon",c1:"#FFC93C",c2:"#2D8CFF",items:["Dudley Do-Right's Ripsaw Falls","Popeye & Bluto's Bilge-Rat Barges","Me Ship, The Olive"]},
+  {id:"skull",n:"Skull Island",c1:"#5E584C",c2:"#4F8A3A",items:["Skull Island: Reign of Kong"]},
+  {id:"jurassic",n:"Jurassic Park",c1:"#2E7D32",c2:"#F2C230",items:["Jurassic Park River Adventure","Jurassic World VelociCoaster","Pteranodon Flyers","Camp Jurassic"]},
+  {id:"hogsmeade",n:"Hogsmeade",c1:"#6E1423",c2:"#D4A93A",items:["Hagrid's Magical Creatures Motorbike Adventure","Harry Potter and the Forbidden Journey","Flight of the Hippogriff","Hogwarts Express · Hogsmeade","Frog Choir","Triwizard Spirit Rally","Hogwarts Always"]},
+  {id:"seuss",n:"Seuss Landing",c1:"#D62828",c2:"#FFFFFF",stripe:true,items:["High in the Sky Seuss Trolley Train Ride!","One Fish, Two Fish, Red Fish, Blue Fish","The Cat in the Hat","Caro-Seuss-el","If I Ran the Zoo"]}]},
+ {id:"usf", n:"Universal Studios Florida", lands:[
+  {id:"production",n:"Production Central",c1:"#7D8B9C",c2:"#1F4FB5",items:["Transformers: The Ride-3D"]},
+  {id:"minion",n:"Minion Land",c1:"#FFD93B",c2:"#2F6DB5",items:["Despicable Me Minion Mayhem","Villain-Con Minion Blast"]},
+  {id:"newyork",n:"New York",c1:"#8B3A2B",c2:"#C9C2B5",items:["Revenge of the Mummy","Race Through New York Starring Jimmy Fallon"]},
+  {id:"london",n:"Diagon Alley",c1:"#6E1423",c2:"#D4A93A",items:["Escape from Gringotts","Hogwarts Express · King's Cross","Knockturn Alley","Ollivanders","Celestina Warbeck","Tales of Beedle the Bard"]},
+  {id:"expo",n:"World Expo",c1:"#1E1E1E",c2:"#C0C6CC",items:["Men in Black: Alien Attack"]},
+  {id:"springfield",n:"Springfield",c1:"#FFD90F",c2:"#F49AC2",items:["The Simpsons Ride","Kang & Kodos' Twirl 'n' Hurl"]},
+  {id:"dreamworks",n:"DreamWorks Land",c1:"#7CC242",c2:"#8E44AD",items:["Trolls Trollercoaster","E.T. Adventure"]},
+  {id:"hollywood",n:"Hollywood",c1:"#C9A227",c2:"#1E1E1E",items:["The Bourne Stuntacular"]}]}
+];
+const LANDS = {}; PARKS.forEach(pk=>pk.lands.forEach(l=>{ l.park=pk; LANDS[l.id]=l; }));
+const TOTAL_TROPHIES = Object.values(LANDS).reduce((n,l)=>n+l.items.length,0);
 const DAY = 86400000;
 const INTERVAL = [0,1,1,2,3,5]; // días por caja (meta: 3 semanas)
 
 /* ================= ESTADO ================= */
 let S = load();
-function fresh(p){ return {id:p.id, name:p.name, av:p.av, color:p.color, coins:0, earned:0, belts:[], learned:{}, chose:{}, practiced:{}, facts:{}, sprint:0, bought:0, free:false}; }
+function fresh(p){ return {id:p.id, name:p.name, av:p.av, color:p.color, earned:0, belts:[], gold:{}, tro:{}, pend:0, bar:0, learned:{}, chose:{}, practiced:{}, facts:{}, sprint:0, free:false}; }
 function load(){
   let d=null; try{ d = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
   if(!d || !Array.isArray(d.players)) d = {players:PLAYERS0.map(fresh), cur:null};
   d.players = d.players.map(p => Object.assign(fresh(PLAYERS0.find(x=>x.id===p.id)||p), p));
-  d.cfg = Object.assign({bossTime:12}, d.cfg||{});
+  d.cfg = Object.assign({bossTime:12, per:12}, d.cfg||{});
   return d;
 }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
@@ -330,7 +290,13 @@ function dueKeys(p){
   const now=Date.now();
   return allKeys(learnedTables(p)).filter(k=>{ const f=p.facts[k]; return f && f.due<=now; });
 }
-function addCoins(n){ const p=P(); p.coins+=n; p.earned+=n; save(); if(n>0) floatTxt("+"+n+" galeones"); }
+const owned = p => Object.values(p.tro).reduce((a,b)=>a+b,0);
+// Cada acierto llena la barra; al llenarse gana un trofeo para colocar en su vitrina.
+function addCoins(n){
+  const p=P(); p.earned+=n; p.bar+=n; const per=S.cfg.per;
+  while(p.bar>=per){ if(owned(p)+p.pend>=TOTAL_TROPHIES){ p.bar=per; break; } p.bar-=per; p.pend++; floatTxt("🏆 ¡Trofeo nuevo!"); }
+  save();
+}
 function floatTxt(t){ const d=document.createElement("div"); d.className="flt"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),950); }
 
 /* ================= NAVEGACIÓN ================= */
@@ -342,38 +308,36 @@ function render(){
   if(v==="who") return vWho();
   if(v==="adults") return vAdults();
   if(!P()) { view={v:"who"}; return vWho(); }
-  ({hub:vHub, tables:vTables, table:vTable, play:vPlay, grid:vGrid, park:vPark, prog:vProg, bag:vBag}[v]||vHub)();
+  ({hub:vHub, tables:vTables, table:vTable, play:vPlay, grid:vGrid, vitrina:vCase, prog:vProg}[v]||vHub)();
 }
 function header(back){
   const p=P();
   return `<div class="top">
     <div class="row">${back?`<button class="btn small white" data-go="${back}">← Volver</button>`:""}
       <div class="who"><span class="av">${p.av}</span><b>${esc(p.name)}</b></div></div>
-    <div class="row"><span class="chip" title="Souvenirs">🎒 ${p.belts.length}/9</span>
-      <span class="chip"><span class="coin"></span>${p.coins}</span></div></div>`;
+    <div class="row"><span class="chip">🏆 ${owned(p)}</span>
+      <span class="chip">⭐ ${p.bar}/${S.cfg.per}</span></div></div>`;
 }
 
 /* ---------- ¿Quién juega? ---------- */
 function vWho(){
   app.innerHTML = `<div class="brand"><img class="appicon" src="icon-512.png" alt=""><div><div class="logo">Multi<span>Parque</span></div><div class="muted">Tablas del 2 al 10 · arma tu Universal Orlando</div></div></div>
   <div class="row between"><h2>¿Quién juega?</h2><button class="btn small white" data-go="adults">Adultos</button></div>
-  <div class="players">${S.players.map(p=>`<button class="pcard" data-pick="${p.id}"><span class="av">${p.av}</span><span><h3>${esc(p.name)}</h3><span class="sub">🎒 ${p.belts.length}/9 souvenirs · ${p.coins} galeones · ${p.bought} atracciones</span></span></button>`).join("")}</div>`;
+  <div class="players">${S.players.map(p=>`<button class="pcard" data-pick="${p.id}"><span class="av">${p.av}</span><span><h3>${esc(p.name)}</h3><span class="sub">🏆 ${owned(p)} de ${TOTAL_TROPHIES} trofeos · ${Object.keys(p.gold).length} dorados de 9</span></span></button>`).join("")}</div>`;
 }
 
 /* ---------- Menú ---------- */
 function vHub(){
   const p=P(), due=dueKeys(p).length, lt=learnedTables(p).length;
-  const nextA = ATTR[p.bought];
   app.innerHTML = header() + `
   <div class="menu">
-    <button class="mbtn" data-go="tables"><span class="ic">⚔️</span><span><h3>Tablas y villanos</h3><small>Aprende cada tabla y vence a su villano para ganar un souvenir.</small></span></button>
+    <button class="mbtn" data-go="tables"><span class="ic">⚔️</span><span><h3>Tablas y villanos</h3><small>Aprende cada tabla y vence a su villano para ganar su trofeo.</small></span></button>
     <button class="mbtn" data-act="repaso" ${lt?"":"disabled"}><span class="ic">🧠</span><span><h3>Repaso inteligente</h3><small>${lt?(due?`${due} operaciones te esperan hoy.`:"Todo al día. Puedes repasar las más difíciles."):"Se abre al aprender tu primera tabla."}</small></span>${due?`<span class="badge">${due}</span>`:""}</button>
     <button class="mbtn" data-act="sprint" ${lt?"":"disabled"}><span class="ic">⚡</span><span><h3>Sprint de 60 segundos</h3><small>${p.sprint?`Tu récord: ${p.sprint} aciertos.`:"¿Cuántas resuelves en un minuto?"}</small></span></button>
-    <button class="mbtn" data-act="detective" ${p.belts.length>=3?"":"disabled"}><span class="ic">🔎</span><span><h3>Detective al revés</h3><small>${p.belts.length>=3?"Te doy el resultado, tú encuentras las multiplicaciones.":"Se abre con 3 souvenirs."}</small></span></button>
-    <button class="mbtn" data-go="park"><span class="ic">🎢</span><span><h3>Mi parque</h3><small>${nextA?`Siguiente: ${esc(nextA.n)} · ${price(nextA.i)} galeones`:"¡Tienes todas las atracciones!"}</small></span></button>
-    <button class="mbtn" data-go="bag"><span class="ic">🎒</span><span><h3>Mi mochila de souvenirs</h3><small>${p.belts.length} de 9 souvenirs de los parques.</small></span></button>
+    <button class="mbtn" data-act="detective" ${p.belts.length>=3?"":"disabled"}><span class="ic">🔎</span><span><h3>Detective al revés</h3><small>${p.belts.length>=3?"Te doy el resultado, tú encuentras las multiplicaciones.":"Se abre al vencer 3 villanos."}</small></span></button>
+    <button class="mbtn" data-go="vitrina"><span class="ic">🏆</span><span><h3>Mi vitrina de trofeos</h3><small>${p.pend?`¡Tienes ${p.pend} trofeo${p.pend>1?"s":""} para colocar!`:`${owned(p)} de ${TOTAL_TROPHIES} trofeos · te faltan ${S.cfg.per-p.bar} aciertos para el siguiente.`}</small></span>${p.pend?`<span class="badge">${p.pend}</span>`:""}</button>
     <button class="mbtn" data-go="grid"><span class="ic">🟧</span><span><h3>Tabla mágica</h3><small>Pinta de tu color cada operación que domines.</small></span></button>
-    <button class="mbtn" data-go="prog"><span class="ic">🏆</span><span><h3>Mi progreso</h3><small>Tu tarjeta para comparar y tu respaldo.</small></span></button>
+    <button class="mbtn" data-go="prog"><span class="ic">📋</span><span><h3>Mi progreso</h3><small>Tu tarjeta para comparar y tu respaldo.</small></span></button>
   </div>
   <div class="row"><button class="btn small white" data-act="switch">Cambiar de jugadora</button></div>`;
 }
@@ -381,11 +345,11 @@ function vHub(){
 /* ---------- Tablas ---------- */
 function vTables(){
   const p=P();
-  app.innerHTML = header("hub") + `<h2>Tablas y villanos</h2><p class="muted" style="margin:0">Van en este orden, de la más fácil a la más retadora. Cada villano que vences te da un souvenir de su parque.</p>
+  app.innerHTML = header("hub") + `<h2>Tablas y villanos</h2><p class="muted" style="margin:0">Van en este orden, de la más fácil a la más retadora. Al vencer a cada villano ganas el trofeo de esa tabla: plateado, o dorado si no pierdes ningún corazón.</p>
   <div class="tables">${ORDER.map((t,k)=>{
     const u=isUnlocked(p,t), done=p.belts.includes(t);
-    const st = done?"Vencido":!u?"🔒 Vence al villano anterior":p.practiced[t]?"¡Listo para el villano!":p.chose[t]?"A escribir":p.learned[t]?"A elegir":"Nueva";
-    return `<button class="tbtn ${done?"done":""} ${u?"":"locked"}" ${u?`data-table="${t}"`:"disabled"}><span class="num">×${t}</span><span style="font-size:26px">${done?BOSS[t].s:u?BOSS[t].e:"🔒"}</span><small>${st}</small></button>`;}).join("")}</div>`;
+    const st = p.gold[t]?"🏆 Dorado":done?"🥈 Plateado":!u?"🔒 Vence al villano anterior":p.practiced[t]?"¡Listo para el villano!":p.chose[t]?"A escribir":p.learned[t]?"A elegir":"Nueva";
+    return `<button class="tbtn ${done?"done":""} ${u?"":"locked"}" ${u?`data-table="${t}"`:"disabled"}><span class="num">×${t}</span><span style="font-size:26px">${done?(p.gold[t]?"🏆":"🥈"):u?BOSS[t].e:"🔒"}</span><small>${st}</small></button>`;}).join("")}</div>`;
 }
 function vTable(){
   const p=P(), t=view.t, b=BOSS[t];
@@ -398,7 +362,7 @@ function vTable(){
     <button class="mbtn" data-act="learn"><span class="ic">👀</span><span><h3>1 · Aprende</h3><small>Mira los puntitos y descubre cada resultado.${p.learned[t]?" ✔":""}</small></span></button>
     <button class="mbtn" data-act="choose" ${p.learned[t]?"":"disabled"}><span class="ic">🎯</span><span><h3>2 · Elige</h3><small>${p.learned[t]?"9 opciones parecidas: ¡fíjate bien!":"Primero Aprende."}${p.chose[t]?" ✔":""}</small></span></button>
     <button class="mbtn" data-act="practice" ${p.chose[t]?"":"disabled"}><span class="ic">✏️</span><span><h3>3 · Escribe</h3><small>${p.chose[t]?"20 preguntas, en orden y revueltas.":"Primero Elige."}${p.practiced[t]?" ✔":""}</small></span></button>
-    <button class="mbtn" data-act="boss" ${p.practiced[t]?"":"disabled"}><span class="ic">${b.e}</span><span><h3>4 · Villano: ${b.n}</h3><small>${p.belts.includes(t)?"¡Vencido! Puedes volver a retarlo.":p.practiced[t]?`Tienes 3 corazones. Premio: ${b.s} ${b.sn}.`:"Primero Escribe."}</small></span></button>
+    <button class="mbtn" data-act="boss" ${p.practiced[t]?"":"disabled"}><span class="ic">${b.e}</span><span><h3>4 · Villano: ${b.n}</h3><small>${p.gold[t]?"¡Trofeo dorado! Puedes volver a retarlo.":p.belts.includes(t)?"Trofeo plateado. Véncelo sin perder corazones para hacerlo dorado.":p.practiced[t]?"3 corazones. Sin perder ninguno: ¡trofeo dorado!":"Primero Escribe."}</small></span></button>
   </div>`;
 }
 
@@ -488,7 +452,7 @@ function vPlay(){
   let hud="", top="", qhtml="", extra="";
   if(G.mode==="det"){
     const R=G.rounds[G.r];
-    hud = `<span class="chip">Caso ${G.r+1} de ${G.rounds.length}</span><span class="chip"><span class="coin"></span>+${G.coins}</span>`;
+    hud = `<span class="chip">Caso ${G.r+1} de ${G.rounds.length}</span><span class="chip">⭐ +${G.coins}</span>`;
     const aTxt = G.a===null ? (G.input||"?") : G.a, bTxt = G.a===null ? "?" : (G.input||"?");
     qhtml = `<div class="muted">¿Qué multiplicaciones dan…</div>
       <div class="q"><span>${R.p}</span><span>=</span><span class="slot ${G.a===null?"cur":""}">${aTxt}</span><span>×</span><span class="slot ${G.a!==null?"cur":""}">${bTxt}</span></div>
@@ -503,10 +467,10 @@ function vPlay(){
       const B=BOSS[G.t];
       top = `<div class="boss"><span class="face" id="bf">${B.e}</span><div class="info"><b>${B.n}</b><div class="pbar red"><i style="width:${G.hp/G.max*100}%"></i></div><span class="hearts">${"❤️".repeat(G.hearts)}${"🤍".repeat(3-G.hearts)}</span></div></div>`;
       hud = G.limit ? `<span class="muted">Tiempo</span><div class="pbar"><i id="tb" style="width:100%"></i></div>` : `<span class="muted">Sin límite de tiempo</span><span style="flex:1"></span>`;
-      hud += `<span class="chip"><span class="coin"></span>+${G.coins}</span>`;
+      hud += `<span class="chip">⭐ +${G.coins}</span>`;
     } else {
       const tot=G.list.length;
-      hud = `<span class="chip">${Math.min(G.i+1,tot)} / ${tot}</span><div class="pbar"><i style="width:${G.i/tot*100}%"></i></div>${G.mode!=="learn"?`<span class="chip"><span class="coin"></span>+${G.coins}</span>`:""}`;
+      hud = `<span class="chip">${Math.min(G.i+1,tot)} / ${tot}</span><div class="pbar"><i style="width:${G.i/tot*100}%"></i></div>${G.mode!=="learn"?`<span class="chip">⭐ +${G.coins}</span>`:""}`;
     }
     const inp = G.mode==="choose" ? "?" : (G.input || "?");
     const parts = q.type==="prod" ? [q.a,"×",q.b,"=",`<span class="slot cur">${inp}</span>`]
@@ -523,7 +487,7 @@ function vPlay(){
     const q=G.list[G.i], ans=q.a*q.b;
     pad = `<div class="pad opts">${q.opts.map(o=>{ let c=""; if(G.fb){ if(o===ans) c="right"; else if(o===G.fb.pick) c="wrong"; } return `<button data-opt="${o}" class="${c}">${o}</button>`; }).join("")}</div>`;
   }
-  app.innerHTML = `<div class="top"><button class="btn small white" data-act="quit">✕ Salir</button><h2 style="font-size:22px">${esc(G.title)}</h2><span class="chip"><span class="coin"></span>${p.coins}</span></div>
+  app.innerHTML = `<div class="top"><button class="btn small white" data-act="quit">✕ Salir</button><h2 style="font-size:22px">${esc(G.title)}</h2><span class="chip">⭐ ${p.bar}/${S.cfg.per}</span></div>
   <div class="play">${top}<div class="hud">${hud}</div>
   <div class="qbox ${G.fb?(G.fb.ok?"ok":"no"):""}">${qhtml}${fb}</div>${extra}
   ${pad}</div>`;
@@ -617,20 +581,23 @@ function endSession(){
   const p=P(), g=G; G=null;
   let icon="🎉", title="¡Terminaste!", body="", bonus=0;
   if(g.mode==="learn"){
-    const first=!p.learned[g.t]; p.learned[g.t]=true; bonus = first?10:3;
-    title=`¡Aprendiste la tabla del ${g.t}!`; body = first?"Ya puedes practicarla.":"¡Buen repaso!";
+    p.learned[g.t]=true; title=`¡Aprendiste la tabla del ${g.t}!`; body="Ahora a elegir.";
   } else if(g.mode==="choose"){
     p.chose[g.t]=true; title=`¡${g.right} aciertos eligiendo!`; body="Ahora a escribirlas tú sola.";
   } else if(g.mode==="practice"){
-    p.practiced[g.t]=true; if(g.right===g.list.length) bonus=5;
-    title=`${g.right} de ${g.list.length} correctas`; body = (bonus?"¡Perfecto! +5 de premio. ":"")+`Ya puedes retar ${aN(BOSS[g.t].n)}.`;
+    p.practiced[g.t]=true;
+    title=`${g.right} de ${g.list.length} correctas`; body = (g.right===g.list.length?"¡Perfecto! ":"")+`Ya puedes retar ${aN(BOSS[g.t].n)}.`;
   } else if(g.mode==="boss"){
+    const B=BOSS[g.t];
     if(g.hp<=0){
-      const first=!p.belts.includes(g.t);
-      const B=BOSS[g.t];
-      if(first){ p.belts.push(g.t); bonus=40; icon=B.s; title=`¡Venciste ${aN(B.n)}!`; body=`Ganaste un souvenir de ${B.land}: <b>${B.sn}</b>, y un cofre de 40 galeones.`; }
-      else { bonus=15; icon=B.e; title="¡Lo volviste a vencer!"; body="Cofre de 15 galeones."; }
-    } else { bonus=3; icon="💪"; title=`${BOSS[g.t].n} ganó esta vez`; body=`Le diste ${g.max-g.hp} de ${g.max} golpes. Practica un poco y vuelve.`; }
+      const first=!p.belts.includes(g.t), perfect=g.hearts===3, wasGold=!!p.gold[g.t];
+      if(first) p.belts.push(g.t);
+      if(perfect) p.gold[g.t]=true;
+      icon = perfect ? cupSVG({gold:true,num:g.t,big:true}) : cupSVG({silver:true,num:g.t,big:true});
+      title=`¡Venciste ${aN(B.n)}!`;
+      body = perfect ? (wasGold?"¡Otra vez perfecto!":`¡Sin perder ningún corazón! Ganaste el <b>trofeo dorado de la tabla del ${g.t}</b>.`)
+        : (first?`Ganaste el <b>trofeo plateado de la tabla del ${g.t}</b>. Véncelo sin perder corazones para que sea dorado.`:(p.gold[g.t]?"Tu trofeo dorado sigue en la vitrina.":"Te faltó poquito para el dorado: ¡sin perder corazones!"));
+    } else { icon="💪"; title=`${B.n} ganó esta vez`; body=`Le diste ${g.max-g.hp} de ${g.max} golpes. Practica un poco y vuelve.`; }
   } else if(g.mode==="sprint"){
     const rec = g.right>p.sprint; if(rec) p.sprint=g.right;
     icon=rec?"🏅":"⚡"; title=`${g.right} aciertos en 60 segundos`; body= rec?"¡Nuevo récord!":`Tu récord es ${p.sprint}.`;
@@ -639,12 +606,11 @@ function endSession(){
   } else if(g.mode==="det"){
     icon="🔎"; title="¡Casos cerrados!"; body=`Encontraste ${g.right} multiplicaciones.`;
   }
-  if(bonus) addCoins(bonus);
   save();
   const back = (g.mode==="learn"||g.mode==="choose"||g.mode==="practice"||g.mode==="boss") ? `data-table="${g.t}"` : `data-go="hub"`;
-  const nextA = ATTR[p.bought], can = nextA && p.coins>=price(nextA.i);
-  modal(`<div class="big">${icon}</div><h2>${title}</h2><div>${body}</div>${g.coins||bonus?`<div class="chip"><span class="coin"></span>+${(g.coins||0)+bonus} galeones</div>`:""}
-    <div class="row" style="justify-content:center">${can?`<button class="btn teal" data-go="park" data-close>🎢 ¡Ya alcanza para una atracción!</button>`:""}<button class="btn ${can?"white":""}" ${back} data-close>Seguir</button></div>`);
+  const can = p.pend>0;
+  modal(`<div class="big">${icon}</div><h2>${title}</h2><div>${body}</div>${g.coins?`<div class="chip">⭐ +${g.coins} aciertos</div>`:""}
+    <div class="row" style="justify-content:center">${can?`<button class="btn teal" data-go="vitrina" data-close>🏆 ¡Coloca tu trofeo nuevo!</button>`:""}<button class="btn ${can?"white":""}" ${back} data-close>Seguir</button></div>`);
 }
 function modal(html){
   const m=document.createElement("div"); m.className="modal"; m.innerHTML=`<div class="card pop">${html}</div>`;
@@ -670,93 +636,59 @@ function vGrid(){
   <div class="legend"><span><i style="background:#fff"></i>Por descubrir</span><span><i style="background:#FFF1C9"></i>En camino</span><span><i style="background:${p.color};border-color:var(--ink)"></i>Dominada</span></div>`;
 }
 
-/* ================= PARQUE ================= */
-function placeMarkers(park, bought){
-  // reparte los marcadores de cada zona en un anillo dentro de su círculo
-  const L=PARKS[park].lands, per={}, out=[];
-  ATTR.forEach(a=>{
-    if(a.park===park) (per[a.land]=per[a.land]||[]).push(a);
-    if(a.also && a.also.p===park) (per[a.also.l]=per[a.also.l]||[]).push(a);
-  });
-  Object.entries(per).forEach(([land,list])=>{
-    const c=L[land], m=list.length;
-    list.forEach((a,j)=>{
-      if(a.i>=bought) return;
-      const ang = -Math.PI/2 + j*2*Math.PI/m, r = m===1?0:Math.min(c.r-11, 8+m*2.2);
-      out.push({a, x:c.x+r*Math.cos(ang), y:c.y+r*Math.sin(ang)});
-    });
-  });
-  return out;
+/* ================= VITRINA ================= */
+let cupN=0;
+// Trofeo dibujado: copa con asas, color de su tierra (o oro/plata para las tablas)
+function cupSVG(o){
+  const id="g"+(cupN++), W=o.big?110:56, H=o.big?136:70;
+  let c1=o.c1, c2=o.c2;
+  if(o.gold){ c1="#F7C531"; c2="#FFF3B0"; } if(o.silver){ c1="#AEB7C4"; c2="#F4F6F9"; }
+  if(o.empty) return `<svg viewBox="0 0 56 70" width="${W}" height="${H}" aria-hidden="true"><path d="M14 8h28v14c0 9-6 16-14 16S14 31 14 22z" fill="none" stroke="#B9B2A3" stroke-width="2.5" stroke-dasharray="4 3"/><path d="M24 39h8v9h-8zM16 50h24v6H16z" fill="none" stroke="#B9B2A3" stroke-width="2.5" stroke-dasharray="4 3"/>${o.num?`<text x="28" y="27" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="13" fill="#B9B2A3">${o.num}</text>`:`<text x="28" y="27" text-anchor="middle" font-size="12" fill="#B9B2A3">?</text>`}</svg>`;
+  const body = o.stripe ? `url(#${id}s)` : `url(#${id}b)`;
+  const metal = o.gold||o.silver;
+  return `<svg viewBox="0 0 56 70" width="${W}" height="${H}" aria-hidden="true" class="${o.gold?"shine":""}">
+  <defs><linearGradient id="${id}b" x1="0" x2="1"><stop offset="0" stop-color="${c1}"/><stop offset=".45" stop-color="${metal?c2:c1}"/><stop offset="1" stop-color="${c1}"/></linearGradient>
+  ${o.stripe?`<pattern id="${id}s" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="4" fill="${c1}"/><rect y="4" width="8" height="4" fill="${c2}"/></pattern>`:""}</defs>
+  <path d="M14 12c-9 0-10 13 2 15M42 12c9 0 10 13-2 15" fill="none" stroke="${metal?c1:c2}" stroke-width="4" stroke-linecap="round"/>
+  <path d="M13 7h30v14c0 10-6.7 17-15 17S13 31 13 21z" fill="${body}" stroke="#23203A" stroke-width="2.2"/>
+  <rect x="24" y="37" width="8" height="10" fill="${metal?c1:c2}" stroke="#23203A" stroke-width="2"/>
+  <rect x="15" y="47" width="26" height="8" rx="2" fill="${metal?c1:c2}" stroke="#23203A" stroke-width="2"/>
+  <rect x="11" y="55" width="34" height="8" rx="2" fill="${metal?"#8A6410":"#3A2A1C"}" stroke="#23203A" stroke-width="2"/>
+  <path d="M18 10v10c0 5 2 9 5 11" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>
+  ${o.num?`<text x="28" y="27" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="15" fill="#23203A" stroke="#fff" stroke-width="2.5" paint-order="stroke">${o.num}</text>`:""}
+  ${o.gold?`<g class="spk"><path d="M47 4l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#FFF7C2"/><path d="M8 34l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#FFF7C2"/></g>`:""}</svg>`;
 }
-function parkSVG(park,p,hi){
-  const P_=PARKS[park], L=P_.lands;
-  let s=`<svg class="map" viewBox="0 0 400 300" role="img" aria-label="Mapa de ${P_.n}">`;
-  if(park==="epic"){
-    s+=`<rect x="0" y="0" width="400" height="300" fill="#D9F0D2"/>`;
-    ["nintendo","ministry","dark","berk"].forEach(k=>{ s+=`<line x1="200" y1="160" x2="${L[k].x}" y2="${L[k].y}" stroke="#E8DCC0" stroke-width="18" stroke-linecap="round"/>`; });
-    s+=`<rect x="186" y="200" width="28" height="100" fill="#E8DCC0"/><text x="200" y="292" text-anchor="middle" font-size="10" fill="#5E5A74">Entrada</text>`;
-  } else {
-    s+=`<rect x="0" y="0" width="400" height="300" fill="#D9F0D2"/><ellipse cx="205" cy="152" rx="${park==="ioa"?118:110}" ry="${park==="ioa"?78:72}" fill="#9ED8F0" stroke="#7CC3E0" stroke-width="3"/><text x="205" y="156" text-anchor="middle" font-size="12" fill="#3D7C99" font-weight="700">Laguna</text>`;
-    s+=`<text x="8" y="16" font-size="11" fill="#5E5A74" font-weight="700">La entrada está abajo ↓</text>`;
-  }
-  const markers = placeMarkers(park,p.bought);
-  Object.entries(L).forEach(([k,c])=>{
-    const all = ATTR.filter(a=>(a.park===park&&a.land===k)||(a.also&&a.also.p===park&&a.also.l===k));
-    const got = all.filter(a=>a.i<p.bought).length;
-    const full = all.length && got===all.length;
-    s+=`<circle cx="${c.x}" cy="${c.y}" r="${c.r}" fill="${got?c.c:"#EDEAE2"}" stroke="${full?"#E3B12B":"#23203A"}" stroke-width="${full?5:2.5}" ${got?"":`stroke-dasharray="5 4"`}/>`;
-    const ly = c.y + c.r + 11 > 298 ? c.y - c.r - 4 : c.y + c.r + 11;
-    s+=`<text class="lname" x="${c.x}" y="${ly}" text-anchor="middle" paint-order="stroke" stroke="#D9F0D2" stroke-width="3">${esc(c.n)}${full?" ⭐":""}</text>`;
-  });
-  markers.forEach(({a,x,y})=>{
-    const isHi = hi===a.i;
-    s+=`<g class="mk" data-attr="${a.i}"><circle cx="${x}" cy="${y}" r="${isHi?11:9}" fill="${a.plan?p.color:"#8A86A0"}" stroke="${isHi?"#F5C84C":"#23203A"}" stroke-width="${isHi?4:2}"/><text x="${x}" y="${y+3.5}" text-anchor="middle">${a.i+1}</text></g>`;
-  });
-  return s+`</svg>`;
-}
-function vPark(){
-  const p=P(); const park = view.park || (ATTR[Math.max(0,p.bought-1)]||ATTR[0]).park;
-  view.park = park;
-  const nextA = ATTR[p.bought];
-  const allPlan = ATTR.filter(a=>a.plan).length;
-  let nextHtml;
-  if(!nextA) nextHtml = `<div class="card" style="text-align:center"><div class="big" style="font-size:54px">🏆</div><h2>¡Completaste los tres parques!</h2></div>`;
-  else {
-    const pr=price(nextA.i), can=p.coins>=pr, L=PARKS[nextA.park].lands[nextA.land];
-    nextHtml = `<div class="card next"><div class="n">${nextA.i+1}</div><div><h3 style="font-size:21px">${p.bought<allPlan?"Siguiente en el itinerario":"Fuera del plan (bonus)"}: ${esc(nextA.n)}</h3>
-      <div class="muted" style="font-size:15px">${esc(L.n)} · ${PARKS[nextA.park].n}${nextA.plan?` · ${DAYS[nextA.day].split(" · ")[0]}, ${nextA.time}`:""}</div>
-      <div class="row" style="margin-top:6px"><button class="btn ${can?"teal":""}" data-act="buy" ${can?"":"disabled"}>Comprar · ${pr} galeones</button>${can?"":`<span class="muted">Te faltan ${pr-p.coins} galeones</span>`}</div></div></div>`;
-  }
-  const lands = Object.entries(PARKS[park].lands).map(([k,c])=>{
-    const all = ATTR.filter(a=>(a.park===park&&a.land===k)||(a.also&&a.also.p===park&&a.also.l===k));
-    if(!all.length) return "";
-    const got = all.filter(a=>a.i<p.bought);
-    return `<div class="land ${got.length===all.length?"full":""}"><h3>${esc(c.n)} <span class="muted" style="font-family:var(--f-body);font-size:14px">${got.length}/${all.length}</span></h3>
-      <ol>${got.map(a=>`<li><span class="num ${a.plan?"":"x"}">${a.i+1}</span><span>${esc(a.n)}</span></li>`).join("")}${got.length<all.length?`<li class="muted">${all.length-got.length} por descubrir…</li>`:""}</ol></div>`;
+function vCase(){
+  const p=P(), per=S.cfg.per, picking=p.pend>0;
+  const honor = ORDER.slice().sort((a,b)=>a-b).map(t=>{
+    const g=p.gold[t], sv=p.belts.includes(t);
+    return `<div class="tro">${g?cupSVG({gold:true,num:t}):sv?cupSVG({silver:true,num:t}):cupSVG({empty:true,num:t})}<span>Tabla del ${t}</span></div>`; }).join("");
+  const shelves = PARKS.map(pk=>{
+    const lands = pk.lands.map(l=>{
+      const have=p.tro[l.id]||0, room=have<l.items.length;
+      const cups = l.items.map((nm,i)=> i<have
+        ? `<div class="tro ${view.last===l.id+i?"newt":""}">${cupSVG({c1:l.c1,c2:l.c2,stripe:l.stripe})}<span>${esc(nm)}</span></div>`
+        : `<div class="tro off">${cupSVG({empty:true})}<span>&nbsp;</span></div>`).join("");
+      const tag = picking&&room ? "button" : "div";
+      return `<${tag} class="land2 ${picking&&room?"pickme":""}" ${picking&&room?`data-place="${l.id}"`:""} style="--c1:${l.c1};--c2:${l.c2}"><b>${esc(l.n)} <small>${have}/${l.items.length}</small></b><div class="cups">${cups}</div></${tag}>`;
+    }).join("");
+    const got=pk.lands.reduce((n,l)=>n+(p.tro[l.id]||0),0), tot=pk.lands.reduce((n,l)=>n+l.items.length,0);
+    return `<section class="shelf"><h3>${pk.n} <small>${got}/${tot}</small></h3><div class="lands2">${lands}</div><div class="plank"></div></section>`;
   }).join("");
-  const days = Object.keys(DAYS).map(d=>{
-    const got = ATTR.filter(a=>a.day===d && a.i<p.bought);
-    if(!got.length) return "";
-    return `<div class="day"><h3>${DAYS[d]}</h3><ol>${got.map(a=>`<li><span class="num ${a.plan?"":"x"}">${a.i+1}</span>${a.time?`<span class="t">${a.time}</span>`:""}<span>${esc(a.n)}</span></li>`).join("")}</ol></div>`;
-  }).join("");
-  const cnt = k => ATTR.filter(a=>a.i<p.bought && (a.park===k || (a.also&&a.also.p===k))).length;
-  app.innerHTML = header("hub") + `<h2>Mi parque</h2>${nextHtml}
-  <div class="tabs">${Object.entries(PARKS).map(([k,v])=>`<button class="tab" data-park="${k}" aria-pressed="${k===park}">${v.n} · ${cnt(k)}</button>`).join("")}</div>
-  ${parkSVG(park,p,view.hi)}
-  <div class="muted" style="font-size:14px;margin-top:-8px">Toca un número para ver su atracción. Los números son el orden en que las haremos en el viaje. El mapa es aproximado.</div>
-  <div id="tip"></div>
-  <div class="lands">${lands}</div>
-  ${days?`<h2>Así iremos en el viaje</h2><div class="lands">${days}</div>`:""}`;
+  app.innerHTML = header("hub") + `<h2>Mi vitrina de trofeos</h2>
+  ${picking?`<div class="card pop" style="background:#FFF8D8;text-align:center"><b style="font-family:var(--f-display);font-weight:400;font-size:22px">🏆 ¡Tienes ${p.pend} trofeo${p.pend>1?"s":""} para colocar!</b><div>Toca la tierra donde lo quieres. Brillan las que tienen espacio.</div></div>`
+   :`<div class="card"><div class="row between"><b>Siguiente trofeo</b><span class="muted">${per-p.bar} aciertos más</span></div><div class="pbar" style="margin-top:6px"><i style="width:${p.bar/per*100}%"></i></div></div>`}
+  <div class="case">
+    <section class="shelf honor"><h3>Estante de honor <small>${Object.keys(p.gold).length} dorados · ${p.belts.length} vencidas</small></h3><div class="cups">${honor}</div><div class="plank"></div></section>
+    ${shelves}
+  </div>`;
+  if(view.last){ const n=document.querySelector(".newt"); if(n) n.scrollIntoView({block:"center"}); }
 }
-function buy(){
-  const p=P(), a=ATTR[p.bought]; if(!a) return;
-  const pr=price(a.i); if(p.coins<pr) return;
-  p.coins-=pr; p.bought++; save();
-  view.park=a.park; view.hi=a.i; render();
-  const L=PARKS[a.park].lands[a.land];
-  const allL = ATTR.filter(x=>(x.park===a.park&&x.land===a.land));
-  const full = allL.every(x=>x.i<p.bought);
-  modal(`<div class="big">🎢</div><h2>¡${esc(a.n)}!</h2><div>Ya está en <b>${esc(L.n)}</b>, en ${PARKS[a.park].n}.</div>${a.plan?`<div class="muted">En el viaje la haremos el <b>${DAYS[a.day].split(" · ")[0]}</b> a las ${a.time}.</div>`:`<div class="muted">Esta no está en el plan del viaje, pero ya es parte de tu parque.</div>`}${full?`<div class="chip">⭐ ¡Completaste ${esc(L.n)}!</div>`:""}<button class="btn" data-close>¡Genial!</button>`);
+function place(land){
+  const p=P(), l=LANDS[land]; if(!l || p.pend<=0) return;
+  const have=p.tro[land]||0; if(have>=l.items.length) return;
+  p.tro[land]=have+1; p.pend--; save(); view.last=land+have; render();
+  modal(`<div class="big">${cupSVG({c1:l.c1,c2:l.c2,stripe:l.stripe,big:true})}</div><h2>${esc(l.items[have])}</h2><div>Nuevo trofeo en <b>${esc(l.n)}</b>, ${l.park.n}.</div><button class="btn" data-close>¡Genial!</button>`);
 }
 
 /* ================= ADULTOS ================= */
@@ -788,11 +720,11 @@ function vAdults(){
       ${pickers(p.av,p.color)}
       <div class="row"><button class="btn small" data-act="edsave">Guardar</button></div></div>
     <div class="card adm"><h3>Cómo va</h3>
-      <div class="tstat">${ORDER.map(t=>`<div><b>×${t}</b>${p.belts.includes(t)?BOSS[t].s+" vencido":p.practiced[t]?"Escribe ✔":p.chose[t]?"Elige ✔":p.learned[t]?"Aprende ✔":"—"}</div>`).join("")}</div>
-      <div>${m} de ${GRID_KEYS.length} operaciones dominadas · récord del sprint: ${p.sprint} · ${p.bought} atracciones</div>
+      <div class="tstat">${ORDER.map(t=>`<div><b>×${t}</b>${p.gold[t]?"🏆 dorado":p.belts.includes(t)?"🥈 plateado":p.practiced[t]?"Escribe ✔":p.chose[t]?"Elige ✔":p.learned[t]?"Aprende ✔":"—"}</div>`).join("")}</div>
+      <div>${m} de ${GRID_KEYS.length} operaciones dominadas · récord del sprint: ${p.sprint} · ${owned(p)} trofeos</div>
       <div><b>Las que más falla:</b></div><div class="row">${weakFacts(p)}</div></div>
-    <div class="card adm"><h3>Galeones: ${p.coins}</h3>
-      <div class="row"><button class="btn small white" data-act="coins" data-n="-50">−50</button><button class="btn small white" data-act="coins" data-n="-10">−10</button><button class="btn small white" data-act="coins" data-n="10">+10</button><button class="btn small white" data-act="coins" data-n="50">+50</button></div></div>
+    <div class="card adm"><h3>Trofeos: ${owned(p)} de ${TOTAL_TROPHIES}${p.pend?` · ${p.pend} por colocar`:""}</h3>
+      <div class="row"><button class="btn small white" data-act="gift">Regalar 1 trofeo</button><button class="btn small white" data-act="untro">Quitar el último</button></div></div>
     <div class="card adm"><h3>Orden de las tablas</h3>
       <div class="muted">Normalmente cada tabla se abre al vencer al villano anterior. Si en la escuela ya vieron otras, puedes abrirlas todas.</div>
       <div class="row"><button class="btn small ${p.free?"teal":"white"}" data-act="free">${p.free?"✔ Todas abiertas":"Abrir todas las tablas"}</button></div></div>
@@ -808,6 +740,9 @@ function vAdults(){
     <label><b>Nombre</b><input class="inp" id="np-name" maxlength="24" placeholder="Nombre" autocomplete="off" value="${esc(nw.name||"")}"></label>
     ${pickers(nw.av,nw.col)}
     <div class="row"><button class="btn small" data-act="addp">Agregar</button></div></div>
+  <div class="card adm"><h3>Aciertos para ganar un trofeo</h3>
+    <div class="muted">Con 12, terminar la vitrina toma unos 700 aciertos (unas 3 semanas practicando a diario).</div>
+    <div class="row">${[8,12,16,20].map(v=>`<button class="btn small ${S.cfg.per===v?"teal":"white"}" data-act="per" data-n="${v}">${v}</button>`).join("")}</div></div>
   <div class="card adm"><h3>Tiempo por pregunta contra el villano</h3>
     <div class="row">${[[8,"8 s"],[12,"12 s"],[20,"20 s"],[0,"Sin límite"]].map(([v,l])=>`<button class="btn small ${S.cfg.bossTime===v?"teal":"white"}" data-act="btime" data-n="${v}">${l}</button>`).join("")}</div></div>`;
 }
@@ -816,6 +751,7 @@ function adAct(act,t){
   if(act==="adclose"){ return go({v:"who"}); }
   if(act==="adback"){ view.edit=null; return render(); }
   if(act==="btime"){ S.cfg.bossTime=+t.dataset.n; save(); return render(); }
+  if(act==="per"){ S.cfg.per=+t.dataset.n; S.players.forEach(p=>{ p.bar=Math.min(p.bar,S.cfg.per-1); }); save(); return render(); }
   if(act==="addp"){
     const name=(document.getElementById("np-name").value||"").trim(); if(!name) return alert("Escribe un nombre.");
     const nw=view.nw; S.players.push(fresh({id:"p"+Date.now().toString(36), name, av:nw.av, color:nw.col})); save();
@@ -823,18 +759,11 @@ function adAct(act,t){
   }
   if(!ed) return;
   if(act==="edsave"){ const n=(document.getElementById("ed-name").value||"").trim(); if(n) ed.name=n; save(); floatTxt("Guardado"); return render(); }
-  if(act==="coins"){ ed.coins=Math.max(0,ed.coins+ +t.dataset.n); save(); return render(); }
+  if(act==="gift"){ if(owned(ed)+ed.pend<TOTAL_TROPHIES) ed.pend++; save(); return render(); }
+  if(act==="untro"){ if(ed.pend>0) ed.pend--; else { const k=Object.keys(ed.tro).filter(k=>ed.tro[k]>0).pop(); if(k) ed.tro[k]--; } save(); return render(); }
   if(act==="free"){ ed.free=!ed.free; save(); return render(); }
   if(act==="reset"){ if(!confirm(`¿Borrar todo el progreso de ${ed.name}? No se puede deshacer.`)) return; const k=S.players.indexOf(ed); S.players[k]=fresh(ed); save(); return render(); }
   if(act==="delp"){ if(!confirm(`¿Eliminar a ${ed.name} y todo su progreso?`)) return; S.players=S.players.filter(p=>p!==ed); if(S.cur===ed.id) S.cur=null; view.edit=null; save(); return render(); }
-}
-
-/* ================= MOCHILA ================= */
-function vBag(){
-  const p=P();
-  app.innerHTML = header("hub") + `<h2>Mi mochila de souvenirs</h2><p class="muted" style="margin:0">Cada villano que vences te deja un souvenir de su zona del parque.</p>
-  <div class="tables">${ORDER.map(t=>{ const B=BOSS[t], got=p.belts.includes(t);
-    return `<div class="tbtn ${got?"done":"locked"}" style="cursor:default"><span style="font-size:44px;line-height:1.1">${got?B.s:"❔"}</span><b style="font-family:var(--f-display);font-weight:400;font-size:17px;line-height:1.15">${got?esc(B.sn):"???"}</b><small>${got?esc(B.land):`Vence ${esc(aN(B.n))} (×${t})`}</small></div>`; }).join("")}</div>`;
 }
 
 /* ================= PROGRESO ================= */
@@ -844,13 +773,13 @@ function vProg(){
   app.innerHTML = header("hub") + `<h2>Mi progreso</h2>
   <div class="card" style="text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center">
     <div style="font-size:60px;line-height:1">${p.av}</div><h2>${esc(p.name)}</h2>
-    <span class="chip" style="font-size:18px">🎒 ${p.belts.map(t=>BOSS[t].s).join(" ")||"Mochila vacía"}</span>
+    <span class="chip" style="font-size:18px">🏆 ${ORDER.slice().sort((a,b)=>a-b).filter(t=>p.gold[t]).map(t=>"×"+t).join(" ")||"Aún sin dorados"}</span>
     <div class="stat" style="width:100%">
-      <div><b>${p.belts.length}/9</b><small>souvenirs</small></div>
+      <div><b>${Object.keys(p.gold).length}/9</b><small>tablas doradas</small></div>
       <div><b>${m}/${GRID_KEYS.length}</b><small>operaciones dominadas</small></div>
-      <div><b>${p.bought}</b><small>atracciones</small></div>
+      <div><b>${owned(p)}/${TOTAL_TROPHIES}</b><small>trofeos de atracciones</small></div>
       <div><b>${p.sprint}</b><small>récord del sprint</small></div>
-      <div><b>${p.earned}</b><small>galeones ganados en total</small></div>
+      <div><b>${p.earned}</b><small>aciertos en total</small></div>
     </div>
     <div class="muted" style="font-size:15px">Enséñale esta tarjeta a tu hermana para comparar.</div>
   </div>
@@ -874,7 +803,7 @@ function doImport(){
 
 /* ================= EVENTOS ================= */
 document.addEventListener("click", e=>{
-  const t=e.target.closest("button,[data-attr]"); if(!t) return;
+  const t=e.target.closest("button"); if(!t) return;
   if(t.hasAttribute("data-close")){ const m=t.closest(".modal"); if(m) m.remove(); }
   const d=t.dataset;
   if(d.pick){ S.cur=d.pick; save(); return go({v:"hub"}); }
@@ -890,15 +819,9 @@ document.addEventListener("click", e=>{
   }
   if(d.go){ return go({v:d.go}); }
   if(d.table){ return go({v:"table", t:+d.table}); }
-  if(d.park){ view.park=d.park; view.hi=null; return render(); }
+  if(d.place){ return place(d.place); }
   if(d.k){ return key(d.k); }
   if(d.opt){ return pick(+d.opt); }
-  if(d.attr!==undefined){
-    const a=ATTR[+d.attr], L=PARKS[a.park].lands[a.land], tip=document.getElementById("tip");
-    view.hi=a.i;
-    if(tip) tip.innerHTML=`<div class="card pop" style="padding:10px 14px"><b><span class="num ${a.plan?"":"x"}">${a.i+1}</span> ${esc(a.n)}</b><div class="muted" style="font-size:15px">${esc(L.n)}${a.plan?` · ${DAYS[a.day]} · ${a.time}`:" · fuera del plan"}${a.also?" · también llega a King's Cross en Studios":""}</div></div>`;
-    return;
-  }
   switch(d.act){
     case "switch": S.cur=null; save(); return go({v:"who"});
     case "learn": return startLearn(view.t);
@@ -909,7 +832,6 @@ document.addEventListener("click", e=>{
     case "sprint": return startSprint();
     case "detective": return startDetective();
     case "detskip": return detSkip();
-    case "buy": return buy();
     case "quit": { const g=G; stopTimer(); G=null; save(); return go(g&&g.t&&g.mode!=="sprint"&&g.mode!=="repaso"?{v:"table",t:g.t}:{v:"hub"}); }
     case "copy": { const el=document.getElementById("exp"); el.select(); try{ navigator.clipboard.writeText(el.value).then(()=>floatTxt("¡Copiado!")); }catch(_){ document.execCommand("copy"); floatTxt("¡Copiado!"); } return; }
     case "import": return doImport();

@@ -264,18 +264,18 @@ const SUBJ = [
   {s:"Betilio",q:"Betilio",t:1,be:"is",was:"was",g:"He"},
   {s:"Froy",q:"Froy",t:1,be:"is",was:"was",g:"He"},
   {s:"Jorge",q:"Jorge",t:1,be:"is",was:"was",g:"He"},
-  {s:"Tina",q:"Tina",t:1,be:"is",was:"was",g:"She"},
-  {s:"Fafis",q:"Fafis",t:1,be:"is",was:"was",g:"She"},
+  {s:"Maria",q:"Maria",t:1,be:"is",was:"was",g:"She"},
+  {s:"Lu",q:"Lu",t:1,be:"is",was:"was",g:"She"},
   {s:"Grandpa",q:"Grandpa",t:1,be:"is",was:"was",g:"He"},
   {s:"Grandma",q:"Grandma",t:1,be:"is",was:"was",g:"She"},
   {s:"Mom",q:"Mom",t:1,be:"is",was:"was",g:"She"},
   {s:"Dad",q:"Dad",t:1,be:"is",was:"was",g:"He"},
-  {s:"Tina and Fafis",q:"Tina and Fafis",t:0,be:"are",was:"were",g:"They"},
+  {s:"Maria and Lu",q:"Maria and Lu",t:0,be:"are",was:"were",g:"They"},
   {s:"Grandpa and Grandma",q:"Grandpa and Grandma",t:0,be:"are",was:"were",g:"They"},
   {s:"Cin and Froy",q:"Cin and Froy",t:0,be:"are",was:"were",g:"They"},
   {s:"My school friends",q:"my school friends",t:0,be:"are",was:"were",g:"They"},
-  {s:"Tina and I",q:"Tina and I",t:0,be:"are",was:"were",g:"We"},
-  {s:"Fafis and I",q:"Fafis and I",t:0,be:"are",was:"were",g:"We"},
+  {s:"Maria and I",q:"Maria and I",t:0,be:"are",was:"were",g:"We"},
+  {s:"Lu and I",q:"Lu and I",t:0,be:"are",was:"were",g:"We"},
   {s:"Mom and I",q:"Mom and I",t:0,be:"are",was:"were",g:"We"},
   {s:"The dog",q:"the dog",t:1,be:"is",was:"was",an:1,g:"It"},
   {s:"The cat",q:"the cat",t:1,be:"is",was:"was",an:1,g:"It"}
@@ -313,7 +313,15 @@ const T_CONT = ["now","right now","at the moment"];
 const T_PAST = ["yesterday","last week","last night","last Saturday","last summer","two days ago"];
 const ADJ = ["happy at the party","tired after the game","at the beach","excited about the trip to Disney","at Grandpa's house","at the ice cream shop","late for school"];
 const THIRD = ["He","She","It"];
+const adjFor = s => R(ADJ.filter(x => !samePerson(s.q, x)));
 
+/* the same real person can appear with two names: Alicia = Grandma, Betilio = Grandpa, Cin = Mom, Jorge = Dad */
+const SAME = {alicia:"grandma", grandma:"alicia", betilio:"grandpa", grandpa:"betilio", cin:"mom", mom:"cin", jorge:"dad", dad:"jorge"};
+function samePerson(subj, obj){
+  const ws = subj.toLowerCase().split(/[^a-z]+/).filter(w => w && !["and","the","my","i"].includes(w));
+  const all = ws.concat(ws.map(w => SAME[w]).filter(Boolean));
+  return all.some(w => new RegExp("\\b"+w+"\\b","i").test(obj));
+}
 /* sentences used in the current lesson, so the same one does not come back */
 let USED = new Set(), USEDO = new Set();
 function pair(af, f={}){
@@ -331,8 +339,7 @@ function pair(af, f={}){
     else g = R(groups);
     const s = R(pool.filter(x => x.g===g));
     const o = s.an ? R(a.ao) : R(a.o);
-    const words = s.q.toLowerCase().split(" ").filter(w => w.length>2 && !["and","the"].includes(w));
-    if(words.some(w => o.toLowerCase().includes(w))) continue;
+    if(samePerson(s.q, o)) continue;
     const key = `${s.s}|${a.v}|${o}`;
     if(USED.has(key) || (k<70 && USEDO.has(o))) continue;
     USED.add(key); USEDO.add(o);
@@ -379,14 +386,14 @@ const PRONS = [
   {p:"I",be:"am",clues:["me"]},
   {p:"You",be:"are",clues:["you","you and Alicia"]},
   {p:"He",be:"is",clues:["Betilio","Froy","Jorge","Grandpa","Dad"]},
-  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Tina","Fafis","Grandma","Mom"]},
+  {p:"She",be:"is",clues:["Cin","Alicia","Kikona","Maria","Lu","Grandma","Mom"]},
   {p:"It",be:"is",clues:["the dog","the cat","the frappé","the ice cream","the beach","the castle"],thing:1},
-  {p:"We",be:"are",clues:["Tina and I","Fafis and I","Mom and I","my school friends and I"]},
-  {p:"They",be:"are",clues:["Tina and Fafis","Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
+  {p:"We",be:"are",clues:["Maria and I","Lu and I","Mom and I","my school friends and I"]},
+  {p:"They",be:"are",clues:["Maria and Lu","Grandpa and Grandma","Cin and Froy","Mom and Dad","my school friends"]}
 ];
 const THING_COMP = {"the dog":["very fluffy","hungry","asleep on the sofa"],"the cat":["on the roof","black and white"],"the frappé":["cold and sweet","on the table"],"the ice cream":["delicious","very cold"],"the beach":["sunny today","beautiful"],"the castle":["big and pink","in the middle of the park"]};
 const PEOPLE_COMP = ["happy today","at the beach","in the kitchen","very funny","ready for school","excited about the trip to Disney","good at soccer","tired after school","at the ice cream shop","in the pool","on the bus","at Grandma's house"];
-const comp = (P, clue) => THING_COMP[clue] ? R(THING_COMP[clue]) : P.thing ? R(["happy","hungry","in the garden"]) : R(PEOPLE_COMP);
+const comp = (P, clue) => THING_COMP[clue] ? R(THING_COMP[clue]) : P.thing ? R(["happy","hungry","in the garden"]) : R(PEOPLE_COMP.filter(x => !samePerson(clue||"", x)));
 const GROUP = {am:["I"], is:["He","She","It"], are:["You","We","They"]};
 function pronChoose(){
   const Pn = R(PRONS), clue = R(Pn.clues);
@@ -426,7 +433,7 @@ function presChoose(){
    - negative: "X likes A, but X ___ like B."  (the "but" shows it is a NO)
    - question: "___ X like A? Yes, she does."  (the ? and the short answer show it is a question) */
 const subjPron = s => s.g==="I" ? "I" : s.g.toLowerCase();
-function otherObj(a, s, o){ const pool = (s.an ? a.ao : a.o) || []; const c = pool.filter(x => x!==o); return c.length ? R(c) : null; }
+function otherObj(a, s, o){ const pool = (s.an ? a.ao : a.o) || []; const c = pool.filter(x => x!==o && !samePerson(s.q, x)); return c.length ? R(c) : null; }
 function doNeg(all){
   for(let k=0;k<20;k++){
     const {a,s,o} = pair(x => !x.np, {bias:1}); const o2 = otherObj(a,s,o); if(!o2) continue;
@@ -553,17 +560,17 @@ const FIXED_PAST = [
   {text:"[[Yesterday]] we ___ to the park.", options:["go","went","going"], a:"went", hint:"go → went → gone"},
   {text:"[[Last summer]] Grandpa and Grandma ___ to the beach.", options:["went","gone","goes"], a:"went", hint:"go → went → gone"},
   {text:"The movie ___ at seven o'clock [[last night]].", options:["begins","began","begun"], a:"began", hint:"begin → began → begun"},
-  {text:"[[Last year]] Fafis ___ the best reader in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
+  {text:"[[Last year]] Lu ___ the best reader in the class.", options:["became","becomes","becoming"], a:"became", hint:"become → became → become"},
   {text:"[[Two days ago]] a mosquito ___ my arm.", options:["bite","bit","bites"], a:"bit", hint:"bite → bit → bitten"},
   {text:"[[Yesterday]] the kids ___ very tired after the race.", options:["are","were","was"], a:"were", hint:H.was},
-  {text:"Tina ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"was", hint:H.was}
+  {text:"Maria ___ at Grandma's house [[last weekend]].", options:["was","were","is"], a:"was", hint:H.was}
 ];
 const isPz = a => !!a.pz;
 function pastChoose(){
   const r = Math.random(); const t = R(T_PAST);
   if(r<.3){ const f = R(FIXED_PAST); return Qc({key:"fp"+f.text, prompt:"Circle the correct answer in simple past.", text:f.text, options:f.options, answers:[f.a], show:f.a, hint:f.hint}); }
   if(r<.55){ const {a,s,o} = pair(isPz); return Qc({prompt:"Circle the correct answer in simple past.", text:sent(s, `___ ${o}`, t), options:[a.past,a.v,a.ing||a.s], answers:[a.past], show:a.past, hint:H.past(a)}); }
-  if(r<.7){ const {s} = pair(null,{people:1}); return Qc({prompt:"Circle was or were.", text:sent(s, `___ ${R(ADJ)}`, t), options:[...new Set(["was","were",s.be])], answers:[s.was], show:s.was, hint:whoIs(s)+H.was}); }
+  if(r<.7){ const {s} = pair(null,{people:1}); return Qc({prompt:"Circle was or were.", text:sent(s, `___ ${adjFor(s)}`, t), options:[...new Set(["was","were",s.be])], answers:[s.was], show:s.was, hint:whoIs(s)+H.was}); }
   if(r<.85){ const {a,s,o} = pair(isPz); return Qc({prompt:"Circle the correct verb.", text:sent(s, `didn't ___ ${o}`, t), options:[a.v,a.past,a.s], answers:[a.v], show:a.v, hint:H.didnt}); }
   const {a,s,o} = pair(isPz);
   return Qc({prompt:"Circle the correct word.", text:`___ ${s.q} ${a.v} ${o} [[${t}]]?`, options:["Did","Does","Do"], answers:["Did"], show:"Did", hint:H.did});
@@ -579,7 +586,7 @@ function pastWrite(){
   if(r<.55) return W1("Complete with the verb in simple past.", sent(s, `___ ${o}`, t), [a.past], H.past(a), `(${a.v})`);
   if(r<.8) return W1("Complete with the verb.", sent(s, `didn't ___ ${o}`, t), [a.v], H.didnt, `(${a.v})`);
   const {s:s2} = pair(null,{people:1});
-  return W1("Write was or were.", sent(s2, `___ ${R(ADJ)}`, t), [s2.was], whoIs(s2)+H.was);
+  return W1("Write was or were.", sent(s2, `___ ${adjFor(s2)}`, t), [s2.was], whoIs(s2)+H.was);
 }
 function pastFlip(){
   const {a,s,o} = pair(isPz); const t = R(T_PAST);
@@ -622,7 +629,7 @@ const FIXERS = [
   () => { const {a,s,o}=pair(isPz); const t=R(T_PAST); return [`Did ${s.q} ${a.past} ${o} [[${t}]]?`, `Did ${s.q} ___ ${o} [[${t}]]?`, [a.v], H.did]; },
   () => { const {a,s,o}=pair(hasIng); return [`${s.s} ${s.be} ${a.v} ${o} [[now]].`, `${s.s} ${s.be} ___ ${o} [[now]].`, [a.ing], H.ing]; },
   () => { const {a,s,o}=pair(hasIng); return [`${s.s} ${a.ing} ${o} [[now]].`, `${s.s} ___ ${a.ing} ${o} [[now]].`, [s.be], whoIs(s)+H.ing]; },
-  () => { const {s}=pair(null,{people:1}); const ad=R(ADJ), t=R(T_PAST); return [`${s.s} ${s.was==="was"?"were":"was"} ${ad} [[${t}]].`, `${s.s} ___ ${ad} [[${t}]].`, [s.was], whoIs(s)+H.was]; },
+  () => { const {s}=pair(null,{people:1}); const ad=adjFor(s), t=R(T_PAST); return [`${s.s} ${s.was==="was"?"were":"was"} ${ad} [[${t}]].`, `${s.s} ___ ${ad} [[${t}]].`, [s.was], whoIs(s)+H.was]; },
   () => { const {a,s,o}=pair(isPz); const t=R(T_PAST); return [`${s.s} ${pres(a,s)} ${o} [[${t}]].`, `${s.s} ___ ${o} [[${t}]].`, [a.past], H.cat.x]; }
 ];
 function mixFix(){

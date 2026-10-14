@@ -48,7 +48,7 @@ button{font:inherit;color:inherit}
 .logo{font-family:var(--f-display);font-size:44px;line-height:1}
 .logo span{color:var(--me)}
 .brand{display:flex;align-items:center;gap:14px}
-.appicon{width:84px;height:84px;border-radius:20px;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);display:grid;place-items:center;background:linear-gradient(160deg,#5CC8E8,#22A699);font-family:var(--f-display);font-size:52px;color:#fff;flex:none;text-shadow:0 3px 0 var(--ink)}
+.appicon{width:84px;height:84px;object-fit:cover;border-radius:20px;border:3px solid var(--ink);box-shadow:0 4px 0 var(--ink);display:grid;place-items:center;background:linear-gradient(160deg,#5CC8E8,#22A699);font-family:var(--f-display);font-size:52px;color:#fff;flex:none;text-shadow:0 3px 0 var(--ink)}
 .players{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
 .pcard{display:flex;gap:14px;align-items:center;text-align:left;background:var(--card);border:3px solid var(--ink);border-radius:20px;box-shadow:0 4px 0 var(--ink);padding:12px 16px;cursor:pointer}
 .pcard .av{font-size:54px;line-height:1}
@@ -337,7 +337,7 @@ function header(back){
 
 /* ---------- ¿Quién juega? ---------- */
 function vWho(){
-  app.innerHTML = `<div class="brand"><div class="appicon">×</div><div><div class="logo">Multi<span>Parque</span></div><div class="muted">Tablas del 2 al 10 · arma tu Universal Orlando</div></div></div>
+  app.innerHTML = `<div class="brand"><img class="appicon" src="icon-512.png" alt=""><div><div class="logo">Multi<span>Parque</span></div><div class="muted">Tablas del 2 al 10 · arma tu Universal Orlando</div></div></div>
   <h2>¿Quién juega?</h2>
   <div class="players">${S.players.map(p=>`<button class="pcard" data-pick="${p.id}"><span class="av">${p.av}</span><span><h3>${esc(p.name)}</h3><span class="sub">🎒 ${p.belts.length}/9 souvenirs · ${p.coins} galeones · ${p.bought} atracciones</span></span></button>`).join("")}</div>`;
 }

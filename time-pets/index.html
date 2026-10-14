@@ -77,7 +77,9 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .era .thumb .mini{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:70%}
 .era .body{padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .era h3{font-size:24px;line-height:1.1}
-.era .topic{font-weight:700;color:var(--red)}
+.era .topic{font-family:var(--f-display);font-size:24px;line-height:1.15;color:var(--red)}
+.topicbig{font-family:var(--f-display);font-size:34px;line-height:1.1;color:var(--red);text-wrap:balance}
+@media (max-width:520px){.topicbig{font-size:28px}}
 .era.locked{background:#F4F6F9}
 .era.locked .thumb{filter:grayscale(1) opacity(.55)}
 .year{font-size:14px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
@@ -295,7 +297,7 @@ const ACTS = [
   {v:"cook",s:"cooks",ing:"cooking",past:"cooked",pz:1,o:["dinner for Grandpa","pasta with Dad","eggs in the kitchen","pancakes with Mom"]},
   {v:"bite",s:"bites",ing:"biting",past:"bit",pz:1,o:[],ao:["the ball","a bone","the new toy"]},
   {v:"take",s:"takes",ing:"taking",past:"took",pz:1,o:["photos at the beach","the bus to school","a nap after lunch","the train at Disney","the dog for a walk"]},
-  {v:"begin",s:"begins",ing:"beginning",past:"began",pz:1,o:["the homework at four o'clock","a new book","the race","the piano lesson"]},
+  {v:"begin",s:"begins",ing:"beginning",past:"began",pz:1,o:["the homework in the kitchen","a new book","the race","the piano lesson"]},
   {v:"watch",s:"watches",ing:"watching",past:"watched",pz:1,o:["a movie with Grandma","the fireworks at Disney","cartoons with Dad","the sunset at the beach"],ao:["the birds from the window"]},
   {v:"visit",s:"visits",ing:"visiting",past:"visited",pz:1,o:["Grandpa and Grandma","the castle at Disney","the museum with the class","the cousins in Puebla"]},
   {v:"listen",s:"listens",ing:"listening",past:"listened",pz:1,o:["to music in the car","to the teacher","to Grandpa's stories"]},
@@ -310,6 +312,7 @@ const ACTS = [
 ];
 const T_PRES = ["every day","every Saturday","on Mondays","in the morning","every summer","after school"];
 const T_CONT = ["now","right now","at the moment"];
+const T_PASTC = ["at eight o'clock last night","when the phone rang","at five o'clock yesterday","all afternoon yesterday","when the rain started"];
 const T_PAST = ["yesterday","last week","last night","last Saturday","last summer","two days ago"];
 const ADJ = ["happy at the party","tired after the game","at the beach","excited about the trip to Disney","at Grandpa's house","at the ice cream shop","late for school"];
 const THIRD = ["He","She","It"];
@@ -372,7 +375,11 @@ const H = {
   was: "I, he, she, it → was. You, we, they → were.",
   didnt: "After didn't the verb goes back to its normal form: didn't go (not didn't went).",
   did: "Past questions start with Did, and the verb goes back to its normal form: Did he take…?",
-  cat: {p:"every day, on Mondays → simple present.", c:"now, right now → present continuous (am / is / are + ing).", x:"yesterday, last week → simple past."},
+  was: "I, he, she, it → was. You, we, they → were.",
+  pc: "Past continuous = was / were + verb-ing.",
+  pcneg: "Negative: wasn't / weren't + verb-ing.",
+  pcq: "Questions start with Was or Were, then the verb + ing.",
+  cat: {pc:"at eight o'clock last night, when the phone rang → past continuous (was / were + ing).", p:"every day, on Mondays → simple present.", c:"now, right now → present continuous (am / is / are + ing).", x:"yesterday, last week → simple past."},
   pron: {I:"I is for me, the person talking.",You:"You is for the person (or people) I talk to.",He:"He is for one boy or man.",She:"She is for one girl or woman.",It:"It is for one animal or thing, and for the weather (it rains).",They:"They is for two or more people, animals or things.",We:"We is for me and other people."}
 };
 
@@ -517,6 +524,42 @@ function contRewrite(){
   return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${cap(s.be)} ${s.q} ${a.ing} ${o}?`, sourceLabel:"Question", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ___ ${o}.`, blanks:[[s.be],[a.ing]], picks:{0:["am","is","are"]}}], hint:whoIs(s)+H.ing});
 }
 
+/* --- Past continuous --- */
+const pcAct = x => x.ing && !x.wx;
+const pcNeg = s => s.was==="was" ? "wasn't" : "weren't";
+const pcNegAlts = s => s.was==="was" ? ["wasn't","was not"] : ["weren't","were not"];
+function pcChoose(){
+  const r = Math.random(); const {a,s,o} = pair(pcAct); const t = R(T_PASTC);
+  if(r<.35) return Qc({prompt:"Choose was or were.", text:sent(s, `___ ${a.ing} ${o}`, t), options:["was","were"], answers:[s.was], show:s.was, hint:whoIs(s)+H.was});
+  if(r<.6) return Qc({prompt:"Choose the correct verb.", text:sent(s, `${s.was} ___ ${o}`, t), options:[a.v,a.past,a.ing], answers:[a.ing], show:a.ing, hint:H.pc});
+  if(r<.8) return Qc({tag:"q", prompt:"Choose Was or Were.", text:`___ ${s.q} ${a.ing} ${o} [[${t}]]?`, options:["Was","Were"], answers:[cap(s.was)], show:cap(s.was), hint:whoIs(s)+H.pcq});
+  return Qc({tag:"neg", prompt:"Choose wasn't or weren't.", text:sent(s, `___ ${a.ing} ${o}`, t), options:["wasn't","weren't"], answers:[pcNeg(s)], show:pcNeg(s), hint:whoIs(s)+H.pcneg});
+}
+function pcVsPast(){
+  const {a,s,o} = pair(x => pcAct(x) && x.pz); const pc = Math.random()<.5;
+  const t = pc ? R(T_PASTC) : R(T_PAST);
+  const forms = [`${s.was} ${a.ing}`, a.past, pres(a,s)];
+  return Qc({prompt:"Look at the time words. Choose the verb.", text:sent(s, `___ ${o}`, t), options:forms, answers:[pc?forms[0]:a.past], show:pc?forms[0]:a.past, hint: pc ? H.cat.pc : H.cat.x});
+}
+function pcWrite(){
+  const {a,s,o} = pair(pcAct); const r = Math.random(); const t = R(T_PASTC);
+  if(r<.5) return Qw({prompt:"Complete with was or were + verb-ing.", rows:[{text:sent(s, `___ ___ ${o}`, t), blanks:[[s.was],[a.ing]]}], hint:whoIs(s)+H.pc, cue:`(${a.v})`});
+  if(r<.75) return W1("Write the verb + ing.", sent(s, `${s.was} ___ ${o}`, t), [a.ing], H.pc, `(${a.v})`);
+  return W1("Write was or were.", sent(s, `___ ${a.ing} ${o}`, t), [s.was], whoIs(s)+H.was);
+}
+function pcFlip(){
+  const {a,s,o} = pair(pcAct); const t = R(T_PASTC);
+  return Qw({prompt:"Make it negative and interrogative.", source:`${s.s} ${s.was} ${a.ing} ${o} [[${t}]].`, rows:[
+    {label:"Negative", text:`${s.s} ___ ${a.ing} ${o} [[${t}]].`, blanks:[pcNegAlts(s)], picks:{0:["wasn't","weren't"]}},
+    {label:"Interrogative", text:`___ ${s.q} ${a.ing} ${o} [[${t}]]?`, blanks:[[cap(s.was)]], picks:{0:["Was","Were"]}}
+  ], hint:whoIs(s)+H.pcneg+" "+H.pcq});
+}
+function pcRewrite(){
+  const {a,s,o} = pair(pcAct); const t = R(T_PASTC); const r = Math.random();
+  if(r<.5) return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${s.s} ${pcNeg(s)} ${a.ing} ${o} [[${t}]].`, sourceLabel:"Negative", rows:[{label:"Change to Affirmative", text:`${s.s} ___ ${a.ing} ${o} [[${t}]].`, blanks:[[s.was]], picks:{0:["was","were"]}}], hint:whoIs(s)+H.was});
+  return Qw({prompt:"Rewrite the sentence. Change it to the form indicated.", source:`${cap(s.was)} ${s.q} ${a.ing} ${o} [[${t}]]?`, sourceLabel:"Question", rows:[{label:"Change to Negative", text:`${s.s} ___ ${a.ing} ${o} [[${t}]].`, blanks:[pcNegAlts(s)], picks:{0:["wasn't","weren't"]}}], hint:whoIs(s)+H.pcneg});
+}
+
 /* --- Era 4: verb forms (editable list) --- */
 const KNOWN_ING = {begin:"beginning",bite:"biting",bleed:"bleeding",become:"becoming",go:"going",take:"taking",eat:"eating",run:"running",swim:"swimming",write:"writing",come:"coming",get:"getting",sit:"sitting",make:"making"};
 const ingOf = p => KNOWN_ING[p] || (/[^e]e$/.test(p) ? p.slice(0,-1)+"ing" : p+"ing");
@@ -606,17 +649,17 @@ function pastRewrite(){
 /* --- Era 6: time mix --- */
 const mixAct = a => a.pz && a.ing;
 function mixParts(){
-  const {a,s,o} = pair(mixAct,{bias:1}); const c = R(["p","c","x"]);
-  const t = c==="p" ? R(T_PRES) : c==="c" ? R(T_CONT) : R(T_PAST);
-  return {a,s,o,c,t,forms:{p:pres(a,s), c:`${s.be} ${a.ing}`, x:a.past}};
+  const {a,s,o} = pair(mixAct,{bias:1}); const c = R(["p","c","x","pc"]);
+  const t = c==="p" ? R(T_PRES) : c==="c" ? R(T_CONT) : c==="pc" ? R(T_PASTC) : R(T_PAST);
+  return {a,s,o,c,t,forms:{p:pres(a,s), c:`${s.be} ${a.ing}`, x:a.past, pc:`${s.was} ${a.ing}`}};
 }
 function mixChoose(){
   const {s,o,c,t,forms} = mixParts();
-  return Qc({prompt:"Look at the time words. Circle the verb.", text:sent(s, `___ ${o}`, t), options:[forms.p,forms.c,forms.x], answers:[forms[c]], show:forms[c], hint:whoIs(s)+H.cat[c]});
+  return Qc({prompt:"Look at the time words. Circle the verb.", text:sent(s, `___ ${o}`, t), options:[forms.p,forms.c,forms.x,forms.pc], answers:[forms[c]], show:forms[c], hint:whoIs(s)+H.cat[c]});
 }
 function mixWrite(){
   const {a,s,o,c,t,forms} = mixParts();
-  if(c==="c") return Qw({prompt:"Look at the time words. Write the verb.", rows:[{text:sent(s, `___ ___ ${o}`, t), blanks:[[s.be],[a.ing]]}], hint:whoIs(s)+H.cat[c], cue:`(${a.v})`});
+  if(c==="c"||c==="pc") return Qw({prompt:"Look at the time words. Write the verb.", rows:[{text:sent(s, `___ ___ ${o}`, t), blanks:[[c==="c"?s.be:s.was],[a.ing]]}], hint:whoIs(s)+H.cat[c], cue:`(${a.v})`});
   return W1("Look at the time words. Write the verb.", sent(s, `___ ${o}`, t), [forms[c]], whoIs(s)+H.cat[c], `(${a.v})`);
 }
 const FIXERS = [
@@ -646,6 +689,11 @@ const T3 = p => ["He","She","It"].includes(p);
 function presConj(){
   const a = pickConj(x => !x.np && !x.wx && x.o.length);
   return Qw({key:"pcj"+a.v, prompt:`Conjugate the verb “${a.v}” in simple present.`, rows:PR7.map(p => ({text:`${p} ___`, blanks:[[T3(p)?a.s:a.v]], picks:{0:[a.v,a.s]}})), hint:"He, she, it → verb + s. I, you, we, they → no -s."});
+}
+const WAS7 = {I:"was",You:"were",He:"was",She:"was",It:"was",We:"were",They:"were"};
+function pcConj(){
+  const a = pickConj(x => x.ing && !x.wx && x.o.length);
+  return Qw({key:"pcj"+a.v, prompt:`Conjugate “${a.v}” in past continuous.`, rows:PR7.map(p => ({text:`${p} ___ ___`, blanks:[[WAS7[p]],[a.ing]], picks:{0:["was","were"],1:[a.v,a.ing]}})), hint:H.was+" Then the verb + ing."});
 }
 function contConj(){
   const a = pickConj(x => x.ing && !x.wx && x.o.length);
@@ -697,6 +745,12 @@ function pastForms(){
     `${a.v} → ${a.past}. + She began the homework. − She didn't begin the homework. ? Did she begin the homework?`);
 }
 
+function pcForms(){
+  const {a,s,o} = pair(pcAct); const t = R(T_PASTC);
+  return forms3("Past continuous", `${s.s} + ${a.v} + ${o} + ${t}`, `${s.s} ${s.was} ${a.ing} ${o} ${t}.`, `${s.s} ${pcNeg(s)} ${a.ing} ${o} ${t}.`, `${cap(s.was)} ${s.q} ${a.ing} ${o} ${t}?`,
+    `${whoIs(s)}+ We were dancing hip hop. − We weren't dancing hip hop. ? Were we dancing hip hop?`);
+}
+
 /* --- Adverbs of frequency (study guide: always 100%, usually 80%, sometimes 50%, rarely 10%, never 0%) --- */
 const ADV = [{w:"always",p:"100%"},{w:"usually",p:"80%"},{w:"sometimes",p:"50%"},{w:"rarely",p:"10%"},{w:"never",p:"0%"}];
 const ADV_H = "always 100% · usually 80% · sometimes 50% · rarely 10% · never 0%.";
@@ -743,6 +797,9 @@ const ERAS = [
   {id:"west", name:"Dusty Town", topic:"Simple Past", year:"1870", hat:"cowboy", hatName:"Cowboy Hat",
     levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(mixGen(pastChoose,pastAB),8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}, {n:"Rewrite", make:()=>makeSet(pastRewrite,6)}, {n:"3 forms", make:()=>makeSet(pastForms,4)}], bossAfter:4,
     boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(mixGen(pastFlip,pastRewrite),1), pastForms()]},
+  {id:"jazz", name:"Jazz Street", topic:"Past Continuous", year:"1925", hat:"flatcap", hatName:"Flat Cap",
+    levels:[{n:"Conjugate", make:()=>makeSet(pcConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(pcChoose,pcChoose,pcVsPast),8)}, {n:"Write", make:()=>makeSet(pcWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pcFlip,5)}, {n:"Rewrite", make:()=>makeSet(pcRewrite,6)}, {n:"3 forms", make:()=>makeSet(pcForms,4)}], bossAfter:4,
+    boss:()=>[...makeSet(pcChoose,3), ...makeSet(pcVsPast,2), ...makeSet(pcWrite,3), ...makeSet(mixGen(pcFlip,pcRewrite),1), pcForms()]},
   {id:"space", name:"Moon Base", topic:"Time Mix: which tense?", year:"3026", hat:"helmet", hatName:"Space Helmet",
     levels:[{n:"Time words", make:()=>makeSet(mixChoose,8)}, {n:"Write", make:()=>makeSet(mixWrite,8)}, {n:"Fix it", make:()=>makeSet(mixFix,8)}],
     boss:()=>[...makeSet(mixChoose,5), ...makeSet(mixWrite,3), ...makeSet(mixFix,2)]}
@@ -832,6 +889,7 @@ function hatSVG(id){
     case "nemes": return '<path d="M56 130 L64 78 Q100 48 136 78 L144 130 L128 130 L122 92 L78 92 L72 130 Z" fill="#F2C14E" stroke="#A97A1E" stroke-width="3" stroke-linejoin="round"/><path d="M66 100 L76 100 M64 114 L74 114 M124 100 L134 100 M126 114 L136 114 M76 78 Q100 62 124 78" stroke="#2F5DA8" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="100" cy="70" r="5" fill="#2F5DA8"/>';
     case "crown": return '<path d="M70 84 L68 50 L84 66 L100 44 L116 66 L132 50 L130 84 Z" fill="#F7C948" stroke="#A97A12" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="72" r="5" fill="#D9434B"/><circle cx="83" cy="76" r="4" fill="#3A7FC0"/><circle cx="117" cy="76" r="4" fill="#3A7FC0"/>';
     case "pirate": return '<path d="M48 86 Q100 28 152 86 Q100 70 48 86Z" fill="#2B2D3A" stroke="#15161F" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="64" r="7" fill="#fff"/><circle cx="97.5" cy="63" r="1.6" fill="#2B2D3A"/><circle cx="102.5" cy="63" r="1.6" fill="#2B2D3A"/>';
+    case "flatcap": return '<path d="M60 82 Q62 50 100 50 Q140 50 144 74 L160 82 Q150 90 100 86 Q70 88 60 82Z" fill="#6B6F7A" stroke="#3A3F4B" stroke-width="3" stroke-linejoin="round"/><path d="M70 62 Q100 54 132 64" stroke="#3A3F4B" stroke-width="2" fill="none"/><circle cx="100" cy="52" r="4" fill="#3A3F4B"/>';
     case "cowboy": return '<path d="M74 84 Q72 48 100 54 Q128 48 126 84 Z" fill="#B06F3C" stroke="#6E3D1A" stroke-width="3"/><rect x="75" y="72" width="50" height="8" fill="#5A3417"/><ellipse cx="100" cy="86" rx="58" ry="10" fill="#9A5B2E" stroke="#6E3D1A" stroke-width="3"/>';
     case "tophat": return '<rect x="72" y="34" width="56" height="48" rx="4" fill="#2B2D3A" stroke="#15161F" stroke-width="3"/><rect x="72" y="66" width="56" height="9" fill="#D9434B"/><ellipse cx="100" cy="84" rx="44" ry="8" fill="#2B2D3A" stroke="#15161F" stroke-width="3"/><circle cx="118" cy="70" r="5" fill="#F7C948"/>';
     case "helmet": return '<circle cx="100" cy="100" r="78" fill="#BEE1FF55" stroke="#BFDFFF" stroke-width="5"/><path d="M48 62 Q64 36 92 30" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".8"/><line x1="100" y1="22" x2="100" y2="6" stroke="#BFDFFF" stroke-width="4"/><circle cx="100" cy="5" r="6" fill="#D9434B"/>';
@@ -934,6 +992,7 @@ function scene(id){
     case "castle": return W+'<rect width="400" height="220" fill="#BFE3FF"/><ellipse cx="80" cy="48" rx="34" ry="12" fill="#fff"/><ellipse cx="310" cy="36" rx="28" ry="10" fill="#fff"/><path d="M0 182 Q200 132 400 182 V220 H0Z" fill="#79B95B"/><g fill="#AAB3C7" stroke="#6E7891" stroke-width="2"><rect x="150" y="92" width="100" height="72"/><rect x="128" y="66" width="34" height="98"/><rect x="238" y="66" width="34" height="98"/><rect x="128" y="56" width="8" height="10"/><rect x="141" y="56" width="8" height="10"/><rect x="154" y="56" width="8" height="10"/><rect x="238" y="56" width="8" height="10"/><rect x="251" y="56" width="8" height="10"/><rect x="264" y="56" width="8" height="10"/></g><path d="M185 164 V134 Q200 118 215 134 V164Z" fill="#4C5468"/><line x1="145" y1="56" x2="145" y2="30" stroke="#4C5468" stroke-width="3"/><path d="M145 30 L166 36 L145 42Z" fill="#D9434B"/></svg>';
     case "pirates": return W+'<rect width="400" height="220" fill="#A9E2F2"/><circle cx="340" cy="46" r="24" fill="#FFF3C4"/><rect y="150" width="400" height="70" fill="#2C8FB8"/><path d="M0 160 Q25 150 50 160 T100 160 T150 160 T200 160 T250 160 T300 160 T350 160 T400 160" stroke="#BDE8F5" stroke-width="4" fill="none"/><path d="M110 150 L290 150 L268 182 L132 182Z" fill="#8A5A2B" stroke="#5A3417" stroke-width="3"/><line x1="200" y1="150" x2="200" y2="44" stroke="#5A3417" stroke-width="5"/><path d="M204 54 Q250 92 204 132Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M196 58 Q156 94 196 130Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M200 44 L226 50 L200 58Z" fill="#2B2D3A"/></svg>';
     case "clock": return W+'<rect width="400" height="220" fill="#C9D8F2"/><ellipse cx="90" cy="46" rx="36" ry="11" fill="#fff"/><ellipse cx="320" cy="64" rx="30" ry="10" fill="#fff"/><rect x="40" y="132" width="70" height="48" fill="#B7A48C"/><rect x="290" y="126" width="80" height="54" fill="#B7A48C"/><g stroke="#6E5A44" stroke-width="2"><rect x="168" y="70" width="64" height="110" fill="#D8C09A"/><path d="M162 70 L200 24 L238 70Z" fill="#5C6E8C"/></g><circle cx="200" cy="100" r="22" fill="#FFF9EC" stroke="#6E5A44" stroke-width="3"/><line x1="200" y1="100" x2="200" y2="85" stroke="#2B2D3A" stroke-width="3" stroke-linecap="round"/><line x1="200" y1="100" x2="212" y2="106" stroke="#2B2D3A" stroke-width="3" stroke-linecap="round"/><rect x="190" y="146" width="20" height="34" rx="10" fill="#6E5A44"/><rect y="176" width="400" height="44" fill="#8CBF6A"/></svg>';
+    case "jazz": return W+'<rect width="400" height="220" fill="#2C2A4A"/><circle cx="330" cy="44" r="20" fill="#FFF3C4"/><rect x="20" y="70" width="90" height="110" fill="#5A3F5E"/><rect x="120" y="50" width="110" height="130" fill="#6E4A3C"/><rect x="240" y="80" width="80" height="100" fill="#4A4F6A"/><g fill="#F5C84C"><rect x="34" y="86" width="14" height="18"/><rect x="66" y="86" width="14" height="18"/><rect x="34" y="120" width="14" height="18"/><rect x="138" y="66" width="16" height="20"/><rect x="176" y="66" width="16" height="20"/><rect x="138" y="104" width="16" height="20"/><rect x="254" y="96" width="14" height="18"/><rect x="290" y="96" width="14" height="18"/></g><rect x="150" y="140" width="50" height="40" fill="#3A2416"/><text x="175" y="132" text-anchor="middle" font-family="Lilita One, sans-serif" font-size="16" fill="#FF6FA5">JAZZ</text><rect y="178" width="400" height="42" fill="#3E3B52"/><line x1="360" y1="100" x2="360" y2="180" stroke="#1E2A3A" stroke-width="5"/><circle cx="360" cy="96" r="9" fill="#FFE68A"/></svg>';
     case "west": return W+'<rect width="400" height="220" fill="#FFC49B"/><circle cx="200" cy="96" r="44" fill="#FFE1B0"/><path d="M0 150 L30 150 L44 108 L130 108 L146 150 L400 150 V220 H0Z" fill="#C0663E"/><path d="M260 150 L272 124 L330 124 L344 150Z" fill="#B05A35"/><rect y="164" width="400" height="56" fill="#E2A266"/><g fill="#3F9B5C"><rect x="318" y="112" width="16" height="64" rx="8"/><rect x="300" y="128" width="12" height="28" rx="6"/><rect x="300" y="148" width="22" height="10" rx="5"/><rect x="340" y="120" width="12" height="26" rx="6"/><rect x="330" y="138" width="22" height="10" rx="5"/></g></svg>';
     case "space": return W+'<rect width="400" height="220" fill="#1B2350"/>'+stars+'<circle cx="310" cy="64" r="28" fill="#F5C84C"/><ellipse cx="310" cy="64" rx="48" ry="10" fill="none" stroke="#FFE3A0" stroke-width="4" transform="rotate(-14 310 64)"/><circle cx="70" cy="58" r="14" fill="#6BB7F2"/><path d="M62 52 q6 -4 10 2 q4 6 -4 8z" fill="#7FB24A"/><ellipse cx="200" cy="232" rx="300" ry="70" fill="#A9AFC7"/><ellipse cx="120" cy="190" rx="22" ry="6" fill="#8A90A8"/><ellipse cx="280" cy="198" rx="30" ry="7" fill="#8A90A8"/></svg>';
   }
@@ -1037,10 +1096,15 @@ const RULES = {
     {t:"Affirmative (+)", rows:[["I","play<b>ed</b>"],["You","play<b>ed</b>"],["He","play<b>ed</b>"],["She","play<b>ed</b>"],["It","play<b>ed</b>"],["We","play<b>ed</b>"],["They","play<b>ed</b>"]]},
     {t:"Negative (−)", rows:[["I","<b>didn't</b> play"],["You","<b>didn't</b> play"],["He","<b>didn't</b> play"],["She","<b>didn't</b> play"],["It","<b>didn't</b> play"],["We","<b>didn't</b> play"],["They","<b>didn't</b> play"]]},
     {t:"Question (?)", rows:[["<b>Did</b>","I play?"],["<b>Did</b>","you play?"],["<b>Did</b>","he play?"],["<b>Did</b>","she play?"],["<b>Did</b>","it play?"],["<b>Did</b>","we play?"],["<b>Did</b>","they play?"]], q:1}]},
-  space:{rules:["every day, on Mondays, after school → simple present","now, right now, at the moment → present continuous","yesterday, last week, last summer → simple past"], cols:[
+  jazz:{rules:["Affirmative: was / were + verb-ing","Negative: wasn't / weren't + verb-ing","Question: Was / Were + subject + verb-ing?"], cols:[
+    {t:"Affirmative (+)", rows:[["I","<b>was</b> danc<b>ing</b>"],["You","<b>were</b> danc<b>ing</b>"],["He","<b>was</b> danc<b>ing</b>"],["She","<b>was</b> danc<b>ing</b>"],["It","<b>was</b> danc<b>ing</b>"],["We","<b>were</b> danc<b>ing</b>"],["They","<b>were</b> danc<b>ing</b>"]]},
+    {t:"Negative (−)", rows:[["I","<b>wasn't</b> dancing"],["You","<b>weren't</b> dancing"],["He","<b>wasn't</b> dancing"],["She","<b>wasn't</b> dancing"],["It","<b>wasn't</b> dancing"],["We","<b>weren't</b> dancing"],["They","<b>weren't</b> dancing"]]},
+    {t:"Question (?)", rows:[["<b>Was</b>","I dancing?"],["<b>Were</b>","you dancing?"],["<b>Was</b>","he dancing?"],["<b>Was</b>","she dancing?"],["<b>Was</b>","it dancing?"],["<b>Were</b>","we dancing?"],["<b>Were</b>","they dancing?"]], q:1}]},
+  space:{rules:["every day, on Mondays, after school → simple present","now, right now, at the moment → present continuous","yesterday, last week, last summer → simple past","at eight o'clock last night, when the phone rang → past continuous"], cols:[
     {t:"Simple present", rows:[["She","plays"],["","every day"]]},
     {t:"Present continuous", rows:[["She","is playing"],["","right now"]]},
-    {t:"Simple past", rows:[["She","played"],["","yesterday"]]}]}
+    {t:"Simple past", rows:[["She","played"],["","yesterday"]]},
+    {t:"Past continuous", rows:[["She","was playing"],["","at 8 last night"]]}]}
 };
 function learnHTML(){
   const e = ERAS[V.learn], back = V.learnBack==="play" ? "Back to the exercise" : "Back to the map";
@@ -1049,7 +1113,7 @@ function learnHTML(){
   else { const R2 = RULES[e.id];
     body = `<div class="rem">${R2.rules.map(r => `<div>• ${esc(r)}</div>`).join("")}</div><div class="rcols">${R2.cols.map(c => `<div class="rcol"><h3>${c.t}</h3><div class="rtab">${c.rows.map(([a,b]) => `<div>${a}</div><div>${b}</div>`).join("")}</div></div>`).join("")}</div>`; }
   return `<div class="row"><button class="btn small white" data-act="unlearn">${back}</button></div>
-  <div class="panel"><h2>Remember! ${e.topic}</h2>${body}</div>`;
+  <div class="panel"><h2>Remember!</h2><div class="topicbig">${e.topic}</div>${body}</div>`;
 }
 
 function mapHTML(){
@@ -1162,7 +1226,7 @@ function playHTML(){
   const title = s.boss ? "Time Quiz" : e.levels[s.l].n;
   const pct = Math.round(s.i / s.qs.length * 100);
   return `<div class="top"><div class="row"><button class="btn small white" data-act="map">Stop</button><button class="btn small white" data-act="learn" data-e="${s.ei}" data-from="play">Remember!</button></div><span class="chip">${GEM}${p.xp}</span></div>
-  <div><h2 style="font-size:26px">${e.name}: ${title}</h2><div class="muted">${e.topic}${s.boss?" · Score to travel: 7 out of 10":""}</div></div>
+  <div><div class="topicbig">${e.topic}</div><h2 style="font-size:22px">${e.name}: ${title}</h2>${s.boss?'<div class="muted">Score to travel: 7 out of 10</div>':""}</div>
   <div class="prog"><div class="bar"><i style="width:${pct}%"></i></div><span>${s.i+1} / ${s.qs.length}</span></div>
   <div class="play"><div class="note">${qHTML(q, V.fb)}</div><div class="side"><div class="pw">${petSVG(p, V.mood)}</div><div class="say">${esc(V.say)}</div><div class="nextitem">${isEgg(p)?"Finish this level to hatch me!":nextItem(p)?`Next: ${nextItem(p).name}`:"Legend!"}</div></div></div>`;
 }
@@ -1265,7 +1329,7 @@ function resultHTML(){
   if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
   if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${SPECIES[p.species]||"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   else if(r.grew) celeb += `<div class="celebrate"><h3 style="font-size:22px">${esc(p.pet)} grew${r.items.length?` and got ${r.items.join(" and ")}`:""}!</h3><div class="pw">${petSVG(p,"happy")}</div></div>`;
-  return topBar(p) + `<div class="result">${main}<div class="chip" style="font-size:20px">${GEM}+${r.gems} time crystals${r.bonus?" (10 bonus)":""}</div>${celeb}
+  return topBar(p) + `<div class="result"><div class="topicbig">${ERAS[r.ei].topic}</div>${main}<div class="chip" style="font-size:20px">${GEM}+${r.gems} time crystals${r.bonus?" (10 bonus)":""}</div>${celeb}
   ${r.grew?"":`<div style="width:160px">${petSVG(p,"happy")}</div>`}
   <div class="grow">${growBar(p)}</div>
   <div class="row" style="justify-content:center"><button class="btn white" data-act="play" data-e="${r.ei}" data-l="${r.l}">${r.boss?"Try again":"Play again"}</button><button class="btn" data-act="map">Time map</button></div></div>`;

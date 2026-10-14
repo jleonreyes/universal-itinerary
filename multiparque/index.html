@@ -153,6 +153,12 @@ button{font:inherit;color:inherit}
 .fcard .peek{font-size:15px;color:var(--ink-soft);margin:0}
 .meter{height:12px;border:2.5px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
 .meter i{display:block;height:100%;background:linear-gradient(90deg,#7FD3F5,#22A699)}
+.spmini{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.spmini span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:16px;border:2px dashed #C9C2B2;filter:grayscale(1);opacity:.45}
+.spmini span.on{border:2px solid var(--ink);filter:none;opacity:1;background:#FFF8D8}
+.spmini span.pf{border-radius:8px}
+.spmini span.pf.on{background:#F7C531}
+.spmini small{font-size:13px;color:var(--ink-soft);margin-left:4px}
 .mcount{font-size:14px;color:var(--ink-soft)}
 .tsel{display:flex;flex-wrap:wrap;gap:8px}
 .tsel button{font-family:var(--f-display);font-size:20px;min-width:56px;padding:6px 10px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;cursor:pointer}
@@ -163,12 +169,19 @@ button{font:inherit;color:inherit}
 .lk .dots{padding:0;gap:3px;justify-content:start}
 .lk .dots i{width:8px;height:8px}
 .lk.m{background:#E6F6F3}
+.spwon{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.tro2{display:flex;flex-direction:column;align-items:center;gap:2px}
+.tro2 b{font-family:var(--f-display);font-weight:400;font-size:18px}
+.tro2 small{color:#B07A00;font-weight:700}
 /* vitrina */
 .case{background:linear-gradient(180deg,#3B2A22,#2A1D17);border:4px solid #1E1410;border-radius:22px;padding:14px 12px 18px;display:flex;flex-direction:column;gap:18px;box-shadow:inset 0 0 0 6px #5A4033}
 .shelf{background:linear-gradient(180deg,rgba(210,235,255,.16),rgba(210,235,255,.05));border-radius:14px;padding:10px 8px 0;position:relative}
 .shelf h3{color:#FFF3DF;font-size:21px;margin:0 4px 8px}
 .shelf h3 small{font-family:var(--f-body);font-size:14px;opacity:.75}
 .plank{height:14px;margin:6px -8px 0;background:linear-gradient(180deg,#C08A5A,#8B5E38);border-radius:0 0 12px 12px;box-shadow:0 4px 0 #5A3B22}
+.special .tro{width:64px}
+.special .tro span{font-size:10.5px}
+.special{background:linear-gradient(180deg,rgba(255,170,220,.2),rgba(255,170,220,.06))}
 .honor{background:linear-gradient(180deg,rgba(255,230,140,.25),rgba(255,230,140,.08))}
 .lands2{display:flex;flex-wrap:wrap;gap:10px}
 .land2{font:inherit;color:inherit;text-align:left;background:rgba(255,255,255,.08);border:2.5px solid var(--c1);border-radius:12px;padding:6px 8px;display:flex;flex-direction:column;gap:4px;max-width:100%}
@@ -278,13 +291,27 @@ const PARKS = [
   {id:"hollywood",n:"Hollywood",c1:"#C9A227",c2:"#1E1E1E",items:["The Bourne Stuntacular"]}]}
 ];
 const LANDS = {}; PARKS.forEach(pk=>pk.lands.forEach(l=>{ l.park=pk; LANDS[l.id]=l; }));
+// Trofeos especiales: cada tabla con su tierra. 4 por completar prácticas + 1 por práctica perfecta.
+const SPECIAL = {
+  2:{land:"minion", items:[["Kevin","🥽"],["Stuart","🎸"],["Bob","🧸"],["Banana de Minion","🍌"]], perfect:["Gru","🚀"]},
+  3:{land:"nintendo", items:[["Mario","🧢"],["Luigi","💚"],["Yoshi","🥚"],["Champiñón 1-UP","🍄"]], perfect:["Súper Estrella","⭐"]},
+  4:{land:"jurassic", items:[["Blue","🦖"],["T-Rex","🦷"],["Triceratops","🦕"],["Pteranodon","🪽"]], perfect:["Mosquito en ámbar","🦟"]},
+  5:{land:"seuss", items:[["The Cat in the Hat","🎩"],["El Grinch","🎄"],["Thing 1 y Thing 2","🎈"],["Huevos verdes con jamón","🍳"]], perfect:["El Lorax","🌳"]},
+  6:{land:"hogsmeade", items:[["Hedwig","🦉"],["Cerveza de mantequilla","🥤"],["Grageas de todos los sabores","🫘"],["Sombrero Seleccionador","🧙"]], perfect:["Snitch dorada","✨"]},
+  7:{land:"berk", items:[["Chimuelo","🐉"],["Hipo","🦿"],["Astrid","🪓"],["Tormenta","🐲"]], perfect:["Furia Nocturna","🌙"]},
+  8:{land:"london", items:[["Duende de Gringotts","💰"],["Varita de Ollivanders","🪄"],["Helado de Florean Fortescue","🍨"],["Autobús Noctámbulo","🚌"]], perfect:["Llave de bóveda","🗝️"]},
+  9:{land:"springfield", items:[["Homer","🛋️"],["Bart","🛹"],["Lisa","🎷"],["Maggie","🍼"]], perfect:["Dona de Lard Lad","🍩"]},
+  10:{land:"marvel", items:[["Spider-Man","🕸️"],["Hulk","💪"],["Wolverine","🗡️"],["Doctor Doom","🟢"]], perfect:["Escudo del Capitán América","🛡️"]}
+};
+const SP_PER = 4, SP_TOTAL = 9*(SP_PER+1);
+const spCount = p => Object.values(p.sp).reduce((a,b)=>a+b,0) + Object.keys(p.spp).length;
 const TOTAL_TROPHIES = Object.values(LANDS).reduce((n,l)=>n+l.items.length,0);
 const DAY = 86400000;
 const INTERVAL = [0,1,1,2,3,5]; // días por caja (meta: 3 semanas)
 
 /* ================= ESTADO ================= */
 let S = load();
-function fresh(p){ return {id:p.id, name:p.name, av:p.av, color:p.color, earned:0, belts:[], gold:{}, tro:{}, pend:0, bar:0, learned:{}, chose:{}, practiced:{}, facts:{}, sprint:0, free:false}; }
+function fresh(p){ return {id:p.id, name:p.name, av:p.av, color:p.color, earned:0, belts:[], gold:{}, tro:{}, pend:0, sp:{}, spp:{}, bar:0, learned:{}, chose:{}, practiced:{}, facts:{}, sprint:0, free:false}; }
 function load(){
   let d=null; try{ d = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
   if(!d || !Array.isArray(d.players)) d = {players:PLAYERS0.map(fresh), cur:null};
@@ -342,7 +369,7 @@ function header(back){
 function vWho(){
   app.innerHTML = `<div class="brand"><img class="appicon" src="icon-512.png" alt=""><div><div class="logo">Multi<span>Parque</span></div><div class="muted">Tablas del 2 al 10 · arma tu Universal Orlando</div></div></div>
   <div class="row between"><h2>¿Quién juega?</h2><button class="btn small white" data-go="adults">Adultos</button></div>
-  <div class="players">${S.players.map(p=>`<button class="pcard" data-pick="${p.id}"><span class="av">${p.av}</span><span><h3>${esc(p.name)}</h3><span class="sub">🏆 ${owned(p)} de ${TOTAL_TROPHIES} trofeos · ${Object.keys(p.gold).length} dorados de 9</span></span></button>`).join("")}</div>`;
+  <div class="players">${S.players.map(p=>`<button class="pcard" data-pick="${p.id}"><span class="av">${p.av}</span><span><h3>${esc(p.name)}</h3><span class="sub">🏆 ${owned(p)} de ${TOTAL_TROPHIES} trofeos · ✨ ${spCount(p)} especiales · ${Object.keys(p.gold).length} dorados de 9</span></span></button>`).join("")}</div>`;
 }
 
 /* ---------- Menú ---------- */
@@ -426,7 +453,7 @@ function pick(v){
   const q=G.list[G.i], ok = v===q.a*q.b;
   updateFact(q, ok, false);
   if(ok){ G.right++; G.coins++; addCoins(1); }
-  else { const c=Object.assign({},q); c.opts=options(q); G.list.splice(Math.min(G.i+3,G.list.length),0,c); }
+  else { G.errs=(G.errs||0)+1; const c=Object.assign({},q); c.opts=options(q); G.list.splice(Math.min(G.i+3,G.list.length),0,c); }
   G.fb={ok, pick:v, msg: ok?"¡Esa es! ✔":`Era ${q.a*q.b}. Volverá en un ratito.`};
   vPlay(); save(); setTimeout(next, ok?600:1600);
 }
@@ -545,6 +572,7 @@ function submit(timeout){
     return;
   }
   updateFact(q, ok, fast);
+  if(!ok) G.errs=(G.errs||0)+1;
   if(ok){ G.right++; const c = G.mode==="repaso"?2:1; G.coins+=c; addCoins(c); }
   if(G.mode==="sprint"){
     G.fb={ok, msg: ok?"✔":full}; vPlay(); save();
@@ -632,6 +660,20 @@ function endSession(){
   }
   save();
   const back = g.free ? `data-go="free"` : (g.mode==="learn"||g.mode==="choose"||g.mode==="practice"||g.mode==="boss") ? `data-table="${g.t}"` : `data-go="hub"`;
+  // Trofeos especiales por completar prácticas de una tabla
+  let spT = null;
+  if((g.mode==="choose"||g.mode==="practice") && !g.free) spT=g.t;
+  if(g.free && g.spec && !g.spec.tricky && g.spec.tables && g.spec.tables.length===1) spT=g.spec.tables[0];
+  const spWon=[];
+  if(spT && SPECIAL[spT]){
+    const sp=SPECIAL[spT], l=LANDS[sp.land], have=p.sp[spT]||0;
+    if(have<SP_PER){ const [nm,e]=sp.items[have]; p.sp[spT]=have+1; view.lastSp=spT+"-"+have; spWon.push(`<div class="tro2">${spSVG({c1:l.c1,c2:l.c2,e,big:true})}<b>${esc(nm)}</b></div>`); }
+    if(!(g.errs>0) && !p.spp[spT]){ p.spp[spT]=true; view.lastSp=spT+"-p"; spWon.push(`<div class="tro2">${spSVG({perfect:true,e:sp.perfect[1],big:true})}<b>${esc(sp.perfect[0])}</b><small>¡Perfecta, sin errores!</small></div>`); }
+    else if(!(g.errs>0) && p.spp[spT]) body += " ¡Otra vez sin errores!";
+    if(spWon.length) body += `<div class="spwon">${spWon.join("")}</div><div class="muted" style="font-size:15px">Trofeo${spWon.length>1?"s":""} especial${spWon.length>1?"es":""} de ${esc(l.n)} · ya está${spWon.length>1?"n":""} en tu vitrina.</div>`;
+    else if(have>=SP_PER && !p.spp[spT]) body += `<div class="muted" style="font-size:15px">Ya tienes los 4 de ${esc(l.n)}. Te falta el trofeo perfecto: ¡hazla sin errores!</div>`;
+    save();
+  }
   const can = p.pend>0;
   modal(`<div class="big">${icon}</div><h2>${title}</h2><div>${body}</div>${g.coins?`<div class="chip">⭐ +${g.coins} aciertos</div>`:""}
     <div class="row" style="justify-content:center">${can?`<button class="btn teal" data-go="vitrina" data-close>🏆 ¡Coloca tu trofeo nuevo!</button>`:""}${g.free?`<button class="btn white" data-act="again" data-close>Otra vez 🔁</button>`:""}<button class="btn ${can?"white":""}" ${back} data-close>Seguir</button></div>`);
@@ -669,7 +711,7 @@ function startFree(spec){
   if(choose) list.forEach(q=>q.opts=options(q));
   else if(spec.tables && spec.tables.length===1) list = list.map(q=>Math.random()<.25?mkq(q.a,q.b,Math.random()<.5?"missA":"missB"):q);
   const name = spec.tricky ? "Las difíciles" : spec.tables.length===1 ? `Tabla del ${spec.tables[0]}` : spec.tables.length===FREE_T.length ? "Todas mezcladas" : "Mezcla: "+spec.tables.map(t=>"×"+t).join(" ");
-  G = {mode: choose?"choose":"practice", free:true, list, i:0, right:0, input:"", fb:null, coins:0, title:(choose?"Elige · ":"Escribe · ")+name};
+  G = {mode: choose?"choose":"practice", free:true, spec, list, i:0, right:0, input:"", fb:null, coins:0, title:(choose?"Elige · ":"Escribe · ")+name};
   go({v:"play"});
 }
 function vFree(){
@@ -679,6 +721,7 @@ function vFree(){
     let m=0; for(let k=1;k<=10;k++) if(mastered(p,fkey(t,k))) m++;
     return `<div class="fcard"><h3>Tabla del ${t}</h3><p class="peek">${t}×1, ${t}×2, ${t}×3 … ${t}×10</p>
       <div class="meter"><i style="width:${m*10}%"></i></div><span class="mcount">${m} de 10 dominadas</span>
+      <div class="spmini">${SPECIAL[t].items.map(([nm,e],i)=>`<span class="${i<(p.sp[t]||0)?"on":""}" title="${esc(nm)}">${e}</span>`).join("")}<span class="pf ${p.spp[t]?"on":""}" title="${esc(SPECIAL[t].perfect[0])}">${SPECIAL[t].perfect[1]}</span><small>${esc(LANDS[SPECIAL[t].land].n)}</small></div>
       <div class="row"><button class="btn small" data-act="fplay" data-t="${t}" data-kind="choose">Elige 🎯</button><button class="btn small teal" data-act="fplay" data-t="${t}" data-kind="write">Escribe ✏️</button><button class="btn small white" data-look="${t}">Ver 👀</button></div></div>`;
   }).join("");
   const sel=freeSel;
@@ -747,6 +790,31 @@ function cupSVG(o){
   ${o.num?`<text x="28" y="27" text-anchor="middle" font-family="Lilita One,sans-serif" font-size="15" fill="#23203A" stroke="#fff" stroke-width="2.5" paint-order="stroke">${o.num}</text>`:""}
   ${o.gold?`<g class="spk"><path d="M47 4l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#FFF7C2"/><path d="M8 34l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#FFF7C2"/></g>`:""}</svg>`;
 }
+function spSVG(o){
+  const W=o.big?110:56, H=o.big?136:70;
+  if(o.empty) return `<svg viewBox="0 0 56 70" width="${W}" height="${H}" aria-hidden="true">${o.perfect?`<path d="M28 3l6.5 13.2 14.5 2.1-10.5 10.2 2.5 14.5L28 36.2 15 43l2.5-14.5L7 18.3l14.5-2.1z"`:`<circle cx="28" cy="24" r="19"`} fill="none" stroke="#B9B2A3" stroke-width="2.5" stroke-dasharray="4 3"/><path d="M20 48h16v6H20zM14 55h28v8H14z" fill="none" stroke="#B9B2A3" stroke-width="2.5" stroke-dasharray="4 3"/></svg>`;
+  const c1=o.perfect?"#F7C531":o.c1, c2=o.perfect?"#FFF3B0":o.c2;
+  const shape = o.perfect
+    ? `<path d="M28 1.5l7 14.2 15.6 2.3-11.3 11 2.7 15.5L28 37.2 14 44.5l2.7-15.5L5.4 18l15.6-2.3z" fill="${c1}" stroke="#23203A" stroke-width="2.2"/><circle cx="28" cy="24" r="11" fill="${c2}" stroke="#23203A" stroke-width="1.6"/>`
+    : `<circle cx="28" cy="24" r="20" fill="${c2}" stroke="#23203A" stroke-width="2.2"/><circle cx="28" cy="24" r="15" fill="${c1}" stroke="#23203A" stroke-width="1.6"/><circle cx="28" cy="24" r="11.5" fill="#fff" fill-opacity=".9"/>`;
+  return `<svg viewBox="0 0 56 70" width="${W}" height="${H}" aria-hidden="true" class="${o.perfect?"shine":""}">${shape}
+  <text x="28" y="${o.perfect?29:30}" text-anchor="middle" font-size="${o.perfect?13:15}">${o.e}</text>
+  <rect x="24" y="44" width="8" height="5" fill="${o.perfect?"#C9951B":c1}" stroke="#23203A" stroke-width="1.8"/>
+  <rect x="19" y="48" width="18" height="6" rx="2" fill="${o.perfect?"#F7C531":c2}" stroke="#23203A" stroke-width="1.8"/>
+  <rect x="13" y="54" width="30" height="9" rx="2" fill="${o.perfect?"#8A6410":"#3A2A1C"}" stroke="#23203A" stroke-width="2"/>
+  ${o.perfect?`<g class="spk"><path d="M49 34l1.3 3.4 3.4 1.3-3.4 1.3-1.3 3.4-1.3-3.4-3.4-1.3 3.4-1.3z" fill="#FFF7C2"/></g>`:""}</svg>`;
+}
+function spShelf(p){
+  return [2,3,4,5,6,7,8,9,10].map(t=>{
+    const sp=SPECIAL[t], l=LANDS[sp.land], have=p.sp[t]||0;
+    const cups = sp.items.map(([nm,e],i)=> i<have
+      ? `<div class="tro ${view.lastSp===t+"-"+i?"newt":""}">${spSVG({c1:l.c1,c2:l.c2,e})}<span>${esc(nm)}</span></div>`
+      : `<div class="tro off">${spSVG({empty:true})}<span>&nbsp;</span></div>`).join("")
+      + (p.spp[t] ? `<div class="tro ${view.lastSp===t+"-p"?"newt":""}">${spSVG({perfect:true,e:sp.perfect[1]})}<span>${esc(sp.perfect[0])}</span></div>`
+                  : `<div class="tro off">${spSVG({empty:true,perfect:true})}<span>Sin errores</span></div>`);
+    return `<div class="land2" style="--c1:${l.c1};--c2:${l.c2}"><b>×${t} · ${esc(l.n)} <small>${have+(p.spp[t]?1:0)}/${SP_PER+1}</small></b><div class="cups">${cups}</div></div>`;
+  }).join("");
+}
 function vCase(){
   const p=P(), per=S.cfg.per, picking=p.pend>0;
   const honor = ORDER.slice().sort((a,b)=>a-b).map(t=>{
@@ -768,10 +836,11 @@ function vCase(){
   ${picking?`<div class="card pop" style="background:#FFF8D8;text-align:center"><b style="font-family:var(--f-display);font-weight:400;font-size:22px">🏆 ¡Tienes ${p.pend} trofeo${p.pend>1?"s":""} para colocar!</b><div>Toca la tierra donde lo quieres. Brillan las que tienen espacio.</div></div>`
    :`<div class="card"><div class="row between"><b>Siguiente trofeo</b><span class="muted">${per-p.bar} aciertos más</span></div><div class="pbar" style="margin-top:6px"><i style="width:${p.bar/per*100}%"></i></div></div>`}
   <div class="case">
+    <section class="shelf special"><h3>Trofeos especiales <small>${spCount(p)}/${SP_TOTAL} · por practicar cada tabla</small></h3><div class="lands2">${spShelf(p)}</div><div class="plank"></div></section>
     <section class="shelf honor"><h3>Estante de honor <small>${Object.keys(p.gold).length} dorados · ${p.belts.length} vencidas</small></h3><div class="cups">${honor}</div><div class="plank"></div></section>
     ${shelves}
   </div>`;
-  if(view.last){ const n=document.querySelector(".newt"); if(n) n.scrollIntoView({block:"center"}); }
+  if(view.last||view.lastSp){ const n=document.querySelector(".newt"); if(n) n.scrollIntoView({block:"center"}); }
 }
 function place(land){
   const p=P(), l=LANDS[land]; if(!l || p.pend<=0) return;
@@ -810,7 +879,7 @@ function vAdults(){
       <div class="row"><button class="btn small" data-act="edsave">Guardar</button></div></div>
     <div class="card adm"><h3>Cómo va</h3>
       <div class="tstat">${ORDER.map(t=>`<div><b>×${t}</b>${p.gold[t]?"🏆 dorado":p.belts.includes(t)?"🥈 plateado":p.practiced[t]?"Escribe ✔":p.chose[t]?"Elige ✔":p.learned[t]?"Aprende ✔":"—"}</div>`).join("")}</div>
-      <div>${m} de ${GRID_KEYS.length} operaciones dominadas · récord del sprint: ${p.sprint} · ${owned(p)} trofeos</div>
+      <div>${m} de ${GRID_KEYS.length} operaciones dominadas · récord del sprint: ${p.sprint} · ${owned(p)} trofeos · ${spCount(p)} especiales</div>
       <div><b>Las que más falla:</b></div><div class="row">${weakFacts(p)}</div></div>
     <div class="card adm"><h3>Trofeos: ${owned(p)} de ${TOTAL_TROPHIES}${p.pend?` · ${p.pend} por colocar`:""}</h3>
       <div class="row"><button class="btn small white" data-act="gift">Regalar 1 trofeo</button><button class="btn small white" data-act="untro">Quitar el último</button></div></div>
@@ -867,6 +936,7 @@ function vProg(){
       <div><b>${Object.keys(p.gold).length}/9</b><small>tablas doradas</small></div>
       <div><b>${m}/${GRID_KEYS.length}</b><small>operaciones dominadas</small></div>
       <div><b>${owned(p)}/${TOTAL_TROPHIES}</b><small>trofeos de atracciones</small></div>
+      <div><b>${spCount(p)}/${SP_TOTAL}</b><small>trofeos especiales</small></div>
       <div><b>${p.sprint}</b><small>récord del sprint</small></div>
       <div><b>${p.earned}</b><small>aciertos en total</small></div>
     </div>

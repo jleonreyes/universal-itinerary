@@ -144,6 +144,25 @@ button{font:inherit;color:inherit}
 .day ol{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:15px}
 .day li{display:flex;gap:8px;align-items:center}
 .day .t{font-variant-numeric:tabular-nums;color:var(--ink-soft);min-width:44px}
+/* práctica libre */
+.fcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.fcard{background:var(--card);border:3px solid var(--ink);border-radius:18px;box-shadow:0 4px 0 var(--ink);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.fcard h3{font-size:24px;line-height:1.1}
+.fcard.hot{background:#FFF8D8}
+.fcard.mixc{background:#E6F6F3}
+.fcard .peek{font-size:15px;color:var(--ink-soft);margin:0}
+.meter{height:12px;border:2.5px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,#7FD3F5,#22A699)}
+.mcount{font-size:14px;color:var(--ink-soft)}
+.tsel{display:flex;flex-wrap:wrap;gap:8px}
+.tsel button{font-family:var(--f-display);font-size:20px;min-width:56px;padding:6px 10px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;cursor:pointer}
+.tsel button[aria-pressed="true"]{background:var(--teal);color:#fff}
+.looklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.lk{background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:8px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;overflow:hidden}
+.lk b{font-family:var(--f-display);font-weight:400;font-size:30px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.lk .dots{padding:0;gap:3px;justify-content:start}
+.lk .dots i{width:8px;height:8px}
+.lk.m{background:#E6F6F3}
 /* vitrina */
 .case{background:linear-gradient(180deg,#3B2A22,#2A1D17);border:4px solid #1E1410;border-radius:22px;padding:14px 12px 18px;display:flex;flex-direction:column;gap:18px;box-shadow:inset 0 0 0 6px #5A4033}
 .shelf{background:linear-gradient(180deg,rgba(210,235,255,.16),rgba(210,235,255,.05));border-radius:14px;padding:10px 8px 0;position:relative}
@@ -308,7 +327,7 @@ function render(){
   if(v==="who") return vWho();
   if(v==="adults") return vAdults();
   if(!P()) { view={v:"who"}; return vWho(); }
-  ({hub:vHub, tables:vTables, table:vTable, play:vPlay, grid:vGrid, vitrina:vCase, prog:vProg}[v]||vHub)();
+  ({hub:vHub, tables:vTables, table:vTable, play:vPlay, grid:vGrid, vitrina:vCase, prog:vProg, free:vFree, look:vLook}[v]||vHub)();
 }
 function header(back){
   const p=P();
@@ -332,6 +351,7 @@ function vHub(){
   app.innerHTML = header() + `
   <div class="menu">
     <button class="mbtn" data-go="tables"><span class="ic">⚔️</span><span><h3>Tablas y villanos</h3><small>Aprende cada tabla y vence a su villano para ganar su trofeo.</small></span></button>
+    <button class="mbtn" data-go="free"><span class="ic">🎯</span><span><h3>Práctica libre</h3><small>Cualquier tabla, sola o mezcladas, cuando quieras.</small></span></button>
     <button class="mbtn" data-act="repaso" ${lt?"":"disabled"}><span class="ic">🧠</span><span><h3>Repaso inteligente</h3><small>${lt?(due?`${due} operaciones te esperan hoy.`:"Todo al día. Puedes repasar las más difíciles."):"Se abre al aprender tu primera tabla."}</small></span>${due?`<span class="badge">${due}</span>`:""}</button>
     <button class="mbtn" data-act="sprint" ${lt?"":"disabled"}><span class="ic">⚡</span><span><h3>Sprint de 60 segundos</h3><small>${p.sprint?`Tu récord: ${p.sprint} aciertos.`:"¿Cuántas resuelves en un minuto?"}</small></span></button>
     <button class="mbtn" data-act="detective" ${p.belts.length>=3?"":"disabled"}><span class="ic">🔎</span><span><h3>Detective al revés</h3><small>${p.belts.length>=3?"Te doy el resultado, tú encuentras las multiplicaciones.":"Se abre al vencer 3 villanos."}</small></span></button>
@@ -580,7 +600,11 @@ function endSession(){
   stopTimer();
   const p=P(), g=G; G=null;
   let icon="🎉", title="¡Terminaste!", body="", bonus=0;
-  if(g.mode==="learn"){
+  if(g.free){
+    const perfect=g.right===g.list.length;
+    icon=perfect?"🌟":"🎯"; title=`${g.right} de ${g.list.length} correctas`;
+    body = perfect?"¡Perfecto!":"Las que fallaste saldrán más seguido.";
+  } else if(g.mode==="learn"){
     p.learned[g.t]=true; title=`¡Aprendiste la tabla del ${g.t}!`; body="Ahora a elegir.";
   } else if(g.mode==="choose"){
     p.chose[g.t]=true; title=`¡${g.right} aciertos eligiendo!`; body="Ahora a escribirlas tú sola.";
@@ -607,14 +631,79 @@ function endSession(){
     icon="🔎"; title="¡Casos cerrados!"; body=`Encontraste ${g.right} multiplicaciones.`;
   }
   save();
-  const back = (g.mode==="learn"||g.mode==="choose"||g.mode==="practice"||g.mode==="boss") ? `data-table="${g.t}"` : `data-go="hub"`;
+  const back = g.free ? `data-go="free"` : (g.mode==="learn"||g.mode==="choose"||g.mode==="practice"||g.mode==="boss") ? `data-table="${g.t}"` : `data-go="hub"`;
   const can = p.pend>0;
   modal(`<div class="big">${icon}</div><h2>${title}</h2><div>${body}</div>${g.coins?`<div class="chip">⭐ +${g.coins} aciertos</div>`:""}
-    <div class="row" style="justify-content:center">${can?`<button class="btn teal" data-go="vitrina" data-close>🏆 ¡Coloca tu trofeo nuevo!</button>`:""}<button class="btn ${can?"white":""}" ${back} data-close>Seguir</button></div>`);
+    <div class="row" style="justify-content:center">${can?`<button class="btn teal" data-go="vitrina" data-close>🏆 ¡Coloca tu trofeo nuevo!</button>`:""}${g.free?`<button class="btn white" data-act="again" data-close>Otra vez 🔁</button>`:""}<button class="btn ${can?"white":""}" ${back} data-close>Seguir</button></div>`);
 }
 function modal(html){
   const m=document.createElement("div"); m.className="modal"; m.innerHTML=`<div class="card pop">${html}</div>`;
   document.body.appendChild(m);
+}
+
+/* ================= PRÁCTICA LIBRE ================= */
+const FREE_T = [2,3,4,5,6,7,8,9,10];
+function factW(p,a,b){ const f=p.facts[fkey(a,b)]; if(!f) return 2; return 1 + f.w*2 + (f.box<=1?2:0) + (f.due<=Date.now()?1:0); }
+function trickyFacts(p){
+  return Object.entries(p.facts).filter(([,f])=>f.w>0&&(f.box<=1||f.w>f.r)).sort((x,y)=>x[1].box-y[1].box||y[1].w-x[1].w).slice(0,10).map(([k])=>k);
+}
+function buildFree(tables, n){
+  const p=P(), pool=[]; tables.forEach(t=>{ for(let k=1;k<=10;k++) pool.push([t,k]); });
+  if(tables.length===1) return shuffle(pool).map(([t,k])=>tableQ(t,k,"prod"));
+  const list=[]; let last="";
+  while(list.length<n){
+    const tot=pool.reduce((s,[t,k])=>s+factW(p,t,k),0); let r=Math.random()*tot, pickd=pool[0];
+    for(const it of pool){ r-=factW(p,it[0],it[1]); if(r<=0){ pickd=it; break; } }
+    const key=fkey(pickd[0],pickd[1]); if(key===last && pool.length>1) continue; last=key;
+    list.push(tableQ(pickd[0],pickd[1],"prod"));
+  }
+  return list;
+}
+let lastFree=null, freeSel=[];
+function startFree(spec){
+  lastFree=spec;
+  let list = spec.tricky ? shuffle(trickyFacts(P())).map(k=>{ const [a,b]=k.split("x").map(Number); return Math.random()<.5?mkq(a,b):mkq(b,a); })
+    : buildFree(spec.tables, spec.n||20);
+  if(!list.length) return go({v:"free"});
+  const choose = spec.kind==="choose";
+  if(choose) list.forEach(q=>q.opts=options(q));
+  else if(spec.tables && spec.tables.length===1) list = list.map(q=>Math.random()<.25?mkq(q.a,q.b,Math.random()<.5?"missA":"missB"):q);
+  const name = spec.tricky ? "Las difíciles" : spec.tables.length===1 ? `Tabla del ${spec.tables[0]}` : spec.tables.length===FREE_T.length ? "Todas mezcladas" : "Mezcla: "+spec.tables.map(t=>"×"+t).join(" ");
+  G = {mode: choose?"choose":"practice", free:true, list, i:0, right:0, input:"", fb:null, coins:0, title:(choose?"Elige · ":"Escribe · ")+name};
+  go({v:"play"});
+}
+function vFree(){
+  const p=P();
+  const tr=trickyFacts(p);
+  const cards = FREE_T.map(t=>{
+    let m=0; for(let k=1;k<=10;k++) if(mastered(p,fkey(t,k))) m++;
+    return `<div class="fcard"><h3>Tabla del ${t}</h3><p class="peek">${t}×1, ${t}×2, ${t}×3 … ${t}×10</p>
+      <div class="meter"><i style="width:${m*10}%"></i></div><span class="mcount">${m} de 10 dominadas</span>
+      <div class="row"><button class="btn small" data-act="fplay" data-t="${t}" data-kind="choose">Elige 🎯</button><button class="btn small teal" data-act="fplay" data-t="${t}" data-kind="write">Escribe ✏️</button><button class="btn small white" data-look="${t}">Ver 👀</button></div></div>`;
+  }).join("");
+  const sel=freeSel;
+  app.innerHTML = header("hub") + `<h2>Práctica libre</h2>
+  <p class="muted" style="margin:0">Practica la tabla que quieras. Cada acierto también llena tu barra de trofeos ⭐.</p>
+  <div class="fcards">
+    <div class="fcard mixc"><h3>Todas mezcladas</h3><p class="peek">20 operaciones de todas las tablas, del 2 al 10. Salen más las que más fallas.</p>
+      <div class="row"><button class="btn small" data-act="fplay" data-t="all" data-kind="choose">Elige 🎯</button><button class="btn small teal" data-act="fplay" data-t="all" data-kind="write">Escribe ✏️</button></div></div>
+    ${tr.length?`<div class="fcard hot"><h3>Las difíciles 🔥</h3><p class="peek">${tr.slice(0,6).map(k=>{const [a,b]=k.split("x");return `${b}×${a}`;}).join(", ")}${tr.length>6?"…":""}</p>
+      <div class="row"><button class="btn small" data-act="fplay" data-t="tricky" data-kind="choose">Elige 🎯</button><button class="btn small teal" data-act="fplay" data-t="tricky" data-kind="write">Escribe ✏️</button></div></div>`:""}
+    <div class="fcard"><h3>Arma tu mezcla</h3><p class="peek">Toca las tablas que quieres juntar.</p>
+      <div class="tsel">${FREE_T.map(t=>`<button data-sel="${t}" aria-pressed="${sel.includes(t)}">×${t}</button>`).join("")}</div>
+      <div class="row"><button class="btn small" data-act="fplay" data-t="sel" data-kind="choose" ${sel.length?"":"disabled"}>Elige 🎯</button><button class="btn small teal" data-act="fplay" data-t="sel" data-kind="write" ${sel.length?"":"disabled"}>Escribe ✏️</button></div></div>
+  </div>
+  <h2>Cada tabla</h2>
+  <div class="fcards">${cards}</div>`;
+}
+function vLook(){
+  const p=P(), t=view.t;
+  const rows=[]; for(let k=1;k<=10;k++){ const m=mastered(p,fkey(t,k));
+    rows.push(`<div class="lk ${m?"m":""}"><b>${t} × ${k} = ${t*k}</b><div class="dots" style="grid-template-columns:repeat(${k},auto)">${"<i></i>".repeat(t*k)}</div>${m?"✔":""}</div>`); }
+  app.innerHTML = header("free") + `<h2>La tabla del ${t}</h2>
+  <div class="trick"><b>🤫 Secreto</b><div>${esc(TRICK[t])}</div></div>
+  <div class="looklist">${rows.join("")}</div>
+  <div class="row"><button class="btn" data-act="fplay" data-t="${t}" data-kind="choose">Elige 🎯</button><button class="btn teal" data-act="fplay" data-t="${t}" data-kind="write">Escribe ✏️</button></div>`;
 }
 
 /* ================= TABLA MÁGICA ================= */
@@ -820,6 +909,8 @@ document.addEventListener("click", e=>{
   if(d.go){ return go({v:d.go}); }
   if(d.table){ return go({v:"table", t:+d.table}); }
   if(d.place){ return place(d.place); }
+  if(d.look){ return go({v:"look", t:+d.look}); }
+  if(d.sel){ const n=+d.sel, a=freeSel; const k=a.indexOf(n); if(k<0) a.push(n); else a.splice(k,1); a.sort((x,y)=>x-y); return render(); }
   if(d.k){ return key(d.k); }
   if(d.opt){ return pick(+d.opt); }
   switch(d.act){
@@ -832,7 +923,13 @@ document.addEventListener("click", e=>{
     case "sprint": return startSprint();
     case "detective": return startDetective();
     case "detskip": return detSkip();
-    case "quit": { const g=G; stopTimer(); G=null; save(); return go(g&&g.t&&g.mode!=="sprint"&&g.mode!=="repaso"?{v:"table",t:g.t}:{v:"hub"}); }
+    case "fplay": { const w=d.t, kind=d.kind;
+      if(w==="all") return startFree({tables:FREE_T.slice(), kind, n:20});
+      if(w==="tricky") return startFree({tricky:true, kind});
+      if(w==="sel") return startFree({tables:freeSel.slice(), kind, n:20});
+      return startFree({tables:[+w], kind}); }
+    case "again": return lastFree && startFree(lastFree);
+    case "quit": { const g=G; stopTimer(); G=null; save(); if(g&&g.free) return go({v:"free"}); return go(g&&g.t&&g.mode!=="sprint"&&g.mode!=="repaso"?{v:"table",t:g.t}:{v:"hub"}); }
     case "copy": { const el=document.getElementById("exp"); el.select(); try{ navigator.clipboard.writeText(el.value).then(()=>floatTxt("¡Copiado!")); }catch(_){ document.execCommand("copy"); floatTxt("¡Copiado!"); } return; }
     case "import": return doImport();
   }

@@ -674,6 +674,29 @@ function makeSet(gen, n){
 }
 const mixGen = (...gens) => () => R(gens)();
 
+/* --- Study guide: build the 3 forms (affirmative > negative > interrogative) as whole sentences --- */
+function forms3(tense, cue, aff, neg, q, hint){
+  return Qw({key:"f3"+aff, prompt:"Write the 3 forms: affirmative, negative and interrogative.", source:cue, sourceLabel:`${tense} · use these words`, rows:[
+    {label:"Affirmative (+)", text:"___", blanks:[[aff]], full:1},
+    {label:"Negative (−)", text:"___", blanks:[[neg]], full:1},
+    {label:"Interrogative (?)", text:"___", blanks:[[q]], full:1}], hint});
+}
+function presForms(){
+  const {a,s,o} = pair(null,{bias:1});
+  return forms3("Simple present", `${s.s} + ${a.v} + ${o}`, `${s.s} ${pres(a,s)} ${o}.`, `${s.s} ${presNeg(s)} ${a.v} ${o}.`, `${s.t?"Does":"Do"} ${s.q} ${a.v} ${o}?`,
+    `${whoIs(s)}+ He runs fast. − He doesn't run fast. ? Does he run fast?  (I, you, we, they: go / don't go / Do…?)`);
+}
+function contForms(){
+  const {a,s,o} = pair(hasIng);
+  return forms3("Present continuous", `${s.s} + ${a.v} + ${o}`, `${s.s} ${s.be} ${a.ing} ${o}.`, `${s.s} ${contNeg(s)} ${a.ing} ${o}.`, `${cap(s.be)} ${s.q} ${a.ing} ${o}?`,
+    `${whoIs(s)}+ You are walking slow. − You aren't walking slow. ? Are you walking slow?`);
+}
+function pastForms(){
+  const {a,s,o} = pair(isPz);
+  return forms3("Simple past", `${s.s} + ${a.v} + ${o}`, `${s.s} ${a.past} ${o}.`, `${s.s} didn't ${a.v} ${o}.`, `Did ${s.q} ${a.v} ${o}?`,
+    `${a.v} → ${a.past}. + She began the homework. − She didn't begin the homework. ? Did she begin the homework?`);
+}
+
 /* --- Adverbs of frequency (study guide: always 100%, usually 80%, sometimes 50%, rarely 10%, never 0%) --- */
 const ADV = [{w:"always",p:"100%"},{w:"usually",p:"80%"},{w:"sometimes",p:"50%"},{w:"rarely",p:"10%"},{w:"never",p:"0%"}];
 const ADV_H = "always 100% · usually 80% · sometimes 50% · rarely 10% · never 0%.";
@@ -706,20 +729,20 @@ const ERAS = [
     levels:[{n:"Pronouns", make:()=>makeSet(pronChoose,8)}, {n:"To be: choose", make:()=>makeSet(beChoose,8)}, {n:"To be: write", make:()=>[beGrid(), ...makeSet(mixGen(beWrite,pronWrite),6)]}],
     boss:()=>[...makeSet(pronChoose,4), ...makeSet(beChoose,3), ...makeSet(mixGen(beWrite,pronWrite),3)]},
   {id:"egypt", name:"Pyramid Sands", topic:"Simple Present", year:"2560 BC", hat:"nemes", hatName:"Pharaoh Headdress",
-    levels:[{n:"Conjugate", make:()=>makeSet(presConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(presChoose,presAB),8)}, {n:"Do · Does · Don't · Doesn't", make:()=>makeSet(doChoose,8)}, {n:"Write", make:()=>makeSet(presWrite,8)}, {n:"Negative & ?", make:()=>makeSet(presFlip,5)}, {n:"Rewrite", make:()=>makeSet(presRewrite,6)}],
-    boss:()=>[...makeSet(presChoose,3), ...makeSet(doChoose,2), ...makeSet(presWrite,3), ...makeSet(mixGen(presFlip,presRewrite),1)]},
+    levels:[{n:"Conjugate", make:()=>makeSet(presConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(presChoose,presAB),8)}, {n:"Do · Does · Don't · Doesn't", make:()=>makeSet(doChoose,8)}, {n:"Write", make:()=>makeSet(presWrite,8)}, {n:"Negative & ?", make:()=>makeSet(presFlip,5)}, {n:"Rewrite", make:()=>makeSet(presRewrite,6)}, {n:"3 forms", make:()=>makeSet(presForms,4)}], bossAfter:5,
+    boss:()=>[...makeSet(presChoose,3), ...makeSet(doChoose,2), ...makeSet(presWrite,3), ...makeSet(mixGen(presFlip,presRewrite),1), presForms()]},
   {id:"clock", after:"egypt", name:"Clock Tower", topic:"Adverbs of Frequency", year:"1859", hat:"tophat", hatName:"Top Hat",
     levels:[{n:"How often?", make:()=>makeSet(mixGen(advPercent,advMeaning),8)}, {n:"Where does it go?", make:()=>makeSet(advOrder,6)}, {n:"Write", make:()=>makeSet(advWrite,8)}, {n:"Adverb + verb", make:()=>makeSet(advVerb,6)}],
     boss:()=>[...makeSet(advPercent,3), ...makeSet(advMeaning,2), ...makeSet(advOrder,2), ...makeSet(advWrite,2), ...makeSet(advVerb,1)]},
   {id:"castle", after:"egypt", name:"Castle Hill", topic:"Present Continuous", year:"1250 AD", hat:"crown", hatName:"Royal Crown",
-    levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(contChoose,contAB),8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}, {n:"Rewrite", make:()=>makeSet(contRewrite,6)}],
-    boss:()=>[...makeSet(contChoose,5), ...makeSet(contWrite,3), ...makeSet(contFlip,1)]},
+    levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(contChoose,contAB),8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}, {n:"Rewrite", make:()=>makeSet(contRewrite,6)}, {n:"3 forms", make:()=>makeSet(contForms,4)}], bossAfter:4,
+    boss:()=>[...makeSet(contChoose,5), ...makeSet(contWrite,3), ...makeSet(contFlip,1), contForms()]},
   {id:"pirates", name:"Pirate Cove", topic:"Verbs: Present · Past · Past Participle", year:"1715", hat:"pirate", hatName:"Pirate Hat",
     levels:[{n:"Past", make:()=>makeSet(()=>vChoose("past"),Math.min(8,S.verbs.length))}, {n:"Past participle", make:()=>makeSet(()=>vChoose("pp"),Math.min(8,S.verbs.length))}, {n:"Table", make:()=>makeSet(vTable,Math.min(6,S.verbs.length))}, {n:"Full table", make:()=>[vFullTable()]}],
     boss:()=>[...makeSet(()=>vChoose(),4), vFullTable()]},
   {id:"west", name:"Dusty Town", topic:"Simple Past", year:"1870", hat:"cowboy", hatName:"Cowboy Hat",
-    levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(mixGen(pastChoose,pastAB),8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}, {n:"Rewrite", make:()=>makeSet(pastRewrite,6)}],
-    boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(mixGen(pastFlip,pastRewrite),1)]},
+    levels:[{n:"Conjugate", make:()=>[wasConj(), ...makeSet(pastConj,2)]}, {n:"Choose", make:()=>makeSet(mixGen(pastChoose,pastAB),8)}, {n:"Write", make:()=>makeSet(pastWrite,8)}, {n:"Negative & ?", make:()=>makeSet(pastFlip,5)}, {n:"Rewrite", make:()=>makeSet(pastRewrite,6)}, {n:"3 forms", make:()=>makeSet(pastForms,4)}], bossAfter:4,
+    boss:()=>[...makeSet(pastChoose,5), ...makeSet(pastWrite,3), ...makeSet(mixGen(pastFlip,pastRewrite),1), pastForms()]},
   {id:"space", name:"Moon Base", topic:"Time Mix: which tense?", year:"3026", hat:"helmet", hatName:"Space Helmet",
     levels:[{n:"Time words", make:()=>makeSet(mixChoose,8)}, {n:"Write", make:()=>makeSet(mixWrite,8)}, {n:"Fix it", make:()=>makeSet(mixFix,8)}],
     boss:()=>[...makeSet(mixChoose,5), ...makeSet(mixWrite,3), ...makeSet(mixFix,2)]}
@@ -941,7 +964,7 @@ const prog = (p,id) => { p.progress = p.progress || {}; return p.progress[id] = 
 const eraBefore = i => ERAS.find(x => x.id===ERAS[i].after) || ERAS[i-1];
 const eraOpen = (p,i) => i===0 || prog(p, eraBefore(i).id).boss >= 7;
 const levelOpen = (p,i,l) => eraOpen(p,i) && (l===0 || (prog(p, ERAS[i].id).l[l-1]||0) >= 1);
-const bossOpen = (p,i) => eraOpen(p,i) && (prog(p, ERAS[i].id).l[ERAS[i].levels.length-1]||0) >= 1;
+const bossOpen = (p,i) => eraOpen(p,i) && ((prog(p, ERAS[i].id).l[ERAS[i].bossAfter ?? ERAS[i].levels.length-1]||0) >= 1 || prog(p, ERAS[i].id).boss > 0);
 
 /* ---------------- screens ---------------- */
 const app = document.getElementById("app");
@@ -1095,7 +1118,7 @@ function rowHTML(r, ri, hl, fb){
     } else if(k < parts.length-1){
       const alts = r.blanks[k]; const w = Math.max(6, ...alts.map(a=>a.length)) + 2;
       const val = fb ? fb.vals[ri][k] : ""; const cls = fb ? (fb.rows[ri].cells[k] ? "ok" : "no") : "";
-      h += `<input class="inl ${cls}" id="b${ri}_${k}" style="width:${w}ch" ${ac} ${fb?"readonly":""} value="${esc(val)}" aria-label="blank ${k+1}">`;
+      h += `<input class="inl ${cls}" id="b${ri}_${k}" style="width:${r.full?"100%":w+"ch"}" ${ac} ${fb?"readonly":""} value="${esc(val)}" aria-label="blank ${k+1}">`;
     }
   });
   return h;

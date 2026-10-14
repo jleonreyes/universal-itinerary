@@ -107,6 +107,9 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .blank{display:inline-block;min-width:96px;border-bottom:3px solid var(--ink);height:1em;vertical-align:-4px}
 .tw{background:var(--mark);border-radius:6px;padding:0 6px;font-weight:700;letter-spacing:.03em}
 .cue{color:var(--ink-soft);font-size:22px}
+.qtag{display:inline-block;font-family:var(--f-display);font-size:17px;line-height:1.4;padding:2px 12px;border-radius:999px;border:2.5px solid var(--ink)}
+.qtag.neg{background:#FBCFD2;color:#8E1219}
+.qtag.q{background:#D6EBFB;color:#1C3A70}
 .inl{display:inline-block;font-family:var(--f-body);font-size:24px;line-height:1.2;height:40px;padding:0 8px;border:3px solid var(--ink);border-radius:10px;background:var(--blank);color:var(--ink);vertical-align:middle;max-width:100%}
 .inl.ok{border-color:var(--green);background:#E6F8EE}
 .inl.no{border-color:var(--red);background:#FFECEE}
@@ -419,18 +422,36 @@ function presChoose(){
   const {a,s,o} = pair(null,{bias:1}); const t = R(T_PRES);
   return Qc({prompt:"Choose the correct verb.", text:sent(s, `___ ${o}`, t), options:[a.v, a.s, a.ing||a.past], answers:[pres(a,s)], show:pres(a,s), hint:H.third(a,s)});
 }
+/* Do / Does / don't / doesn't: every sentence makes the meaning clear
+   - negative: "X likes A, but X ___ like B."  (the "but" shows it is a NO)
+   - question: "___ X like A? Yes, she does."  (the ? and the short answer show it is a question) */
+const subjPron = s => s.g==="I" ? "I" : s.g.toLowerCase();
+function otherObj(a, s, o){ const pool = (s.an ? a.ao : a.o) || []; const c = pool.filter(x => x!==o); return c.length ? R(c) : null; }
+function doNeg(all){
+  for(let k=0;k<20;k++){
+    const {a,s,o} = pair(x => !x.np, {bias:1}); const o2 = otherObj(a,s,o); if(!o2) continue;
+    const n = presNeg(s);
+    return Qc({tag:"neg", prompt: all ? "Choose Do, Does, don't or doesn't." : "Choose don't or doesn't.", text:`${s.s} ${pres(a,s)} ${o}, but ${subjPron(s)} ___ ${a.v} ${o2}.`, options: all ? ["Do","Does","don't","doesn't"] : ["don't","doesn't"], answers:[n], show:n, hint:`“but” tells you it is a NO sentence. ${whoIs(s)}${H.neg}`});
+  }
+  return doQ(all);
+}
+function doQ(all){
+  const {a,s,o} = pair(x => !x.np, {bias:1}); const D = s.t ? "Does" : "Do", yes = Math.random()<.6;
+  const pr = subjPron(s), ans = s.g==="I" ? "you" : s.g==="You" ? "I" : pr;
+  const short = yes ? `Yes, ${ans} ${D.toLowerCase()}.` : `No, ${ans} ${D==="Does"?"doesn't":"don't"}.`;
+  return Qc({tag:"q", prompt: all ? "Choose Do, Does, don't or doesn't." : "Choose Do or Does.", text:`___ ${s.q} ${a.v} ${o}? ${short}`, options: all ? ["Do","Does","don't","doesn't"] : ["Do","Does"], answers:[D], show:D, hint:`The question mark ( ? ) tells you it is a question. ${whoIs(s)}${H.q}`});
+}
 function doChoose(){
-  const {a,s,o} = pair(null,{bias:1});
-  const opts = ["Do","Does","don't","doesn't"];
-  if(Math.random()<.5) return Qc({prompt:"Choose Do, Does, don't or doesn't.", text:`___ ${s.q} ${a.v} ${o}?`, options:opts, answers:[s.t?"Does":"Do"], show:s.t?"Does":"Do", hint:whoIs(s)+H.q});
-  const t = Math.random()<.5 ? R(T_PRES) : null;
-  return Qc({prompt:"Choose Do, Does, don't or doesn't.", text:sent(s, `___ ${a.v} ${o}`, t), options:opts, answers:[presNeg(s)], show:presNeg(s), hint:whoIs(s)+H.neg});
+  const r = Math.random();
+  if(r<.3) return doNeg(false);
+  if(r<.6) return doQ(false);
+  return Math.random()<.5 ? doNeg(true) : doQ(true);
 }
 function presAB(){
   const {a,s,o} = pair(null,{bias:1}); const r = Math.random();
   if(r<.4) return Qc({prompt:"Choose the correct option.", text:`${s.s} ___ ${o}.`, options:[a.v, a.s], answers:[pres(a,s)], show:pres(a,s), hint:H.third(a,s)});
-  if(r<.75) return Qc({prompt:"Choose the correct option.", text:`${s.s} ___ ${a.v} ${o}.`, options:["don't","doesn't"], answers:[presNeg(s)], show:presNeg(s), hint:whoIs(s)+H.neg});
-  return Qc({prompt:"Choose the correct option.", text:`___ ${s.q} ${a.v} ${o}?`, options:["Do","Does"], answers:[s.t?"Does":"Do"], show:s.t?"Does":"Do", hint:whoIs(s)+H.q});
+  if(r<.75) return doNeg(false);
+  return doQ(false);
 }
 function presWrite(){
   const {a,s,o} = pair(null,{bias:1}); const r = Math.random();
@@ -1043,6 +1064,7 @@ function qHTML(q, fb){
   let h = `<div class="q-prompt">${esc(q.prompt)}</div>`;
   if(q.source) h += `<div class="rowlabel">${q.sourceLabel||"Affirmative"}</div><div class="q-src">${hlText(q.source,hl)}</div>`;
   if(q.type==="choose"){
+    if(q.tag) h += `<div><span class="qtag ${q.tag}">${q.tag==="neg"?"✗ Negative: it is a NO":"? Question"}</span></div>`;
     h += `<div class="q-text">${fmtChoose(q.text,hl)}${q.cue?` <span class="cue">${esc(q.cue)}</span>`:""}</div>`;
     h += `<div class="opts">${q.options.map(o => { let cls=""; if(fb){ if(o===q.answers[0]) cls="right"; else if(o===fb.pick) cls="wrong"; }
       return `<button class="opt ${cls}" data-act="opt" data-v="${esc(o)}" ${fb?"disabled":""}>${esc(o)}</button>`; }).join("")}</div>`;

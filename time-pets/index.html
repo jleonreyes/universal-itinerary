@@ -723,32 +723,37 @@ function makeSet(gen, n){
 const mixGen = (...gens) => () => R(gens)();
 
 /* --- Study guide: build the 3 forms (affirmative > negative > interrogative) as whole sentences --- */
-function forms3(tense, cue, aff, neg, q, hint){
+/* the grammar part (subject + helper + verb) must be exact; small spelling slips in the rest of the sentence are OK */
+const coreOf = (ans, rest) => { const i = ans.indexOf(rest); return i>0 ? ans.slice(0,i).trim() : null; };
+function forms3(tense, cue, aff, neg, q, hint, rest){
+  const row = (label, ans) => ({label, text:"___", blanks:[[ans]], full:1, core: rest ? coreOf(ans, rest) : null});
   return Qw({key:"f3"+aff, prompt:"Write the 3 forms: affirmative, negative and interrogative.", source:cue, sourceLabel:`${tense} · use these words`, rows:[
-    {label:"Affirmative (+)", text:"___", blanks:[[aff]], full:1},
-    {label:"Negative (−)", text:"___", blanks:[[neg]], full:1},
-    {label:"Interrogative (?)", text:"___", blanks:[[q]], full:1}], hint});
+    row("Affirmative (+)", aff), row("Negative (−)", neg), row("Interrogative (?)", q)], hint});
+}
+function coreMatch(v, core){
+  const nv = norm(v), nc = norm(core);
+  return nv.startsWith(nc+" ") && nv.length > nc.length+1;
 }
 function presForms(){
   const {a,s,o} = pair(null,{bias:1});
   return forms3("Simple present", `${s.s} + ${a.v} + ${o}`, `${s.s} ${pres(a,s)} ${o}.`, `${s.s} ${presNeg(s)} ${a.v} ${o}.`, `${s.t?"Does":"Do"} ${s.q} ${a.v} ${o}?`,
-    `${whoIs(s)}+ He runs fast. − He doesn't run fast. ? Does he run fast?  (I, you, we, they: go / don't go / Do…?)`);
+    `${whoIs(s)}+ He runs fast. − He doesn't run fast. ? Does he run fast?  (I, you, we, they: go / don't go / Do…?)`, o);
 }
 function contForms(){
   const {a,s,o} = pair(hasIng);
   return forms3("Present continuous", `${s.s} + ${a.v} + ${o}`, `${s.s} ${s.be} ${a.ing} ${o}.`, `${s.s} ${contNeg(s)} ${a.ing} ${o}.`, `${cap(s.be)} ${s.q} ${a.ing} ${o}?`,
-    `${whoIs(s)}+ You are walking slow. − You aren't walking slow. ? Are you walking slow?`);
+    `${whoIs(s)}+ You are walking slow. − You aren't walking slow. ? Are you walking slow?`, o);
 }
 function pastForms(){
   const {a,s,o} = pair(isPz);
   return forms3("Simple past", `${s.s} + ${a.v} + ${o}`, `${s.s} ${a.past} ${o}.`, `${s.s} didn't ${a.v} ${o}.`, `Did ${s.q} ${a.v} ${o}?`,
-    `${a.v} → ${a.past}. + She began the homework. − She didn't begin the homework. ? Did she begin the homework?`);
+    `${a.v} → ${a.past}. + She began the homework. − She didn't begin the homework. ? Did she begin the homework?`, o);
 }
 
 function pcForms(){
   const {a,s,o} = pair(pcAct); const t = R(T_PASTC);
   return forms3("Past continuous", `${s.s} + ${a.v} + ${o} + ${t}`, `${s.s} ${s.was} ${a.ing} ${o} ${t}.`, `${s.s} ${pcNeg(s)} ${a.ing} ${o} ${t}.`, `${cap(s.was)} ${s.q} ${a.ing} ${o} ${t}?`,
-    `${whoIs(s)}+ We were dancing hip hop. − We weren't dancing hip hop. ? Were we dancing hip hop?`);
+    `${whoIs(s)}+ We were dancing hip hop. − We weren't dancing hip hop. ? Were we dancing hip hop?`, o);
 }
 
 /* --- Adverbs of frequency (study guide: always 100%, usually 80%, sometimes 50%, rarely 10%, never 0%) --- */
@@ -1252,8 +1257,8 @@ function evaluate(q, vals){
   const rows = q.rows.map((r,ri) => {
     const cells = r.blanks.map((alts,k) => {
       const v = vals[ri][k] || "";
-      const ok = alts.some(a => norm(a)===norm(v));
-      if(!ok && v.trim() && alts.some(a => norm(a)===norm(fixApos(v)))) apos = true;
+      const ok = alts.some(a => norm(a)===norm(v)) || (!!r.core && coreMatch(v, r.core));
+      if(!ok && v.trim() && (alts.some(a => norm(a)===norm(fixApos(v))) || (!!r.core && coreMatch(fixApos(v), r.core)))) apos = true;
       if(ok && k===0 && r.text.startsWith("___") && /^[a-z]/.test(v.trim())) tips.add("Remember: a sentence starts with a capital letter.");
       return ok;
     });

@@ -414,7 +414,7 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 (()=>{
 /* ---------- WORDS: [word, picture, sentence with ___ ] ---------- */
 const BLOCKS=[
- {id:'b1',name:'Block 1',words:[
+ {id:'b1',name:'Spelling 1',words:[
   ['backpack','🎒','I put my books in my ___.'],
   ['homework','📝','I do my ___ after school.'],
   ['starfish','🌊⭐','A ___ lives in the sea.'],
@@ -425,7 +425,7 @@ const BLOCKS=[
   ['toothbrush','🪥','I clean my teeth with a ___.'],
   ['birthday','🎂','Happy ___ to you!'],
   ['rainbow','🌈','A ___ has many colors.']]},
- {id:'b2',name:'Block 2',words:[
+ {id:'b2',name:'Spelling 2',words:[
   ['airplane','✈️','The ___ flies in the sky.'],
   ['baseball','⚾','We play ___ in the park.'],
   ['goldfish','🐠','My ___ swims in a bowl.'],
@@ -436,7 +436,7 @@ const BLOCKS=[
   ['snowstorm','🌨️','A big ___ brings lots of snow.'],
   ['spaceship','🚀','The ___ flies to the moon.'],
   ['wheelchair','🦽','He rolls to school in his ___.']]},
- {id:'b3',name:'Block 3',words:[
+ {id:'b3',name:'Spelling 3',words:[
   ['coin','🪙','I found a ___ on the floor.'],
   ['join','🤝','Can I ___ your game?'],
   ['point','👉','___ to the red ball.'],
@@ -448,7 +448,7 @@ const BLOCKS=[
   ['joy','😄','She jumped with ___.'],
   ['enjoy','🥳','I ___ reading books.'],
   ['royal','👑','The king lives in a ___ castle.']]},
- {id:'b4',name:'Block 4',words:[
+ {id:'b4',name:'Spelling 4',words:[
   ['happy','😊','I am ___ today!'],
   ['funny','🤣','The clown is so ___.'],
   ['sunny','🌞','It is a ___ day.'],
@@ -461,7 +461,7 @@ const BLOCKS=[
   ['very','💯','The cake is ___ good.'],
   ['silly','🤪','My cat is so ___.'],
   ['lucky','🍀','I found a clover. I am ___!']]},
- {id:'b5',name:'Block 5',words:[
+ {id:'b5',name:'Spelling 5',words:[
   ['armband','⚽','The team captain wears an ___ on her arm.'],
   ['birthplace','🏡','Your ___ is where you were born.'],
   ['cardboard','📦','The box is made of ___.'],
@@ -474,20 +474,7 @@ const BLOCKS=[
   ['smartphone','📱','Mom calls me on her ___.'],
   ['sunburn','🥵','Use sunscreen so you don\'t get a ___.'],
   ['workshop','🔨','Dad fixes things in his ___.']]},
- {id:'b6',name:'Block 6',words:[
-  ['citizen','🏛️','A good ___ helps the town.'],
-  ['determined','💪','She is ___ to finish the race.'],
-  ['fist','✊','Make a ___ with your hand.'],
-  ['proud','🏅','I am ___ of my work.'],
-  ['refugee','🧳','A ___ had to leave home to be safe.'],
-  ['role model','🌟','My teacher is my ___.'],
-  ['unkind','😠','It is ___ to laugh at others.'],
-  ['war','⚔️','Everyone wants peace, not ___.'],
-  ['visit','👵','We ___ Grandma every Sunday.'],
-  ['present','🎁','I got a ___ for my birthday.'],
-  ['meal','🍽️','Breakfast is my favorite ___ of the day.'],
-  ['photos','📸','We took lots of ___ at the beach.']]},
- {id:'b7',name:'Block 7',words:[
+ {id:'b7',name:'Spelling 6',words:[
   ['acorn','🌰','The squirrel eats an ___.'],
   ['bored','🥱','I am ___. There is nothing to do.'],
   ['circus','🎪','We saw clowns at the ___.'],
@@ -499,47 +486,87 @@ const BLOCKS=[
   ['target','🎯','Throw the ball at the ___.'],
   ['trapdoor','🚪','The pirate opened a ___ in the floor.'],
   ['treasure','💰','The pirates found the ___.'],
-  ['worried','😟','Dad is ___ because the dog is lost.']]}
+  ['worried','😟','Dad is ___ because the dog is lost.']]},
+ {id:'b8',name:'Spelling 7',words:[
+  ['cry','😢','Babies ___ when they are hungry.'],
+  ['try','🔁','If you fall, get up and ___ again.'],
+  ['fly','🐦','Birds can ___ high in the sky.'],
+  ['sky','🌤️','The ___ is blue and sunny today.'],
+  ['dry','🧺','Use a towel to ___ your hands.'],
+  ['shy','🙈','The new girl is ___ and speaks very quietly.'],
+  ['reply','💬','Please ___ to my message soon.'],
+  ['deny','🙅','Don\'t ___ it! I saw you eat the cookie.'],
+  ['apply','🧴','___ sunscreen before you go to the beach.'],
+  ['spy','🕵️','The ___ wore dark glasses and watched quietly.'],
+  ['July','📅','My birthday is in ___.'],
+  ['fry','🍳','Mom will ___ the eggs in a pan.']]}
 ];
 BLOCKS.forEach(b=>b.track='spell');
 
-/* ---------- VOCABULARY: [word, picture, meaning] (meanings from class notes) ---------- */
+/* ---------- VOCABULARY (study guide order): [word, picture, meaning, fill-in-the-blank sentence] ---------- */
 const VOCAB=[
- {id:'v1',name:'Vocab 1',track:'vocab',words:[
-  ['buffalo','🦬','A large animal with horns and thick fur. A bison.'],
-  ['flood','🌊','Water covering an area.'],
-  ['hide','🐄','The skin of an animal.'],
-  ['honor','🎖️','Treat someone with respect.'],
-  ['protect','🛡️','Keep someone safe.'],
-  ['shelter','⛺','A safe place for protection.'],
-  ['smoke','💨','White, gray or black gas.'],
-  ['sport','🏈','Fun or amusement. Exercise for the body.']]},
+ {id:'v3',name:'Vocab 1',track:'vocab',words:[
+  ['battle','⚔️','A fight between two groups.','The two armies had a big ___ near the castle.'],
+  ['cheer','📣','A shout for support.','The fans gave a loud ___ when our team scored a goal.'],
+  ['crops','🌽','Plants grown by farmers for food.','The farmers water their ___ every morning.'],
+  ['crowd','👥','A large group of people in one place.','A big ___ came to watch the parade.'],
+  ['knight','🗡️','A soldier who served a king or a queen.','The ___ rode his horse to protect the king.'],
+  ['play','🎭','A performance with actors.','Our class acted in a ___ for the parents.'],
+  ['prize','🏆','A reward for winning.','She won a ___ for the best drawing.'],
+  ['seeds','🌻','Small part of a plant.','We put the ___ in the soil and they grew into plants.']]},
  {id:'v2',name:'Vocab 2',track:'vocab',words:[
-  ['bonfire','🔥','A large outdoor fire.'],
-  ['bucket','🪣','A container for water.'],
-  ['costume','🦸','Clothes we wear to look like something.'],
-  ['flag','🇲🇽','A piece of cloth representing a country.'],
-  ['huge','🐋','Large in size.'],
-  ['mask','👺','A face cover.'],
-  ['parade','🥁','People marching in the streets.']]},
- {id:'v3',name:'Vocab 3',track:'vocab',words:[
-  ['battle','⚔️','A fight between two groups.'],
-  ['cheer','📣','A shout for support.'],
-  ['crop','🌽','Plants grown by farmers for food.'],
-  ['crowd','👥','A large group of people in one place.'],
-  ['knight','🗡️','A soldier who served a king or a queen.'],
-  ['play','🎭','A performance with actors.'],
-  ['prize','🏆','A reward for winning.'],
-  ['seeds','🌻','Small part of a plant.']]},
- {id:'v4',name:'Vocab 4',track:'vocab',words:[
-  ['citizen','🏛️','A person who belongs to a country.'],
-  ['determined','💪','Wanting something very much.'],
-  ['fist','✊','A closed hand.'],
-  ['proud','🏅','Feeling happy about something done.'],
-  ['refugee','🧳','A person who leaves their country because of danger.'],
-  ['role model','🌟','Someone you admire and want to be like.'],
-  ['unkind','😠','Not nice.'],
-  ['war','🪖','Conflict between nations.']]}
+  ['bonfire','🔥','A large outdoor fire.','At camp we sat around the ___ and roasted marshmallows.'],
+  ['bucket','🪣','A container for water.','I carried water to the garden in a ___.'],
+  ['costume','🦸','Clothes we wear to look like something.','I wore a pirate ___ on Halloween.'],
+  ['flag','🇲🇽','A piece of cloth representing a country.','The Mexican ___ is green, white and red.'],
+  ['huge','🐋','Large in size.','An elephant is not small. It is ___!'],
+  ['mask','👺','A face cover.','He wore a ___ on his face, so nobody knew who he was.'],
+  ['parade','🥁','People marching in the streets.','The band marched down the street in the ___.']]},
+ {id:'v5',name:'Vocab 3',track:'vocab',words:[
+  ['do your homework','📝','Finish the school work the teacher gives you for home.','The teacher gave us math exercises for home. Before you play, you must ___.'],
+  ['get ready for school','👕','Wash, get dressed and eat breakfast before school.','Before I go to school, I ___: I wash, get dressed and eat breakfast.'],
+  ['go to school','🏫','Travel to school to learn.','We ___ from Monday to Friday to learn with our teacher.'],
+  ['pack your bag','🎒','Put your books and things in your backpack.','Don\'t forget to ___ with your books and pencils.'],
+  ['study for the test','📖','Read and practice to get ready for a test.','Tomorrow is the English exam, so tonight I will ___.']]},
+ {id:'v6',name:'Vocab 4',track:'vocab',words:[
+  ['watch fireworks','🎆','Look at bright lights that burst in the night sky.','On New Year\'s night we ___ that light up the sky.'],
+  ['visit friends and family','🏡','Go to see the people you love.','On holidays we ___ who live far away.'],
+  ['give presents','🎁','Give gifts to other people.','On birthdays we ___ wrapped in pretty paper.'],
+  ['make a meal','🍲','Cook food to eat.','Dad is in the kitchen. He will ___ for the whole family.'],
+  ['take photos','📸','Make pictures with a camera.','Smile! I want to ___ with my camera.']]},
+ {id:'v1',name:'Vocab 5',track:'vocab',words:[
+  ['buffalo','🦬','A large animal with horns and thick fur. A bison.','The ___ was eating grass on the plains.'],
+  ['flood','🌊','Water covering an area.','It rained for three days and there was a ___ in the town.'],
+  ['hide','🐄','The skin of an animal.','They made a warm blanket from the buffalo ___.'],
+  ['honor','🎖️','Treat someone with respect.','We ___ our grandparents when we listen to them and respect them.'],
+  ['protect','🛡️','Keep someone safe.','Wear a helmet to ___ your head.'],
+  ['shelter','⛺','A safe place for protection.','During the storm, the dog found ___ under the table.'],
+  ['smoke','💨','White, gray or black gas.','Black ___ came out of the chimney.'],
+  ['sport','🏈','Fun or amusement. Exercise for the body.','Soccer is my favorite ___.']]},
+ {id:'v4',name:'Vocab 6',track:'vocab',words:[
+  ['citizen','🏛️','A person who belongs to a country.','I was born in Mexico, so I am a Mexican ___.'],
+  ['determined','💪','Wanting something very much.','She was ___ to win the race, so she trained every day.'],
+  ['fist','✊','A closed hand.','He closed his hand and made a ___.'],
+  ['proud','🏅','Feeling happy about something done.','I got a 10 on my test. I feel so ___!'],
+  ['refugee','🧳','A person who leaves their country because of danger.','The ___ left her country because of the war.'],
+  ['role model','🌟','Someone you admire and want to be like.','My mom is my ___. I want to be like her.'],
+  ['unkind','😠','Not nice.','Laughing at others is ___.'],
+  ['war','🪖','Conflict between nations.','The two countries fought a long ___.']]},
+ {id:'v7',name:'Vocab 7',track:'vocab',words:[
+  ['angry','😡','Feeling mad.','My brother broke my toy on purpose. I am so ___ that my face is red!'],
+  ['worried','😟','Afraid that something bad will happen.','Mom can\'t find the dog. She is ___ that it is lost.'],
+  ['surprised','😮','Feeling something you did not expect.','I didn\'t know about the party. I opened the door and everyone shouted SURPRISE! I was so ___!'],
+  ['scared','😱','Feeling afraid.','There is a big spider on my bed! I am ___ of it.'],
+  ['tired','😴','Needing rest or sleep.','I ran all day and now I need to sleep. I am ___.'],
+  ['excited','🤩','Very happy about something that is coming.','Tomorrow we go to the theme park! We can\'t wait. We are so ___!'],
+  ['bored','🥱','Feeling that nothing is fun to do.','There is nothing to do and nothing is fun. I am ___.']]},
+ {id:'v8',name:'Vocab 8',track:'vocab',words:[
+  ['be born','🐣','Come into the world as a baby.','When the egg opens, the baby chick will ___.'],
+  ['get a job','💼','Start working to earn money.','When I grow up, I want to ___ as a vet.'],
+  ['get married','💒','Become husband and wife.','My aunt is wearing a white dress. Today she will ___!'],
+  ['graduate','🎓','Finish school and get a diploma.','My cousin finished university. Tomorrow she will ___.'],
+  ['have children','👶','Become a mom or a dad.','My uncle and aunt want to ___. They want a baby!'],
+  ['start school','🖍️','Go to school for the first time.','My little brother is three. This year he will ___.']]}
 ];
 const BASE=BLOCKS.concat(VOCAB);
 const TRACK_NAME={spell:'Spelling',vocab:'Vocabulary'};
@@ -602,7 +629,7 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0)}
 const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,track:c.track||'spell',words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
 const keyOf=(b,w)=>b.track==='vocab'?'v:'+w:w;
-const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',block:b.id})));
+const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s,c])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',ctx:b.track==='vocab'?(c||''):'',block:b.id})));
 const plain=k=>k.replace(/^v:/,'');
 const st=(k,p=me())=>p.words[k]||{box:0,r:0,w:0,seen:0};
 const starHTML=n=>[0,1,2].map(i=>`<span class="${i<n?'on':'off'}">★</span>`).join('');
@@ -676,7 +703,7 @@ function renderPractice(){
   const sec=(track,title,note)=>{
     const tr=trickyWords(track),bl=allBlocks(track);if(!bl.length)return'';
     let h=`<h3 class="sec-title">${title}<small>${note}</small></h3><div class="cards">`;
-    if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match each word with its meaning, like the vocabulary quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
+    if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match words with meanings and fill in the blanks, like the quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
     if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
     h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
       return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
@@ -689,7 +716,7 @@ function renderLook(id){
   lookBlock=id;const b=allBlocks().find(x=>x.id===id);if(!b)return renderPractice();
   $('#look-title').textContent=b.name;
   const vocab=b.track==='vocab';
-  $('#look-list').innerHTML=b.words.map(([w,e,s])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}" data-def="${vocab?esc(s):''}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${s?`<span class="look-sent">${esc(vocab?s:s.replace('___',w))}</span>`:''}</span></button>`).join('');
+  $('#look-list').innerHTML=b.words.map(([w,e,s,c])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}" data-def="${vocab?esc(s):''}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${s?`<span class="look-sent">${esc(vocab?s:s.replace('___',w))}</span>`:''}${vocab&&c?`<span class="look-sent"><i>${esc(c.replace('___',w))}</i></span>`:''}</span></button>`).join('');
   show('s-look');
 }
 const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice')};
@@ -707,10 +734,12 @@ const OWL={
   soso:['Good try!','Nice work! Look at it again.','Almost! We will try it again soon.'],
   oops:['Oops! Try another letter.','Hmm, not that one.','Try again!','Look closely!'],
   help:['Here is a little help!','I will help you!'],
+  context:['Read the sentence. Which word fits?','Fill in the blank!'],
+  pickspell:['Look closely at the letters!','Which one is spelled right?'],
   match:['Which word matches?','Read the meaning. Find the word!'],
   meaning:['What does it mean?','Find the right meaning!'],
   nope:['Not that one. Try again!','Hmm, read it again.','Almost! Try another one.']};
-const INST={match:'Tap the word that matches the meaning.',meaning:'Tap the right meaning.',scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
+const INST={context:'Tap the word that fits in the blank.',pickspell:'Which one is spelled right? Tap it.',match:'Tap the word that matches the meaning.',meaning:'Tap the right meaning.',scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
 function owl(t){$('#owl-msg').textContent=t}
 
 function start(kind,list,levelId,replay,from){
@@ -721,12 +750,14 @@ function start(kind,list,levelId,replay,from){
 }
 function chooseMode(w,tries){
   if(w.def&&canChoose(w)){
-    const pickChoice=()=>Math.random()<.6?'match':'meaning';
+    const pickChoice=()=>{const r=Math.random();if(w.ctx&&r<.35)return'context';return r<.7?'match':'meaning'};
     if(S.kind==='match')return pickChoice();
-    if(tries>0)return'match';
-    const bx=st(w.key).box,chance=bx<=1?.7:bx<=3?.5:.4;
+    if(tries>0)return w.ctx&&Math.random()<.5?'context':'match';
+    const bx=st(w.key).box,chance=w.word.length>12?.85:bx<=1?.7:bx<=3?.5:.4;
     if(Math.random()<chance)return pickChoice();
+    if(w.word.length>12)return'fill1';
   }
+  if(!w.def&&tries===0&&Math.random()<.25&&misspellings(w.word).length>=2)return'pickspell';
   let b=st(w.key).box;
   if(S.kind==='mix')b+=1;
   if(S.kind==='final')b=Math.max(b,2)+1;
@@ -735,9 +766,24 @@ function chooseMode(w,tries){
   if(b<=0)return'scramble';if(b===1)return r?'scramble':'fill1';if(b===2)return r?'fill1':'fill2';if(b===3)return r?'fill2':'spell';return'spell';
 }
 function vocabWithDefs(){return allBlocks('vocab').flatMap(b=>b.words.map(x=>({word:x[0],def:x[2],block:b.id}))).filter(x=>x.def)}
+const CHOICE=['match','meaning','context','pickspell'];
 function canChoose(w){return vocabWithDefs().filter(x=>x.word!==w.word).length>=2}
+function misspellings(word){
+  const L=word.toLowerCase(),cap=word[0]!==L[0],V={a:'e',e:'i',i:'e',o:'u',u:'o'};
+  const rule=[x=>x.replace(/y$/,'ie'),x=>x.replace(/y$/,'i'),x=>x.replace(/y$/,'ey'),x=>x.replace(/oy/,'oi'),x=>x.replace(/oi/,'oy'),
+    x=>x.replace(/([bcdfglmnprst])\1/,'$1'),x=>x.replace(/([aeiou])([bcdfglmnprt])([aeiouy])/,'$1$2$2$3'),x=>x.replace(/ea/,'ee'),x=>x.replace(/ou/,'ow'),
+    x=>x.replace(/igh/,'i'),x=>x.replace(/ck/,'k'),x=>x.replace(/ur/,'er'),x=>x.replace(/ir/,'ur'),x=>x.replace(/ai/,'ay'),x=>x.replace(/ow/,'ou'),x=>x.replace(/ee/,'ea'),x=>x.replace(/ph/,'f')];
+  const rnd=[x=>{const i=1+Math.floor(Math.random()*(x.length-2));return x.slice(0,i)+x.slice(i+1)},
+    x=>{const i=1+Math.floor(Math.random()*(x.length-2));return x.slice(0,i)+x[i+1]+x[i]+x.slice(i+2)},
+    x=>{const ix=[...x].map((c,i)=>V[c]?i:-1).filter(i=>i>=0);if(!ix.length)return x;const i=rand(ix);return x.slice(0,i)+V[x[i]]+x.slice(i+1)}];
+  const out=[];const add=v=>{if(v&&v!==L&&v.length>=2&&!/\s{2}/.test(v)&&!out.includes(v))out.push(v)};
+  shuffle(rule.slice()).forEach(f=>add(f(L)));
+  for(let k=0;k<12&&out.length<4;k++)add(rand(rnd)(L));
+  return shuffle(out).slice(0,2).map(v=>cap?v[0].toUpperCase()+v.slice(1):v);
+}
 function makeOpts(w,mode){
-  const n=mode==='match'?4:3,all=vocabWithDefs().filter(x=>x.word!==w.word&&x.def!==w.def);
+  if(mode==='pickspell')return shuffle(misspellings(w.word).map(x=>({word:x})).concat([{word:w.word}]));
+  const n=mode==='meaning'?3:4,all=vocabWithDefs().filter(x=>x.word!==w.word&&x.def!==w.def);
   const same=shuffle(all.filter(x=>x.block===w.block)),other=shuffle(all.filter(x=>x.block!==w.block));
   const seen=new Set([w.word]),pick=[];
   for(const x of same.concat(other)){if(pick.length>=n-1)break;if(!seen.has(x.word)){seen.add(x.word);pick.push(x)}}
@@ -745,7 +791,7 @@ function makeOpts(w,mode){
 }
 function buildQ(it){
   const w=it.w,letters=[...w.word],mode=chooseMode(w,it.tries);
-  if(mode==='match'||mode==='meaning')return{it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
+  if(CHOICE.includes(mode))return{it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
   const idx=letters.map((c,i)=>i).filter(i=>letters[i]!==' ');
   let hidden;
   if(mode==='scramble'||mode==='spell')hidden=idx;
@@ -762,14 +808,14 @@ function nextQ(){
   $('#g-bar').style.width=(Object.keys(S.first).length/S.uniq*100)+'%';
   $('#g-pts').textContent=me().points;
   const sk=$('#g-streak');sk.hidden=S.streak<2;sk.textContent=`🔥 ${S.streak} in a row!`;
-  $('#q-emoji').textContent=Q.opts?'🤔':Q.w.emoji;
+  $('#q-emoji').textContent=Q.opts&&Q.mode!=='pickspell'?'🤔':Q.w.emoji;
   const qs=$('#q-sent');qs.classList.toggle('is-def',!!Q.w.def);
-  qs.innerHTML=Q.mode==='meaning'?`<span class="def-label">Word</span>What does this word mean?`:Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
+  qs.innerHTML=Q.mode==='meaning'?`<span class="def-label">Word</span>What does this word mean?`:Q.mode==='context'?`<span class="def-label">Fill in the blank</span>${esc(Q.w.ctx).replace('___','<span class="blank">?</span>')}`:Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
   $('#q-inst').textContent=INST[Q.mode];
   $('#hint-btn').disabled=false;
   $('#feedback').hidden=true;$('#input').hidden=false;
   renderSlots();renderInput();owl(rand(OWL[Q.mode]));
-  say(Q.mode==='match'?Q.w.def:Q.w.word);
+  say(Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word);
 }
 function renderSlots(){
   if(Q.opts){const el=$('#slots');el.className='slots';el.innerHTML=(Q.mode==='meaning'||Q.done)?`<span class="choice-word">${esc(Q.w.word)}</span>`:'';return}
@@ -783,12 +829,12 @@ function renderSlots(){
 const KB=['qwertyuiop','asdfghjkl','zxcvbnm'];
 function renderInput(){
   const el=$('#input');
-  if(Q.opts){el.innerHTML=`<div class="opts ${Q.mode}">`+Q.opts.map((o,j)=>`<button class="opt" data-act="opt" data-j="${j}">${esc(Q.mode==='match'?o.word:o.def)}</button>`).join('')+'</div>';return}
+  if(Q.opts){el.innerHTML=`<div class="opts ${Q.mode}">`+Q.opts.map((o,j)=>`<button class="opt" data-act="opt" data-j="${j}">${esc(Q.mode==='meaning'?o.def:o.word)}</button>`).join('')+'</div>';return}
   if(Q.mode==='scramble')el.innerHTML='<div class="tiles">'+Q.tiles.map((t,j)=>`<button class="tile" data-act="tile" data-j="${j}">${esc(t.c)}</button>`).join('')+'</div>';
   else el.innerHTML=KB.map(r=>'<div class="kb-row">'+[...r].map(k=>`<button class="key" data-act="key" data-k="${k}">${k}</button>`).join('')+'</div>').join('');
 }
 function clearGlow(){document.querySelectorAll('.glow').forEach(e=>e.classList.remove('glow'))}
-function glow(c){clearGlow();const el=Q.mode==='scramble'?[...document.querySelectorAll('.tile')].find(t=>!t.classList.contains('used')&&t.textContent===c):document.querySelector(`.key[data-k="${c}"]`);if(el)el.classList.add('glow')}
+function glow(c){clearGlow();const el=Q.mode==='scramble'?[...document.querySelectorAll('.tile')].find(t=>!t.classList.contains('used')&&t.textContent===c):document.querySelector(`.key[data-k="${c.toLowerCase()}"]`);if(el)el.classList.add('glow')}
 function pickOpt(j,el){
   if(!Q||Q.done||!Q.opts||el.disabled)return;
   if(Q.opts[j].word===Q.w.word){el.classList.add('right');sBlip();complete()}
@@ -797,8 +843,8 @@ function pickOpt(j,el){
 function press(c,el){
   if(!Q||Q.done||Q.opts)return;
   const pos=Q.hidden[Q.cur],want=Q.letters[pos];
-  if(c===want){
-    Q.filled[pos]=c;Q.cur++;Q.wrongHere=0;
+  if(c.toLowerCase()===want.toLowerCase()){
+    c=want;Q.filled[pos]=c;Q.cur++;Q.wrongHere=0;
     if(Q.mode==='scramble'){if(!el||el.textContent!==c)el=[...document.querySelectorAll('.tile')].find(t=>!t.classList.contains('used')&&t.textContent===c);if(el){el.classList.add('used');Q.tiles[+el.dataset.j].used=true}}
     clearGlow();sBlip();renderSlots();
     if(Q.cur>=Q.hidden.length)complete();
@@ -998,7 +1044,7 @@ const acts={
   tile:b=>{if(!b.classList.contains('used'))press(b.textContent,b)},
   key:b=>press(b.dataset.k,b),
   hint:()=>hint(),
-  hear:()=>Q&&say(Q.mode==='match'?Q.w.def:Q.w.word,.7),
+  hear:()=>Q&&say(Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word,.7),
   opt:b=>pickOpt(+b.dataset.j,b),
   matchblock:b=>playMatch([b.dataset.b]),
   matchall:()=>playMatch(allBlocks('vocab').map(x=>x.id),10),

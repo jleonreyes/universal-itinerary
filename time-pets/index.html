@@ -674,6 +674,33 @@ function makeSet(gen, n){
 }
 const mixGen = (...gens) => () => R(gens)();
 
+/* --- Adverbs of frequency (study guide: always 100%, usually 80%, sometimes 50%, rarely 10%, never 0%) --- */
+const ADV = [{w:"always",p:"100%"},{w:"usually",p:"80%"},{w:"sometimes",p:"50%"},{w:"rarely",p:"10%"},{w:"never",p:"0%"}];
+const ADV_H = "always 100% · usually 80% · sometimes 50% · rarely 10% · never 0%.";
+const ADV_POS = "The adverb goes before the verb: I always do my homework.";
+const advOpts = (A, key, n=3) => [A[key], ...shuffle(ADV.filter(x => x!==A)).slice(0,n-1).map(x => x[key])];
+function advPercent(){
+  const {a,s,o} = pair(null,{bias:1}); const A = R(ADV);
+  return Qc({key:"ap"+s.s+a.v+A.w, prompt:"How often? Look at the percent. Choose the adverb.", text:`${s.s} ___ ${pres(a,s)} ${o}.`, cue:`(${A.p})`, options:advOpts(A,"w"), answers:[A.w], show:A.w, hint:ADV_H});
+}
+function advMeaning(){
+  const A = R(ADV);
+  return Qc({key:"am"+A.w+Math.random(), prompt:"How often is it? Choose the percent.", text:`${cap(A.w)} = ___`, options:advOpts(A,"p",4), answers:[A.p], show:A.p, hint:ADV_H});
+}
+function advOrder(){
+  const {a,s,o} = pair(null,{bias:1}); const A = R(ADV), v = pres(a,s);
+  const ok = `${s.s} ${A.w} ${v} ${o}.`;
+  return Qc({key:"ao"+ok, prompt:"Which sentence is correct?", text:`Where does “${A.w}” go?`, options:[ok, `${s.s} ${v} ${A.w} ${o}.`, `${s.s} ${v} ${o} ${A.w}.`], answers:[ok], show:ok, hint:ADV_POS});
+}
+function advWrite(){
+  const {a,s,o} = pair(null,{bias:1}); const A = R(ADV);
+  return W1("Look at the percent. Write the adverb.", `${s.s} ___ ${pres(a,s)} ${o}.`, [A.w], ADV_H, `(${A.p})`);
+}
+function advVerb(){
+  const {a,s,o} = pair(null,{bias:1}); const A = R(ADV);
+  return Qw({prompt:"Write the adverb and the verb.", rows:[{text:`${s.s} ___ ___ ${o}.`, blanks:[[A.w],[pres(a,s)]]}], cue:`(${A.p} · ${a.v})`, hint:`${ADV_H} ${H.third(a,s)}`});
+}
+
 const ERAS = [
   {id:"dino", name:"Dino Valley", topic:"Pronouns & Verb To Be", year:"66 million years ago", hat:"shell", hatName:"Eggshell Cap",
     levels:[{n:"Pronouns", make:()=>makeSet(pronChoose,8)}, {n:"To be: choose", make:()=>makeSet(beChoose,8)}, {n:"To be: write", make:()=>[beGrid(), ...makeSet(mixGen(beWrite,pronWrite),6)]}],
@@ -681,7 +708,10 @@ const ERAS = [
   {id:"egypt", name:"Pyramid Sands", topic:"Simple Present", year:"2560 BC", hat:"nemes", hatName:"Pharaoh Headdress",
     levels:[{n:"Conjugate", make:()=>makeSet(presConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(presChoose,presAB),8)}, {n:"Do · Does · Don't · Doesn't", make:()=>makeSet(doChoose,8)}, {n:"Write", make:()=>makeSet(presWrite,8)}, {n:"Negative & ?", make:()=>makeSet(presFlip,5)}, {n:"Rewrite", make:()=>makeSet(presRewrite,6)}],
     boss:()=>[...makeSet(presChoose,3), ...makeSet(doChoose,2), ...makeSet(presWrite,3), ...makeSet(mixGen(presFlip,presRewrite),1)]},
-  {id:"castle", name:"Castle Hill", topic:"Present Continuous", year:"1250 AD", hat:"crown", hatName:"Royal Crown",
+  {id:"clock", after:"egypt", name:"Clock Tower", topic:"Adverbs of Frequency", year:"1859", hat:"tophat", hatName:"Top Hat",
+    levels:[{n:"How often?", make:()=>makeSet(mixGen(advPercent,advMeaning),8)}, {n:"Where does it go?", make:()=>makeSet(advOrder,6)}, {n:"Write", make:()=>makeSet(advWrite,8)}, {n:"Adverb + verb", make:()=>makeSet(advVerb,6)}],
+    boss:()=>[...makeSet(advPercent,3), ...makeSet(advMeaning,2), ...makeSet(advOrder,2), ...makeSet(advWrite,2), ...makeSet(advVerb,1)]},
+  {id:"castle", after:"egypt", name:"Castle Hill", topic:"Present Continuous", year:"1250 AD", hat:"crown", hatName:"Royal Crown",
     levels:[{n:"Conjugate", make:()=>makeSet(contConj,3)}, {n:"Choose", make:()=>makeSet(mixGen(contChoose,contAB),8)}, {n:"Write", make:()=>makeSet(contWrite,8)}, {n:"Negative & ?", make:()=>makeSet(contFlip,5)}, {n:"Rewrite", make:()=>makeSet(contRewrite,6)}],
     boss:()=>[...makeSet(contChoose,5), ...makeSet(contWrite,3), ...makeSet(contFlip,1)]},
   {id:"pirates", name:"Pirate Cove", topic:"Verbs: Present · Past · Past Participle", year:"1715", hat:"pirate", hatName:"Pirate Hat",
@@ -780,6 +810,7 @@ function hatSVG(id){
     case "crown": return '<path d="M70 84 L68 50 L84 66 L100 44 L116 66 L132 50 L130 84 Z" fill="#F7C948" stroke="#A97A12" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="72" r="5" fill="#D9434B"/><circle cx="83" cy="76" r="4" fill="#3A7FC0"/><circle cx="117" cy="76" r="4" fill="#3A7FC0"/>';
     case "pirate": return '<path d="M48 86 Q100 28 152 86 Q100 70 48 86Z" fill="#2B2D3A" stroke="#15161F" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="64" r="7" fill="#fff"/><circle cx="97.5" cy="63" r="1.6" fill="#2B2D3A"/><circle cx="102.5" cy="63" r="1.6" fill="#2B2D3A"/>';
     case "cowboy": return '<path d="M74 84 Q72 48 100 54 Q128 48 126 84 Z" fill="#B06F3C" stroke="#6E3D1A" stroke-width="3"/><rect x="75" y="72" width="50" height="8" fill="#5A3417"/><ellipse cx="100" cy="86" rx="58" ry="10" fill="#9A5B2E" stroke="#6E3D1A" stroke-width="3"/>';
+    case "tophat": return '<rect x="72" y="34" width="56" height="48" rx="4" fill="#2B2D3A" stroke="#15161F" stroke-width="3"/><rect x="72" y="66" width="56" height="9" fill="#D9434B"/><ellipse cx="100" cy="84" rx="44" ry="8" fill="#2B2D3A" stroke="#15161F" stroke-width="3"/><circle cx="118" cy="70" r="5" fill="#F7C948"/>';
     case "helmet": return '<circle cx="100" cy="100" r="78" fill="#BEE1FF55" stroke="#BFDFFF" stroke-width="5"/><path d="M48 62 Q64 36 92 30" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".8"/><line x1="100" y1="22" x2="100" y2="6" stroke="#BFDFFF" stroke-width="4"/><circle cx="100" cy="5" r="6" fill="#D9434B"/>';
   }
   return "";
@@ -879,6 +910,7 @@ function scene(id){
     case "egypt": return W+'<rect width="400" height="220" fill="#FFE6A6"/><circle cx="70" cy="56" r="28" fill="#FFF6D6"/><path d="M150 180 L238 68 L326 180Z" fill="#D9A54C"/><path d="M238 68 L326 180 L276 180Z" fill="#BE8832"/><path d="M58 180 L115 108 L172 180Z" fill="#E2B35E"/><path d="M115 108 L172 180 L142 180Z" fill="#C79842"/><rect y="172" width="400" height="48" fill="#E9C277"/><path d="M0 192 Q100 180 200 192 T400 186 V220 H0Z" fill="#DBAE62"/></svg>';
     case "castle": return W+'<rect width="400" height="220" fill="#BFE3FF"/><ellipse cx="80" cy="48" rx="34" ry="12" fill="#fff"/><ellipse cx="310" cy="36" rx="28" ry="10" fill="#fff"/><path d="M0 182 Q200 132 400 182 V220 H0Z" fill="#79B95B"/><g fill="#AAB3C7" stroke="#6E7891" stroke-width="2"><rect x="150" y="92" width="100" height="72"/><rect x="128" y="66" width="34" height="98"/><rect x="238" y="66" width="34" height="98"/><rect x="128" y="56" width="8" height="10"/><rect x="141" y="56" width="8" height="10"/><rect x="154" y="56" width="8" height="10"/><rect x="238" y="56" width="8" height="10"/><rect x="251" y="56" width="8" height="10"/><rect x="264" y="56" width="8" height="10"/></g><path d="M185 164 V134 Q200 118 215 134 V164Z" fill="#4C5468"/><line x1="145" y1="56" x2="145" y2="30" stroke="#4C5468" stroke-width="3"/><path d="M145 30 L166 36 L145 42Z" fill="#D9434B"/></svg>';
     case "pirates": return W+'<rect width="400" height="220" fill="#A9E2F2"/><circle cx="340" cy="46" r="24" fill="#FFF3C4"/><rect y="150" width="400" height="70" fill="#2C8FB8"/><path d="M0 160 Q25 150 50 160 T100 160 T150 160 T200 160 T250 160 T300 160 T350 160 T400 160" stroke="#BDE8F5" stroke-width="4" fill="none"/><path d="M110 150 L290 150 L268 182 L132 182Z" fill="#8A5A2B" stroke="#5A3417" stroke-width="3"/><line x1="200" y1="150" x2="200" y2="44" stroke="#5A3417" stroke-width="5"/><path d="M204 54 Q250 92 204 132Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M196 58 Q156 94 196 130Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M200 44 L226 50 L200 58Z" fill="#2B2D3A"/></svg>';
+    case "clock": return W+'<rect width="400" height="220" fill="#C9D8F2"/><ellipse cx="90" cy="46" rx="36" ry="11" fill="#fff"/><ellipse cx="320" cy="64" rx="30" ry="10" fill="#fff"/><rect x="40" y="132" width="70" height="48" fill="#B7A48C"/><rect x="290" y="126" width="80" height="54" fill="#B7A48C"/><g stroke="#6E5A44" stroke-width="2"><rect x="168" y="70" width="64" height="110" fill="#D8C09A"/><path d="M162 70 L200 24 L238 70Z" fill="#5C6E8C"/></g><circle cx="200" cy="100" r="22" fill="#FFF9EC" stroke="#6E5A44" stroke-width="3"/><line x1="200" y1="100" x2="200" y2="85" stroke="#2B2D3A" stroke-width="3" stroke-linecap="round"/><line x1="200" y1="100" x2="212" y2="106" stroke="#2B2D3A" stroke-width="3" stroke-linecap="round"/><rect x="190" y="146" width="20" height="34" rx="10" fill="#6E5A44"/><rect y="176" width="400" height="44" fill="#8CBF6A"/></svg>';
     case "west": return W+'<rect width="400" height="220" fill="#FFC49B"/><circle cx="200" cy="96" r="44" fill="#FFE1B0"/><path d="M0 150 L30 150 L44 108 L130 108 L146 150 L400 150 V220 H0Z" fill="#C0663E"/><path d="M260 150 L272 124 L330 124 L344 150Z" fill="#B05A35"/><rect y="164" width="400" height="56" fill="#E2A266"/><g fill="#3F9B5C"><rect x="318" y="112" width="16" height="64" rx="8"/><rect x="300" y="128" width="12" height="28" rx="6"/><rect x="300" y="148" width="22" height="10" rx="5"/><rect x="340" y="120" width="12" height="26" rx="6"/><rect x="330" y="138" width="22" height="10" rx="5"/></g></svg>';
     case "space": return W+'<rect width="400" height="220" fill="#1B2350"/>'+stars+'<circle cx="310" cy="64" r="28" fill="#F5C84C"/><ellipse cx="310" cy="64" rx="48" ry="10" fill="none" stroke="#FFE3A0" stroke-width="4" transform="rotate(-14 310 64)"/><circle cx="70" cy="58" r="14" fill="#6BB7F2"/><path d="M62 52 q6 -4 10 2 q4 6 -4 8z" fill="#7FB24A"/><ellipse cx="200" cy="232" rx="300" ry="70" fill="#A9AFC7"/><ellipse cx="120" cy="190" rx="22" ry="6" fill="#8A90A8"/><ellipse cx="280" cy="198" rx="30" ry="7" fill="#8A90A8"/></svg>';
   }
@@ -906,7 +938,8 @@ function tone(fs){
 
 /* ---------------- progress ---------------- */
 const prog = (p,id) => { p.progress = p.progress || {}; return p.progress[id] = p.progress[id] || {l:[], boss:0}; };
-const eraOpen = (p,i) => i===0 || prog(p, ERAS[i-1].id).boss >= 7;
+const eraBefore = i => ERAS.find(x => x.id===ERAS[i].after) || ERAS[i-1];
+const eraOpen = (p,i) => i===0 || prog(p, eraBefore(i).id).boss >= 7;
 const levelOpen = (p,i,l) => eraOpen(p,i) && (l===0 || (prog(p, ERAS[i].id).l[l-1]||0) >= 1);
 const bossOpen = (p,i) => eraOpen(p,i) && (prog(p, ERAS[i].id).l[ERAS[i].levels.length-1]||0) >= 1;
 
@@ -974,6 +1007,9 @@ const RULES = {
     {t:"Affirmative (+)", rows:[["I","<b>am</b> play<b>ing</b>"],["You","<b>are</b> play<b>ing</b>"],["He","<b>is</b> play<b>ing</b>"],["She","<b>is</b> play<b>ing</b>"],["It","<b>is</b> play<b>ing</b>"],["We","<b>are</b> play<b>ing</b>"],["They","<b>are</b> play<b>ing</b>"]]},
     {t:"Negative (−)", rows:[["I","<b>am not</b> playing"],["You","<b>aren't</b> playing"],["He","<b>isn't</b> playing"],["She","<b>isn't</b> playing"],["It","<b>isn't</b> playing"],["We","<b>aren't</b> playing"],["They","<b>aren't</b> playing"]]},
     {t:"Question (?)", rows:[["<b>Am</b>","I playing?"],["<b>Are</b>","you playing?"],["<b>Is</b>","he playing?"],["<b>Is</b>","she playing?"],["<b>Is</b>","it playing?"],["<b>Are</b>","we playing?"],["<b>Are</b>","they playing?"]], q:1}]},
+  clock:{rules:["always 100% · usually 80% · sometimes 50% · rarely 10% · never 0%","The adverb goes before the verb.","He, she, it → the verb still takes -s: She rarely gets in trouble."], cols:[
+    {t:"How often?", rows:[["<b>always</b>","100%"],["<b>usually</b>","80%"],["<b>sometimes</b>","50%"],["<b>rarely</b>","10%"],["<b>never</b>","0%"]]},
+    {t:"Examples", rows:[["I","<b>always</b> do my homework."],["He","<b>usually</b> takes the bus to school."],["You","<b>sometimes</b> eat pizza."],["She","<b>rarely</b> gets in trouble."],["We","<b>never</b> go to the moon."]]}]},
   west:{rules:["Affirmative: subject + past form (played, went)","Negative: didn't + verb","Question: Did + subject + verb?"], cols:[
     {t:"Affirmative (+)", rows:[["I","play<b>ed</b>"],["You","play<b>ed</b>"],["He","play<b>ed</b>"],["She","play<b>ed</b>"],["It","play<b>ed</b>"],["We","play<b>ed</b>"],["They","play<b>ed</b>"]]},
     {t:"Negative (−)", rows:[["I","<b>didn't</b> play"],["You","<b>didn't</b> play"],["He","<b>didn't</b> play"],["She","<b>didn't</b> play"],["It","<b>didn't</b> play"],["We","<b>didn't</b> play"],["They","<b>didn't</b> play"]]},
@@ -1001,7 +1037,7 @@ function mapHTML(){
     const lv = e.levels.map((L,l) => `<button class="lvb" data-act="play" data-e="${i}" data-l="${l}" ${levelOpen(p,i,l)?"":"disabled"}>${l+1}. ${L.n}${stars(pr.l[l]||0)}</button>`).join("");
     const boss = `<button class="lvb boss" data-act="play" data-e="${i}" data-l="-1" ${bossOpen(p,i)?"":"disabled"}>Time Quiz<span style="font-size:13px">${pr.boss?`best ${pr.boss}/10`:"need 7/10"}</span></button>`;
     const here = p.era===e.id ? `<span class="mini">${petSVG(p,"idle")}</span>` : "";
-    track += `${i?'<div class="link" aria-hidden="true"><span></span></div>':""}<div class="era ${open?"":"locked"}"><div class="thumb">${scene(e.id)}${here}</div><div class="body"><div><h3>${e.name}</h3><div class="year">${e.year}</div></div><div class="topic">${e.topic}</div>${open?`<div><button class="btn small white" data-act="learn" data-e="${i}">Remember!</button></div><div class="lv">${lv}${boss}</div>`:`<div class="muted">Get 7 or more in the ${ERAS[i-1].name} Time Quiz to travel here.</div>`}</div></div>`;
+    track += `${i?'<div class="link" aria-hidden="true"><span></span></div>':""}<div class="era ${open?"":"locked"}"><div class="thumb">${scene(e.id)}${here}</div><div class="body"><div><h3>${e.name}</h3><div class="year">${e.year}</div></div><div class="topic">${e.topic}</div>${open?`<div><button class="btn small white" data-act="learn" data-e="${i}">Remember!</button></div><div class="lv">${lv}${boss}</div>`:`<div class="muted">Get 7 or more in the ${eraBefore(i).name} Time Quiz to travel here.</div>`}</div></div>`;
   });
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>

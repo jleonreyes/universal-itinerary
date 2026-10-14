@@ -740,10 +740,10 @@ const OUTFITS = [
   {n:12, id:"monster", name:"Monster costume"},
   {n:15, id:"mardi", name:"Mardi Gras costume"},
   {n:18, id:"striped", name:"Tall striped hat"},
-  {n:24, id:"furry", name:"Furry explorer suit"}
+  {n:21, id:"furry", name:"Furry explorer suit"}
 ];
 const OUTFIT_HEAD = {plumber:1, monster:1, mardi:1, striped:1, furry:1};
-const SWIRL_AT = 21;
+const SWIRL_AT = 20;
 const swirlOn = p => threes(p) >= SWIRL_AT && !(p.off||[]).includes("swirl");
 const threes = p => p.threes || 0;
 const nextOutfit = p => OUTFITS.find(o => o.n > threes(p));
@@ -799,7 +799,7 @@ function petSVG(p, mood){
   if(has("aura")) g += `<circle class="aura" cx="100" cy="112" r="92" fill="none" stroke="#F5C84C" stroke-width="5" stroke-dasharray="3 15" stroke-linecap="round"/>`;
   if(has("wings")) g += `<ellipse cx="50" cy="150" rx="26" ry="15" transform="rotate(-30 50 150)" fill="#fff" stroke="#9FC4E8" stroke-width="3.5"/><ellipse cx="150" cy="150" rx="26" ry="15" transform="rotate(30 150 150)" fill="#fff" stroke="#9FC4E8" stroke-width="3.5"/>`;
   if(has("bag")) g += `<rect x="62" y="134" width="76" height="46" rx="14" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5"/>`;
-  if(p.outfit==="furry" && threes(p)>=24) g += `<rect x="46" y="126" width="108" height="58" rx="12" fill="#5F6B3C" stroke="#3B4425" stroke-width="3.5"/><rect x="40" y="140" width="14" height="30" rx="5" fill="#76824A" stroke="#3B4425" stroke-width="3"/><rect x="146" y="140" width="14" height="30" rx="5" fill="#76824A" stroke="#3B4425" stroke-width="3"/>`;
+  if(p.outfit==="furry" && threes(p)>=21) g += `<rect x="46" y="126" width="108" height="58" rx="12" fill="#5F6B3C" stroke="#3B4425" stroke-width="3.5"/><rect x="40" y="140" width="14" height="30" rx="5" fill="#76824A" stroke="#3B4425" stroke-width="3"/><rect x="146" y="140" width="14" height="30" rx="5" fill="#76824A" stroke="#3B4425" stroke-width="3"/>`;
   if(has("cape")) g += `<path d="M64 140 Q44 182 68 192 L132 192 Q156 182 136 140Z" fill="#3A7FC0" stroke="#24578A" stroke-width="3.5" stroke-linejoin="round"/>`;
   if(ot) g += `<path d="M128 178 Q178 184 186 140 Q172 164 132 162 Z" fill="${c.m}" stroke="${c.d}" ${sw} stroke-linejoin="round"/>`;
   if(sp==="dog") g += `<path d="M134 168 Q166 160 168 128" fill="none" stroke="${c.d}" stroke-width="15" stroke-linecap="round"/><path d="M134 168 Q166 160 168 128" fill="none" stroke="${c.m}" stroke-width="8" stroke-linecap="round"/>`;

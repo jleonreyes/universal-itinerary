@@ -865,7 +865,7 @@ function petSVG(p, mood){
   if(sp==="dog" && mood==="happy") g += `<path d="M95 128 Q100 140 105 128Z" fill="#FF8FA3" stroke="#C2457A" stroke-width="2"/>`;
   if(ot) g += `<path d="M80 112 L58 108 M80 117 L58 119 M120 112 L142 108 M120 117 L142 119" stroke="${c.d}" stroke-width="2" stroke-linecap="round"/>`;
   if(OF) g += outfitHead(OF);
-  if(swirlOn(p)) g += `<defs><radialGradient id="swl"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#7FD3F5"/><stop offset=".5" stop-color="#FF6FA5"/><stop offset=".75" stop-color="#F5C84C"/><stop offset="1" stop-color="#8FD8BD"/></radialGradient></defs><path d="M40 70 Q58 58 74 74 M160 70 Q142 58 126 74" stroke="#FF6FA5" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M48 96 Q48 70 74 72 Q100 74 96 98 Q94 120 72 120 Q50 120 48 96Z M104 98 Q100 74 126 72 Q152 70 152 96 Q150 120 128 120 Q106 120 104 98Z" fill="url(#swl)" stroke="#B83C78" stroke-width="4" stroke-linejoin="round"/><path d="M60 96 a12 10 0 1 1 24 0 a8 7 0 1 1 -16 0 a4 3 0 1 1 8 0 M116 96 a12 10 0 1 1 24 0 a8 7 0 1 1 -16 0 a4 3 0 1 1 8 0" fill="none" stroke="#fff" stroke-width="2.5" opacity=".9"/><path d="M96 92 Q100 86 104 92" stroke="#B83C78" stroke-width="4" fill="none"/>`;
+  if(swirlOn(p)) g += `<defs><radialGradient id="swg"><stop offset="0" stop-color="#E9FFF4"/><stop offset=".55" stop-color="#5CC8A8"/><stop offset="1" stop-color="#2E9E6B"/></radialGradient><radialGradient id="swp"><stop offset="0" stop-color="#F6EEFF"/><stop offset=".55" stop-color="#B79AF0"/><stop offset="1" stop-color="#7F5CC4"/></radialGradient></defs><path d="M40 70 Q58 58 74 74 M160 70 Q142 58 126 74" stroke="#D4A62A" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M48 96 Q48 70 74 72 Q100 74 96 98 Q94 120 72 120 Q50 120 48 96Z" fill="url(#swg)" stroke="#D4A62A" stroke-width="5" stroke-linejoin="round"/><path d="M104 98 Q100 74 126 72 Q152 70 152 96 Q150 120 128 120 Q106 120 104 98Z" fill="url(#swp)" stroke="#D4A62A" stroke-width="5" stroke-linejoin="round"/><path d="M48 96 Q48 70 74 72 Q100 74 96 98 Q94 120 72 120 Q50 120 48 96Z M104 98 Q100 74 126 72 Q152 70 152 96 Q150 120 128 120 Q106 120 104 98Z" fill="none" stroke="#9A7414" stroke-width="1.5" transform="translate(0 2)" opacity=".5"/><path d="M60 96 a12 10 0 1 1 24 0 a8 7 0 1 1 -16 0 a4 3 0 1 1 8 0 M116 96 a12 10 0 1 1 24 0 a8 7 0 1 1 -16 0 a4 3 0 1 1 8 0" fill="none" stroke="#fff" stroke-width="2.5" opacity=".9"/><path d="M96 92 Q100 86 104 92" stroke="#D4A62A" stroke-width="5" fill="none"/><circle cx="58" cy="82" r="3" fill="#fff" opacity=".8"/><circle cx="114" cy="82" r="3" fill="#fff" opacity=".8"/>`;
   if(p.hat==="helmet" && !(OF && OUTFIT_HEAD[OF])) g += hatSVG("helmet");
   return `<svg class="pm ${mood}" viewBox="0 0 200 200" role="img" aria-label="${esc(p.pet)} the ${SPECIES[p.species]||"pet"}"><ellipse cx="100" cy="194" rx="48" ry="6" fill="rgba(30,42,58,.18)"/><g class="pg"><g transform="translate(100 192) scale(${sc}) translate(-100 -192)">${g}</g></g></svg>`;
 }
@@ -1011,7 +1011,7 @@ function mapHTML(){
 function wardrobeItems(p){
   const n = growthN(p), off = p.off||[];
   const list = ITEMS.filter(i => i.id!=="hatch" && spOk(i,p)).map(i => ({id:i.id, name:cap(i.name.replace(/^an? /,"")), got:n>=i.n, on:!off.includes(i.id), how:`Keep passing levels: ${n} / ${i.n}`}));
-  list.push({id:"swirl", name:"Rainbow swirl glasses", got:threes(p)>=SWIRL_AT, on:!off.includes("swirl"), how:`3-star wins: ${threes(p)} / ${SWIRL_AT}`});
+  list.push({id:"swirl", name:"Magic swirl glasses", got:threes(p)>=SWIRL_AT, on:!off.includes("swirl"), how:`3-star wins: ${threes(p)} / ${SWIRL_AT}`});
   return list;
 }
 function roomHTML(){
@@ -1201,7 +1201,7 @@ function resultHTML(){
     main = `<h2 style="font-size:34px">${r.pass?"You passed the Time Quiz!":"Time Quiz"}</h2><div class="score ${r.pass?"":"low"}">${r.score}/10</div>${r.pass?"":'<div>You need 7 to travel. Practice the levels and try again!</div>'}`;
   }
   let celeb = "";
-  if(r.swirl) celeb += `<div class="celebrate"><h3 style="font-size:24px">Special accessory: Rainbow swirl glasses!</h3><div>You got 3 stars ${SWIRL_AT} times. Turn them on or off in the Wardrobe.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
+  if(r.swirl) celeb += `<div class="celebrate"><h3 style="font-size:24px">Special accessory: Magic swirl glasses!</h3><div>You got 3 stars ${SWIRL_AT} times. Turn them on or off in the Wardrobe.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.outfit) celeb += `<div class="celebrate"><h3 style="font-size:24px">New outfit: ${r.outfit.name}!</h3><div>You got 3 stars ${r.outfit.n} times. ${esc(p.pet)} is wearing it now. Change it in the Pet room.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
   if(r.hatched) celeb += `<div class="celebrate"><h3 style="font-size:26px">Crack! The egg hatched!</h3><div style="font-size:20px">Surprise! ${esc(p.pet)} is a little ${SPECIES[p.species]||"bear"}!</div><div class="pw">${petSVG(p,"happy")}</div></div>`;

@@ -675,7 +675,7 @@ function renderHome(){
   $('#home-avatar').textContent=p.avatar;$('#home-name').textContent=p.name;
   $('#home-points').textContent=p.points;$('#home-hello').textContent=`Hi, ${p.name}!`;
   const full=REG_IDS.every(id=>p.stickers.includes(id));
-  $('#home-toward').textContent=full?'Album full!':`${Math.min(p.toward,PTS)} / ${PTS} ⭐`;
+  $('#home-toward').textContent=full?'Album full!':p.toward>=PTS?`${Math.floor(p.toward/PTS)} ready! Win with 3 stars`:`${p.toward} / ${PTS} ⭐`;
   $('#home-meter').style.width=(full?100:Math.min(100,p.toward/PTS*100))+'%';
   $('#home-stickers').textContent=`${p.stickers.length} of ${REG_IDS.length+GOLD_IDS.length} stickers`;
   show('s-home');
@@ -944,18 +944,22 @@ function finish(){
   const p=me(),keys=Object.keys(S.first),good=keys.filter(k=>S.first[k]).length,pct=keys.length?good/keys.length:0;
   const stars=pct>=.9?3:pct>=.7?2:1;
   if(S.levelId)p.levels[S.levelId]=Math.max(p.levels[S.levelId]||0,stars);
-  const got=[];
-  while(p.toward>=PTS){const s=awardFrom(REG_IDS,p);if(!s){p.toward=PTS;break}p.toward-=PTS;got.push(s)}
-  let goldLevel=false;
-  if(S.levelId&&stars===3&&!p.goldLevels.includes(S.levelId)){const g=awardFrom(GOLD_IDS,p);if(g){p.goldLevels.push(S.levelId);got.push(g);goldLevel=true}}
-  if(!goldLevel&&pct===1&&keys.length>=5){const g=awardFrom(GOLD_IDS,p);if(g)got.push(g)}
+  /* stickers only for a 3-star game, and at most 3 per game; points keep counting toward the next ones */
+  const got=[],CAP=3;
+  if(stars===3){
+    let goldLevel=false;
+    if(S.levelId&&!p.goldLevels.includes(S.levelId)){const g=awardFrom(GOLD_IDS,p);if(g){p.goldLevels.push(S.levelId);got.push(g);goldLevel=true}}
+    if(!goldLevel&&pct===1&&keys.length>=5){const g=awardFrom(GOLD_IDS,p);if(g)got.push(g)}
+    while(got.length<CAP&&p.toward>=PTS){const s=awardFrom(REG_IDS,p);if(!s){p.toward=Math.min(p.toward,PTS);break}p.toward-=PTS;got.push(s)}
+  }
+  const waiting=Math.floor(p.toward/PTS);
   const spec=checkSpecial(p);
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
   $('#r-line').textContent=S.kind==='match'?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
-  $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
+  $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):stars<3?(waiting?`Get 3 stars to win your sticker! ${waiting===1?'1 sticker is':waiting+' stickers are'} waiting for you.`:`Get 3 stars to win stickers! ${PTS-p.toward} more points for your next sticker.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
   const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],galaxy:['🌌','Galaxy!'],crystal:['💖','Crystal!'],sun:['☀️','Golden Sun!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
   if(spec.length)$('#r-packs-label').textContent=spec.some(x=>x.id[0]==='t')?'WOW! You won a trophy! Tap to open.':'WOW! A special sticker! Tap to open.';
   $('#r-packs').innerHTML=spec.map(x=>{const k=SPEC[x.id].kind;return`<button class="pack specpack ${k}" data-act="open" data-s="${x.id}"><span class="p-ico">${SPL[k][0]}</span>${SPL[k][1]}</button>`}).join('')+got.map(s=>`<button class="pack ${s.gold?'goldpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':'🎁'}</span>${s.gold?'Gold!':'Open me'}</button>`).join('');

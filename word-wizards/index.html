@@ -203,6 +203,7 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .miss-list span{background:var(--paper-2);padding:4px 12px;border-radius:999px;font-weight:700}
 .packs{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:6px 0}
 .pack{width:130px;height:160px;border-radius:20px;background:repeating-linear-gradient(45deg,var(--berry) 0 14px,var(--berry-deep) 14px 28px);color:var(--white);font-family:var(--display);font-weight:800;font-size:1.1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:0 6px 0 var(--ink);animation:wiggle 1.4s ease-in-out infinite}
+.pack.motivpack{background:repeating-linear-gradient(45deg,var(--mint) 0 14px,var(--mint-deep) 14px 28px);color:var(--ink)}
 .pack.goldpack{background:repeating-linear-gradient(45deg,var(--gold) 0 14px,var(--gold-deep) 14px 28px);color:var(--ink)}
 .pack .p-ico{font-size:2.6rem}
 @keyframes wiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
@@ -586,6 +587,12 @@ const TRACK_NAME={spell:'Spelling',vocab:'Vocabulary'};
 
 /* ---------- STICKERS ---------- */
 const PAGES=[
+ {id:'motiv',name:'Motivation',tint:'#8fd8bd',motiv:true,items:[
+  ['mo1','🌱','Great Start'],['mo2','💪','You Can Do It'],['mo3','🚀','Keep Going'],['mo4','🌟','Shine Bright'],
+  ['mo5','🧠','Smart Thinker'],['mo6','🎯','Stay Focused'],['mo7','🐢','Step by Step'],['mo8','🦁','Be Brave'],
+  ['mo9','🌈','Never Give Up'],['mo10','🔥','On Fire'],['mo11','🧗','Climb Higher'],['mo12','🎈','Have Fun'],
+  ['mo13','📚','Super Reader'],['mo14','✏️','Practice Pro'],['mo15','🦋','Growing Every Day'],['mo16','🏅','Proud of You'],
+  ['mo17','☀️','Bright Mind'],['mo18','🤝','Team Player'],['mo19','🍀','Lucky Learner'],['mo20','🎉','Hooray']],gold:[]},
  {id:'wiz',name:'Wizard School',tint:'#9b7bff',items:[
   ['w1','🦉','Owl Post'],['w2','🪄','Magic Wand'],['w3','🧹','Flying Broom'],['w4','🏰','Castle School'],
   ['w5','🧪','Potion Class'],['w6','📜','Secret Map'],['w7','🚂','Magic Express'],['w8','🕯️','Floating Candles'],
@@ -619,16 +626,17 @@ const PAGES=[
 ];
 const STICK={};
 PAGES.forEach(p=>{p.items.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:false,page:p});p.gold.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:true,page:p})});
-const REG_IDS=PAGES.flatMap(p=>p.items.map(i=>i[0])), GOLD_IDS=PAGES.flatMap(p=>p.gold.map(i=>i[0]));
+const MOTIV_IDS=PAGES.filter(p=>p.motiv).flatMap(p=>p.items.map(i=>i[0]));
+const REG_IDS=PAGES.filter(p=>!p.motiv).flatMap(p=>p.items.map(i=>i[0])), GOLD_IDS=PAGES.flatMap(p=>p.gold.map(i=>i[0]));
 
 const AVATARS=['🐻','🦦','🦄','🐉','🦉','🧚','🐱','🦊','🐼','🐬','🦋','🐯'];
 const PTS=60, KEY='word-wizards-v1';
 
 /* ---------- STATE ---------- */
 const uid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[]});
+const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],motiv:[],special:[]});
 const blankState=()=>({players:[mkPlayer('Player 1','🐻'),mkPlayer('Player 2','🦦')],avatarsV2:true,current:null,custom:[]});
-function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
+function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.motiv=p.motiv||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.players)&&s.players.length)return fix(s)}catch(e){}return blankState()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 let state=load();
@@ -677,7 +685,7 @@ function renderHome(){
   const full=REG_IDS.every(id=>p.stickers.includes(id));
   $('#home-toward').textContent=full?'Album full!':p.toward>=PTS?`${Math.floor(p.toward/PTS)} ready! Win with 3 stars`:`${p.toward} / ${PTS} ⭐`;
   $('#home-meter').style.width=(full?100:Math.min(100,p.toward/PTS*100))+'%';
-  $('#home-stickers').textContent=`${p.stickers.length} of ${REG_IDS.length+GOLD_IDS.length} stickers`;
+  $('#home-stickers').textContent=`${p.stickers.length} of ${REG_IDS.length+GOLD_IDS.length+MOTIV_IDS.length} stickers`;
   show('s-home');
 }
 
@@ -732,8 +740,8 @@ function renderLook(id){
   $('#look-list').innerHTML=b.words.map(([w,e,s,c])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}" data-def="${vocab?esc(s):''}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${s?`<span class="look-sent">${esc(vocab?s:s.replace('___',w))}</span>`:''}${vocab&&c?`<span class="look-sent"><i>${esc(c.replace('___',w))}</i></span>`:''}</span></button>`).join('');
   show('s-look');
 }
-const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice')};
-const playMatch=(ids,n)=>{const w=wordsOf(ids).filter(x=>x.def&&canChoose(x));if(!w.length)return renderPractice();start('match',n?pickWeighted(w,Math.min(n,w.length)):shuffle(w.slice()),null,()=>playMatch(ids,n),'practice')};
+const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice');if(S)S.blockId=id};
+const playMatch=(ids,n)=>{const w=wordsOf(ids).filter(x=>x.def&&canChoose(x));if(!w.length)return renderPractice();start('match',n?pickWeighted(w,Math.min(n,w.length)):shuffle(w.slice()),null,()=>playMatch(ids,n),'practice');if(S&&ids.length===1)S.blockId=ids[0]};
 const playTricky=track=>{const t=trickyWords(track);if(!t.length)return renderPractice();start('practice',t,null,()=>playTricky(track),'practice')};
 
 /* ---------- GAME ---------- */
@@ -757,7 +765,7 @@ function owl(t){$('#owl-msg').textContent=t}
 
 function start(kind,list,levelId,replay,from){
   if(!list.length)return;
-  S={kind,levelId,replay,from,queue:list.map(w=>({w,tries:0})),i:0,pts:0,streak:0,first:{},uniq:list.length};
+  S={kind,levelId,replay,from,flawless:true,queue:list.map(w=>({w,tries:0})),i:0,pts:0,streak:0,first:{},uniq:list.length};
   $('#quit-btn').dataset.armed='';$('#quit-btn').textContent='✕ Stop';
   show('s-game');nextQ();
 }
@@ -886,7 +894,7 @@ function complete(){
   const s=p.words[k]||(p.words[k]={box:0,r:0,w:0,seen:0});s.seen++;
   let pts;
   if(perfect){S.streak++;pts=10+Math.min(S.streak-1,5)*2;s.box=Math.min(5,s.box+1);s.r++}
-  else{S.streak=0;pts=3;s.box=Math.max(0,s.box-1);s.w++;if(Q.it.tries<2)S.queue.splice(Math.min(S.queue.length,S.i+3),0,{w:Q.w,tries:Q.it.tries+1})}
+  else{S.flawless=false;S.streak=0;pts=3;s.box=Math.max(0,s.box-1);s.w++;if(Q.it.tries<2)S.queue.splice(Math.min(S.queue.length,S.i+3),0,{w:Q.w,tries:Q.it.tries+1})}
   if(Q.it.tries===0)S.first[k]=perfect;
   S.pts+=pts;p.points+=pts;p.toward+=pts;save();
   renderSlots();
@@ -945,12 +953,15 @@ function finish(){
   const stars=pct>=.9?3:pct>=.7?2:1;
   if(S.levelId)p.levels[S.levelId]=Math.max(p.levels[S.levelId]||0,stars);
   /* stickers only for a 3-star game, and at most 3 per game; points keep counting toward the next ones */
-  const got=[],CAP=3;
-  if(stars===3){
+  const got=[],CAP=3,practice=!S.levelId,earn=stars===3&&(!practice||S.flawless);
+  /* practice: one motivation sticker the first time each block is practiced; more stickers need 3 stars and no mistakes */
+  let motivGot=null;
+  if(practice&&S.blockId&&!p.motiv.includes(S.blockId)){const id=MOTIV_IDS.find(x=>!p.stickers.includes(x));p.motiv.push(S.blockId);if(id){p.stickers.push(id);motivGot=STICK[id]}}
+  if(earn){
     let goldLevel=false;
     if(S.levelId&&!p.goldLevels.includes(S.levelId)){const g=awardFrom(GOLD_IDS,p);if(g){p.goldLevels.push(S.levelId);got.push(g);goldLevel=true}}
     if(!goldLevel&&pct===1&&keys.length>=5){const g=awardFrom(GOLD_IDS,p);if(g)got.push(g)}
-    while(got.length<CAP&&p.toward>=PTS){const s=awardFrom(REG_IDS,p);if(!s){p.toward=Math.min(p.toward,PTS);break}p.toward-=PTS;got.push(s)}
+    while(got.length+(motivGot?1:0)<CAP&&p.toward>=PTS){const s=awardFrom(REG_IDS,p);if(!s){p.toward=Math.min(p.toward,PTS);break}p.toward-=PTS;got.push(s)}
   }
   const waiting=Math.floor(p.toward/PTS);
   const spec=checkSpecial(p);
@@ -959,10 +970,12 @@ function finish(){
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
   $('#r-line').textContent=S.kind==='match'?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
-  $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`):stars<3?(waiting?`Get 3 stars to win your sticker! ${waiting===1?'1 sticker is':waiting+' stickers are'} waiting for you.`:`Get 3 stars to win stickers! ${PTS-p.toward} more points for your next sticker.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
+  if(motivGot)got.unshift(motivGot);
+  const rule=practice?'3 stars and no mistakes':'3 stars';
+  $('#r-packs-label').textContent=got.length?(got.length===1?'You won a sticker! Tap to open.':`You won ${got.length} stickers! Tap to open.`)+(!earn&&practice?` To win more here: ${rule}!`:''):!earn&&practice?(waiting?`Get ${rule} to win your sticker! ${waiting===1?'1 sticker is':waiting+' stickers are'} waiting for you.`:`Get ${rule} to win stickers! ${PTS-p.toward} more points for your next sticker.`):stars<3?(waiting?`Get 3 stars to win your sticker! ${waiting===1?'1 sticker is':waiting+' stickers are'} waiting for you.`:`Get 3 stars to win stickers! ${PTS-p.toward} more points for your next sticker.`):`Keep going! ${PTS-Math.min(p.toward,PTS)} more points for your next sticker.`;
   const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],galaxy:['🌌','Galaxy!'],crystal:['💖','Crystal!'],sun:['☀️','Golden Sun!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
   if(spec.length)$('#r-packs-label').textContent=spec.some(x=>x.id[0]==='t')?'WOW! You won a trophy! Tap to open.':'WOW! A special sticker! Tap to open.';
-  $('#r-packs').innerHTML=spec.map(x=>{const k=SPEC[x.id].kind;return`<button class="pack specpack ${k}" data-act="open" data-s="${x.id}"><span class="p-ico">${SPL[k][0]}</span>${SPL[k][1]}</button>`}).join('')+got.map(s=>`<button class="pack ${s.gold?'goldpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':'🎁'}</span>${s.gold?'Gold!':'Open me'}</button>`).join('');
+  $('#r-packs').innerHTML=spec.map(x=>{const k=SPEC[x.id].kind;return`<button class="pack specpack ${k}" data-act="open" data-s="${x.id}"><span class="p-ico">${SPL[k][0]}</span>${SPL[k][1]}</button>`}).join('')+got.map(s=>`<button class="pack ${s.gold?'goldpack':s.page.motiv?'motivpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':s.page.motiv?'💌':'🎁'}</span>${s.gold?'Gold!':s.page.motiv?'For you!':'Open me'}</button>`).join('');
   const miss=keys.filter(k=>!S.first[k]);
   $('#r-miss-wrap').hidden=!miss.length;$('#r-miss').innerHTML=miss.map(k=>`<span>${esc(plain(k))}</span>`).join('');
   show('s-results');
@@ -994,8 +1007,8 @@ function renderAlbum(){
   const have=[...pg.items,...pg.gold].filter(i=>p.stickers.includes(i[0])).length;
   $('#album-page').innerHTML=`<div class="album-head"><h3>${pg.name}</h3><span>${have} / ${pg.items.length+pg.gold.length}</span></div>
    <div class="grid">${pg.items.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>
-   <p class="gold-title">Gold stickers</p><p class="note" style="text-align:left;margin-top:-8px">Win one when you get 3 stars on a level for the first time, or spell every word perfectly in a game.</p>
-   <div class="grid">${pg.gold.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>`;
+   ${pg.motiv?`<p class="note" style="text-align:left">Win one the first time you practice each block.</p>`:`<p class="gold-title">Gold stickers</p><p class="note" style="text-align:left;margin-top:-8px">Win one when you get 3 stars on a level for the first time, or play a perfect game.</p>
+   <div class="grid">${pg.gold.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>`}`;
   show('s-album');
 }
 
@@ -1091,7 +1104,7 @@ const acts={
   copybackup:()=>{const ta=$('#backup-code');if(!ta.value)ta.value=encodeState();const ok=()=>status('Copied. Paste it in Notes.');const fb=()=>{ta.focus();ta.select();try{document.execCommand('copy');ok()}catch(e){status('Select the code and copy it.')}};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}},
   restore:b=>{const code=$('#backup-code').value.trim();if(!code){status('Paste a backup code first.');return}
     try{const s=JSON.parse(decodeURIComponent(escape(atob(code))));if(!s||!Array.isArray(s.players)||!s.players.length)throw 0;if(!armed(b))return;state=fix(s);save();parentMsg='Progress restored.';renderParents()}catch(e){status('That code did not work. Check that it was copied completely.')}},
-  reset:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p){Object.assign(p,{points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[]});save()}parentMsg='Progress erased.';renderParents()}
+  reset:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p){Object.assign(p,{points:0,motiv:[],toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[]});save()}parentMsg='Progress erased.';renderParents()}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;unlockAudio();const f=acts[b.dataset.act];if(f)f(b,e)});
 document.addEventListener('keydown',e=>{

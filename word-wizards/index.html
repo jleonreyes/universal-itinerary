@@ -213,6 +213,17 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .sticker{width:100%;max-width:120px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,var(--white) 0 8%,transparent 30%),var(--tint,var(--lilac));border:6px solid var(--white);box-shadow:0 4px 0 rgba(0,0,0,.25);position:relative;overflow:hidden}
 .s-emoji{font-size:clamp(2.2rem,9vw,3.4rem);line-height:1}
 .sticker.gold{border-color:var(--gold);background:radial-gradient(circle at 35% 30%,var(--white) 0 8%,transparent 30%),linear-gradient(135deg,var(--gold),var(--gold-deep))}
+.dia-wrap{position:relative;width:100%;max-width:120px}
+.dia{width:100%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 35% 30%,#fff 0 9%,transparent 30%),linear-gradient(135deg,#d9f8ff,#7fd3f5 45%,#c9b6ff);border:6px solid #fff;box-shadow:0 0 0 3px #7fd3f5,0 4px 0 rgba(0,0,0,.25)}
+.dia::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.85) 50%,transparent 60%);animation:shine 2.2s ease-in-out infinite}
+.dia .de{font-size:clamp(2.2rem,9vw,3.4rem);line-height:1;position:relative;z-index:1}
+.dia-g{position:absolute;right:-4px;bottom:-4px;z-index:2;background:var(--ink);color:var(--white);font-family:var(--display);font-weight:800;font-size:1rem;padding:2px 10px;border-radius:999px;border:3px solid #7fd3f5}
+.dia.empty{background:var(--sky);border:4px dashed #7fd3f5;box-shadow:none;opacity:.7}
+.dia.empty::after{display:none}
+.dia.empty .de{opacity:.35;filter:grayscale(1)}
+.b-diamond{background:linear-gradient(135deg,#d9f8ff,#7fd3f5 50%,#c9b6ff);color:var(--ink);box-shadow:0 7px 0 #4aa6cf}
+.gbtn{min-width:56px}
+.gbtn[aria-pressed="true"]{background:#7fd3f5;color:var(--ink)}
 .sticker.gold::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.75) 50%,transparent 60%);animation:shine 2.6s ease-in-out infinite}
 @keyframes shine{from{transform:translateX(-60%)}to{transform:translateX(60%)}}
 .sticker.empty{background:var(--sky);border:4px dashed var(--sky-line);box-shadow:none;color:var(--sky-line);font-family:var(--display);font-size:2rem;font-weight:800}
@@ -336,6 +347,7 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
       <div class="meter"><span id="home-meter"></span></div>
     </div>
   </div>
+  <button class="big b-diamond" id="home-diamond" data-act="diamonds" hidden><span class="big-ico">💎</span><span><b>New Diamond Award!</b><small>For your great quiz at school. Tap to see it.</small></span></button>
   <nav class="menu">
     <button class="big b-map" data-act="go" data-to="map" data-track="spell"><span class="big-ico">🗺️</span><span><b>Spelling</b><small>Spell words level by level</small></span></button>
     <button class="big b-vocab" data-act="go" data-to="map" data-track="vocab"><span class="big-ico">📚</span><span><b>Vocabulary</b><small>Learn what words mean</small></span></button>
@@ -636,7 +648,7 @@ const PTS=60, KEY='word-wizards-v1';
 const uid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],motiv:[],special:[]});
 const blankState=()=>({players:[mkPlayer('Player 1','🐻'),mkPlayer('Player 2','🦦')],avatarsV2:true,current:null,custom:[]});
-function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.motiv=p.motiv||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
+function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.diamonds=p.diamonds||{};p.motiv=p.motiv||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.players)&&s.players.length)return fix(s)}catch(e){}return blankState()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 let state=load();
@@ -685,6 +697,7 @@ function renderHome(){
   const full=REG_IDS.every(id=>p.stickers.includes(id));
   $('#home-toward').textContent=full?'Album full!':p.toward>=PTS?`${Math.floor(p.toward/PTS)} ready! Win with 3 stars`:`${p.toward} / ${PTS} ⭐`;
   $('#home-meter').style.width=(full?100:Math.min(100,p.toward/PTS*100))+'%';
+  $('#home-diamond').hidden=!Object.values(p.diamonds||{}).some(d=>!d.seen);
   $('#home-stickers').textContent=`${p.stickers.length} of ${REG_IDS.length+GOLD_IDS.length+MOTIV_IDS.length} stickers`;
   show('s-home');
 }
@@ -997,9 +1010,21 @@ let albumPage=0;
 function stickerCell(id,owned){const s=STICK[id];
   if(owned)return`<button class="cell" data-act="saysticker" data-s="${id}"><div class="sticker ${s.gold?'gold':''}" style="--tint:${s.page.tint}"><span class="s-emoji">${s.e}</span></div><span class="s-name">${esc(s.n)}</span></button>`;
   return`<div class="cell"><div class="sticker empty ${s.gold?'gslot':''}">${s.gold?'★':'?'}</div><span class="s-name" style="color:var(--lilac)">${s.gold?'Gold':'???'}</span></div>`}
+/* ---------- DIAMOND AWARDS (a grown-up adds them for a 9, 9.5 or 10 on the school quiz) ---------- */
+const diamondBlocks=()=>allBlocks().filter(b=>b.id!=='b6');
+const diamondCell=(b,d)=>`<div class="cell"><div class="dia-wrap"><div class="dia ${d?'':'empty'}"><span class="de">💎</span></div>${d?`<span class="dia-g">${esc(d.g)}</span>`:''}</div><span class="s-name">${esc(b.name)}</span></div>`;
+function renderDiamonds(){
+  const p=me(),bl=diamondBlocks(),dm=p.diamonds||{},n=bl.filter(b=>dm[b.id]).length;
+  const sec=(t,title)=>{const xs=bl.filter(b=>b.track===t);return xs.length?`<p class="gold-title" style="color:#7fd3f5">${title}</p><div class="grid">${xs.map(b=>diamondCell(b,dm[b.id])).join('')}</div>`:''};
+  $('#album-page').innerHTML=`<div class="album-head"><h3>💎 Diamond Awards</h3><span>${n} / ${bl.length}</span></div>
+   <p class="note" style="text-align:left">Get 9, 9.5 or 10 on your quiz at school and a grown-up puts a diamond here. One for each block!</p>${sec('spell','Spelling')}${sec('vocab','Vocabulary')}`;
+  let changed=false;Object.values(dm).forEach(d=>{if(!d.seen){d.seen=true;changed=true}});if(changed)save();
+  show('s-album');
+}
 function renderAlbum(){
   const p=me(),pg=PAGES[albumPage];
-  $('#album-tabs').innerHTML=PAGES.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===albumPage}" data-act="tab" data-i="${i}">${x.name}</button>`).join('')+`<button class="tab trophytab" role="tab" aria-selected="${albumPage===PAGES.length}" data-act="tab" data-i="${PAGES.length}">🏆 Trophy Room</button>`;
+  $('#album-tabs').innerHTML=PAGES.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===albumPage}" data-act="tab" data-i="${i}">${x.name}</button>`).join('')+`<button class="tab trophytab" role="tab" aria-selected="${albumPage===PAGES.length}" data-act="tab" data-i="${PAGES.length}">🏆 Trophy Room</button><button class="tab" role="tab" aria-selected="${albumPage===PAGES.length+1}" data-act="tab" data-i="${PAGES.length+1}">💎 Diamonds</button>`;
+  if(albumPage===PAGES.length+1)return renderDiamonds();
   if(!pg){
     $('#album-page').innerHTML=`<div class="album-head"><h3>Trophy Room</h3><span>${p.special.length} / ${SPECIAL.length}</span></div>
      <div class="sgrid">${SPECIAL.map(x=>{const own=p.special.includes(x.id);return`<div class="scell ${x.kind}">${own?specArt(x,p):`<div class="spc empty ${x.kind}">${x.kind==='trophy'||x.kind==='legend'?'🏆':'?'}</div>`}<span class="s-name">${own?esc(x.name(p)):'???'}</span><span class="s-how">${esc(x.how)}</span></div>`}).join('')}</div>`;
@@ -1030,6 +1055,10 @@ function renderParents(){
     <p class="muted">${pp.points} points · ${pp.stickers.length} stickers · ${doneLv} of ${L.length} levels done</p>
     <div class="legend"><span class="wchip good">learned</span><span class="wchip learn">learning</span><span class="wchip weak">needs practice</span><span class="wchip">not played yet</span></div>
     ${prog}
+  </div>
+  <div class="panel"><h3>💎 Diamond awards (school quiz)</h3>
+    <p class="muted">When ${esc(pp.name)} gets 9, 9.5 or 10 on a quiz at school, tap the grade next to that block. One diamond per block. Change the player at the top of this page.</p>
+    ${['spell','vocab'].map(t=>`<p class="blk-title" style="font-size:1.05rem;margin-top:8px">${TRACK_NAME[t]}</p>`+diamondBlocks().filter(b=>b.track===t).map(b=>{const d=(pp.diamonds||{})[b.id];return`<div class="prow"><span style="flex:1;min-width:120px"><b>${esc(b.name)}</b> ${d?`· 💎 ${esc(d.g)}`:''}</span>${['9','9.5','10'].map(g=>`<button class="pchip gbtn" data-act="dset" data-b="${b.id}" data-g="${g}" aria-pressed="${!!d&&d.g===g}">${g}</button>`).join('')}${d?`<button class="btn small" data-act="ddel" data-b="${b.id}">Remove</button>`:''}</div>`}).join('')).join('')}
   </div>
   <div class="panel"><h3>Players</h3>
     ${state.players.map(p=>`<div class="prow"><button class="av-btn" data-act="avatar" data-id="${p.id}" aria-label="Change picture">${p.avatar}</button><input type="text" id="name-${p.id}" value="${esc(p.name)}" maxlength="20" aria-label="Name"><button class="btn small" data-act="delplayer" data-id="${p.id}" ${state.players.length<2?'hidden':''}>Remove</button></div>`).join('')}
@@ -1084,6 +1113,9 @@ const acts={
   resback:()=>{const f=S&&S.from;S=null;f==='map'?renderMap():f==='practice'?renderPractice():renderHome()},
   open:b=>openPack(b),
   tab:b=>{albumPage=+b.dataset.i;renderAlbum()},
+  diamonds:()=>{albumPage=PAGES.length+1;renderAlbum()},
+  dset:b=>{const p=state.players.find(x=>x.id===parentPlayer);if(!p)return;p.diamonds=p.diamonds||{};const old=p.diamonds[b.dataset.b];p.diamonds[b.dataset.b]={g:b.dataset.g,at:Date.now(),seen:old&&old.g===b.dataset.g?old.seen:false};save();const bk=allBlocks().find(x=>x.id===b.dataset.b);parentMsg=`💎 ${b.dataset.g} for ${p.name}: ${bk?bk.name:''}.`;renderParents()},
+  ddel:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p&&p.diamonds)delete p.diamonds[b.dataset.b];save();parentMsg='Diamond removed.';renderParents()},
   saysticker:b=>{const s=STICK[b.dataset.s];if(s){say(s.n);sSparkle()}},
   pplayer:b=>{parentPlayer=b.dataset.id;renderParents()},
   avatar:b=>{const p=state.players.find(x=>x.id===b.dataset.id);if(!p)return;p.avatar=AVATARS[(AVATARS.indexOf(p.avatar)+1)%AVATARS.length];save();b.textContent=p.avatar},

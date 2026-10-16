@@ -181,6 +181,22 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .vedit{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;gap:8px;align-items:center}
 .vedit .inp{font-size:18px;padding:4px 8px}
 .vedit .h{font-weight:700;font-size:14px;color:var(--ink-soft)}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px 10px}
+.dcell{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-weight:700;font-size:15px;line-height:1.2;min-width:0}
+.dwrap{position:relative;width:96px}
+.dia{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 35% 30%,#fff 0 9%,transparent 30%),linear-gradient(135deg,#d9f8ff,#7FD3F5 45%,#c9b6ff);border:5px solid #fff;box-shadow:0 0 0 3px #7FD3F5,0 4px 0 rgba(30,42,58,.2)}
+.dia::after{content:"";position:absolute;inset:-40%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.85) 50%,transparent 60%);animation:dshine 2.2s ease-in-out infinite}
+@keyframes dshine{from{transform:translateX(-60%)}to{transform:translateX(60%)}}
+.dia .de{font-size:44px;line-height:1;position:relative;z-index:1}
+.dia.empty{background:var(--bg);border:4px dashed #7FD3F5;box-shadow:none}
+.dia.empty::after{display:none}
+.dia.empty .de{opacity:.3;filter:grayscale(1)}
+.dg{position:absolute;right:-6px;bottom:-4px;z-index:2;background:var(--ink);color:#fff;font-family:var(--f-display);font-size:16px;padding:1px 9px;border-radius:999px;border:3px solid #7FD3F5}
+.dbanner{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:14px 18px;border-radius:18px;border:3px solid var(--ink);background:linear-gradient(135deg,#d9f8ff,#7FD3F5 55%,#c9b6ff);color:var(--ink);font-family:var(--f-body);font-size:18px;cursor:pointer}
+.dbanner b{font-family:var(--f-display);font-size:24px;font-weight:400;display:block}
+.drow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--rule)}
+.drow .dn{flex:1;min-width:160px}
+.drow .btn[aria-pressed="true"]{background:#7FD3F5}
 .gate{user-select:none;-webkit-user-select:none;touch-action:none}
 .gate .fill{display:block;height:6px;background:var(--red);width:0;border-radius:4px;margin-top:6px}
 .gate.holding .fill{width:100%;transition:width 1.5s linear}
@@ -783,6 +799,11 @@ function advVerb(){
   return Qw({prompt:"Write the adverb and the verb.", rows:[{text:`${s.s} ___ ___ ${o}.`, blanks:[[A.w],[pres(a,s)]]}], cue:`(${A.p} · ${a.v})`, hint:`${ADV_H} ${H.third(a,s)}`});
 }
 
+/* ---------- diamond awards: a grown-up adds one per topic for a 9, 9.5 or 10 on the school grammar quiz ---------- */
+const dmOf = p => (p.diamonds = p.diamonds || {});
+const diaCell = (e, d) => `<div class="dcell"><div class="dwrap"><div class="dia ${d?"":"empty"}"><span class="de">💎</span></div>${d?`<span class="dg">${esc(d.g)}</span>`:""}</div><span>${esc(e.topic)}</span></div>`;
+const diaNew = p => Object.values(dmOf(p)).some(d => !d.seen);
+
 const ERAS = [
   {id:"dino", name:"Dino Valley", topic:"Pronouns & Verb To Be", year:"66 million years ago", hat:"shell", hatName:"Eggshell Cap",
     levels:[{n:"Pronouns", make:()=>makeSet(pronChoose,8)}, {n:"To be: choose", make:()=>makeSet(beChoose,8)}, {n:"To be: write", make:()=>[beGrid(), ...makeSet(mixGen(beWrite,pronWrite),6)]}],
@@ -1138,6 +1159,7 @@ function mapHTML(){
   });
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>
+  ${diaNew(p)?`<button class="dbanner" data-act="room"><span style="font-size:44px">💎</span><span><b>New Diamond Award!</b>For your great grammar quiz at school. Tap to see it in the Pet room.</span></button>`:""}
   <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>
   ${extra?`<h2 style="font-size:26px">Extra practice</h2><div class="muted">Not part of the time trip. Practice here any time. Stars still help your pet grow.</div><div class="track">${extra}</div>`:""}`;
 }
@@ -1155,6 +1177,7 @@ function roomHTML(){
     return `<button class="hat" data-act="hat" data-h="${e.hat}" ${got?"":"disabled"} aria-pressed="${p.hat===e.hat}"><svg viewBox="${vb}">${got?hatSVG(e.hat):'<text x="100" y="100" text-anchor="middle" font-size="44" font-family="Lilita One, sans-serif" fill="#9AA6B5">?</text>'}</svg>${got?e.hatName:`Win the ${e.name} quiz`}</button>`; }).join("");
   const trav = ERAS.map((e,i) => eraOpen(p,i) && !e.extra ? `<button class="btn small ${p.era===e.id?"":"white"}" data-act="travel" data-e="${e.id}" aria-pressed="${p.era===e.id}">${e.name} · ${e.year}</button>` : "").join("");
   return topBar(p) + `${stageBox(p, V.roomMood||"idle", V.roomSay||`Hi ${p.name.split(" ")[0]}! Where are we going today?`)}
+  <div class="panel"><h2>💎 Diamond awards</h2><div class="muted">Get 9, 9.5 or 10 on your grammar quiz at school and a grown-up puts a diamond here. One for each topic!</div><div class="dgrid">${ERAS.map(e => diaCell(e, dmOf(p)[e.id])).join("")}</div></div>${(()=>{ let ch=false; Object.values(dmOf(p)).forEach(d=>{ if(!d.seen){ d.seen=true; ch=true; } }); if(ch) save(); return ""; })()}
   <div class="panel"><h2>Time machine</h2><div class="muted">Pick a time to visit. Win each Time Quiz to unlock a new one.</div><div class="travel">${trav}</div></div>
   <div class="panel"><h2>Hat closet</h2><div class="closet">${hats}</div></div>
   <div class="panel"><h2>Wardrobe</h2><div class="muted">Tap a thing to put it on or take it off.</div>
@@ -1355,11 +1378,15 @@ function grownHTML(){
   const rows = S.verbs.map((v,i) => `<input class="inp" data-vi="${i}" data-f="p" value="${esc(v.p)}" aria-label="Present ${i+1}"><input class="inp" data-vi="${i}" data-f="past" value="${esc(v.past)}" aria-label="Past ${i+1}"><input class="inp" data-vi="${i}" data-f="pp" value="${esc(v.pp)}" aria-label="Past participle ${i+1}"><button class="btn small white" data-act="vdel" data-i="${i}" aria-label="Delete ${esc(v.p)}">Delete</button>`).join("");
   const players = S.players.map(p => `<div class="row" style="justify-content:space-between"><span><b>${esc(p.name)}</b> · ${esc(p.pet)} · ${p.xp} crystals</span><span class="row"><button class="btn small white" data-act="preset" data-id="${p.id}">${V.arm==="r"+p.id?"Tap again to reset":"Reset progress"}</button>${p.id==="pelonchis"||p.id==="pillus"?"":`<button class="btn small white" data-act="pdel" data-id="${p.id}">${V.arm==="d"+p.id?"Tap again to delete":"Delete player"}</button>`}</span></div>`).join("");
   const na = 'autocapitalize="off" autocorrect="off" spellcheck="false"';
+  const dp = S.players.find(x => x.id===V.dp) || S.players[0];
   return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
   <div class="panel"><h2>Verb list (Pirate Cove)</h2><div class="muted">Add the verbs from the notebook each week. Changes save as you type.</div>
   <div class="vedit"><span class="h">Present</span><span class="h">Past</span><span class="h">Past participle</span><span></span>${rows}
   <input class="inp" id="nv-p" placeholder="take" ${na} aria-label="New present"><input class="inp" id="nv-past" placeholder="took" ${na} aria-label="New past"><input class="inp" id="nv-pp" placeholder="taken" ${na} aria-label="New past participle"><button class="btn small" data-act="vadd">Add</button></div>
   <div class="row"><button class="btn small white" data-act="vreset">${V.arm==="v"?"Tap again to restore":"Restore notebook list"}</button><span class="muted" id="v-msg"></span></div></div>
+  <div class="panel"><h2>💎 Diamond awards (school quiz)</h2><div class="muted">When she gets 9, 9.5 or 10 on a grammar quiz at school, pick her name and tap the grade next to the topic. One diamond per topic.</div>
+  <div class="row">${S.players.map(p => `<button class="btn small ${dp.id===p.id?"":"white"}" data-act="dpick" data-id="${p.id}" aria-pressed="${dp.id===p.id}">${esc(p.name)}</button>`).join("")}</div>
+  <div>${ERAS.map(e => { const d = dmOf(dp)[e.id]; return `<div class="drow"><span class="dn"><b>${esc(e.topic)}</b>${d?` · 💎 ${esc(d.g)}`:""}</span>${["9","9.5","10"].map(g => `<button class="btn small white" data-act="dset" data-e="${e.id}" data-g="${g}" aria-pressed="${!!d && d.g===g}">${g}</button>`).join("")}${d?`<button class="btn small white" data-act="ddel" data-e="${e.id}">${V.arm==="d"+e.id?"Tap again to remove":"Remove"}</button>`:""}</div>`; }).join("")}</div></div>
   <div class="panel"><h2>Players</h2>${players}</div>`;
 }
 
@@ -1379,6 +1406,9 @@ function bindGate(){
 function go(screen){ V.screen = screen; V.arm = null; render(); window.scrollTo(0,0); }
 
 const ACT = {
+  dpick(el){ V.dp = el.dataset.id; V.arm = null; render(); },
+  dset(el){ const p = S.players.find(x => x.id===V.dp) || S.players[0]; if(!p) return; const old = dmOf(p)[el.dataset.e]; dmOf(p)[el.dataset.e] = {g:el.dataset.g, at:Date.now(), seen: old && old.g===el.dataset.g ? old.seen : false}; V.arm = null; save(); render(); },
+  ddel(el){ const k = "d"+el.dataset.e; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===V.dp) || S.players[0]; if(p) delete dmOf(p)[el.dataset.e]; V.arm = null; save(); render(); },
   home(){ V.pid = null; V.grownOpen = false; go("home"); },
   pick(el){ V.pid = el.dataset.id; V.pick = null; go(P().color ? "map" : "color"); },
   newp(){ go("newp"); try{ document.getElementById("np-name").focus(); }catch(e){} },

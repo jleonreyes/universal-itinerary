@@ -287,9 +287,11 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .ride .cost{font-size:.85rem;color:var(--lilac);font-weight:700}
 .seal{display:flex;align-items:center;gap:14px;border-radius:18px;padding:12px 14px;background:var(--sky-2);border:2px dashed var(--sky-line)}
 .seal.got{border:2px solid var(--gold);background:linear-gradient(135deg,rgba(247,197,74,.25),rgba(255,95,147,.15))}
-.seal-art{flex:0 0 72px;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;background:radial-gradient(circle at 35% 30%,#fff6c0 0 10%,transparent 35%),linear-gradient(135deg,var(--gold),var(--gold-deep));border:4px solid #ffe27a;box-shadow:0 4px 0 rgba(0,0,0,.25);overflow:hidden;position:relative}
+.seal-art{flex:0 0 96px;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;position:relative;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
+.seal.got .seal-art{animation:pop .6s backwards}
 .seal-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .seal:not(.got) .seal-art{filter:grayscale(1) brightness(.5)}
+.seal-art span{opacity:0}
 .seal b{display:block;font-family:var(--display);font-size:1.2rem}
 .seal small{color:var(--lilac)}
 .pp-res{margin:0 0 6px;font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--gold);text-align:center}

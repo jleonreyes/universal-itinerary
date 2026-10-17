@@ -271,6 +271,28 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .pack.specpack.legend{background:linear-gradient(135deg,#fff6c0,#ffd84a,#ffb3d1,#9ff3ff);width:170px;height:200px}
 .trophytab{border-color:var(--gold)}
 .gold-title{font-family:var(--display);font-weight:800;color:var(--gold);font-size:1.25rem;margin:4px 0 0}
+/* park pass */
+.tab.passtab{border-color:var(--gold)}
+.pp-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;background:var(--sky-2);border:2px solid var(--sky-line);border-radius:18px;padding:12px 14px}
+.pp-bar b{font-family:var(--display);font-size:1.35rem;color:var(--gold)}
+.pp-bar .pp-free{color:var(--mint);font-family:var(--display);font-weight:800;font-size:1.1rem}
+.pp-msg{min-height:1.4em;margin:0;color:var(--paper);font-weight:700;text-align:center}
+.ride{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;position:relative}
+.ride img{width:100%;max-width:120px;aspect-ratio:1;border-radius:50%;display:block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
+.ride.locked img{filter:grayscale(1) brightness(.45);opacity:.6}
+.ride.locked .lk{position:absolute;top:calc(min(100%,120px)/2 - 18px);font-size:1.8rem}
+.ride.can img{opacity:.85;filter:grayscale(.6) brightness(.75)}
+.ride.can .lk{animation:pulse 1.2s ease-in-out infinite}
+.ride .s-name{text-align:center}
+.ride .cost{font-size:.85rem;color:var(--lilac);font-weight:700}
+.seal{display:flex;align-items:center;gap:14px;border-radius:18px;padding:12px 14px;background:var(--sky-2);border:2px dashed var(--sky-line)}
+.seal.got{border:2px solid var(--gold);background:linear-gradient(135deg,rgba(247,197,74,.25),rgba(255,95,147,.15))}
+.seal-art{flex:0 0 72px;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;background:radial-gradient(circle at 35% 30%,#fff6c0 0 10%,transparent 35%),linear-gradient(135deg,var(--gold),var(--gold-deep));border:4px solid #ffe27a;box-shadow:0 4px 0 rgba(0,0,0,.25);overflow:hidden;position:relative}
+.seal-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.seal:not(.got) .seal-art{filter:grayscale(1) brightness(.5)}
+.seal b{display:block;font-family:var(--display);font-size:1.2rem}
+.seal small{color:var(--lilac)}
+.pp-res{margin:0 0 6px;font-family:var(--display);font-weight:800;font-size:1.15rem;color:var(--gold);text-align:center}
 
 /* parents */
 .panel{background:var(--paper);color:var(--ink);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:12px}
@@ -338,7 +360,7 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 <section class="screen" id="s-home" hidden>
   <div class="topbar">
     <button class="chip" data-act="switch"><span id="home-avatar"></span><span id="home-name"></span><span class="chip-sub">change</span></button>
-    <span class="chip stat">⭐ <b id="home-points">0</b></span>
+    <span class="chip stat">⭐ <b id="home-points">0</b></span><button class="chip stat" data-act="parkpass">🎟️ <b id="home-tickets">0</b></button>
   </div>
   <div class="hello">
     <h1 class="title" id="home-hello">Hi!</h1>
@@ -638,6 +660,27 @@ const PAGES=[
 ];
 const STICK={};
 PAGES.forEach(p=>{p.items.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:false,page:p});p.gold.forEach(([id,e,n])=>STICK[id]={id,e,n,gold:true,page:p})});
+/* ---------- PARK PASS (premium ride stickers) ---------- */
+const PARKS=[
+ {id:'usf',name:'Universal Studios',full:'Universal Studios Florida',e:'🎬',rides:["Harry Potter and the Escape from Gringotts","Hogwarts Express – King's Cross Station","Revenge of the Mummy","Transformers: The Ride–3D","Fast & Furious – Supercharged","Men in Black Alien Attack","E.T. Adventure","The Simpsons Ride","Kang & Kodos' Twirl 'n' Hurl","Race Through New York Starring Jimmy Fallon","Despicable Me Minion Mayhem","Illumination's Villain-Con Minion Blast","Trolls Trollercoaster"]},
+ {id:'ioa',name:'Islands of Adventure',full:'Islands of Adventure',e:'🏝️',rides:["Hagrid's Magical Creatures Motorbike Adventure","Harry Potter and the Forbidden Journey","Flight of the Hippogriff","Hogwarts Express – Hogsmeade Station","Jurassic World VelociCoaster","Jurassic Park River Adventure","Pteranodon Flyers","Skull Island: Reign of Kong","The Incredible Hulk Coaster","The Amazing Adventures of Spider-Man","Doctor Doom's Fearfall","Storm Force Accelatron","Popeye & Bluto's Bilge-Rat Barges","Dudley Do-Right's Ripsaw Falls","The Cat in the Hat","One Fish, Two Fish, Red Fish, Blue Fish","Caro-Seuss-el","The High in the Sky Seuss Trolley Train Ride!"]},
+ {id:'epic',name:'Epic Universe',full:'Epic Universe',e:'🌌',rides:["Stardust Racers","Constellation Carousel","Monsters Unchained: The Frankenstein Experiment","Curse of the Werewolf","Harry Potter and the Battle at the Ministry","Mario Kart: Bowser's Challenge","Mine-Cart Madness","Yoshi's Adventure","Hiccup's Wing Gliders","Dragon Racer's Rally","Fyre Drill"]}
+];
+const RIDE={};
+PARKS.forEach(pk=>{pk.ids=pk.rides.map((n,i)=>{const id=pk.id+String(i+1).padStart(2,'0');RIDE[id]={id,n,park:pk};return id})});
+const passCost=()=>state.passCost||4;
+/* a block is mastered when its own level and every mix level with it have 3 stars */
+function masteredBlocks(p){const out=[];['spell','vocab'].forEach(t=>{const L=getLevels(t);allBlocks(t).forEach(b=>{const mine=L.filter(l=>l.kind!=='final'&&l.blocks.includes(b.id));if(mine.length&&mine.every(l=>(p.levels[l.id]||0)>=3))out.push(t+':'+b.id)})});return out}
+function passOf(p){
+  if(!p.pass){const three=Object.values(p.levels||{}).filter(v=>v>=3).length,m=masteredBlocks(p);
+    /* starting tickets for the 3-star levels already won, and a free pass for each block already mastered */
+    p.pass={tickets:three,picks:m.length,owned:[],seals:[],mastered:m}}
+  const x=p.pass;x.owned=x.owned||[];x.seals=x.seals||[];x.mastered=x.mastered||[];x.tickets=x.tickets||0;x.picks=x.picks||0;return x}
+/* call after a game: returns what was won for the results screen */
+function passAfterGame(p,earn){const x=passOf(p),r={ticket:false,picks:0};
+  if(earn){x.tickets++;r.ticket=true}
+  masteredBlocks(p).forEach(k=>{if(!x.mastered.includes(k)){x.mastered.push(k);x.picks++;r.picks++}});
+  return r}
 const MOTIV_IDS=PAGES.filter(p=>p.motiv).flatMap(p=>p.items.map(i=>i[0]));
 const REG_IDS=PAGES.filter(p=>!p.motiv).flatMap(p=>p.items.map(i=>i[0])), GOLD_IDS=PAGES.flatMap(p=>p.gold.map(i=>i[0]));
 
@@ -648,7 +691,7 @@ const PTS=60, KEY='word-wizards-v1';
 const uid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const mkPlayer=(name,avatar)=>({id:uid(),name,avatar,points:0,toward:0,stickers:[],words:{},levels:{},goldLevels:[],motiv:[],special:[]});
 const blankState=()=>({players:[mkPlayer('Player 1','🐻'),mkPlayer('Player 2','🦦')],avatarsV2:true,current:null,custom:[]});
-function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.diamonds=p.diamonds||{};p.motiv=p.motiv||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});return s}
+function fix(s){s.custom=Array.isArray(s.custom)?s.custom:[];if(!s.avatarsV2){if(s.players[0]&&s.players[0].avatar==='🦄')s.players[0].avatar='🐻';if(s.players[1]&&s.players[1].avatar==='🐉')s.players[1].avatar='🦦';s.avatarsV2=true}s.players.forEach(p=>{p.goldLevels=p.goldLevels||[];p.diamonds=p.diamonds||{};p.motiv=p.motiv||[];p.special=p.special||[];p.points=p.points||0;p.toward=p.toward||0;p.stickers=p.stickers||[];p.words=p.words||{};p.levels=p.levels||{};p.avatar=p.avatar||'🦄';p.name=p.name||'Player'});s.passCost=s.passCost||4;return s}
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&Array.isArray(s.players)&&s.players.length)return fix(s)}catch(e){}return blankState()}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
 let state=load();
@@ -662,6 +705,8 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0)}
 const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,track:c.track||'spell',words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
 const keyOf=(b,w)=>b.track==='vocab'?'v:'+w:w;
+/* give existing players their starting Park Pass tickets right away */
+state.players.forEach(p=>passOf(p));save();
 const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s,c])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',ctx:b.track==='vocab'?(c||''):'',block:b.id})));
 const plain=k=>k.replace(/^v:/,'');
 const st=(k,p=me())=>p.words[k]||{box:0,r:0,w:0,seen:0};
@@ -693,7 +738,7 @@ function renderPlayers(){
 function renderHome(){
   const p=me();
   $('#home-avatar').textContent=p.avatar;$('#home-name').textContent=p.name;
-  $('#home-points').textContent=p.points;$('#home-hello').textContent=`Hi, ${p.name}!`;
+  $('#home-points').textContent=p.points;{const x=passOf(p);$('#home-tickets').textContent=x.tickets+(x.picks?` +${x.picks}🏰`:'')}$('#home-hello').textContent=`Hi, ${p.name}!`;
   const full=REG_IDS.every(id=>p.stickers.includes(id));
   $('#home-toward').textContent=full?'Album full!':p.toward>=PTS?`${Math.floor(p.toward/PTS)} ready! Win with 3 stars`:`${p.toward} / ${PTS} ⭐`;
   $('#home-meter').style.width=(full?100:Math.min(100,p.toward/PTS*100))+'%';
@@ -977,6 +1022,7 @@ function finish(){
     while(got.length+(motivGot?1:0)<CAP&&p.toward>=PTS){const s=awardFrom(REG_IDS,p);if(!s){p.toward=Math.min(p.toward,PTS);break}p.toward-=PTS;got.push(s)}
   }
   const waiting=Math.floor(p.toward/PTS);
+  const pw=passAfterGame(p,earn),px=passOf(p);
   const spec=checkSpecial(p);
   save();
   $('#r-stars').innerHTML=starHTML(stars);
@@ -989,6 +1035,8 @@ function finish(){
   const SPL={diamond:['💎','Diamond!'],rainbow:['🌈','Super special!'],galaxy:['🌌','Galaxy!'],crystal:['💖','Crystal!'],sun:['☀️','Golden Sun!'],trophy:['🏆','Trophy!'],legend:['👑','Legend!']};
   if(spec.length)$('#r-packs-label').textContent=spec.some(x=>x.id[0]==='t')?'WOW! You won a trophy! Tap to open.':'WOW! A special sticker! Tap to open.';
   $('#r-packs').innerHTML=spec.map(x=>{const k=SPEC[x.id].kind;return`<button class="pack specpack ${k}" data-act="open" data-s="${x.id}"><span class="p-ico">${SPL[k][0]}</span>${SPL[k][1]}</button>`}).join('')+got.map(s=>`<button class="pack ${s.gold?'goldpack':s.page.motiv?'motivpack':''}" data-act="open" data-s="${s.id}"><span class="p-ico">${s.gold?'✨':s.page.motiv?'💌':'🎁'}</span>${s.gold?'Gold!':s.page.motiv?'For you!':'Open me'}</button>`).join('');
+  const ppl=[];if(pw.ticket)ppl.push(`🎟️ +1 Park ticket! You have ${px.tickets}.`);if(pw.picks)ppl.push(pw.picks===1?'🏰 Block mastered! You won a free ride pass!':`🏰 ${pw.picks} blocks mastered! ${pw.picks} free ride passes!`);
+  if(ppl.length)$('#r-packs').insertAdjacentHTML('afterbegin',ppl.map(t=>`<p class="pp-res">${t}</p>`).join('')+`<button class="btn gold small" data-act="parkpass" style="margin:0 auto 8px">Go to Park Pass</button>`);
   const miss=keys.filter(k=>!S.first[k]);
   $('#r-miss-wrap').hidden=!miss.length;$('#r-miss').innerHTML=miss.map(k=>`<span>${esc(plain(k))}</span>`).join('');
   show('s-results');
@@ -1023,8 +1071,9 @@ function renderDiamonds(){
 }
 function renderAlbum(){
   const p=me(),pg=PAGES[albumPage];
-  $('#album-tabs').innerHTML=PAGES.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===albumPage}" data-act="tab" data-i="${i}">${x.name}</button>`).join('')+`<button class="tab trophytab" role="tab" aria-selected="${albumPage===PAGES.length}" data-act="tab" data-i="${PAGES.length}">🏆 Trophy Room</button><button class="tab" role="tab" aria-selected="${albumPage===PAGES.length+1}" data-act="tab" data-i="${PAGES.length+1}">💎 Diamonds</button>`;
+  $('#album-tabs').innerHTML=PAGES.map((x,i)=>`<button class="tab" role="tab" aria-selected="${i===albumPage}" data-act="tab" data-i="${i}">${x.name}</button>`).join('')+`<button class="tab passtab" role="tab" aria-selected="${albumPage===PAGES.length+2}" data-act="tab" data-i="${PAGES.length+2}">🎟️ Park Pass</button><button class="tab trophytab" role="tab" aria-selected="${albumPage===PAGES.length}" data-act="tab" data-i="${PAGES.length}">🏆 Trophy Room</button><button class="tab" role="tab" aria-selected="${albumPage===PAGES.length+1}" data-act="tab" data-i="${PAGES.length+1}">💎 Diamonds</button>`;
   if(albumPage===PAGES.length+1)return renderDiamonds();
+  if(albumPage===PAGES.length+2)return renderPass();
   if(!pg){
     $('#album-page').innerHTML=`<div class="album-head"><h3>Trophy Room</h3><span>${p.special.length} / ${SPECIAL.length}</span></div>
      <div class="sgrid">${SPECIAL.map(x=>{const own=p.special.includes(x.id);return`<div class="scell ${x.kind}">${own?specArt(x,p):`<div class="spc empty ${x.kind}">${x.kind==='trophy'||x.kind==='legend'?'🏆':'?'}</div>`}<span class="s-name">${own?esc(x.name(p)):'???'}</span><span class="s-how">${esc(x.how)}</span></div>`}).join('')}</div>`;
@@ -1035,6 +1084,35 @@ function renderAlbum(){
    ${pg.motiv?`<p class="note" style="text-align:left">Win one the first time you practice each block.</p>`:`<p class="gold-title">Gold stickers</p><p class="note" style="text-align:left;margin-top:-8px">Win one when you get 3 stars on a level for the first time, or play a perfect game.</p>
    <div class="grid">${pg.gold.map(i=>stickerCell(i[0],p.stickers.includes(i[0]))).join('')}</div>`}`;
   show('s-album');
+}
+
+let passPark=0,passMsg='';
+function sealArt(pk){return`<div class="seal-art"><span>${pk.e}</span><img src="park/seal-${pk.id}.webp" alt="" onerror="this.remove()"></div>`}
+function renderPass(){
+  const p=me(),x=passOf(p),pk=PARKS[passPark],cost=passCost(),can=x.picks>0||x.tickets>=cost;
+  const total=PARKS.reduce((a,k)=>a+k.ids.length,0);
+  const got=x.seals.includes(pk.id),have=pk.ids.filter(i=>x.owned.includes(i)).length;
+  $('#album-page').innerHTML=`<div class="album-head"><h3>🎟️ Park Pass</h3><span>${x.owned.length} / ${total} rides</span></div>
+   <div class="pp-bar"><span>🎟️ <b>${x.tickets}</b> tickets</span>${x.picks?`<span class="pp-free">🏰 ${x.picks} free ${x.picks===1?'pass':'passes'}</span>`:''}<span class="note" style="text-align:left;flex-basis:100%">Get 3 stars to win a ticket. ${cost} tickets = 1 ride. Master a whole block (3 stars on its levels) for a free ride!</span></div>
+   <div class="tabs">${PARKS.map((k,i)=>`<button class="tab" aria-selected="${i===passPark}" data-act="ppark" data-i="${i}">${k.e} ${k.name}</button>`).join('')}</div>
+   <div class="seal ${got?'got':''}">${sealArt(pk)}<span><b>${got?esc(pk.full)+' Gold Seal!':'Gold Seal'}</b><small>${got?'You collected every ride in this park!':`Collect all ${pk.ids.length} rides to win it. ${have} / ${pk.ids.length}`}</small></span></div>
+   <p class="pp-msg" id="pp-msg">${esc(passMsg)}</p>
+   <div class="grid">${pk.ids.map(id=>{const r=RIDE[id],own=x.owned.includes(id);
+     return own?`<button class="ride" data-act="sayride" data-r="${id}"><img src="park/${id}.webp" alt="" loading="lazy"><span class="s-name">${esc(r.n)}</span></button>`
+     :`<button class="ride locked ${can?'can':''}" data-act="buyride" data-r="${id}"><img src="park/${id}.webp" alt="" loading="lazy"><span class="lk">${can?'🎟️':'🔒'}</span><span class="s-name">${esc(r.n)}</span><span class="cost">${x.picks?'Free pass':cost+' 🎟️'}</span></button>`}).join('')}</div>`;
+  passMsg='';show('s-album');
+}
+function buyRide(b){
+  const p=me(),x=passOf(p),id=b.dataset.r,r=RIDE[id],cost=passCost();if(!r||x.owned.includes(id))return;
+  const msg=t=>{const m=$('#pp-msg');if(m)m.textContent=t};
+  if(!x.picks&&x.tickets<cost){sBonk();msg(`You need ${cost-x.tickets} more ${cost-x.tickets===1?'ticket':'tickets'}. Get 3 stars to win tickets!`);return}
+  if(b.dataset.armed!=='1'){document.querySelectorAll('.ride[data-armed="1"]').forEach(e=>e.dataset.armed='');b.dataset.armed='1';msg(`Tap ${r.n} again to get it${x.picks?' with a free pass':` for ${cost} tickets`}!`);say(r.n);return}
+  if(x.picks)x.picks--;else x.tickets-=cost;
+  x.owned.push(id);
+  const pk=r.park,full=pk.ids.every(i=>x.owned.includes(i))&&!x.seals.includes(pk.id);
+  if(full)x.seals.push(pk.id);
+  save();sSparkle();sWin();confetti(full?160:90);say(full?`${pk.full} Gold Seal!`:r.n);
+  passMsg=full?`🏆 WOW! You won the ${pk.full} Gold Seal!`:`You got ${r.n}!`;renderPass();
 }
 
 /* ---------- GROWN-UPS ---------- */
@@ -1059,6 +1137,12 @@ function renderParents(){
   <div class="panel"><h3>💎 Diamond awards (school quiz)</h3>
     <p class="muted">When ${esc(pp.name)} gets 9, 9.5 or 10 on a quiz at school, tap the grade next to that block. One diamond per block. Change the player at the top of this page.</p>
     ${['spell','vocab'].map(t=>`<p class="blk-title" style="font-size:1.05rem;margin-top:8px">${TRACK_NAME[t]}</p>`+diamondBlocks().filter(b=>b.track===t).map(b=>{const d=(pp.diamonds||{})[b.id];return`<div class="prow"><span style="flex:1;min-width:120px"><b>${esc(b.name)}</b> ${d?`· 💎 ${esc(d.g)}`:''}</span>${['9','9.5','10'].map(g=>`<button class="pchip gbtn" data-act="dset" data-b="${b.id}" data-g="${g}" aria-pressed="${!!d&&d.g===g}">${g}</button>`).join('')}${d?`<button class="btn small" data-act="ddel" data-b="${b.id}">Remove</button>`:''}</div>`}).join('')).join('')}
+  </div>
+  <div class="panel"><h3>🎟️ Park Pass</h3>
+    <p class="muted">${esc(pp.name)}: ${passOf(pp).tickets} tickets · ${passOf(pp).picks} free passes · ${passOf(pp).owned.length} of 42 rides. A ticket comes with every 3-star game; a free pass with every mastered block.</p>
+    <p class="blk-title" style="font-size:1.05rem">Tickets for one ride</p>
+    <div class="pchips">${[3,4,5,6].map(c=>`<button class="pchip gbtn" data-act="pcost" data-c="${c}" aria-pressed="${passCost()===c}">${c}</button>`).join('')}</div>
+    <div class="row" style="justify-content:flex-start"><button class="btn small" data-act="ptick" data-n="1">Give 1 ticket</button><button class="btn small" data-act="ptick" data-n="-1">Take 1 ticket</button></div>
   </div>
   <div class="panel"><h3>Players</h3>
     ${state.players.map(p=>`<div class="prow"><button class="av-btn" data-act="avatar" data-id="${p.id}" aria-label="Change picture">${p.avatar}</button><input type="text" id="name-${p.id}" value="${esc(p.name)}" maxlength="20" aria-label="Name"><button class="btn small" data-act="delplayer" data-id="${p.id}" ${state.players.length<2?'hidden':''}>Remove</button></div>`).join('')}
@@ -1113,6 +1197,12 @@ const acts={
   resback:()=>{const f=S&&S.from;S=null;f==='map'?renderMap():f==='practice'?renderPractice():renderHome()},
   open:b=>openPack(b),
   tab:b=>{albumPage=+b.dataset.i;renderAlbum()},
+  ppark:b=>{passPark=+b.dataset.i;renderPass()},
+  buyride:b=>buyRide(b),
+  sayride:b=>{const r=RIDE[b.dataset.r];if(r){say(r.n);sSparkle()}},
+  parkpass:()=>{S=null;albumPage=PAGES.length+2;renderAlbum()},
+  pcost:b=>{state.passCost=+b.dataset.c;save();parentMsg=`A ride now costs ${state.passCost} tickets.`;renderParents()},
+  ptick:b=>{const p=state.players.find(x=>x.id===parentPlayer);if(!p)return;const x=passOf(p);x.tickets=Math.max(0,x.tickets+ +b.dataset.n);save();parentMsg=`${p.name} has ${x.tickets} tickets.`;renderParents()},
   diamonds:()=>{albumPage=PAGES.length+1;renderAlbum()},
   dset:b=>{const p=state.players.find(x=>x.id===parentPlayer);if(!p)return;p.diamonds=p.diamonds||{};const old=p.diamonds[b.dataset.b];p.diamonds[b.dataset.b]={g:b.dataset.g,at:Date.now(),seen:old&&old.g===b.dataset.g?old.seen:false};save();const bk=allBlocks().find(x=>x.id===b.dataset.b);parentMsg=`💎 ${b.dataset.g} for ${p.name}: ${bk?bk.name:''}.`;renderParents()},
   ddel:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p&&p.diamonds)delete p.diamonds[b.dataset.b];save();parentMsg='Diamond removed.';renderParents()},
@@ -1136,7 +1226,7 @@ const acts={
   copybackup:()=>{const ta=$('#backup-code');if(!ta.value)ta.value=encodeState();const ok=()=>status('Copied. Paste it in Notes.');const fb=()=>{ta.focus();ta.select();try{document.execCommand('copy');ok()}catch(e){status('Select the code and copy it.')}};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}},
   restore:b=>{const code=$('#backup-code').value.trim();if(!code){status('Paste a backup code first.');return}
     try{const s=JSON.parse(decodeURIComponent(escape(atob(code))));if(!s||!Array.isArray(s.players)||!s.players.length)throw 0;if(!armed(b))return;state=fix(s);save();parentMsg='Progress restored.';renderParents()}catch(e){status('That code did not work. Check that it was copied completely.')}},
-  reset:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p){Object.assign(p,{points:0,motiv:[],toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[]});save()}parentMsg='Progress erased.';renderParents()}
+  reset:b=>{if(!armed(b))return;const p=state.players.find(x=>x.id===parentPlayer);if(p){Object.assign(p,{points:0,motiv:[],toward:0,stickers:[],words:{},levels:{},goldLevels:[],special:[],pass:{tickets:0,picks:0,owned:[],seals:[],mastered:[]}});save()}parentMsg='Progress erased.';renderParents()}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;unlockAudio();const f=acts[b.dataset.act];if(f)f(b,e)});
 document.addEventListener('keydown',e=>{

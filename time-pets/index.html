@@ -186,6 +186,13 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .hcrown{font-family:var(--f-display);font-size:13px;color:#A97A12;min-height:18px}
 .halbum{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:12px}
 .hcell{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:700;text-align:center;line-height:1.15}
+.crest{display:block;height:auto}
+.crest.xs{display:inline-block;width:16px;vertical-align:-3px}
+.crest.sm{width:44px}
+.crest.pickc{width:min(130px,100%);filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+.hstimg{display:block;height:100px;width:auto;max-width:90px;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3))}
+.hstimg.big{height:130px;max-width:110px}
+.halbum .hst.empty{width:72px;height:96px;border-radius:40px}
 .hst{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff 0 8%,transparent 30%),var(--h1);border:5px solid var(--h2);box-shadow:0 0 0 2px #1E2A3A,0 0 14px var(--h2);font-size:34px}
 .hst.big{width:90px;height:90px;font-size:44px}
 .hst.empty{background:#EEF2F7;border:3px dashed #9AA6B5;box-shadow:none;color:#9AA6B5;font-family:var(--f-display);font-size:28px}
@@ -1077,13 +1084,13 @@ const bossOpen = (p,i) => eraOpen(p,i) && ((prog(p, ERAS[i].id).l[ERAS[i].bossAf
    correct answer: +10 to your house · each mistake: +10 to one rival house, taking turns */
 const HOUSES = {
   gryffindor:{name:"Gryffindor", c1:"#7F0909", c2:"#FFC500", ink:"#fff", animal:"🦁", trait:"Brave",
-    st:[["🦁","Brave Lion"],["🧣","Scarlet Scarf"],["🗡️","Shining Sword"],["🔥","Courage Flame"],["🛡️","Red Shield"],["🧹","Racing Broom"],["🦉","Owl Post"],["🏆","Golden Cup"]]},
+    st:[["01","Brave Lion"],["02","Lightning Bolt"],["03","Golden Crown"],["04","Brave Sword"],["05","Griffin"],["06","Castle"],["07","Phoenix"],["08","North Star"],["09","Lion Paw"],["10","Racing Broom"]]},
   hufflepuff:{name:"Hufflepuff", c1:"#ECB939", c2:"#372E29", ink:"#372E29", animal:"🦡", trait:"Loyal",
-    st:[["🦡","Loyal Badger"],["🌻","Sunflower"],["🍯","Honey Pot"],["🌱","Little Sprout"],["🍪","Kitchen Treat"],["🤝","Best Friends"],["🧺","Picnic Basket"],["⭐","Gold Star"]]},
+    st:[["01","Loyal Badger"],["02","Golden Leaf"],["03","Golden Cup"],["04","Garden Tools"],["05","Busy Bee"],["06","Castle"],["07","Sunshine"],["08","North Star"],["09","Badger Paw"],["10","Kind Heart"]]},
   ravenclaw:{name:"Ravenclaw", c1:"#0E1A40", c2:"#946B2D", ink:"#fff", animal:"🦅", trait:"Wise",
-    st:[["🦅","Wise Eagle"],["📚","Book Tower"],["🔭","Star Telescope"],["🌙","Blue Moon"],["💎","Sapphire"],["🪶","Writing Quill"],["🧩","Riddle"],["✨","Bright Idea"]]},
+    st:[["01","Wise Eagle"],["02","Writing Quill"],["03","Compass Star"],["04","Spell Book"],["05","Star Telescope"],["06","Castle"],["07","Moon and Stars"],["08","Eagle Wing"],["09","Wise Owl"],["10","Hourglass"]]},
   slytherin:{name:"Slytherin", c1:"#1A472A", c2:"#AAAAAA", ink:"#fff", animal:"🐍", trait:"Clever",
-    st:[["🐍","Clever Snake"],["🧪","Green Potion"],["🌿","Silver Leaf"],["💚","Emerald"],["🗝️","Silver Key"],["🌊","Lake Wave"],["🪄","Magic Wand"],["🏰","Dungeon Tower"]]}
+    st:[["01","Clever Snake"],["02","Lightning Bolt"],["03","Silver Crown"],["04","Green Potion"],["05","Coiled Snake"],["06","Castle"],["07","Snake Spiral"],["08","North Star"],["09","Silver Paw"],["10","Spell Book"]]}
 };
 const HKEYS = Object.keys(HOUSES);
 const STICK_EVERY = 100;
@@ -1100,7 +1107,9 @@ function housePoints(p, good, bad){
   return out;
 }
 const hChip = (h, txt) => `<span class="hchip" style="background:${HOUSES[h].c1};color:${HOUSES[h].ink};border-color:${HOUSES[h].c2}">${txt}</span>`;
-const hSticker = (h, st, big) => `<span class="hst ${big?"big":""}" style="--h1:${HOUSES[h].c1};--h2:${HOUSES[h].c2}"><span>${st[0]}</span></span>`;
+const HIMG = id => (window.HIMG_DATA && window.HIMG_DATA[id]) || `houses/${id}.png`;
+const crest = (h, cls) => `<img class="${cls||"crest"}" src="${HIMG(h+"-crest")}" alt="${HOUSES[h].name} crest">`;
+const hSticker = (h, st, big) => `<img class="hstimg ${big?"big":""}" src="${HIMG(h+"-"+st[0])}" alt="${st[1]}">`;
 
 function hpChips(hp){
   if(!hp) return "";
@@ -1115,7 +1124,7 @@ const app = document.getElementById("app");
 
 function topBar(p){
   return `<div class="top"><div class="row"><button class="btn small white" data-act="home">Players</button>${V.screen!=="map"?'<button class="btn small white" data-act="map">Time map</button>':""}</div>
-  <div class="row"><span class="chip">${esc(p.name)}</span>${p.house?hChip(p.house, `${HOUSES[p.house].animal} ${ownPts(p)}`):""}<span class="chip" title="Time crystals">${GEM}${p.xp}</span><button class="btn small white" data-act="sound" aria-pressed="${S.sound}">${S.sound?"Sound on":"Sound off"}</button></div></div>`;
+  <div class="row"><span class="chip">${esc(p.name)}</span>${p.house?hChip(p.house, `${crest(p.house,"crest xs")} ${ownPts(p)}`):""}<span class="chip" title="Time crystals">${GEM}${p.xp}</span><button class="btn small white" data-act="sound" aria-pressed="${S.sound}">${S.sound?"Sound on":"Sound off"}</button></div></div>`;
 }
 function growBar(p){
   const n = growthN(p), nx = nextItem(p);
@@ -1217,7 +1226,7 @@ function mapHTML(){
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>
   ${diaNew(p)?`<button class="dbanner" data-act="room"><span style="font-size:44px">💎</span><span><b>New Diamond Award!</b>For your great grammar quiz at school. Tap to see it in the Pet room.</span></button>`:""}
-  ${p.house ? `<div class="cupbar" style="--h1:${HOUSES[p.house].c1};--h2:${HOUSES[p.house].c2};--hi:${HOUSES[p.house].ink}"><div><b>${HOUSES[p.house].animal} ${HOUSES[p.house].name}</b><div>${ownPts(p)} house points · ${stickersOf(p)} of ${HOUSES[p.house].st.length} stickers</div></div><button class="btn small white" data-act="cup">House Cup</button></div>` : `<div class="panel"><h2>Choose your house!</h2><div>Every right answer gives points to your house. Every mistake gives points to a rival house.</div><div><button class="btn" data-act="sort">Choose my house</button></div></div>`}
+  ${p.house ? `<div class="cupbar" style="--h1:${HOUSES[p.house].c1};--h2:${HOUSES[p.house].c2};--hi:${HOUSES[p.house].ink}"><div class="row" style="gap:10px;flex-wrap:nowrap">${crest(p.house,"crest sm")}<div><b>${HOUSES[p.house].name}</b><div>${ownPts(p)} house points · ${stickersOf(p)} of ${HOUSES[p.house].st.length} stickers</div></div></div><button class="btn small white" data-act="cup">House Cup</button></div>` : `<div class="panel"><h2>Choose your house!</h2><div>Every right answer gives points to your house. Every mistake gives points to a rival house.</div><div><button class="btn" data-act="sort">Choose my house</button></div></div>`}
   <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>
   ${extra?`<h2 style="font-size:26px">Extra practice</h2><div class="muted">Not part of the time trip. Practice here any time. Stars still help your pet grow.</div><div class="track">${extra}</div>`:""}`;
 }
@@ -1385,7 +1394,7 @@ function finish(){
   const s = V.sess, p = P(), e = ERAS[s.ei], pr = prog(p, e.id);
   const before = s.startN;
   const res = {ei:s.ei, l:s.l, boss:s.boss, points:s.points, max:s.max, gems:s.gems, newSt:s.newSt||[]};
-  if(p.house && s.hsum) res.house = `<b>House points this round:</b> ` + HKEYS.filter(k => s.hsum[k]).map(k => hChip(k, `${HOUSES[k].animal} ${HOUSES[k].name} +${s.hsum[k]}`)).join(" ");
+  if(p.house && s.hsum) res.house = `<b>House points this round:</b> ` + HKEYS.filter(k => s.hsum[k]).map(k => hChip(k, `${HOUSES[k].name} +${s.hsum[k]}`)).join(" ");
   if(!s.boss){
     const pct = s.points/s.max; const st = pct>=.9?3:pct>=.7?2:pct>=.5?1:0;
     res.stars = st; pr.l[s.l] = Math.max(pr.l[s.l]||0, st);
@@ -1440,7 +1449,7 @@ function sortHTML(){
   const p = P();
   return `<div class="row"><button class="btn small white" data-act="map">Back</button></div>
   <div class="panel"><h2>Choose your house, ${esc(p.name.split(" ")[0])}!</h2><div>Right answers give 10 points to your house. Each mistake gives 10 points to a rival house. Win house stickers along the way!</div>
-  <div class="houses">${HKEYS.map(k => { const H = HOUSES[k]; return `<button class="hcard" data-act="pickhouse" data-h="${k}" style="--h1:${H.c1};--h2:${H.c2};--hi:${H.ink}"><span class="ha">${H.animal}</span><b>${H.name}</b><span>${H.trait}</span></button>`; }).join("")}</div></div>`;
+  <div class="houses">${HKEYS.map(k => { const H = HOUSES[k]; return `<button class="hcard" data-act="pickhouse" data-h="${k}" style="--h1:${H.c1};--h2:${H.c2};--hi:${H.ink}">${crest(k,"crest pickc")}<b>${H.name}</b><span>${H.trait}</span></button>`; }).join("")}</div></div>`;
 }
 function hourglass(h, pts, max){
   const H = HOUSES[h], f = max ? pts/max : 0, top = 22, bot = 150, fillH = Math.round((bot-top-20)*f);
@@ -1452,7 +1461,7 @@ function hourglass(h, pts, max){
 function cupHTML(){
   const p = P(), cup = cupOf(p), max = Math.max(10, ...HKEYS.map(k => cup[k])), lead = Math.max(...HKEYS.map(k => cup[k]));
   const H = HOUSES[p.house];
-  const board = HKEYS.map(k => `<div class="hcol ${k===p.house?"mine":""}" style="--h1:${HOUSES[k].c1};--h2:${HOUSES[k].c2};--hi:${HOUSES[k].ink}"><div class="hcrown">${cup[k]===lead&&lead>0?"Leading!":"&nbsp;"}</div>${hourglass(k,cup[k],max)}<div class="hname">${HOUSES[k].animal} ${HOUSES[k].name}</div><div class="hpts" style="color:${k==="hufflepuff"?"#8A6410":HOUSES[k].c1}">${cup[k]}</div></div>`).join("");
+  const board = HKEYS.map(k => `<div class="hcol ${k===p.house?"mine":""}" style="--h1:${HOUSES[k].c1};--h2:${HOUSES[k].c2};--hi:${HOUSES[k].ink}"><div class="hcrown">${cup[k]===lead&&lead>0?"Leading!":"&nbsp;"}</div>${hourglass(k,cup[k],max)}${crest(k,"crest sm")}<div class="hname">${HOUSES[k].name}</div><div class="hpts" style="color:${k==="hufflepuff"?"#8A6410":HOUSES[k].c1}">${cup[k]}</div></div>`).join("");
   const got = stickersOf(p);
   const album = H.st.map((st,i) => i<got ? `<div class="hcell">${hSticker(p.house, st)}<span>${st[1]}</span></div>` : `<div class="hcell"><span class="hst empty">?</span><span>${(i+1)*STICK_EVERY} pts</span></div>`).join("");
   return topBar(p) + `<div class="panel"><h2>House Cup</h2><div class="muted">Your right answers fill your house's hourglass. Your mistakes help the other houses.</div><div class="board">${board}</div></div>

@@ -287,9 +287,26 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .ride .cost{font-size:.85rem;color:var(--lilac);font-weight:700}
 .seal{display:flex;align-items:center;gap:14px;border-radius:18px;padding:12px 14px;background:var(--sky-2);border:2px dashed var(--sky-line)}
 .seal.got{border:2px solid var(--gold);background:linear-gradient(135deg,rgba(247,197,74,.25),rgba(255,95,147,.15))}
-.seal-art{flex:0 0 96px;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;position:relative;filter:drop-shadow(0 4px 0 rgba(0,0,0,.3))}
-.seal.got .seal-art{animation:pop .6s backwards}
-.seal-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.seal-art{flex:0 0 112px;width:112px;height:112px;border-radius:50%;display:grid;place-items:center;font-size:2.3rem;position:relative}
+.seal.got{border:2px solid #bfe9ff;background:linear-gradient(135deg,rgba(191,233,255,.22),rgba(155,92,255,.18),rgba(247,197,74,.18));box-shadow:0 0 22px rgba(191,233,255,.35)}
+.seal.got .seal-art{flex-basis:132px;width:132px;height:132px;animation:pop .6s backwards,diaGlow 2.4s ease-in-out infinite}
+.seal-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.seal.got .seal-art::after{content:"";position:absolute;inset:11%;border-radius:50%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.7) 48%,transparent 60%);background-size:250% 100%;animation:diaShine 3.2s ease-in-out infinite;pointer-events:none;mix-blend-mode:screen}
+.seal.got .seal-art i{position:absolute;width:14px;height:14px;background:#fff;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);animation:twinkle 1.8s ease-in-out infinite;z-index:2}
+.seal.got .seal-art i:nth-of-type(1){top:6%;left:10%}
+.seal.got .seal-art i:nth-of-type(2){bottom:10%;right:4%;animation-delay:.6s;width:11px;height:11px}
+.seal.got .seal-art i:nth-of-type(3){top:14%;right:2%;animation-delay:1.2s;width:9px;height:9px}
+@keyframes diaGlow{0%,100%{filter:drop-shadow(0 0 6px rgba(191,233,255,.7)) drop-shadow(0 0 16px rgba(155,92,255,.45))}50%{filter:drop-shadow(0 0 14px rgba(255,255,255,.95)) drop-shadow(0 0 30px rgba(247,197,74,.7))}}
+@keyframes diaShine{0%{background-position:150% 0}60%,100%{background-position:-60% 0}}
+@keyframes twinkle{0%,100%{transform:scale(.3) rotate(0);opacity:.2}50%{transform:scale(1.15) rotate(45deg);opacity:1}}
+.dia-pop{position:fixed;inset:0;z-index:60;display:grid;place-items:center;align-content:center;gap:14px;background:radial-gradient(circle at 50% 42%,#4a2f9a,#1b1446 60%,#0c0a24);text-align:center;padding:20px}
+.dp-wrap{display:contents}
+.dia-pop .ray{position:absolute;width:150vmax;height:150vmax;left:50%;top:45%;transform:translate(-50%,-50%);background:repeating-conic-gradient(rgba(255,255,255,.10) 0 8deg,transparent 8deg 20deg);animation:spin 18s linear infinite;pointer-events:none}
+.dia-pop .seal.got .seal-art{flex:none;width:min(72vw,340px);height:min(72vw,340px);animation:pop .7s backwards,diaGlow 2.4s ease-in-out infinite}
+.dia-pop h3{position:relative;font-size:clamp(1.6rem,7vw,2.3rem);color:#fff;text-shadow:0 0 18px rgba(191,233,255,.9)}
+.dia-pop p{position:relative;margin:0;color:var(--lilac);font-weight:700}
+.dia-pop .btn{position:relative}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
 .seal:not(.got) .seal-art{filter:grayscale(1) brightness(.5)}
 .seal-art span{opacity:0}
 .seal b{display:block;font-family:var(--display);font-size:1.2rem}
@@ -1089,7 +1106,8 @@ function renderAlbum(){
 }
 
 let passPark=0,passMsg='';
-function sealArt(pk){return`<div class="seal-art"><span>${pk.e}</span><img src="park/seal-${pk.id}.webp" alt="" onerror="this.remove()"></div>`}
+function sealArt(pk){return`<div class="seal-art"><span>${pk.e}</span><img src="park/seal-${pk.id}.webp" alt="" onerror="this.remove()"><i></i><i></i><i></i></div>`}
+function diamondPop(pk){const d=document.createElement('div');d.className='dia-pop';d.innerHTML=`<div class="ray"></div><div class="seal got dp-wrap">${sealArt(pk)}</div><h3>${esc(pk.full)}<br>Diamond Sticker!</h3><p>You collected every ride in this park!</p><button class="btn gold" type="button">Yay!</button>`;d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);setTimeout(()=>confetti(160),300)}
 function renderPass(){
   const p=me(),x=passOf(p),pk=PARKS[passPark],cost=passCost(),can=x.picks>0||x.tickets>=cost;
   const total=PARKS.reduce((a,k)=>a+k.ids.length,0);
@@ -1097,7 +1115,7 @@ function renderPass(){
   $('#album-page').innerHTML=`<div class="album-head"><h3>🎟️ Park Pass</h3><span>${x.owned.length} / ${total} rides</span></div>
    <div class="pp-bar"><span>🎟️ <b>${x.tickets}</b> tickets</span>${x.picks?`<span class="pp-free">🏰 ${x.picks} free ${x.picks===1?'pass':'passes'}</span>`:''}<span class="note" style="text-align:left;flex-basis:100%">Get 3 stars to win a ticket. ${cost} tickets = 1 ride. Master a whole block (3 stars on its levels) for a free ride!</span></div>
    <div class="tabs">${PARKS.map((k,i)=>`<button class="tab" aria-selected="${i===passPark}" data-act="ppark" data-i="${i}">${k.e} ${k.name}</button>`).join('')}</div>
-   <div class="seal ${got?'got':''}">${sealArt(pk)}<span><b>${got?esc(pk.full)+' Gold Seal!':'Gold Seal'}</b><small>${got?'You collected every ride in this park!':`Collect all ${pk.ids.length} rides to win it. ${have} / ${pk.ids.length}`}</small></span></div>
+   <div class="seal ${got?'got':''}" ${got?`data-act="diapop" data-p="${passPark}" role="button"`:''}>${sealArt(pk)}<span><b>${got?esc(pk.full)+' Diamond Sticker!':'💎 Diamond Sticker'}</b><small>${got?'You collected every ride in this park! Tap to see it big.':`Collect all ${pk.ids.length} rides to win it. ${have} / ${pk.ids.length}`}</small></span></div>
    <p class="pp-msg" id="pp-msg">${esc(passMsg)}</p>
    <div class="grid">${pk.ids.map(id=>{const r=RIDE[id],own=x.owned.includes(id);
      return own?`<button class="ride" data-act="sayride" data-r="${id}"><img src="park/${id}.webp" alt="" loading="lazy"><span class="s-name">${esc(r.n)}</span></button>`
@@ -1113,8 +1131,8 @@ function buyRide(b){
   x.owned.push(id);
   const pk=r.park,full=pk.ids.every(i=>x.owned.includes(i))&&!x.seals.includes(pk.id);
   if(full)x.seals.push(pk.id);
-  save();sSparkle();sWin();confetti(full?160:90);say(full?`${pk.full} Gold Seal!`:r.n);
-  passMsg=full?`🏆 WOW! You won the ${pk.full} Gold Seal!`:`You got ${r.n}!`;renderPass();
+  save();sSparkle();sWin();confetti(full?160:90);say(full?`${pk.full} Diamond Sticker!`:r.n);
+  passMsg=full?`💎 WOW! You won the ${pk.full} Diamond Sticker!`:`You got ${r.n}!`;renderPass();if(full)diamondPop(pk);
 }
 
 /* ---------- GROWN-UPS ---------- */
@@ -1200,6 +1218,7 @@ const acts={
   open:b=>openPack(b),
   tab:b=>{albumPage=+b.dataset.i;renderAlbum()},
   ppark:b=>{passPark=+b.dataset.i;renderPass()},
+  diapop:b=>{const pk=PARKS[+b.dataset.p];if(pk){diamondPop(pk);sSparkle();say(pk.full+' Diamond Sticker!')}},
   buyride:b=>buyRide(b),
   sayride:b=>{const r=RIDE[b.dataset.r];if(r){say(r.n);sSparkle()}},
   parkpass:()=>{S=null;albumPage=PAGES.length+2;renderAlbum()},

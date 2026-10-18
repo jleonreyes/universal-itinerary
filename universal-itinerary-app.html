@@ -67,6 +67,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;touch-
 .row.major .t{color:#fff;font-weight:700}
 .row .t.bad{color:var(--bad)}
 .row .nm{font-size:16px;line-height:1.3}
+.row.hasic{grid-template-columns:52px 1fr 52px}
+.ri{width:52px;height:52px;border-radius:50%;object-fit:cover;align-self:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.ci .ri{width:42px;height:42px;flex:0 0 42px}
+.sh-title .ri{width:56px;height:56px;flex:0 0 56px}
 .row.major .nm{font-weight:700}
 .row .d{font-size:13px;color:#cbd5e1;font-weight:400}
 .row .m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:5px;font-size:11px}
@@ -235,6 +239,23 @@ const ZC = {
   usf:'#fda4af', dw:'#a3e635', fly:'#7c3aed', log:'#475569'
 };
 const zc = z => ZC[z] || ZC.log;
+/* iconos de atracción (los mismos de Word Wizards) */
+const RIDE_IC = {
+ 'Stardust Racers':'epic01','Constellation Carousel':'epic02','Monsters Unchained':'epic03','Curse of the Werewolf':'epic04',
+ 'Battle at the Ministry':'epic05','Mario Kart':'epic06','Mine-Cart Madness':'epic07',"Yoshi's Adventure":'epic08',
+ "Hiccup's Wing Gliders":'epic09',"Dragon Racer's Rally":'epic10','Fyre Drill':'epic11',
+ "Hagrid's":'ioa01','Forbidden Journey':'ioa02','Flight of the Hippogriff':'ioa03',"Hogwarts Express → King's Cross":'ioa04','Hogwarts Express → USF':'ioa04',
+ 'VelociCoaster':'ioa05','Jurassic River Adventure':'ioa06','Pteranodon Flyers':'ioa07','Skull Island':'ioa08',
+ 'The Incredible Hulk Coaster':'ioa09','Spider-Man':'ioa10',"Doctor Doom's Fearfall":'ioa11','Storm Force Accelatron':'ioa12',
+ 'Bilge-Rat Barges':'ioa13','Ripsaw Falls':'ioa14','The Cat in the Hat':'ioa15','One Fish, Two Fish':'ioa16',
+ 'Caro-Seuss-el':'ioa17','High in the Sky Trolley Train':'ioa18',
+ 'Escape from Gringotts':'usf01','Hogwarts Express → Hogsmeade':'usf02','Hogwarts Express → IOA':'usf02','Revenge of the Mummy':'usf03','Transformers':'usf04',
+ 'MIB Alien Attack':'usf06','E.T. Adventure':'usf07','The Simpsons Ride':'usf08','Kang & Kodos':'usf09','Jimmy Fallon':'usf10',
+ 'Minion Mayhem':'usf11','Villain-Con Minion Blast':'usf12','Trolls Trollercoaster':'usf13'
+};
+const RIDE_KEYS = Object.keys(RIDE_IC).sort((a,b) => b.length - a.length);
+const rideIcon = name => { const n = String(name||''); const k = RIDE_IC[n] ? n : RIDE_KEYS.find(k => n.startsWith(k)); return k ? `word-wizards/park/${RIDE_IC[k]}.webp` : ''; };
+const icImg = name => { const u = rideIcon(name); return u ? `<img class="ri" src="${u}" alt="" loading="lazy" onerror="this.remove()">` : ''; };
 // Fondo de color del renglón: más intenso en atracciones y shows
 const tint = (hex,a) => { const n = parseInt(hex.slice(1),16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`; };
 const zbg = (z,strong) => z === 'log' ? 'transparent' : tint(zc(z), strong ? .5 : .3);
@@ -735,10 +756,11 @@ function render(){
     const si = showInfo(it), times = si ? si.t.map(toMin) : [];
     const off = it.fixed && times.length && !times.includes(s.start);
     const pills = times.length ? `<span class="st"><small>Funciones:</small>${times.map(t => `<span data-t="${t}" class="${t===s.start?'on':''}">${fmt(t)}</span>`).join('')}</span>` : '';
-    html += `<div class="row ${major?'major':''} ${isNow?'now':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
+    const ic = icImg(it.name);
+    html += `<div class="row ${major?'major':''} ${isNow?'now':''} ${ic?'hasic':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
       <span class="t ${s.clash?'bad':''}">${fmt(s.start)}</span>
       <span class="b"><span class="nm">${esc(it.name)}</span> <span class="d">${esc(detail(it))}</span>
-        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con horarios 2026</span>':''}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>
+        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con horarios 2026</span>':''}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>${ic}
     </div>`;
   });
   $('#list').innerHTML = html || '<p class="help" style="padding:24px 0">Sin actividades. Toca ＋ Agregar.</p>';
@@ -789,7 +811,7 @@ function renderEdit(){
   if(i < 0) return closeSheets();
   const it = list[i], s = schedule(list)[i], ride = it.type === 'ride';
   $('#editBody').innerHTML = `
-    <div class="sh-title"><span class="dot" style="background:${zc(it.zone)};width:16px;height:16px"></span><input class="in big" id="eName" value="${esc(it.name)}"></div>
+    <div class="sh-title">${icImg(it.name) || `<span class="dot" style="background:${zc(it.zone)};width:16px;height:16px"></span>`}<input class="in big" id="eName" value="${esc(it.name)}"></div>
     <div class="when">Empieza <b>${fmt(s.start)}</b> · termina <b>${fmt(s.end)}</b>${s.clash?` · <span class="bad">te pasas ${s.clash} min</span>`:''}</div>
     <label class="field switch"><span>Hora fija<small>Shows y funciones: no se mueve aunque cambie lo anterior</small></span><input type="checkbox" id="eFixed" ${it.fixed?'checked':''}></label>
     ${it.fixed ? `<div class="field"><span>Hora</span><input type="time" id="eAt" step="300" value="${hhmm(it.at ?? s.start)}"></div>` : ''}
@@ -910,7 +932,7 @@ function renderCatalog(q){
     const rows = arr.map((c,ci) => ({c,ci})).filter(({c}) => !q || (c.name + ' ' + g + ' ' + (c.note||'')).toLowerCase().includes(q));
     if(!rows.length) return;
     html += `<div class="grp" style="--gz:${zc(arr[0].zone)}">${g}</div>` + rows.map(({c,ci}) =>
-      `<button class="ci" data-g="${gi}" data-c="${ci}" style="--z:${zc(c.zone)};--zb:${zbg(c.zone, true)}"><span class="x"><b>${esc(c.name)}</b><small>${esc(catLine(c))}</small></span><span class="plus">＋</span></button>`).join('');
+      `<button class="ci" data-g="${gi}" data-c="${ci}" style="--z:${zc(c.zone)};--zb:${zbg(c.zone, true)}">${icImg(c.name)}<span class="x"><b>${esc(c.name)}</b><small>${esc(catLine(c))}</small></span><span class="plus">＋</span></button>`).join('');
   });
   $('#catList').innerHTML = html;
 }

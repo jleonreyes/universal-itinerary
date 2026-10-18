@@ -1081,7 +1081,7 @@ const levelOpen = (p,i,l) => eraOpen(p,i) && (l===0 || (prog(p, ERAS[i].id).l[l-
 const bossOpen = (p,i) => eraOpen(p,i) && ((prog(p, ERAS[i].id).l[ERAS[i].bossAfter ?? ERAS[i].levels.length-1]||0) >= 1 || prog(p, ERAS[i].id).boss > 0);
 
 /* ---------------- House Cup (private family use) ----------------
-   correct answer: +10 to your house · each mistake: +10 to one rival house, taking turns */
+   correct answer: +10 to your house · each mistake: +20 (double) to one rival house, taking turns */
 const HOUSES = {
   gryffindor:{name:"Gryffindor", c1:"#7F0909", c2:"#FFC500", ink:"#fff", animal:"🦁", trait:"Brave",
     st:[["01","Brave Lion"],["02","Lightning Bolt"],["03","Golden Crown"],["04","Brave Sword"],["05","Griffin"],["06","Castle"],["07","Phoenix"],["08","North Star"],["09","Lion Paw"],["10","Racing Broom"]]},
@@ -1094,6 +1094,7 @@ const HOUSES = {
 };
 const HKEYS = Object.keys(HOUSES);
 const STICK_EVERY = 100;
+const RIVAL_PTS = 20;
 const cupOf = p => { p.cup = p.cup || {gryffindor:0,hufflepuff:0,ravenclaw:0,slytherin:0}; return p.cup; };
 const ownPts = p => p.house ? cupOf(p)[p.house] : 0;
 const stickersOf = p => p.house ? Math.min(HOUSES[p.house].st.length, Math.floor(ownPts(p)/STICK_EVERY)) : 0;
@@ -1102,7 +1103,7 @@ function housePoints(p, good, bad){
   const cup = cupOf(p), before = stickersOf(p), out = {good:0, rivals:[]};
   if(good){ cup[p.house] += 10*good; out.good = 10*good; }
   const rivals = HKEYS.filter(h => h!==p.house);
-  for(let i=0;i<bad;i++){ p.hrot = ((p.hrot||0)+1) % 3; const h = rivals[p.hrot]; cup[h] += 10; out.rivals.push(h); }
+  for(let i=0;i<bad;i++){ p.hrot = ((p.hrot||0)+1) % 3; const h = rivals[p.hrot]; cup[h] += RIVAL_PTS; out.rivals.push(h); }
   out.newSt = stickersOf(p) > before ? HOUSES[p.house].st.slice(before, stickersOf(p)) : [];
   return out;
 }
@@ -1114,7 +1115,7 @@ const hSticker = (h, st, big) => `<img class="hstimg ${big?"big":""}" src="${HIM
 function hpChips(hp){
   if(!hp) return "";
   let h = hp.good ? " "+hChip(P().house, `+${hp.good} ${HOUSES[P().house].name}`) : "";
-  const tally = {}; hp.rivals.forEach(r => tally[r] = (tally[r]||0)+10);
+  const tally = {}; hp.rivals.forEach(r => tally[r] = (tally[r]||0)+RIVAL_PTS);
   Object.keys(tally).forEach(r => { h += " "+hChip(r, `+${tally[r]} ${HOUSES[r].name}`); });
   return h;
 }
@@ -1226,7 +1227,7 @@ function mapHTML(){
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>
   ${diaNew(p)?`<button class="dbanner" data-act="room"><span style="font-size:44px">💎</span><span><b>New Diamond Award!</b>For your great grammar quiz at school. Tap to see it in the Pet room.</span></button>`:""}
-  ${p.house ? `<div class="cupbar" style="--h1:${HOUSES[p.house].c1};--h2:${HOUSES[p.house].c2};--hi:${HOUSES[p.house].ink}"><div class="row" style="gap:10px;flex-wrap:nowrap">${crest(p.house,"crest sm")}<div><b>${HOUSES[p.house].name}</b><div>${ownPts(p)} house points · ${stickersOf(p)} of ${HOUSES[p.house].st.length} stickers</div></div></div><button class="btn small white" data-act="cup">House Cup</button></div>` : `<div class="panel"><h2>Choose your house!</h2><div>Every right answer gives points to your house. Every mistake gives points to a rival house.</div><div><button class="btn" data-act="sort">Choose my house</button></div></div>`}
+  ${p.house ? `<div class="cupbar" style="--h1:${HOUSES[p.house].c1};--h2:${HOUSES[p.house].c2};--hi:${HOUSES[p.house].ink}"><div class="row" style="gap:10px;flex-wrap:nowrap">${crest(p.house,"crest sm")}<div><b>${HOUSES[p.house].name}</b><div>${ownPts(p)} house points · ${stickersOf(p)} of ${HOUSES[p.house].st.length} stickers</div></div></div><button class="btn small white" data-act="cup">House Cup</button></div>` : `<div class="panel"><h2>Choose your house!</h2><div>Every right answer gives 10 points to your house. Every mistake gives 20 points to a rival house!</div><div><button class="btn" data-act="sort">Choose my house</button></div></div>`}
   <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>
   ${extra?`<h2 style="font-size:26px">Extra practice</h2><div class="muted">Not part of the time trip. Practice here any time. Stars still help your pet grow.</div><div class="track">${extra}</div>`:""}`;
 }
@@ -1370,7 +1371,7 @@ function doCheck(vals){
   const r = evaluate(q, vals);
   const hp = housePoints(p, r.pts, Math.max(0, q.pts - r.pts));
   if(hp && hp.newSt.length) s.newSt = [...(s.newSt||[]), ...hp.newSt];
-  if(hp){ s.hsum = s.hsum || {}; if(hp.good) s.hsum[p.house] = (s.hsum[p.house]||0) + hp.good; hp.rivals.forEach(h => s.hsum[h] = (s.hsum[h]||0) + 10); }
+  if(hp){ s.hsum = s.hsum || {}; if(hp.good) s.hsum[p.house] = (s.hsum[p.house]||0) + hp.good; hp.rivals.forEach(h => s.hsum[h] = (s.hsum[h]||0) + RIVAL_PTS); }
   const gain = q.retry ? Math.min(r.gain,1) : r.gain;
   if(!q.retry) s.points += r.pts;
   p.xp += gain; s.gems += gain; save();
@@ -1448,7 +1449,7 @@ function resultHTML(){
 function sortHTML(){
   const p = P();
   return `<div class="row"><button class="btn small white" data-act="map">Back</button></div>
-  <div class="panel"><h2>Choose your house, ${esc(p.name.split(" ")[0])}!</h2><div>Right answers give 10 points to your house. Each mistake gives 10 points to a rival house. Win house stickers along the way!</div>
+  <div class="panel"><h2>Choose your house, ${esc(p.name.split(" ")[0])}!</h2><div>Right answers give 10 points to your house. Each mistake gives 20 points to a rival house! Win house stickers along the way!</div>
   <div class="houses">${HKEYS.map(k => { const H = HOUSES[k]; return `<button class="hcard" data-act="pickhouse" data-h="${k}" style="--h1:${H.c1};--h2:${H.c2};--hi:${H.ink}">${crest(k,"crest pickc")}<b>${H.name}</b><span>${H.trait}</span></button>`; }).join("")}</div></div>`;
 }
 function hourglass(h, pts, max){
@@ -1464,7 +1465,7 @@ function cupHTML(){
   const board = HKEYS.map(k => `<div class="hcol ${k===p.house?"mine":""}" style="--h1:${HOUSES[k].c1};--h2:${HOUSES[k].c2};--hi:${HOUSES[k].ink}"><div class="hcrown">${cup[k]===lead&&lead>0?"Leading!":"&nbsp;"}</div>${hourglass(k,cup[k],max)}${crest(k,"crest sm")}<div class="hname">${HOUSES[k].name}</div><div class="hpts" style="color:${k==="hufflepuff"?"#8A6410":HOUSES[k].c1}">${cup[k]}</div></div>`).join("");
   const got = stickersOf(p);
   const album = H.st.map((st,i) => i<got ? `<div class="hcell">${hSticker(p.house, st)}<span>${st[1]}</span></div>` : `<div class="hcell"><span class="hst empty">?</span><span>${(i+1)*STICK_EVERY} pts</span></div>`).join("");
-  return topBar(p) + `<div class="panel"><h2>House Cup</h2><div class="muted">Your right answers fill your house's hourglass. Your mistakes help the other houses.</div><div class="board">${board}</div></div>
+  return topBar(p) + `<div class="panel"><h2>House Cup</h2><div class="muted">Your right answers fill your house's hourglass. Each mistake gives 20 points to the other houses.</div><div class="board">${board}</div></div>
   <div class="panel" style="--h1:${H.c1};--h2:${H.c2}"><h2>${H.name} stickers</h2><div class="muted">You win a sticker every ${STICK_EVERY} points for ${H.name}. ${got<H.st.length?`Next one at ${(got+1)*STICK_EVERY} points.`:"You have them all!"}</div><div class="halbum">${album}</div></div>`;
 }
 function grownHTML(){

@@ -170,6 +170,26 @@ label.f{display:flex;flex-direction:column;gap:4px;font-weight:700}
 .ward{min-height:84px;justify-content:center}
 .ward .wstate{font-family:var(--f-display);font-size:15px;border:2px solid var(--ink);border-radius:999px;padding:0 10px;background:var(--card)}
 .ward[aria-pressed="true"] .wstate{background:#BDEBD2}
+.hchip{display:inline-block;font-family:var(--f-display);font-size:15px;line-height:1.5;padding:0 10px;border-radius:999px;border:2.5px solid;vertical-align:middle;white-space:nowrap}
+.cupbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;background:var(--h1);color:var(--hi);border:3px solid var(--h2);border-radius:18px;padding:10px 14px}
+.cupbar b{font-family:var(--f-display);font-weight:400;font-size:22px}
+.houses{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.hcard{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--h1);color:var(--hi);border:4px solid var(--h2);border-radius:18px;padding:14px 8px;box-shadow:0 4px 0 #1E2A3A;cursor:pointer}
+.hcard .ha{font-size:46px;line-height:1}
+.hcard b{font-family:var(--f-display);font-weight:400;font-size:24px}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:end}
+.hcol{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0;border-radius:14px;padding:6px 2px}
+.hcol.mine{background:var(--h2);background:color-mix(in srgb,var(--h2) 30%,transparent);outline:3px solid var(--h1)}
+.hcol .hg{width:100%;max-width:90px;height:auto}
+.hcol .hname{font-family:var(--f-display);font-size:14px;text-align:center;line-height:1.1;overflow-wrap:anywhere}
+.hcol .hpts{font-family:var(--f-display);font-size:24px;color:var(--h1);font-variant-numeric:tabular-nums}
+.hcrown{font-family:var(--f-display);font-size:13px;color:#A97A12;min-height:18px}
+.halbum{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:12px}
+.hcell{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;font-weight:700;text-align:center;line-height:1.15}
+.hst{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#fff 0 8%,transparent 30%),var(--h1);border:5px solid var(--h2);box-shadow:0 0 0 2px #1E2A3A,0 0 14px var(--h2);font-size:34px}
+.hst.big{width:90px;height:90px;font-size:44px}
+.hst.empty{background:#EEF2F7;border:3px dashed #9AA6B5;box-shadow:none;color:#9AA6B5;font-family:var(--f-display);font-size:28px}
+.hsum{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}
 .closet{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}
 .hat{display:flex;flex-direction:column;align-items:center;gap:4px;background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:8px;box-shadow:0 3px 0 var(--ink);cursor:pointer;font-size:14px;font-weight:700;text-align:center;line-height:1.2}
 .hat svg{width:70px;height:70px}
@@ -1053,12 +1073,49 @@ const eraOpen = (p,i) => i===0 || prog(p, eraBefore(i).id).boss >= 7;
 const levelOpen = (p,i,l) => eraOpen(p,i) && (l===0 || (prog(p, ERAS[i].id).l[l-1]||0) >= 1);
 const bossOpen = (p,i) => eraOpen(p,i) && ((prog(p, ERAS[i].id).l[ERAS[i].bossAfter ?? ERAS[i].levels.length-1]||0) >= 1 || prog(p, ERAS[i].id).boss > 0);
 
+/* ---------------- House Cup (private family use) ----------------
+   correct answer: +10 to your house · each mistake: +10 to one rival house, taking turns */
+const HOUSES = {
+  gryffindor:{name:"Gryffindor", c1:"#7F0909", c2:"#FFC500", ink:"#fff", animal:"🦁", trait:"Brave",
+    st:[["🦁","Brave Lion"],["🧣","Scarlet Scarf"],["🗡️","Shining Sword"],["🔥","Courage Flame"],["🛡️","Red Shield"],["🧹","Racing Broom"],["🦉","Owl Post"],["🏆","Golden Cup"]]},
+  hufflepuff:{name:"Hufflepuff", c1:"#ECB939", c2:"#372E29", ink:"#372E29", animal:"🦡", trait:"Loyal",
+    st:[["🦡","Loyal Badger"],["🌻","Sunflower"],["🍯","Honey Pot"],["🌱","Little Sprout"],["🍪","Kitchen Treat"],["🤝","Best Friends"],["🧺","Picnic Basket"],["⭐","Gold Star"]]},
+  ravenclaw:{name:"Ravenclaw", c1:"#0E1A40", c2:"#946B2D", ink:"#fff", animal:"🦅", trait:"Wise",
+    st:[["🦅","Wise Eagle"],["📚","Book Tower"],["🔭","Star Telescope"],["🌙","Blue Moon"],["💎","Sapphire"],["🪶","Writing Quill"],["🧩","Riddle"],["✨","Bright Idea"]]},
+  slytherin:{name:"Slytherin", c1:"#1A472A", c2:"#AAAAAA", ink:"#fff", animal:"🐍", trait:"Clever",
+    st:[["🐍","Clever Snake"],["🧪","Green Potion"],["🌿","Silver Leaf"],["💚","Emerald"],["🗝️","Silver Key"],["🌊","Lake Wave"],["🪄","Magic Wand"],["🏰","Dungeon Tower"]]}
+};
+const HKEYS = Object.keys(HOUSES);
+const STICK_EVERY = 100;
+const cupOf = p => { p.cup = p.cup || {gryffindor:0,hufflepuff:0,ravenclaw:0,slytherin:0}; return p.cup; };
+const ownPts = p => p.house ? cupOf(p)[p.house] : 0;
+const stickersOf = p => p.house ? Math.min(HOUSES[p.house].st.length, Math.floor(ownPts(p)/STICK_EVERY)) : 0;
+function housePoints(p, good, bad){
+  if(!p.house) return null;
+  const cup = cupOf(p), before = stickersOf(p), out = {good:0, rivals:[]};
+  if(good){ cup[p.house] += 10*good; out.good = 10*good; }
+  const rivals = HKEYS.filter(h => h!==p.house);
+  for(let i=0;i<bad;i++){ p.hrot = ((p.hrot||0)+1) % 3; const h = rivals[p.hrot]; cup[h] += 10; out.rivals.push(h); }
+  out.newSt = stickersOf(p) > before ? HOUSES[p.house].st.slice(before, stickersOf(p)) : [];
+  return out;
+}
+const hChip = (h, txt) => `<span class="hchip" style="background:${HOUSES[h].c1};color:${HOUSES[h].ink};border-color:${HOUSES[h].c2}">${txt}</span>`;
+const hSticker = (h, st, big) => `<span class="hst ${big?"big":""}" style="--h1:${HOUSES[h].c1};--h2:${HOUSES[h].c2}"><span>${st[0]}</span></span>`;
+
+function hpChips(hp){
+  if(!hp) return "";
+  let h = hp.good ? " "+hChip(P().house, `+${hp.good} ${HOUSES[P().house].name}`) : "";
+  const tally = {}; hp.rivals.forEach(r => tally[r] = (tally[r]||0)+10);
+  Object.keys(tally).forEach(r => { h += " "+hChip(r, `+${tally[r]} ${HOUSES[r].name}`); });
+  return h;
+}
+
 /* ---------------- screens ---------------- */
 const app = document.getElementById("app");
 
 function topBar(p){
   return `<div class="top"><div class="row"><button class="btn small white" data-act="home">Players</button>${V.screen!=="map"?'<button class="btn small white" data-act="map">Time map</button>':""}</div>
-  <div class="row"><span class="chip">${esc(p.name)}</span><span class="chip" title="Time crystals">${GEM}${p.xp}</span><button class="btn small white" data-act="sound" aria-pressed="${S.sound}">${S.sound?"Sound on":"Sound off"}</button></div></div>`;
+  <div class="row"><span class="chip">${esc(p.name)}</span>${p.house?hChip(p.house, `${HOUSES[p.house].animal} ${ownPts(p)}`):""}<span class="chip" title="Time crystals">${GEM}${p.xp}</span><button class="btn small white" data-act="sound" aria-pressed="${S.sound}">${S.sound?"Sound on":"Sound off"}</button></div></div>`;
 }
 function growBar(p){
   const n = growthN(p), nx = nextItem(p);
@@ -1160,6 +1217,7 @@ function mapHTML(){
   return topBar(p) + `${stageBox(p,"idle",LINES[st])}
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>
   ${diaNew(p)?`<button class="dbanner" data-act="room"><span style="font-size:44px">💎</span><span><b>New Diamond Award!</b>For your great grammar quiz at school. Tap to see it in the Pet room.</span></button>`:""}
+  ${p.house ? `<div class="cupbar" style="--h1:${HOUSES[p.house].c1};--h2:${HOUSES[p.house].c2};--hi:${HOUSES[p.house].ink}"><div><b>${HOUSES[p.house].animal} ${HOUSES[p.house].name}</b><div>${ownPts(p)} house points · ${stickersOf(p)} of ${HOUSES[p.house].st.length} stickers</div></div><button class="btn small white" data-act="cup">House Cup</button></div>` : `<div class="panel"><h2>Choose your house!</h2><div>Every right answer gives points to your house. Every mistake gives points to a rival house.</div><div><button class="btn" data-act="sort">Choose my house</button></div></div>`}
   <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>
   ${extra?`<h2 style="font-size:26px">Extra practice</h2><div class="muted">Not part of the time trip. Practice here any time. Stars still help your pet grow.</div><div class="track">${extra}</div>`:""}`;
 }
@@ -1242,13 +1300,13 @@ function qHTML(q, fb){
   }
   if(!fb && q.type!=="choose") h += `<div class="actions"><button class="btn" data-act="check">Check</button></div>`;
   if(fb){
-    if(fb.ok) h += `<div class="fb ok" role="status">${TICK}<div><b>${esc(fb.praise)}</b> <span class="chip" style="padding:0 8px">${GEM}+${fb.gain}</span>${fb.tip?`<div class="tip">${esc(fb.tip)}</div>`:""}</div></div>`;
+    if(fb.ok) h += `<div class="fb ok" role="status">${TICK}<div><b>${esc(fb.praise)}</b> <span class="chip" style="padding:0 8px">${GEM}+${fb.gain}</span>${hpChips(fb.hp)}${fb.tip?`<div class="tip">${esc(fb.tip)}</div>`:""}</div></div>`;
     else {
       let ans;
       if(q.type==="choose") ans = `<div class="fix">The answer is <span class="goal">${esc(q.show)}</span>.</div>`;
       else if(q.type==="table") ans = `<div class="fix">${esc(q.v.p)} → <span class="goal">${esc(q.v.past)}</span> → <span class="goal">${esc(q.v.pp)}</span></div>`;
       else ans = q.rows.map((r,ri) => fb.rows[ri].ok ? "" : `<div class="fix">${fixedHTML(r,hl)}</div>`).join("");
-      h += `<div class="fb no" role="status"><span class="x" aria-hidden="true">✗</span><div><b>${esc(fb.title)}</b> ${fb.gain?`<span class="chip" style="padding:0 8px">${GEM}+${fb.gain}</span>`:""}${ans}<div class="hint">${esc(fb.hint)}</div>${fb.again?'<div class="hint muted">We will try this one again at the end.</div>':""}</div></div>`;
+      h += `<div class="fb no" role="status"><span class="x" aria-hidden="true">✗</span><div><b>${esc(fb.title)}</b> ${fb.gain?`<span class="chip" style="padding:0 8px">${GEM}+${fb.gain}</span>`:""}${hpChips(fb.hp)}${ans}<div class="hint">${esc(fb.hint)}</div>${fb.again?'<div class="hint muted">We will try this one again at the end.</div>':""}</div></div>`;
     }
     h += `<div class="actions"><button class="btn" data-act="next" id="next">${V.sess.i+1>=V.sess.qs.length?"See results":"Next"}</button></div>`;
   }
@@ -1301,13 +1359,16 @@ function doCheck(vals){
   if(V.fb) return;
   if(q.type!=="choose" && vals.flat().every(v => !v.trim())){ V.say = "Write your answer first!"; render(); focusInput(); return; }
   const r = evaluate(q, vals);
+  const hp = housePoints(p, r.pts, Math.max(0, q.pts - r.pts));
+  if(hp && hp.newSt.length) s.newSt = [...(s.newSt||[]), ...hp.newSt];
+  if(hp){ s.hsum = s.hsum || {}; if(hp.good) s.hsum[p.house] = (s.hsum[p.house]||0) + hp.good; hp.rivals.forEach(h => s.hsum[h] = (s.hsum[h]||0) + 10); }
   const gain = q.retry ? Math.min(r.gain,1) : r.gain;
   if(!q.retry) s.points += r.pts;
   p.xp += gain; s.gems += gain; save();
   const again = !r.ok && !s.boss && !q.retry;
   if(again) s.qs.push({...q, retry:true, options: q.options ? shuffle(q.options) : undefined});
   const partial = r.pts>0 && !r.ok;
-  V.fb = {...r, gain, hint: r.apos ? `Remember the apostrophe ( ' ). ${q.hint}` : q.hint, praise:R(PRAISE), title: r.apos ? "So close!" : partial ? "Half right!" : "Not quite!", again};
+  V.fb = {...r, hp, gain, hint: r.apos ? `Remember the apostrophe ( ' ). ${q.hint}` : q.hint, praise:R(PRAISE), title: r.apos ? "So close!" : partial ? "Half right!" : "Not quite!", again};
   V.mood = r.ok ? "happy" : "sad"; V.say = r.ok ? R(PET_OK) : R(PET_NO);
   tone(r.ok ? [660,880] : [300,220]);
   render();
@@ -1323,7 +1384,8 @@ function nextQ(){
 function finish(){
   const s = V.sess, p = P(), e = ERAS[s.ei], pr = prog(p, e.id);
   const before = s.startN;
-  const res = {ei:s.ei, l:s.l, boss:s.boss, points:s.points, max:s.max, gems:s.gems};
+  const res = {ei:s.ei, l:s.l, boss:s.boss, points:s.points, max:s.max, gems:s.gems, newSt:s.newSt||[]};
+  if(p.house && s.hsum) res.house = `<b>House points this round:</b> ` + HKEYS.filter(k => s.hsum[k]).map(k => hChip(k, `${HOUSES[k].animal} ${HOUSES[k].name} +${s.hsum[k]}`)).join(" ");
   if(!s.boss){
     const pct = s.points/s.max; const st = pct>=.9?3:pct>=.7?2:pct>=.5?1:0;
     res.stars = st; pr.l[s.l] = Math.max(pr.l[s.l]||0, st);
@@ -1360,6 +1422,8 @@ function resultHTML(){
     main = `<h2 style="font-size:34px">${ERAS[r.ei].extra?(r.pass?"Great score!":"Final quiz"):(r.pass?"You passed the Time Quiz!":"Time Quiz")}</h2><div class="score ${r.pass?"":"low"}">${r.score}/10</div>${r.pass||ERAS[r.ei].extra?"":'<div>You need 7 to travel. Practice the levels and try again!</div>'}`;
   }
   let celeb = "";
+  if(r.newSt && r.newSt.length) celeb += `<div class="celebrate" style="border-color:${HOUSES[p.house].c1}"><h3 style="font-size:24px">New ${HOUSES[p.house].name} sticker${r.newSt.length>1?"s":""}!</h3><div class="halbum">${r.newSt.map(st => `<div class="hcell">${hSticker(p.house, st, 1)}<span>${st[1]}</span></div>`).join("")}</div></div>`;
+  if(r.house) celeb += `<div class="celebrate"><div class="hsum">${r.house}</div><div style="margin-top:8px"><button class="btn small white" data-act="cup">See the House Cup</button></div></div>`;
   if(r.swirl) celeb += `<div class="celebrate"><h3 style="font-size:24px">Special accessory: Magic swirl glasses!</h3><div>You got 3 stars ${SWIRL_AT} times. Turn them on or off in the Wardrobe.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.outfit) celeb += `<div class="celebrate"><h3 style="font-size:24px">New outfit: ${r.outfit.name}!</h3><div>You got 3 stars ${r.outfit.n} times. ${esc(p.pet)} is wearing it now. Change it in the Pet room.</div><div class="pw">${petSVG(p,"happy")}</div></div>`;
   if(r.hat) celeb += `<div class="celebrate"><h3 style="font-size:22px">New hat: ${ERAS.find(x=>x.hat===r.hat).hatName}!</h3>${r.next?`<div>${esc(p.pet)} traveled to <b>${r.next.name}</b> (${r.next.year}). New lessons: ${r.next.topic}.</div>`:`<div>You finished every time! ${esc(p.pet)} is a real time traveler.</div>`}</div>`;
@@ -1372,11 +1436,33 @@ function resultHTML(){
 }
 
 /* ---------- grown-ups ---------- */
+function sortHTML(){
+  const p = P();
+  return `<div class="row"><button class="btn small white" data-act="map">Back</button></div>
+  <div class="panel"><h2>Choose your house, ${esc(p.name.split(" ")[0])}!</h2><div>Right answers give 10 points to your house. Each mistake gives 10 points to a rival house. Win house stickers along the way!</div>
+  <div class="houses">${HKEYS.map(k => { const H = HOUSES[k]; return `<button class="hcard" data-act="pickhouse" data-h="${k}" style="--h1:${H.c1};--h2:${H.c2};--hi:${H.ink}"><span class="ha">${H.animal}</span><b>${H.name}</b><span>${H.trait}</span></button>`; }).join("")}</div></div>`;
+}
+function hourglass(h, pts, max){
+  const H = HOUSES[h], f = max ? pts/max : 0, top = 22, bot = 150, fillH = Math.round((bot-top-20)*f);
+  return `<svg viewBox="0 0 80 170" class="hg" aria-hidden="true"><rect x="8" y="4" width="64" height="10" rx="3" fill="${H.c2}" stroke="#1E2A3A" stroke-width="2"/><rect x="8" y="156" width="64" height="10" rx="3" fill="${H.c2}" stroke="#1E2A3A" stroke-width="2"/>
+  <clipPath id="cl-${h}"><path d="M16 14 H64 V40 Q64 70 44 85 Q64 100 64 130 V156 H16 V130 Q16 100 36 85 Q16 70 16 40Z"/></clipPath>
+  <g clip-path="url(#cl-${h})"><rect x="0" y="14" width="80" height="142" fill="#ffffff" opacity=".6"/><rect x="0" y="${156-fillH}" width="80" height="${fillH}" fill="${H.c1}"/>${f>0?Array.from({length:8},(_,i)=>`<circle cx="${22+(i*13)%40}" cy="${156-fillH+6+((i*7)%Math.max(6,fillH-6))}" r="2.4" fill="${H.c2}" opacity=".9"/>`).join(""):""}</g>
+  <path d="M16 14 H64 V40 Q64 70 44 85 Q64 100 64 130 V156 H16 V130 Q16 100 36 85 Q16 70 16 40Z" fill="none" stroke="#1E2A3A" stroke-width="2.5"/></svg>`;
+}
+function cupHTML(){
+  const p = P(), cup = cupOf(p), max = Math.max(10, ...HKEYS.map(k => cup[k])), lead = Math.max(...HKEYS.map(k => cup[k]));
+  const H = HOUSES[p.house];
+  const board = HKEYS.map(k => `<div class="hcol ${k===p.house?"mine":""}" style="--h1:${HOUSES[k].c1};--h2:${HOUSES[k].c2};--hi:${HOUSES[k].ink}"><div class="hcrown">${cup[k]===lead&&lead>0?"Leading!":"&nbsp;"}</div>${hourglass(k,cup[k],max)}<div class="hname">${HOUSES[k].animal} ${HOUSES[k].name}</div><div class="hpts" style="color:${k==="hufflepuff"?"#8A6410":HOUSES[k].c1}">${cup[k]}</div></div>`).join("");
+  const got = stickersOf(p);
+  const album = H.st.map((st,i) => i<got ? `<div class="hcell">${hSticker(p.house, st)}<span>${st[1]}</span></div>` : `<div class="hcell"><span class="hst empty">?</span><span>${(i+1)*STICK_EVERY} pts</span></div>`).join("");
+  return topBar(p) + `<div class="panel"><h2>House Cup</h2><div class="muted">Your right answers fill your house's hourglass. Your mistakes help the other houses.</div><div class="board">${board}</div></div>
+  <div class="panel" style="--h1:${H.c1};--h2:${H.c2}"><h2>${H.name} stickers</h2><div class="muted">You win a sticker every ${STICK_EVERY} points for ${H.name}. ${got<H.st.length?`Next one at ${(got+1)*STICK_EVERY} points.`:"You have them all!"}</div><div class="halbum">${album}</div></div>`;
+}
 function grownHTML(){
   if(!V.grownOpen) return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
     <div class="panel"><h2>Grown-ups</h2><div>Press and hold the button for 2 seconds to open the settings.</div><div><button class="btn white gate" id="gate">Hold to open<span class="fill"></span></button></div></div>`;
   const rows = S.verbs.map((v,i) => `<input class="inp" data-vi="${i}" data-f="p" value="${esc(v.p)}" aria-label="Present ${i+1}"><input class="inp" data-vi="${i}" data-f="past" value="${esc(v.past)}" aria-label="Past ${i+1}"><input class="inp" data-vi="${i}" data-f="pp" value="${esc(v.pp)}" aria-label="Past participle ${i+1}"><button class="btn small white" data-act="vdel" data-i="${i}" aria-label="Delete ${esc(v.p)}">Delete</button>`).join("");
-  const players = S.players.map(p => `<div class="row" style="justify-content:space-between"><span><b>${esc(p.name)}</b> · ${esc(p.pet)} · ${p.xp} crystals</span><span class="row"><button class="btn small white" data-act="preset" data-id="${p.id}">${V.arm==="r"+p.id?"Tap again to reset":"Reset progress"}</button>${p.id==="pelonchis"||p.id==="pillus"?"":`<button class="btn small white" data-act="pdel" data-id="${p.id}">${V.arm==="d"+p.id?"Tap again to delete":"Delete player"}</button>`}</span></div>`).join("");
+  const players = S.players.map(p => `<div class="row" style="justify-content:space-between"><span><b>${esc(p.name)}</b> · ${esc(p.pet)} · ${p.xp} crystals</span><span class="row">${p.house?`<button class="btn small white" data-act="chhouse" data-id="${p.id}">${V.arm==="h"+p.id?"Tap again: new house, points to 0":"Change house"}</button>`:""}<button class="btn small white" data-act="preset" data-id="${p.id}">${V.arm==="r"+p.id?"Tap again to reset":"Reset progress"}</button>${p.id==="pelonchis"||p.id==="pillus"?"":`<button class="btn small white" data-act="pdel" data-id="${p.id}">${V.arm==="d"+p.id?"Tap again to delete":"Delete player"}</button>`}</span></div>`).join("");
   const na = 'autocapitalize="off" autocorrect="off" spellcheck="false"';
   const dp = S.players.find(x => x.id===V.dp) || S.players[0];
   return `<div class="row"><button class="btn small white" data-act="home">Back</button></div>
@@ -1392,7 +1478,7 @@ function grownHTML(){
 
 /* ---------- render & events ---------- */
 function render(){
-  const map = {newp:newpHTML, learn:learnHTML, home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
+  const map = {sort:sortHTML, cup:cupHTML, newp:newpHTML, learn:learnHTML, home:homeHTML, color:colorHTML, map:mapHTML, room:roomHTML, play:playHTML, result:resultHTML, grown:grownHTML};
   if(["map","room","play","result","color"].includes(V.screen) && !P()) V.screen = "home";
   app.innerHTML = (map[V.screen]||homeHTML)();
   if(V.screen==="grown" && !V.grownOpen) bindGate();
@@ -1429,6 +1515,10 @@ const ACT = {
     p.color = (V.pick && V.pick.color) || p.color || "mint"; if(pet) p.pet = pet; save(); go("map"); },
   map(){ V.fb = null; go("map"); },
   room(){ V.roomSay = null; V.roomMood = "idle"; go("room"); },
+  sort(){ go("sort"); },
+  cup(){ go("cup"); },
+  pickhouse(el){ const p = P(); p.house = el.dataset.h; cupOf(p); save(); tone([523,659,784]); go("map"); },
+  chhouse(el){ const k = "h"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.house = null; p.cup = null; p.hrot = 0; } save(); V.arm = null; render(); },
   learn(el){ V.learn = +el.dataset.e; V.learnBack = el.dataset.from || "map"; go("learn"); },
   unlearn(){ go(V.learnBack==="play" && V.sess ? "play" : "map"); },
   sound(){ S.sound = !S.sound; save(); render(); },
@@ -1449,7 +1539,7 @@ const ACT = {
     if(!a||!b||!c){ document.getElementById("v-msg").textContent = "Fill in all three forms."; return; }
     S.verbs.push({p:a,past:b,pp:c}); save(); render(); },
   vreset(){ if(V.arm!=="v"){ V.arm = "v"; render(); return; } S.verbs = DEFAULT_VERBS.map(v=>({...v})); save(); V.arm = null; render(); },
-  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; p.threes=0; p.outfit=null; p.off=[]; } save(); V.arm = null; render(); }
+  preset(el){ const k = "r"+el.dataset.id; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===el.dataset.id); if(p){ p.xp=0; p.progress={}; p.hats=[]; p.hat=null; p.era="dino"; p.threes=0; p.outfit=null; p.off=[]; p.cup=null; p.hrot=0; } save(); V.arm = null; render(); }
 };
 
 app.addEventListener("click", ev => { const el = ev.target.closest("[data-act]"); if(!el || el.disabled) return; const f = ACT[el.dataset.act]; if(f) f(el); });

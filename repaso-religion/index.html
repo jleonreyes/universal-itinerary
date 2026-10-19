@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Religión">
+<meta name="theme-color" content="#EAF1F4">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Repaso Dios con nosotros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Layout: one column workbook — a menu of exercise cards, then one exercise per screen, tap-tap (no dragging) for iPad */
+:root{
+  --bg:#EAF1F4; --surface:#FFFFFF; --ink:#1D2B36; --muted:#5B6B77; --line:#C9D6DD;
+  --gold:#B97C0C; --gold-soft:#FBEBC8; --sea:#4F8CC4; --sea-ink:#FFFFFF; --land:#F1E6C6; --land2:#DCCB98; --river:#2F6FA8;
+  --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111A20; --surface:#1B262E; --ink:#E8EEF2; --muted:#9AAAB5; --line:#33434E;
+  --gold:#E9AE45; --gold-soft:#3A2E14; --sea:#2C5E8E; --sea-ink:#E8F1FA; --land:#4A4330; --land2:#62583A; --river:#6FA8DA;
+  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#111A20; --surface:#1B262E; --ink:#E8EEF2; --muted:#9AAAB5; --line:#33434E;
+  --gold:#E9AE45; --gold-soft:#3A2E14; --sea:#2C5E8E; --sea-ink:#E8F1FA; --land:#4A4330; --land2:#62583A; --river:#6FA8DA;
+  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.4;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:800}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:2px 0 0;text-wrap:balance}
+.total{font-family:var(--display);font-weight:800;font-size:20px;background:var(--gold-soft);color:var(--ink);border-radius:999px;padding:4px 14px;white-space:nowrap}
+.total b{color:var(--gold)}
+
+.group h2{font-family:var(--display);font-size:22px;margin:6px 0 8px;font-weight:800}
+.group p.gdesc{margin:-6px 0 10px;color:var(--muted);font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:6px;min-height:104px}
+.card:hover{border-color:var(--gold)}
+.card .t{font-weight:800;font-size:18px;line-height:1.2}
+.card .s{font-size:13px;color:var(--muted)}
+.card .st{margin-top:auto;font-size:20px;letter-spacing:2px;color:var(--line)}
+.card .st .on{color:var(--gold)}
+
+/* play view */
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.back{background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:800}
+.ptitle{font-family:var(--display);font-size:clamp(22px,5vw,30px);font-weight:800;margin:0;line-height:1.1;flex:1;min-width:0}
+.inst{background:var(--gold-soft);border-radius:12px;padding:10px 14px;font-weight:600}
+.meta{display:flex;justify-content:space-between;gap:10px;font-size:15px;color:var(--muted);font-weight:700}
+.prog{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+#fb{min-height:26px;font-weight:800;text-align:center}
+#fb.ok{color:var(--ok)} #fb.bad{color:var(--bad)}
+
+.chip{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;line-height:1.2}
+.chip.sel{border-color:var(--sel);background:var(--sel-soft)}
+.chip.used{display:none}
+.bank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.06)}}
+
+/* map */
+.mapwrap{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:8px;display:flex;justify-content:center}
+.map{width:100%;max-width:470px;height:auto;display:block}
+.map .land{fill:var(--land)} .map .sea{fill:var(--sea)} .map .hill{fill:var(--land2)}
+.map .river{fill:none;stroke:var(--river);stroke-width:4;stroke-linecap:round}
+.map .lake{fill:var(--sea)}
+.map .seatxt{fill:var(--sea-ink);font:700 10px var(--body)}
+.map .comp{fill:var(--ink);font:800 12px var(--body)}
+.map .tgt{cursor:pointer}
+.map .dot{fill:var(--surface);stroke:var(--ink);stroke-width:2.5}
+.map .tgt.sel .dot{fill:var(--sel);stroke:var(--sel)}
+.map .tgt.ok .dot{fill:var(--ok);stroke:var(--ok)}
+.map .tgt.bad .dot{fill:var(--bad);stroke:var(--bad)}
+.map .q{fill:var(--ink);font:800 9px var(--body);pointer-events:none}
+.map .tgt.ok .q,.map .tgt.sel .q,.map .tgt.bad .q{fill:var(--surface)}
+.map .lbl{fill:var(--ink);font:800 12.5px var(--body);paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round;pointer-events:none}
+
+/* matching */
+.match{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:44px;align-items:start}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mi{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;font-weight:700;font-size:15.5px;line-height:1.25;min-height:54px}
+.mi .pt{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--ink);border:2px solid var(--surface)}
+.left .mi .pt{right:-8px} .right .mi .pt{left:-8px}
+.mi.sel{border-color:var(--sel);background:var(--sel-soft)}
+.mi.ok{border-color:var(--ok);background:var(--ok-soft)}
+.mi.ok .pt{background:var(--ok)}
+.mi.bad{border-color:var(--bad);background:var(--bad-soft)}
+.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.lines line{stroke-width:4;stroke-linecap:round}
+.lines .ok{stroke:var(--ok)} .lines .bad{stroke:var(--bad)}
+
+/* ordering */
+.olist{display:flex;flex-direction:column;gap:10px}
+.oi{display:flex;align-items:center;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;font-weight:700}
+.oi .n{flex:none;width:34px;height:34px;border-radius:50%;border:2px dashed var(--line);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:18px}
+.oi.ok{border-color:var(--ok);background:var(--ok-soft)}
+.oi.ok .n{border:none;background:var(--ok);color:var(--surface)}
+.oi.bad{border-color:var(--bad);background:var(--bad-soft)}
+
+/* fill in */
+.passage{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px 18px;font-size:18px;line-height:2.1}
+.blank{display:inline-block;min-width:92px;border:none;border-bottom:3px solid var(--muted);background:transparent;padding:0 6px;font-weight:800;line-height:1.3;text-align:center}
+.blank.act{border-bottom-color:var(--sel);background:var(--sel-soft);border-radius:6px 6px 0 0}
+.blank.ok{border-bottom-color:var(--ok);color:var(--ok)}
+.blank.bad{background:var(--bad-soft)}
+
+/* finish */
+.finish{background:var(--surface);border:3px solid var(--gold);border-radius:18px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.finish .big{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.finish .stars{font-size:40px;letter-spacing:6px;color:var(--line)}
+.finish .stars .on{color:var(--gold)}
+.finish .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{border-radius:999px;padding:10px 20px;font-weight:800;border:2px solid var(--gold);background:var(--gold);color:var(--surface)}
+.btn.alt{background:transparent;color:var(--ink)}
+@media (max-width:480px){ .match{column-gap:30px} .mi{font-size:14.5px;padding:9px 10px} .passage{font-size:17px} }
+@media (prefers-reduced-motion:reduce){ .shake,.pop{animation:none} .prog i{transition:none} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div id="home">
+    <header class="top">
+      <div>
+        <div class="kicker">Religión · Unidad 1</div>
+        <h1>Dios con nosotros</h1>
+      </div>
+      <div class="total" id="total"></div>
+    </header>
+    <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:18px"></div>
+  </div>
+
+  <div id="play" hidden>
+    <div class="bar">
+      <button class="back" id="back" type="button">← Menú</button>
+      <h2 class="ptitle" id="ptitle"></h2>
+    </div>
+    <div class="inst" id="inst"></div>
+    <div class="meta"><span id="count"></span><span id="errs"></span></div>
+    <div class="prog"><i id="progbar"></i></div>
+    <div id="area" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div id="fb" aria-live="polite"></div>
+    <div id="finish"></div>
+  </div>
+</div>
+
+<script>
+const MAP = [
+  {n:'Mar Mediterráneo', x:55,  y:140},
+  {n:'Galilea',          x:163, y:92},
+  {n:'Cafarnaúm',        x:232, y:66, a:'end'},
+  {n:'Lago de Galilea',  x:250, y:92, lines:['Lago de','Galilea'], lx:268},
+  {n:'Nazaret',          x:186, y:124},
+  {n:'Samaria',          x:130, y:205},
+  {n:'Judea',            x:112, y:300},
+  {n:'Jerusalén',        x:176, y:342},
+  {n:'Belén',            x:148, y:374},
+  {n:'Río Jordán',       x:246, y:220, lines:['Río','Jordán'], lx:258}
+];
+
+const ACTS = [
+  {g:'unir', id:'pais', title:'El País de Jesús', src:'Libro p. 16-17', pairs:[
+    ['¿En qué región vivió Jesús?','Palestina'],
+    ['¿De qué imperio era parte Palestina?','Del Imperio Romano'],
+    ['¿Cuáles eran las tres regiones?','Galilea, Samaria y Judea'],
+    ['¿Qué región estaba al norte?','Galilea'],
+    ['¿Qué región estaba al sur?','Judea'],
+    ['¿Dónde nació Jesús?','En Belén de Judea'],
+    ['¿Dónde creció Jesús?','En Nazaret de Galilea'],
+    ['¿Cuál era la capital religiosa y cultural?','Jerusalén'],
+    ['¿Qué rey famoso nació en Belén mucho antes de Cristo?','El rey David'],
+    ['¿Entre qué mar y qué río vivió Jesús?','El mar Mediterráneo y el río Jordán'],
+    ['¿Hace cuánto tiempo vivió Jesús?','Hace unos dos mil años'],
+    ['¿A quién se refería el profeta con "jefe" y "pastor"?','A Jesús']
+  ]},
+  {g:'unir', id:'salvador', title:'Les ha nacido un Salvador', src:'Libro p. 18-21', pairs:[
+    ['¿Qué ángel visitó a María?','El ángel Gabriel'],
+    ['¿Con quién estaba prometida María?','Con José'],
+    ['¿Qué nombre le pondría al niño?','Jesús'],
+    ['¿Qué respondió María al ángel?','"Aquí está la esclava del Señor, que me suceda como tú dices"'],
+    ['¿Dónde nació Jesús?','En un pobre establo de Belén'],
+    ['¿Quiénes lo visitaron primero?','Unos humildes pastores'],
+    ['¿Quiénes llegaron más tarde?','Unos sabios (magos) de Oriente'],
+    ['¿Por qué se enojó el rey Herodes?','Pensó que el niño sería rey de Israel'],
+    ['¿A dónde huyó la Sagrada Familia?','A Egipto'],
+    ['¿Cuál fue la señal para los pastores?','Un niño envuelto en pañales, acostado en un pesebre'],
+    ['¿Quién es Jesús, según los profetas?','El Mesías que Dios había prometido'],
+    ['¿Qué oraciones recuerdan la Anunciación?','El Ángelus y el Ave María'],
+    ['¿Por qué Dios avisó a unos pobres pastores?','Porque Jesús vino para todos, sobre todo los humildes']
+  ]},
+  {g:'unir', id:'oculta', title:'Vida oculta de Jesús', src:'Cuaderno', pairs:[
+    ['"Y les estaba sujeto"','Jesús obedecía a sus papás, confiaba en ellos, los ayudaba.'],
+    ['"Crecía en sabiduría"','Jesús estudiaba para saber cada día más.'],
+    ['"Crecía en edad"','Jesús se alimentaba sanamente, hacía ejercicio para estar sano y fuerte.'],
+    ['"Crecía en gracia ante Dios"','Jesús rezaba, teniendo una relación de amistad con Dios.'],
+    ['"Crecía en gracia ante los hombres"','Jesús era amable y respetuoso con todos.']
+  ]},
+  {g:'unir', id:'josemaria', title:'San Josemaría y el Opus Dei', src:'Cuaderno', pairs:[
+    ['San Josemaría nació en…','Barbastro, España, en 1902'],
+    ['Fue ordenado sacerdote en…','1925'],
+    ['Murió el…','26 de junio de 1975'],
+    ['Fundó el Opus Dei para…','ayudar a todos a encontrar a Dios en su vida de cada día'],
+    ['La santidad está en…','la vida cotidiana'],
+    ['Todos tenemos…','una misión'],
+    ['María nos lleva…','a Jesús'],
+    ['"La alegría es la señal…','de que estamos con Dios"'],
+    ['Nos enseña que podemos amar a Dios…','en casa y en todas partes'],
+    ['Pequeños pasos,…','grandes cosas']
+  ]},
+  {g:'mapa', id:'mapa', title:'Mapa de Palestina', src:'Libro p. 16 · Cuaderno'},
+  {g:'orden', id:'infancia', title:'La infancia de Jesús', src:'Libro p. 20', items:[
+    ['Anunciación a María',1],['Visita de María a Isabel',2],['Nacimiento de Jesús',3],['Visita de los pastores',4],
+    ['Presentación en el Templo',5],['Adoración de los magos',5],['Huida a Egipto',7],['Vida en Nazaret',8]
+  ], note:'La Presentación en el Templo y los magos valen en cualquier orden entre ellos.'},
+  {g:'orden', id:'vidajm', title:'La vida de San Josemaría', src:'Cuaderno', items:[
+    ['Nació en Barbastro, España, en 1902.',1],['Estudió en el seminario y se hizo sacerdote.',2],['Fue ordenado sacerdote en 1925.',3],
+    ['Fundó el Opus Dei para ayudar a todas las personas a encontrar a Dios en su vida de cada día.',4],['Murió el 26 de junio de 1975.',5]
+  ]},
+  {g:'completa', id:'anunciacion', title:'La Anunciación', src:'Libro p. 18',
+    text:'María era una joven de [Nazaret] que estaba prometida con [José]. El ángel [Gabriel], enviado por [Dios], le anunció que tendría un hijo. Sería el [Mesías] que [Israel] esperaba y debería ponerle por nombre [Jesús]. María respondió: «Aquí está la [esclava] del Señor, que me suceda como tú dices».',
+    extra:['Belén','Herodes']},
+  {g:'completa', id:'pais2', title:'El País de Jesús', src:'Libro p. 16-17',
+    text:'Jesús vivió hace unos dos mil años en [Palestina], una parte del Imperio [Romano]. Palestina se dividía en tres regiones: [Galilea], [Samaria] y [Judea]. Jesús nació en [Belén] y creció en [Nazaret]. [Jerusalén], en el sur, era la capital religiosa y cultural.',
+    extra:['Egipto','Cafarnaúm']},
+  {g:'completa', id:'maria', title:'Virtudes de María', src:'Cuaderno',
+    text:'El ángel le dijo: «María, tendrás un [hijo] que será el [Mesías] y le pondrás por nombre [Jesús]». Las virtudes de María: es [paciente], es [amable] y es [cariñosa].',
+    extra:['presumida','José']},
+  {g:'completa', id:'ave', title:'Ave María', src:'Oración',
+    text:'Dios te salve, María, llena eres de [gracia], el [Señor] es contigo. Bendita tú eres entre todas las [mujeres], y bendito es el [fruto] de tu vientre, [Jesús]. Santa María, [Madre] de Dios, ruega por nosotros, [pecadores], ahora y en la hora de nuestra [muerte]. Amén.',
+    extra:[]},
+  {g:'completa', id:'angelus', title:'Ángelus', src:'Oración',
+    text:'El Ángel del Señor anunció a [María]. Y concibió por obra del Espíritu [Santo]. He aquí la [esclava] del Señor. Hágase en mí según tu [palabra]. Y el Verbo se hizo [carne]. Y habitó entre [nosotros].',
+    extra:[]}
+];
+
+const GROUPS = [
+  {g:'unir', h:'Une con líneas', d:'Relaciona cada pregunta con su respuesta.'},
+  {g:'mapa', h:'Pon los nombres', d:'Coloca cada nombre en su lugar del mapa.'},
+  {g:'orden', h:'Ordena', d:'Toca los sucesos en el orden en que pasaron.'},
+  {g:'completa', h:'Completa', d:'Llena los espacios con la palabra correcta.'}
+];
+const INST = {
+  unir:'Toca una frase de un lado y luego su pareja del otro lado para unirlas con una línea.',
+  mapa:'Toca un nombre y luego el punto del mapa donde va (o primero el punto y luego el nombre).',
+  orden:'Toca los sucesos en orden, del primero al último.',
+  completa:'Toca una palabra para ponerla en el espacio azul. Puedes tocar otro espacio para cambiar cuál llenas.'
+};
+
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+let best = {};
+try { best = JSON.parse(localStorage.getItem('religion-u1-stars') || '{}') || {}; } catch (e) { best = {}; }
+const saveBest = () => { try { localStorage.setItem('religion-u1-stars', JSON.stringify(best)); } catch (e) {} };
+const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
+
+function renderHome() {
+  const tot = ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
+  $('#total').innerHTML = `<b>★ ${tot}</b> / ${ACTS.length * 3}`;
+  $('#groups').innerHTML = GROUPS.map(G => `
+    <section class="group"><h2>${G.h}</h2><p class="gdesc">${G.d}</p>
+    <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
+      <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
+      <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}</div></section>`).join('');
+}
+$('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) start(c.dataset.id); });
+$('#back').addEventListener('click', () => { $('#play').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); });
+
+let cur = null;
+function start(id) {
+  const act = ACTS.find(a => a.id === id);
+  cur = { act, mistakes: 0, done: 0, total: 0, over: false };
+  $('#home').hidden = true; $('#play').hidden = false;
+  $('#ptitle').textContent = act.title;
+  $('#inst').textContent = INST[act.g] + (act.note ? ' ' + act.note : '');
+  $('#finish').innerHTML = ''; fb('', '');
+  ({ unir: renderUnir, mapa: renderMapa, orden: renderOrden, completa: renderCompleta })[act.g](act);
+  progress(); window.scrollTo(0, 0);
+}
+function progress() {
+  $('#count').textContent = `${cur.done} de ${cur.total}`;
+  $('#errs').textContent = cur.mistakes ? `Errores: ${cur.mistakes}` : '';
+  $('#progbar').style.width = (cur.total ? cur.done / cur.total * 100 : 0) + '%';
+}
+let fbT;
+function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = msg; clearTimeout(fbT); if (msg) fbT = setTimeout(() => { f.textContent = ''; }, 1600); }
+const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡Así se hace!'];
+function right() { cur.done++; fb('ok', PRAISE[Math.floor(Math.random() * PRAISE.length)]); progress(); if (cur.done === cur.total) setTimeout(finish, 450); }
+function wrong(...els) { cur.mistakes++; fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); }); }
+function finish() {
+  cur.over = true;
+  const m = cur.mistakes, stars = m <= 1 ? 3 : m <= 3 ? 2 : 1;
+  best[cur.act.id] = Math.max(best[cur.act.id] || 0, stars); saveBest();
+  const msg = stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!';
+  const tip = stars === 3 ? 'Te lo sabes muy bien.' : 'Repítelo para ganar las 3 estrellas.';
+  $('#finish').innerHTML = `<div class="finish"><div class="big">${msg}</div><div class="stars">${starStr(stars)}</div>
+    <div>${m === 0 ? 'Sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${tip}</div>
+    <div class="btns"><button class="btn" type="button" id="again">Otra vez</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+  $('#again').onclick = () => start(cur.act.id);
+  $('#tomenu').onclick = () => $('#back').click();
+  $('#finish').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ---------- Une con líneas ---------- */
+function renderUnir(act) {
+  const pairs = shuffle(act.pairs).slice(0, 5);
+  cur.total = pairs.length;
+  const L = shuffle(pairs.map((p, k) => ({ t: p[0], k }))), R = shuffle(pairs.map((p, k) => ({ t: p[1], k })));
+  const col = (arr, side) => arr.map(x => `<button class="mi" type="button" data-side="${side}" data-k="${x.k}">${esc(x.t)}<span class="pt"></span></button>`).join('');
+  $('#area').innerHTML = `<div class="match" id="match"><svg class="lines" id="lines" aria-hidden="true"></svg>
+    <div class="col left">${col(L, 'L')}</div><div class="col right">${col(R, 'R')}</div></div>`;
+  const box = $('#match'), sel = { L: null, R: null }, matched = new Set();
+  let temp = null;
+  const btn = (side, k) => box.querySelector(`.mi[data-side="${side}"][data-k="${k}"]`);
+  function draw() {
+    const b = box.getBoundingClientRect(), svg = $('#lines');
+    svg.setAttribute('viewBox', `0 0 ${b.width} ${b.height}`);
+    const seg = (kl, kr, cls) => {
+      const l = btn('L', kl).getBoundingClientRect(), r = btn('R', kr).getBoundingClientRect();
+      return `<line class="${cls}" x1="${l.right - b.left}" y1="${l.top + l.height / 2 - b.top}" x2="${r.left - b.left}" y2="${r.top + r.height / 2 - b.top}"/>`;
+    };
+    svg.innerHTML = [...matched].map(k => seg(k, k, 'ok')).join('') + (temp ? seg(temp[0], temp[1], 'bad') : '');
+  }
+  box.addEventListener('click', e => {
+    const b = e.target.closest('.mi'); if (!b || b.classList.contains('ok') || cur.over) return;
+    const side = b.dataset.side, k = +b.dataset.k;
+    if (sel[side] !== null) btn(side, sel[side]).classList.remove('sel');
+    if (sel[side] === k) { sel[side] = null; return; }
+    sel[side] = k; b.classList.add('sel');
+    if (sel.L === null || sel.R === null) return;
+    const bl = btn('L', sel.L), br = btn('R', sel.R);
+    bl.classList.remove('sel'); br.classList.remove('sel');
+    if (sel.L === sel.R) {
+      matched.add(sel.L); bl.classList.add('ok', 'pop'); br.classList.add('ok', 'pop'); draw(); right();
+    } else {
+      temp = [sel.L, sel.R]; draw(); bl.classList.add('bad'); br.classList.add('bad'); wrong(bl, br);
+      setTimeout(() => { temp = null; bl.classList.remove('bad'); br.classList.remove('bad'); draw(); }, 700);
+    }
+    sel.L = sel.R = null;
+  });
+  new ResizeObserver(draw).observe(box);
+}
+
+/* ---------- Mapa ---------- */
+function renderMapa() {
+  cur.total = MAP.length;
+  const tg = MAP.map((t, i) => `<g class="tgt" data-i="${i}" role="button" aria-label="Punto ${i + 1}">
+      <circle cx="${t.x}" cy="${t.y}" r="16" fill="transparent"/><circle class="dot" cx="${t.x}" cy="${t.y}" r="8"/>
+      <text class="q" x="${t.x}" y="${t.y + 3}" text-anchor="middle">?</text></g>`).join('');
+  $('#area').innerHTML = `<div class="mapwrap"><svg class="map" viewBox="0 0 320 440" role="img" aria-label="Mapa de Palestina">
+    <rect class="land" width="320" height="440"/>
+    <ellipse class="hill" cx="200" cy="100" rx="40" ry="16"/><ellipse class="hill" cx="150" cy="250" rx="30" ry="14"/>
+    <ellipse class="hill" cx="140" cy="330" rx="34" ry="14"/><ellipse class="hill" cx="200" cy="180" rx="22" ry="10"/>
+    <path class="sea" d="M0 0 H165 C150 70 128 130 100 190 C75 245 45 310 18 380 L0 400 Z"/>
+    <ellipse class="lake" cx="250" cy="92" rx="15" ry="24"/>
+    <path class="river" d="M250 116 C246 140 258 160 248 185 C238 210 254 230 244 255 C234 280 248 300 236 325 C228 345 232 360 226 372"/>
+    <ellipse class="lake" cx="222" cy="400" rx="20" ry="32"/>
+    <text class="seatxt" x="222" y="398" text-anchor="middle">Mar</text><text class="seatxt" x="222" y="410" text-anchor="middle">Muerto</text>
+    <text class="comp" x="298" y="22" text-anchor="middle">N</text><path d="M298 26 L293 38 L298 35 L303 38 Z" class="comp"/>
+    <g id="lbls"></g>${tg}</svg></div>
+    <div class="bank" id="bank">${shuffle(MAP.map((t, i) => i)).map(i => `<button class="chip" type="button" data-i="${i}">${MAP[i].n}</button>`).join('')}</div>`;
+  let selChip = null, selDot = null;
+  const dot = i => $(`.tgt[data-i="${i}"]`), chip = i => $(`#bank .chip[data-i="${i}"]`);
+  const clear = () => { if (selChip !== null) chip(selChip).classList.remove('sel'); if (selDot !== null) dot(selDot).classList.remove('sel'); selChip = selDot = null; };
+  function check(d, c) {
+    const dg = dot(d), cb = chip(c); clear();
+    if (d === c) {
+      dg.classList.add('ok'); dg.querySelector('.q').textContent = '✓'; cb.classList.add('used');
+      const t = MAP[d], end = t.a === 'end', x = t.lx || (end ? t.x - 12 : t.x + 12);
+      const lines = t.lines || [t.n], y0 = t.y + 4 - (lines.length - 1) * 7;
+      $('#lbls').insertAdjacentHTML('beforeend', lines.map((ln, j) =>
+        `<text class="lbl" x="${x}" y="${y0 + j * 14}" text-anchor="${end ? 'end' : 'start'}">${ln}</text>`).join(''));
+      right();
+    } else {
+      dg.classList.add('bad'); setTimeout(() => dg.classList.remove('bad'), 600); wrong(cb);
+    }
+  }
+  $('#bank').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b || cur.over) return; const i = +b.dataset.i;
+    if (selDot !== null) return check(selDot, i);
+    const was = selChip; clear(); if (was !== i) { selChip = i; b.classList.add('sel'); }
+  });
+  $('.map').addEventListener('click', e => {
+    const g = e.target.closest('.tgt'); if (!g || g.classList.contains('ok') || cur.over) return; const i = +g.dataset.i;
+    if (selChip !== null) return check(i, selChip);
+    const was = selDot; clear(); if (was !== i) { selDot = i; g.classList.add('sel'); }
+  });
+}
+
+/* ---------- Ordena ---------- */
+function renderOrden(act) {
+  cur.total = act.items.length;
+  const ranks = act.items.map(x => x[1]).sort((a, b) => a - b);
+  $('#area').innerHTML = `<div class="olist" id="olist">${shuffle(act.items.map((x, i) => i)).map(i =>
+    `<button class="oi" type="button" data-i="${i}"><span class="n"></span><span>${esc(act.items[i][0])}</span></button>`).join('')}</div>`;
+  $('#olist').addEventListener('click', e => {
+    const b = e.target.closest('.oi'); if (!b || b.classList.contains('ok') || cur.over) return;
+    const it = act.items[+b.dataset.i];
+    if (it[1] === ranks[cur.done]) {
+      b.classList.add('ok', 'pop'); b.querySelector('.n').textContent = cur.done + 1; b.style.order = cur.done + 1;
+      right();
+    } else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrong(b); }
+  });
+  [...$('#olist').children].forEach(b => b.style.order = 100);
+}
+
+/* ---------- Completa ---------- */
+function renderCompleta(act) {
+  const parts = act.text.split(/\[([^\]]+)\]/), answers = [];
+  let html = '';
+  parts.forEach((p, i) => {
+    if (i % 2) { html += `<button class="blank" type="button" data-b="${answers.length}">&nbsp;</button>`; answers.push(p); }
+    else html += esc(p);
+  });
+  cur.total = answers.length;
+  const words = shuffle(answers.concat(act.extra));
+  $('#area').innerHTML = `<div class="passage" id="passage">${html}</div>
+    <div class="bank" id="bank">${words.map(w => `<button class="chip" type="button" data-w="${esc(w)}">${esc(w)}</button>`).join('')}</div>`;
+  const filled = answers.map(() => false); let active = 0;
+  const blank = i => $(`.blank[data-b="${i}"]`);
+  const setActive = i => { document.querySelectorAll('.blank.act').forEach(x => x.classList.remove('act')); active = i; if (i >= 0) blank(i).classList.add('act'); };
+  setActive(0);
+  $('#passage').addEventListener('click', e => { const b = e.target.closest('.blank'); if (b && !filled[+b.dataset.b]) setActive(+b.dataset.b); });
+  $('#bank').addEventListener('click', e => {
+    const c = e.target.closest('.chip'); if (!c || c.classList.contains('used') || active < 0 || cur.over) return;
+    const bl = blank(active);
+    if (c.dataset.w === answers[active]) {
+      filled[active] = true; bl.textContent = answers[active]; bl.classList.remove('act'); bl.classList.add('ok', 'pop'); c.classList.add('used');
+      setActive(filled.indexOf(false)); right();
+    } else { bl.classList.add('bad'); setTimeout(() => bl.classList.remove('bad'), 600); wrong(c); }
+  });
+}
+
+renderHome();
+</script>
+
+</body>
+</html>

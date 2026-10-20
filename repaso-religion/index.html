@@ -19,18 +19,18 @@
 :root{
   --bg:#EAF1F4; --surface:#FFFFFF; --ink:#1D2B36; --muted:#5B6B77; --line:#C9D6DD;
   --gold:#B97C0C; --gold-soft:#FBEBC8; --sea:#4F8CC4; --sea-ink:#FFFFFF; --land:#F1E6C6; --land2:#DCCB98; --river:#2F6FA8;
-  --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB;
+  --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB; --bead:#4E86D1; --bead-hi:#CFE0F7;
   --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
   --body:"Nunito", "Segoe UI", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#111A20; --surface:#1B262E; --ink:#E8EEF2; --muted:#9AAAB5; --line:#33434E;
   --gold:#E9AE45; --gold-soft:#3A2E14; --sea:#2C5E8E; --sea-ink:#E8F1FA; --land:#4A4330; --land2:#62583A; --river:#6FA8DA;
-  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358; color-scheme:dark }}
+  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358; --bead:#7FB0F2; --bead-hi:#E6F0FC; color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#111A20; --surface:#1B262E; --ink:#E8EEF2; --muted:#9AAAB5; --line:#33434E;
   --gold:#E9AE45; --gold-soft:#3A2E14; --sea:#2C5E8E; --sea-ink:#E8F1FA; --land:#4A4330; --land2:#62583A; --river:#6FA8DA;
-  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358; color-scheme:dark }
+  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358; --bead:#7FB0F2; --bead-hi:#E6F0FC; color-scheme:dark }
 
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.4;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
@@ -128,6 +128,22 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .finish .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 .btn{border-radius:999px;padding:10px 20px;font-weight:800;border:2px solid var(--gold);background:var(--gold);color:var(--surface)}
 .btn.alt{background:transparent;color:var(--ink)}
+/* rosary */
+.rosary{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:14px 16px;display:grid;grid-template-columns:minmax(0,230px) 1fr;gap:16px;align-items:center;margin-top:16px}
+.rosary svg{width:100%;height:auto;display:block}
+.rosary .string{fill:none;stroke:var(--line);stroke-width:1.5}
+.rosary .b{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.rosary .b.on{fill:var(--bead);stroke:var(--bead)}
+.rosary .b.of.on{fill:var(--gold);stroke:var(--gold)}
+.rosary .shine{fill:var(--bead-hi);opacity:.8}
+.rosary .new{animation:bead .7s ease-out both}
+@keyframes bead{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.35);opacity:1}100%{transform:scale(1)}}
+.rosary .ro-t{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.1;margin:0}
+.rosary .ro-n{font-family:var(--display);font-weight:800;font-size:40px;color:var(--gold);line-height:1;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.rosary p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.finish .gain{font-weight:800;color:var(--bead)}
+@media (max-width:520px){ .rosary{grid-template-columns:1fr;justify-items:center;text-align:center} .rosary svg{max-width:220px} }
+@media (prefers-reduced-motion:reduce){ .rosary .new{animation:none} }
 @media (max-width:480px){ .match{column-gap:30px} .mi{font-size:14.5px;padding:9px 10px} .passage{font-size:17px} }
 @media (prefers-reduced-motion:reduce){ .shake,.pop{animation:none} .prog i{transition:none} }
 </style>
@@ -143,6 +159,7 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
       </div>
       <div class="total" id="total"></div>
     </header>
+    <section class="rosary" id="rosary" aria-label="Mi rosario"></section>
     <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:18px"></div>
   </div>
 
@@ -270,9 +287,47 @@ try { best = JSON.parse(localStorage.getItem('religion-u1-stars') || '{}') || {}
 const saveBest = () => { try { localStorage.setItem('religion-u1-stars', JSON.stringify(best)); } catch (e) {} };
 const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
 
+/* Rosario: 59 cuentas + crucifijo + medalla = 61 piezas, en el orden en que se reza */
+const MAXSTARS = ACTS.length * 3;
+const ROSARY = (() => {
+  const P = [{k:'cross', x:150, y:440}];
+  P.push({k:'of', x:150, y:402}, {k:'hm', x:150, y:381}, {k:'hm', x:150, y:363}, {k:'hm', x:150, y:345}, {k:'of', x:150, y:322});
+  P.push({k:'medal', x:150, y:292});
+  const seq = []; for (let d = 0; d < 5; d++) { for (let i = 0; i < 10; i++) seq.push('hm'); if (d < 4) seq.push('of'); }
+  const a0 = 104, span = 332;
+  seq.forEach((k, i) => { const a = (a0 + span * i / (seq.length - 1)) * Math.PI / 180; P.push({k, x:150 + 118 * Math.cos(a), y:150 + 128 * Math.sin(a)}); });
+  return P;
+})();
+const totalStars = () => ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
+const piecesFor = st => Math.round(st * ROSARY.length / MAXSTARS);
+function rosarySVG(lit, from) {
+  const cls = (i, base) => base + (i < lit ? ' on' : '') + (i >= from && i < lit ? ' new' : '');
+  const delay = i => (i >= from && i < lit) ? ` style="animation-delay:${(i - from) * 0.12}s;transform-box:fill-box;transform-origin:center"` : '';
+  const out = ROSARY.map((p, i) => {
+    if (p.k === 'cross') return `<g class="${cls(i,'')}"${delay(i)}><path class="${cls(i,'b of')}" d="M144 418 h12 v12 h12 v11 h-12 v28 h-12 v-28 h-12 v-11 h12 z"/></g>`;
+    if (p.k === 'medal') return `<g class="${cls(i,'')}"${delay(i)}><ellipse class="${cls(i,'b of')}" cx="150" cy="292" rx="10" ry="13"/><path class="shine" d="M150 286 l2 4 h4 l-3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 h4 z" ${i < lit ? '' : 'opacity="0"'}/></g>`;
+    const r = p.k === 'of' ? 8 : 5.6;
+    return `<g class="${cls(i,'')}"${delay(i)}><circle class="${cls(i,'b ' + p.k)}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${r}"/>${i < lit ? `<circle class="shine" cx="${(p.x - r * .35).toFixed(1)}" cy="${(p.y - r * .35).toFixed(1)}" r="${(r * .32).toFixed(1)}"/>` : ''}</g>`;
+  }).join('');
+  return `<svg viewBox="0 0 300 480" role="img" aria-label="Rosario con ${lit} de ${ROSARY.length} piezas">
+    <ellipse class="string" cx="150" cy="150" rx="118" ry="128"/><path class="string" d="M150 279 V420"/>${out}</svg>`;
+}
+function renderRosary() {
+  const st = totalStars(), lit = piecesFor(st);
+  let seen = lit; try { seen = Math.min(lit, +(localStorage.getItem('religion-u1-seen') ?? lit)); } catch (e) {}
+  const done = lit >= ROSARY.length;
+  $('#rosary').innerHTML = `${rosarySVG(lit, seen)}<div>
+    <h2 class="ro-t">${done ? '¡Rosario completo!' : 'Mi rosario'}</h2>
+    <div class="ro-n">${lit} <span style="font-size:20px;color:var(--muted)">de ${ROSARY.length} cuentas</span></div>
+    <p>${done ? 'Ganaste todas las estrellas. ¡Felicidades!' : `Cada estrella agrega cuentas. Con las ${MAXSTARS} estrellas se completa el rosario, del crucifijo a la quinta decena.`}</p>
+    <p>★ ${st} de ${MAXSTARS} estrellas</p></div>`;
+  try { localStorage.setItem('religion-u1-seen', String(lit)); } catch (e) {}
+}
+
 function renderHome() {
-  const tot = ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
-  $('#total').innerHTML = `<b>★ ${tot}</b> / ${ACTS.length * 3}`;
+  const tot = totalStars();
+  $('#total').innerHTML = `<b>★ ${tot}</b> / ${MAXSTARS}`;
+  renderRosary();
   $('#groups').innerHTML = GROUPS.map(G => `
     <section class="group"><h2>${G.h}</h2><p class="gdesc">${G.d}</p>
     <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
@@ -306,11 +361,14 @@ function wrong(...els) { cur.mistakes++; fb('bad', 'Casi. Inténtalo otra vez.')
 function finish() {
   cur.over = true;
   const m = cur.mistakes, stars = m <= 1 ? 3 : m <= 3 ? 2 : 1;
+  const before = piecesFor(totalStars());
   best[cur.act.id] = Math.max(best[cur.act.id] || 0, stars); saveBest();
+  const gain = piecesFor(totalStars()) - before;
   const msg = stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!';
   const tip = stars === 3 ? 'Te lo sabes muy bien.' : 'Repítelo para ganar las 3 estrellas.';
   $('#finish').innerHTML = `<div class="finish"><div class="big">${msg}</div><div class="stars">${starStr(stars)}</div>
     <div>${m === 0 ? 'Sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${tip}</div>
+    ${gain > 0 ? `<div class="gain">+${gain} ${gain === 1 ? 'cuenta' : 'cuentas'} para tu rosario</div>` : ''}
     <div class="btns"><button class="btn" type="button" id="again">Otra vez</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
   $('#again').onclick = () => start(cur.act.id);
   $('#tomenu').onclick = () => $('#back').click();

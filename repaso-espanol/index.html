@@ -459,7 +459,9 @@ function speak(parts, rate) {
 }
 
 /* ================= PELUCHES (fotos en peluches/<id>.webp) ================= */
-const PHOTO_ANI = [["ani-00", "Osito Chocolate"], ["ani-01", "Nutria Coco"], ["ani-02", "Panda Bambú"], ["ani-03", "Conejita Rosa"], ["ani-04", "Elefante Trompita"], ["ani-06", "Perezoso Siesta"], ["ani-07", "Jirafa Manchitas"], ["ani-08", "Changuito Plátano"], ["ani-09", "Pingüino Emperador"], ["ani-10", "Koala Hojitas"], ["ani-11", "Osito Moñito"], ["ani-12", "Elefanta Orejitas"], ["ani-13", "Oso Canela"], ["ani-14", "Oso Polar Copito"], ["ani-15", "Nutria Avellana"], ["ani-16", "Conejo Algodón"], ["ani-17", "Elefante Abrazos"], ["ani-18", "Jirafa Pecas"], ["ani-19", "Pingüino Frac"], ["ani-20", "Oso Miel"], ["ani-21", "Panda Dormilón"], ["ani-23", "Conejo Galleta"], ["ani-24", "Chango Travieso"], ["ani-25", "Pingüino Bebé"], ["ani-26", "Koala Nube"]];
+const PHOTO_ANI = [["ani3-00", "Osito Chocolate"], ["ani3-01", "Oso Negro"], ["ani3-02", "Panda Bambú"], ["ani3-03", "Oso Polar Copito"], ["ani3-04", "Koala Hojitas"], ["ani3-05", "Nutria Mamá y Bebé"], ["ani3-06", "Perrito Caramelo"], ["ani3-07", "Changuito Plátano"], ["ani3-08", "Chango Travieso"], ["ani3-09", "Orangután Naranja"], ["ani3-10", "Gorila Bonachón"], ["ani3-11", "Conejito Café"], ["ani3-12", "Ratón Queso"], ["ani3-13", "Pingüino Emperador"], ["ani3-14", "Elefante Trompita"], ["ani3-15", "Jirafa Manchitas"], ["ani3-16", "Puercoespín Pinito"], ["ani3-17", "Gatito Atigrado"], ["ani3-18", "Búho Sabio"], ["ani3-19", "Caballito Canela"], ["ani3-20", "Delfín Saltarín"], ["ani3-21", "Pez Payaso"], ["ani3-22", "Ardilla Bellota"], ["ani3-23", "Flamenco Rosa"], ["ani3-24", "Canguro Mamá"], ["ani3-25", "Leoncito Melena"], ["ani3-26", "Pollito Amarillo"], ["ani3-27", "Gallina Pinta"], ["ani3-28", "Vaquita Manchas"], ["ani3-29", "Cocodrilo Sonrisas"], ["ani3-30", "Venadito"]];
+/* Animalitos anteriores → nuevos (para no perder los que ya tenían) */
+const OLD_ANI = {"ani-00": "ani3-00", "ani-01": "ani3-01", "ani-02": "ani3-02", "ani-03": "ani3-03", "ani-04": "ani3-04", "ani-06": "ani3-05", "ani-07": "ani3-06", "ani-08": "ani3-07", "ani-09": "ani3-08", "ani-10": "ani3-09", "ani-11": "ani3-10", "ani-12": "ani3-11", "ani-13": "ani3-12", "ani-14": "ani3-13", "ani-15": "ani3-14", "ani-16": "ani3-15", "ani-17": "ani3-16", "ani-18": "ani3-17", "ani-19": "ani3-18", "ani-20": "ani3-19", "ani-21": "ani3-20", "ani-23": "ani3-21", "ani-24": "ani3-22", "ani-25": "ani3-23", "ani-26": "ani3-24"};
 const PHOTO_MON = [["mon-00", "Unicornito Menta"], ["mon-01", "Mango Peludo"], ["mon-02", "Pepino Lunares"], ["mon-03", "Dragoncito Alitas"], ["mon-04", "Malteada Arcoíris"], ["mon-05", "Reyecito Azul"], ["mon-06", "Moras Peludas"], ["mon-07", "Rayitas Tres Ojos"], ["mon-08", "Orejitas Tímido"], ["mon-09", "Pompón Amarillo"], ["mon-10", "Ojón Verde"], ["mon-11", "Guiño Moñitos"], ["mon-12", "Uva Manchitas"], ["mon-14", "Fueguito"], ["mon-15", "Confeti"], ["mon-16", "Dinito Azul"], ["mon-17", "Hojita Menta"], ["mon-18", "Princesa Limón"], ["mon-19", "Copetín Azul"], ["mon-21", "Nube Dormilona"], ["mon-22", "Ojito Naranja"], ["mon-24", "Chicle Lunares"], ["mon-25", "Kiwi Orejón"], ["mon-26", "Fresón Rey"], ["mon-27", "Arcoíris Peludo"]];
 const PHOTO_FRU = [["fru-00", "Manzanita Roja"], ["fru-01", "Plátano Saludos"], ["fru-02", "Fresita"], ["fru-03", "Brócoli Arbolito"], ["fru-04", "Zanahoria Risueña"], ["fru-06", "Ciruela Feliz"], ["fru-07", "Limón Guiño"], ["fru-08", "Durazno Pachoncito"], ["fru-09", "Piña Coronita"], ["fru-10", "Berenjena Violeta"], ["fru-11", "Sandía Rebanada"], ["fru-12", "Uvas Racimo"], ["fru-13", "Pimiento Rojo"], ["fru-14", "Cerezas Gemelas"], ["fru-15", "Aguacate Huesito"], ["fru-16", "Hongo Lunares"], ["fru-17", "Pera Dulce"], ["fru-19", "Elote Granitos"], ["fru-20", "Naranja Gajos"], ["fru-22", "Jitomate Bolita"], ["fru-23", "Chile Valiente"], ["fru-24", "Papa Pecas"], ["fru-25", "Ajo Guiño"], ["fru-26", "Pepino Fresquito"], ["fru-27", "Moras Azules"]];
 const TOYS = [].concat(
@@ -472,7 +474,7 @@ const ROYALS = [['real-8', 'Reina Nutria'], ['real-0', 'Rey Osito Dorado'], ['re
   ['real-4', 'Rey Brócoli'], ['real-5', 'Rey Monstruo Colorín'], ['real-6', 'Rey Aguacate'], ['real-7', 'Rey Monstruo Arcoíris']].map(([id, name]) => ({ id, name, cat: 3, royal: true }));
 const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras', 'Peluche real 👑'];
 const TOYBY = Object.fromEntries(TOYS.concat(ROYALS).map(t => [t.id, t]));
-const BEARS = new Set(['ani-00', 'ani-11', 'ani-13', 'ani-20', 'ani-14']);
+const BEARS = new Set(['ani3-00', 'ani3-01', 'ani3-02', 'ani3-03']);
 function toySVG(t, extraCls) {
   return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="peluches/${t.id}.webp" alt="${esc(t.name)}" decoding="async">`;
 }
@@ -494,7 +496,7 @@ function loadPlayer(id) {
     ['esp-stars', 'esp-errs', 'esp-seen', 'esp-toys', 'esp-toys-seen', 'esp-bonus'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
   }
   best = load(K('stars'), {}); errs = load(K('errs'), {});
-  toys = load(K('toys'), []).filter(t => TOYBY[t] && !TOYBY[t].royal); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
+  toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
   royals = load(K('royals'), []).filter(t => TOYBY[t]);
   crown = load(K('crown'), null);
   if (!crown) { crown = {}; GROUPS.forEach(G => { crown[G.g] = ACTS.filter(a => a.g === G.g && best[a.id] === 3).map(a => a.id); }); save(K('crown'), crown); }

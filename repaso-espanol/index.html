@@ -56,9 +56,10 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .toys p{margin:0;color:var(--muted);font-size:14.5px}
 .toys h3{font-family:var(--display);font-weight:800;font-size:17px;margin:0 0 4px;display:flex;justify-content:space-between}
 .toys h3 span{color:var(--muted);font-size:15px}
-.cab{background:linear-gradient(180deg,var(--wall),var(--wall2));border:9px solid var(--wood);border-radius:14px;padding:6px 6px 0;display:grid;grid-template-columns:repeat(7,1fr);box-shadow:inset 0 6px 12px rgba(0,0,0,.12)}
+.cab{background:linear-gradient(180deg,var(--wall),var(--wall2));border:9px solid var(--wood);border-radius:14px;padding:6px 6px 0;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:inset 0 6px 12px rgba(0,0,0,.12)}
 .slot{position:relative;box-sizing:border-box;width:100%;margin:0;aspect-ratio:1/1.05;border:none;background:transparent;padding:0;font:inherit;line-height:0;border-bottom:7px solid var(--wood2);box-shadow:0 3px 0 -1px var(--wood3)}
 .slot .toy{position:absolute;left:2%;bottom:0;width:96%;height:auto}
+.toy.photo{object-fit:contain;aspect-ratio:1/1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.22))}
 .slot.empty::before{content:"?";position:absolute;inset:18% 20% 10%;border:2px dashed var(--line);border-radius:50%;display:grid;place-items:center;color:var(--muted);font:800 18px var(--display);opacity:.6}
 .slot.new .toy{animation:drop .8s cubic-bezier(.3,1.5,.5,1) both}
 @keyframes drop{0%{transform:translateY(-40%) scale(.4);opacity:0}100%{transform:none;opacity:1}}
@@ -461,129 +462,6 @@ const SMILE = (x, y, w = 3, c = '#3A2418') => `<path d="M${x - w} ${y} Q${x} ${y
 const SEAM = d => `<path d="${d}" fill="none" stroke="#000" stroke-opacity=".17" stroke-width=".8" stroke-dasharray="1.5 1.3" stroke-linecap="round"/>`;
 const WHISK = (y) => `<g stroke="#3A2418" stroke-opacity=".55" stroke-width=".7" stroke-linecap="round"><path d="M39 ${y} L30 ${y - 2}"/><path d="M39 ${y + 2.5} L30 ${y + 3}"/><path d="M61 ${y} L70 ${y - 2}"/><path d="M61 ${y + 2.5} L70 ${y + 3}"/></g>`;
 
-function accessory(P, acc) {
-  if (!acc) return '';
-  const [k, c] = acc;
-  if (k === 'bow') return `<g><path d="M66 22 l-8 -5 v10z M66 22 l8 -5 v10z" fill="${P.g(c)}"/><circle cx="66" cy="22" r="2.6" fill="${dk(c, .15)}"/></g>`;
-  if (k === 'tie') return `<g><path d="M50 64 l-7 -4 v8z M50 64 l7 -4 v8z" fill="${P.g(c)}"/><circle cx="50" cy="64" r="2.2" fill="${dk(c, .15)}"/></g>`;
-  if (k === 'scarf') return `<path d="M30 62 Q50 70 70 62 L70 67 Q50 75 30 67Z" fill="${P.g(c)}"/><path d="M60 66 l4 14 l6 -2 l-4 -13z" fill="${P.g(dk(c, .08))}"/>`;
-  if (k === 'heart') return `<path d="M50 84 C40 77 42 70 46.5 70.5 C48.5 70.7 50 72.5 50 72.5 C50 72.5 51.5 70.7 53.5 70.5 C58 70 60 77 50 84Z" fill="${P.g(c)}"/>`;
-  if (k === 'shell') return `<g><path d="M41 82 Q50 66 59 82 Q50 86 41 82Z" fill="${P.g(c)}"/><g stroke="${dk(c, .25)}" stroke-width=".8" fill="none"><path d="M50 70 V84"/><path d="M50 70 L45 83"/><path d="M50 70 L55 83"/></g></g>`;
-  if (k === 'cheese') return `<g><path d="M37 85 L62 70 L62 85Z" fill="${P.g('#F7C948')}"/><circle cx="54" cy="80" r="2" fill="#D9A520"/><circle cx="58.5" cy="76.5" r="1.4" fill="#D9A520"/></g>`;
-  if (k === 'bamboo') return `<g><rect x="62" y="56" width="4" height="30" rx="2" transform="rotate(22 64 71)" fill="${P.g('#7DBE57')}"/><path d="M71 58 q6 -4 9 0 q-5 3 -9 0z" fill="#5DAE4B"/></g>`;
-  return '';
-}
-
-function animal(P, o) {
-  const c = o.c, belly = o.belly, arm = o.arm || c, foot = o.foot || arm, head = o.head || c;
-  const C = P.g(c), B = P.g(belly), A = P.g(arm), F = P.g(foot), H = P.g(head), M = P.g(o.muzzle || belly);
-  const inner = o.earIn || lt(belly, .05);
-  let back = o.back || '', ears = '', top = '', face = '', mid = o.mid || '';
-  const e = o.ears || 'round';
-  if (e === 'round') ears = `<circle cx="31" cy="24" r="8.6" fill="${A}"/><circle cx="69" cy="24" r="8.6" fill="${A}"/><circle cx="31" cy="24.6" r="4.6" fill="${inner}"/><circle cx="69" cy="24.6" r="4.6" fill="${inner}"/>`;
-  if (e === 'small') ears = `<circle cx="31" cy="31" r="5.2" fill="${A}"/><circle cx="69" cy="31" r="5.2" fill="${A}"/><circle cx="31" cy="31.4" r="2.6" fill="${inner}"/><circle cx="69" cy="31.4" r="2.6" fill="${inner}"/>`;
-  if (e === 'mouse') ears = `<circle cx="29" cy="24" r="12" fill="${A}"/><circle cx="71" cy="24" r="12" fill="${A}"/><circle cx="29" cy="24.5" r="7.5" fill="${inner}"/><circle cx="71" cy="24.5" r="7.5" fill="${inner}"/>`;
-  if (e === 'koala') ears = `<circle cx="27" cy="30" r="12.5" fill="${A}"/><circle cx="73" cy="30" r="12.5" fill="${A}"/><circle cx="28" cy="31" r="7.5" fill="${inner}"/><circle cx="72" cy="31" r="7.5" fill="${inner}"/>`;
-  if (e === 'long') ears = `<ellipse cx="40" cy="15" rx="6.6" ry="17" transform="rotate(-12 40 15)" fill="${A}"/><ellipse cx="60" cy="15" rx="6.6" ry="17" transform="rotate(12 60 15)" fill="${A}"/><ellipse cx="40" cy="16" rx="3.4" ry="12" transform="rotate(-12 40 16)" fill="${inner}"/><ellipse cx="60" cy="16" rx="3.4" ry="12" transform="rotate(12 60 16)" fill="${inner}"/>`;
-  if (e === 'elephant') ears = `<ellipse cx="23" cy="44" rx="14" ry="16" fill="${A}"/><ellipse cx="77" cy="44" rx="14" ry="16" fill="${A}"/><ellipse cx="24" cy="44.5" rx="8.5" ry="10.5" fill="${inner}"/><ellipse cx="76" cy="44.5" rx="8.5" ry="10.5" fill="${inner}"/>`;
-  if (e === 'giraffe') ears = `<rect x="39" y="12" width="4" height="12" rx="2" fill="${P.g(dk(c, .1))}"/><rect x="57" y="12" width="4" height="12" rx="2" fill="${P.g(dk(c, .1))}"/><circle cx="41" cy="12" r="3.4" fill="${P.g('#8A5A2B')}"/><circle cx="59" cy="12" r="3.4" fill="${P.g('#8A5A2B')}"/><ellipse cx="26" cy="33" rx="8" ry="4" transform="rotate(-25 26 33)" fill="${A}"/><ellipse cx="74" cy="33" rx="8" ry="4" transform="rotate(25 74 33)" fill="${A}"/>`;
-  const headRx = o.wide ? 25 : 22.5, headRy = o.wide ? 21 : 22.5;
-  let body = back + ears +
-    `<ellipse cx="50" cy="73" rx="23" ry="20" fill="${C}"/>` +
-    (o.noBelly ? '' : `<ellipse cx="50" cy="76" rx="${o.bigBelly ? 17 : 13.5}" ry="${o.bigBelly ? 15 : 12.5}" fill="${B}"/>`) + SEAM('M50 65 V88') + mid +
-    `<ellipse cx="37" cy="91" rx="9" ry="6.4" fill="${F}"/><ellipse cx="63" cy="91" rx="9" ry="6.4" fill="${F}"/>` +
-    (o.pads === false ? '' : `<ellipse cx="37" cy="91.6" rx="5" ry="3.4" fill="${P.g(o.pad || belly)}"/><ellipse cx="63" cy="91.6" rx="5" ry="3.4" fill="${P.g(o.pad || belly)}"/>`) +
-    `<ellipse cx="29" cy="71" rx="6.6" ry="11" transform="rotate(25 29 71)" fill="${A}"/><ellipse cx="71" cy="71" rx="6.6" ry="11" transform="rotate(-25 71 71)" fill="${A}"/>` +
-    (o.held || '') +
-    `<ellipse cx="50" cy="43" rx="${headRx}" ry="${headRy}" fill="${H}"/>` + (o.headDeco || '') + SEAM('M50 21 V31');
-  if (o.mask) body += o.mask;
-  if (o.snout !== false) body += `<ellipse cx="50" cy="51.5" rx="${o.wide ? 12 : 9.5}" ry="${o.wide ? 8.2 : 7.2}" fill="${M}"/>`;
-  face += EYES(41.5, 58.5, 41.5, o.eyeR || 3.6);
-  if (o.nose !== false) face += `<ellipse cx="50" cy="48.6" rx="${o.bigNose ? 5 : 3.6}" ry="${o.bigNose ? 6 : 2.6}" fill="${o.nose || '#3B2317'}"/><ellipse cx="49" cy="${o.bigNose ? 46.5 : 47.9}" rx="1.2" ry=".7" fill="#fff" opacity=".6"/>`;
-  if (o.mouth !== false) face += SMILE(50, o.bigNose ? 55.5 : 53.2, 2.8);
-  if (o.teeth) face += `<rect x="48.3" y="54.2" width="3.4" height="3" rx=".6" fill="#fff" stroke="#3A2418" stroke-width=".4"/>`;
-  if (o.whisk) face += WHISK(51);
-  face += BLUSH(35.5, 64.5, 49.5, o.blush);
-  face += o.faceExtra || '';
-  return { body: body + accessory(P, o.acc), face: face + (o.accFace ? accessory(P, o.accFace) : '') };
-}
-const SPIKES = (c) => { let s = ''; for (let k = 0; k <= 18; k++) { const a = Math.PI * (.88 + k * 1.24 / 18), r1 = 16, r2 = 32 + (k % 2) * 3, x = 50 + Math.cos(a) * r1, y = 46 + Math.sin(a) * r1, x2 = 50 + Math.cos(a) * r2, y2 = 46 + Math.sin(a) * r2, dx = Math.cos(a + Math.PI / 2) * 4.2, dy = Math.sin(a + Math.PI / 2) * 4.2;
-  s += `<path d="M${(x - dx).toFixed(1)} ${(y - dy).toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)} L${(x + dx).toFixed(1)} ${(y + dy).toFixed(1)}Z" fill="${c}"/>`; } return s; };
-
-const ANIMALS = [
-  ['oso-canela', 'Osito Canela', {c:'#9A6A43', belly:'#E2C39B', acc:['tie','#D9534F']}],
-  ['oso-polar', 'Oso Polar Copito', {c:'#F1EEE6', belly:'#FFFFFF', nose:'#2B2B2B', earIn:'#E6D8CB', acc:['scarf','#4F8CC4']}],
-  ['panda', 'Panda Bambú', {c:'#F6F4EF', belly:'#FFFFFF', arm:'#2C2A2F', foot:'#2C2A2F', pad:'#5B5860', earIn:'#4A474F', nose:'#222', held:'', acc:['bamboo'],
-    mask:`<ellipse cx="41.5" cy="42.5" rx="6.4" ry="7.8" transform="rotate(28 41.5 42.5)" fill="#2C2A2F"/><ellipse cx="58.5" cy="42.5" rx="6.4" ry="7.8" transform="rotate(-28 58.5 42.5)" fill="#2C2A2F"/>`}],
-  ['oso-miel', 'Oso Miel', {c:'#D49A3A', belly:'#F6DFA4', acc:['bow','#E2557A']}],
-  ['osa-rosita', 'Osita Rosita', {c:'#E8A2B5', belly:'#FBE2E9', acc:['heart','#D63D6B']}],
-  ['koala', 'Koala Nube', {c:'#A5A7AD', belly:'#E9E9EC', ears:'koala', earIn:'#F4F1F1', snout:false, bigNose:true, nose:'#2E2B2E'}],
-  ['nutria-coco', 'Nutria Coco', {c:'#8A5A3B', belly:'#EAD3B6', ears:'small', wide:true, muzzle:'#F1E1CC', whisk:true, nose:'#2B1A12',
-    back:`<ellipse cx="79" cy="86" rx="15" ry="6" transform="rotate(-24 79 86)" fill="#7A4D31"/>`}],
-  ['nutria-conchita', 'Nutria Conchita', {c:'#A16C47', belly:'#EED9BE', ears:'small', wide:true, muzzle:'#F4E6D2', whisk:true, nose:'#2B1A12', acc:['shell','#F4A6B8'],
-    back:`<ellipse cx="79" cy="86" rx="15" ry="6" transform="rotate(-24 79 86)" fill="#8A5A3B"/>`}],
-  ['nutria-avellana', 'Nutria Bebé Avellana', {c:'#BC8D66', belly:'#F3E3CF', ears:'small', wide:true, muzzle:'#F7ECDD', whisk:true, nose:'#3A2418', eyeR:4.1, acc:['bow','#7FB3E0'],
-    back:`<ellipse cx="79" cy="86" rx="14" ry="5.6" transform="rotate(-24 79 86)" fill="#A97B55"/>`}],
-  ['conejo-algodon', 'Conejo Algodón', {c:'#F5F1EB', belly:'#FFFFFF', ears:'long', earIn:'#F6C3CF', nose:'#E88FA2', teeth:true, acc:['bow','#8FCB9B'],
-    back:`<circle cx="75" cy="86" r="7" fill="#FFFFFF"/>`}],
-  ['conejo-galleta', 'Conejo Galleta', {c:'#B88A62', belly:'#F0DEC6', ears:'long', earIn:'#F2C2B8', nose:'#E88FA2', teeth:true, acc:['scarf','#F2C14E']}],
-  ['pato-limon', 'Pato Limón', {c:'#F5CB3A', belly:'#FBE596', ears:'none', snout:false, nose:false, mouth:false, foot:'#F08A2B', pads:false,
-    headDeco:`<path d="M48 21 q-1 -7 5 -8 q-4 3 -1 8z" fill="#E8B82A"/>`, faceExtra:`<ellipse cx="50" cy="51" rx="10.5" ry="4.6" fill="#F08A2B"/><path d="M40 51 Q50 53.5 60 51" stroke="#B8601A" stroke-width=".8" fill="none"/>`}],
-  ['patita-perla', 'Patita Perla', {c:'#F7F4EE', belly:'#FFFFFF', ears:'none', snout:false, nose:false, mouth:false, foot:'#F2A33A', pads:false, accFace:['bow','#E2557A'],
-    faceExtra:`<ellipse cx="50" cy="51" rx="10.5" ry="4.6" fill="#F2A33A"/><path d="M40 51 Q50 53.5 60 51" stroke="#B8701A" stroke-width=".8" fill="none"/>`}],
-  ['puercoespin', 'Puercoespín Pinito', {c:'#E6CBA6', belly:'#F4E5CF', arm:'#D8B88E', ears:'small', earIn:'#F2C2B8', nose:'#2B1A12',
-    back:`<g>${''}</g>`, spikes:'#6E4A33'}],
-  ['pinguino', 'Pingüino Frac', {c:'#2F3B52', belly:'#FFFFFF', ears:'none', snout:false, nose:false, mouth:false, foot:'#F29A38', pads:false, bigBelly:true,
-    mask:`<path d="M50 60 C36 60 31 50 33 42 C35 35 42 34 50 40 C58 34 65 35 67 42 C69 50 64 60 50 60Z" fill="#FFFFFF"/>`, faceExtra:`<path d="M46 47.5 L54 47.5 L50 52.5Z" fill="#F29A38"/>`, acc:['tie','#D9534F']}],
-  ['pinguino-bebe', 'Pingüino Bebé Gris', {c:'#8F98A6', belly:'#F1F2F4', ears:'none', snout:false, nose:false, mouth:false, foot:'#3B3F47', pads:false, bigBelly:true, eyeR:4,
-    mask:`<path d="M50 60 C37 60 32 51 34 43 C36 36 42 35 50 40 C58 35 64 36 66 43 C68 51 63 60 50 60Z" fill="#F1F2F4"/>`, faceExtra:`<path d="M46.5 47.5 L53.5 47.5 L50 51.5Z" fill="#3B3F47"/>`}],
-  ['jirafa', 'Jirafa Manchitas', {c:'#F0C25A', belly:'#F8E2A8', ears:'giraffe', muzzle:'#F6DCA2', nose:'#8A5A2B',
-    mid:`<g fill="#B9762E" opacity=".85"><circle cx="34" cy="66" r="3.2"/><circle cx="66" cy="68" r="3.6"/><circle cx="41" cy="86" r="2.6"/><circle cx="61" cy="85" r="2.4"/></g>`,
-    headDeco:`<g fill="#B9762E" opacity=".85"><circle cx="33" cy="40" r="2.6"/><circle cx="67" cy="38" r="3"/><circle cx="50" cy="27" r="2.8"/><circle cx="38" cy="30" r="1.8"/></g>`}],
-  ['elefante', 'Elefante Trompita', {c:'#A9B3BD', belly:'#CBD2D9', ears:'elephant', earIn:'#E9B9C6', snout:false, nose:false, mouth:false,
-    faceExtra:`<path d="M50 46 Q48.5 58 55.5 61" fill="none" stroke="#97A2AD" stroke-width="7.5" stroke-linecap="round"/><path d="M49.5 50 h1.5 M50 54 h2" stroke="#7E8994" stroke-width=".7"/>${SMILE(41.5, 55, 2.2)}`}],
-  ['elefanta-rosa', 'Elefanta Rosita', {c:'#E8B2C4', belly:'#F6D7E2', ears:'elephant', earIn:'#F7DCE6', snout:false, nose:false, mouth:false, accFace:['bow','#9B7BD1'],
-    faceExtra:`<path d="M50 46 Q48.5 58 55.5 61" fill="none" stroke="#DDA0B4" stroke-width="7.5" stroke-linecap="round"/>${SMILE(41.5, 55, 2.2)}`}],
-  ['raton-queso', 'Ratón Queso', {c:'#A3A1A6', belly:'#E3E1E4', ears:'mouse', earIn:'#F2B8C5', nose:'#E88FA2', whisk:true, acc:['cheese'],
-    back:`<path d="M70 88 Q90 86 86 70 Q84 62 90 58" fill="none" stroke="#E7A9B7" stroke-width="2.4" stroke-linecap="round"/>`}],
-  ['ratona-nieve', 'Ratoncita Nieve', {c:'#F4F2F0', belly:'#FFFFFF', ears:'mouse', earIn:'#F6C3CF', nose:'#E88FA2', whisk:true, accFace:['bow','#4FB3A9'],
-    back:`<path d="M70 88 Q90 86 86 70 Q84 62 90 58" fill="none" stroke="#F2B8C5" stroke-width="2.4" stroke-linecap="round"/>`}]
-];
-
-const MON = [
-  ['Pompón','#7FC8F8','#FFE45E','blob',2,'horns'],['Burbuja','#F78FB3','#FFFFFF','tall',1,'antena'],['Chispa','#9BE15D','#F9F871','wide',3,'none'],
-  ['Moras','#8E7CC3','#F6C6EA','blob',2,'one'],['Gomita','#FF9F68','#FFF3B0','tall',2,'fur'],['Nubecita','#B8E0F6','#FFFFFF','wide',2,'antena'],
-  ['Bombón','#FF6F91','#FFC75F','blob',1,'horns'],['Tornasol','#4FD1C5','#F687B3','tall',3,'one'],['Malvavisco','#F3E8FF','#B794F4','blob',2,'fur'],
-  ['Fideo','#F6E05E','#68D391','tall',2,'antena'],['Pelusa','#A0AEC0','#FBB6CE','wide',1,'fur'],['Confeti','#FC8181','#90CDF4','blob',3,'horns'],
-  ['Arándano','#5A67D8','#C3DAFE','wide',2,'one'],['Menta','#81E6D9','#FFFFFF','blob',2,'horns'],['Cosquillas','#F6AD55','#9F7AEA','tall',1,'fur'],
-  ['Glotón','#68D391','#FEFCBF','wide',2,'none'],['Brillito','#FBD38D','#F56565','blob',1,'antena'],['Lunita','#2C5282','#FAF089','tall',2,'horns'],
-  ['Chicle','#ED64A6','#B2F5EA','wide',3,'antena'],['Panqué','#D69E2E','#FED7E2','blob',2,'one'],['Algodoncito','#FBB6CE','#BEE3F8','wide',2,'fur']
-];
-function monster(P, [name, c, a, shape, eyes, top]) {
-  const C = P.g(c), Aa = P.g(a);
-  let s = '';
-  if (top === 'horns') s += `<path d="M34 30 Q26 14 34 10 Q33 20 41 26Z" fill="${P.g('#FFF4D6')}"/><path d="M66 30 Q74 14 66 10 Q67 20 59 26Z" fill="${P.g('#FFF4D6')}"/>`;
-  if (top === 'one') s += `<path d="M44 24 Q50 4 56 24Z" fill="${Aa}"/>`;
-  if (top === 'antena') s += `<path d="M42 26 Q38 14 32 12 M58 26 Q62 14 68 12" stroke="${dk(c, .25)}" stroke-width="1.6" fill="none" stroke-linecap="round"/><circle cx="32" cy="12" r="4" fill="${Aa}"/><circle cx="68" cy="12" r="4" fill="${Aa}"/>`;
-  const bodyPath = shape === 'tall' ? `<ellipse cx="50" cy="57" rx="23" ry="34" fill="${C}"/>` : shape === 'wide' ? `<ellipse cx="50" cy="62" rx="33" ry="27" fill="${C}"/>` :
-    `<path d="M19 70 C17 40 31 22 50 22 C69 22 83 40 81 70 C80 86 68 93 50 93 C32 93 20 86 19 70Z" fill="${C}"/>`;
-  const ty = shape === 'tall' ? 24 : shape === 'wide' ? 36 : 23;
-  if (top === 'fur') { for (let k = 0; k < 7; k++) { const x = 32 + k * 6; s += `<path d="M${x - 4} ${ty + 6} L${x} ${ty - 5 - (k % 2) * 3} L${x + 4} ${ty + 6}Z" fill="${C}"/>`; } }
-  s += `<ellipse cx="34" cy="92" rx="8" ry="5.5" fill="${P.g(dk(c, .12))}"/><ellipse cx="66" cy="92" rx="8" ry="5.5" fill="${P.g(dk(c, .12))}"/>`;
-  s += bodyPath;
-  s += `<ellipse cx="50" cy="${shape === 'wide' ? 72 : 74}" rx="14" ry="12" fill="${Aa}" opacity=".9"/>`;
-  s += `<g fill="${Aa}" opacity=".75"><circle cx="30" cy="${shape === 'tall' ? 50 : 56}" r="3"/><circle cx="71" cy="${shape === 'tall' ? 46 : 52}" r="2.4"/><circle cx="68" cy="78" r="2"/></g>`;
-  s += `<ellipse cx="${shape === 'wide' ? 17 : 26}" cy="66" rx="5.5" ry="9" transform="rotate(30 ${shape === 'wide' ? 17 : 26} 66)" fill="${P.g(dk(c, .06))}"/><ellipse cx="${shape === 'wide' ? 83 : 74}" cy="66" rx="5.5" ry="9" transform="rotate(-30 ${shape === 'wide' ? 83 : 74} 66)" fill="${P.g(dk(c, .06))}"/>`;
-  s += SEAM(`M50 ${shape === 'wide' ? 38 : 30} V44`);
-  const ey = shape === 'wide' ? 52 : 46;
-  const eye = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/><circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#000" stroke-opacity=".12" stroke-width=".8"/>` + EYE(x + r * .1, y + r * .12, r * .58);
-  let f = eyes === 1 ? eye(50, ey, 8) : eyes === 2 ? eye(41, ey, 5.6) + eye(59, ey, 5.6) : eye(37.5, ey + 1, 4.6) + eye(50, ey - 3, 5) + eye(62.5, ey + 1, 4.6);
-  const my = ey + (eyes === 1 ? 13 : 10);
-  f += `<path d="M40 ${my} Q50 ${my + 11} 60 ${my}Z" fill="#7A1F2B"/><path d="M45 ${my + 5} Q50 ${my + 9} 55 ${my + 5} Q50 ${my + 7} 45 ${my + 5}Z" fill="#E86A7A"/><rect x="${eyes === 3 ? 47.6 : 43.5}" y="${my - .2}" width="3.4" height="3.6" rx=".7" fill="#fff"/>${eyes === 3 ? '' : `<rect x="53.1" y="${my - .2}" width="3.4" height="3.6" rx=".7" fill="#fff"/>`}`;
-  f += BLUSH(33, 67, my - 1);
-  return { body: s, face: f };
-}
-
 /* frutas y verduras con piernitas */
 const LEGS = (shoe, y = 70) => `<g stroke="#3A2A20" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M44 ${y} L41 91"/><path d="M56 ${y} L59 91"/></g><ellipse cx="38.5" cy="92.5" rx="5.2" ry="2.9" fill="${shoe}"/><ellipse cx="61.5" cy="92.5" rx="5.2" ry="2.9" fill="${shoe}"/><circle cx="37" cy="91.6" r="1" fill="#fff" opacity=".5"/><circle cx="60" cy="91.6" r="1" fill="#fff" opacity=".5"/>`;
 const ARMS = (y, x1 = 27, x2 = 73) => `<g stroke="#3A2A20" stroke-width="1.4" stroke-linecap="round" fill="none"><path d="M${x1 + 4} ${y} Q${x1 - 3} ${y + 2} ${x1 - 5} ${y + 9}"/><path d="M${x2 - 4} ${y} Q${x2 + 3} ${y + 2} ${x2 + 5} ${y + 9}"/></g><circle cx="${x1 - 5}" cy="${y + 10}" r="2.2" fill="#FFFFFF" stroke="#3A2A20" stroke-width=".6"/><circle cx="${x2 + 5}" cy="${y + 10}" r="2.2" fill="#FFFFFF" stroke="#3A2A20" stroke-width=".6"/>`;
@@ -609,7 +487,11 @@ const FRUITS = [
   ['hongo','Hongo Lunares','#E23D3D','#F2C14E', (P, c) => `<path d="M42 46 L40 76 Q50 80 60 76 L58 46Z" fill="${P.g('#F4EAD8')}"/><path d="M20 48 Q22 20 50 18 Q78 20 80 48 Q50 54 20 48Z" fill="${P.g(c)}"/>${[[34,34,4],[50,26,4.5],[66,34,4],[42,44,3],[60,43,3]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" opacity=".92"/>`).join('')}`, 60, {face:[50, 60], legs:77, arms:56, eyeR:3}],
   ['papa','Papa Pecas','#C9995F','#E2557A', (P, c) => `<path d="M26 52 Q24 30 48 28 Q72 26 75 48 Q77 72 52 74 Q28 76 26 52Z" fill="${P.g(c)}"/>${[[36,38],[62,36],[68,58],[34,64],[56,68]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.6" ry="1.1" fill="${dk(c, .25)}" opacity=".7"/>`).join('')}`, 50, {legs:72}],
   ['kiwi','Kiwi Peludito','#8BC34A','#7B61FF', (P, c) => `<circle cx="50" cy="50" r="25" fill="${P.g('#8A6239')}"/><circle cx="50" cy="50" r="21.5" fill="${P.g(c)}"/><circle cx="50" cy="50" r="11.5" fill="${P.g('#F4F7D9')}"/>${Array.from({length: 14}, (x, k) => { const a = k * Math.PI / 7, X = (50 + Math.cos(a) * 16.5).toFixed(1), Y = (50 + Math.sin(a) * 16.5).toFixed(1); return `<ellipse cx="${X}" cy="${Y}" rx=".9" ry="1.7" transform="rotate(${k * 180 / 7 + 90} ${X} ${Y})" fill="#1B1410"/>`; }).join('')}`, 0, {face:[50, 50], legs:73, eyeR:2.6}],
-  ['berenjena','Berenjena Violeta','#6B3FA0','#F2C14E', (P, c) => `<path d="M44 32 C30 40 28 72 48 76 C68 80 72 56 60 36 C56 28 50 28 44 32Z" fill="${P.g(c)}"/><path d="M40 33 Q50 24 62 34 Q56 38 50 34 Q46 38 40 33Z" fill="${P.g('#4FA84A')}"/><path d="M51 27 Q52 20 56 17" stroke="#3E8E41" stroke-width="2.4" fill="none" stroke-linecap="round"/>`, 56, {legs:75}]
+  ['berenjena','Berenjena Violeta','#6B3FA0','#F2C14E', (P, c) => `<path d="M44 32 C30 40 28 72 48 76 C68 80 72 56 60 36 C56 28 50 28 44 32Z" fill="${P.g(c)}"/><path d="M40 33 Q50 24 62 34 Q56 38 50 34 Q46 38 40 33Z" fill="${P.g('#4FA84A')}"/><path d="M51 27 Q52 20 56 17" stroke="#3E8E41" stroke-width="2.4" fill="none" stroke-linecap="round"/>`, 56, {legs:75}],
+  ['mango','Mango Solecito','#F6A623','#4F8CC4', (P, c) => `<path d="M30 46 Q30 26 52 26 Q74 28 72 52 Q70 76 48 74 Q28 70 30 46Z" fill="${P.g(c)}"/><ellipse cx="62" cy="38" rx="10" ry="8" fill="#E8573C" opacity=".35"/><path d="M52 26 q1 -4 4 -6" stroke="#6B3F1D" stroke-width="1.6" fill="none"/>${LEAF(55, 21, -15)}`, 52, {legs:72}],
+  ['calabaza','Calabaza Risueña','#F08A24','#7B61FF', (P, c) => `<ellipse cx="36" cy="52" rx="13" ry="21" fill="${P.g(dk(c, .06))}"/><ellipse cx="64" cy="52" rx="13" ry="21" fill="${P.g(dk(c, .06))}"/><ellipse cx="50" cy="52" rx="15" ry="22" fill="${P.g(c)}"/><path d="M50 31 q-1 -6 4 -9" stroke="#4E7A2B" stroke-width="3" fill="none" stroke-linecap="round"/>${LEAF(53, 26, -20)}`, 52, {legs:73}],
+  ['pepino','Pepino Fresquito','#4E9A45','#F2C14E', (P, c) => `<rect x="37" y="20" width="26" height="58" rx="13" fill="${P.g(c)}"/>${[[42,30],[57,36],[43,62],[58,68],[50,74]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="${lt(c, .5)}"/>`).join('')}<rect x="48" y="16" width="4" height="6" rx="2" fill="#3E7A2B"/>`, 48, {legs:77, arms:50, x1:32, x2:68, eyeR:3}],
+  ['coco','Coco Bonachón','#8A5A34','#E2557A', (P, c) => `<circle cx="50" cy="50" r="24" fill="${P.g(c)}"/><g stroke="#5E3A1E" stroke-width=".7" opacity=".6" fill="none"><path d="M30 40 q6 -2 10 2"/><path d="M60 32 q6 0 9 4"/><path d="M34 62 q5 2 9 0"/><path d="M58 64 q6 -1 9 -5"/></g><g fill="#4A2C15"><circle cx="44" cy="30" r="1.6"/><circle cx="50" cy="28" r="1.6"/><circle cx="56" cy="30" r="1.6"/></g>`, 52, {legs:72}]
 ];
 function fruit(P, [id, name, c, shoe, draw, fy, o = {}]) {
   const legs = LEGS(P.g(shoe), o.legs || 72), arms = ARMS(o.arms || 50, o.x1, o.x2);
@@ -619,15 +501,19 @@ function fruit(P, [id, name, c, shoe, draw, fy, o = {}]) {
   return { body: legs + arms + draw(P, c), face };
 }
 
+const PHOTO_ANI = [["ani-00", "Osito Chocolate"], ["ani-01", "Nutria Coco"], ["ani-02", "Panda Bambú"], ["ani-03", "Conejita Rosa"], ["ani-04", "Elefante Trompita"], ["ani-06", "Perezoso Siesta"], ["ani-07", "Jirafa Manchitas"], ["ani-08", "Changuito Plátano"], ["ani-09", "Pingüino Emperador"], ["ani-10", "Koala Hojitas"], ["ani-11", "Osito Moñito"], ["ani-12", "Elefanta Orejitas"], ["ani-13", "Oso Canela"], ["ani-14", "Oso Polar Copito"], ["ani-15", "Nutria Avellana"], ["ani-16", "Conejo Algodón"], ["ani-17", "Elefante Abrazos"], ["ani-18", "Jirafa Pecas"], ["ani-19", "Pingüino Frac"], ["ani-20", "Oso Miel"], ["ani-21", "Panda Dormilón"], ["ani-23", "Conejo Galleta"], ["ani-24", "Chango Travieso"], ["ani-25", "Pingüino Bebé"], ["ani-26", "Koala Nube"]];
+const PHOTO_MON = [["mon-00", "Unicornito Menta"], ["mon-01", "Mango Peludo"], ["mon-02", "Pepino Lunares"], ["mon-03", "Dragoncito Alitas"], ["mon-04", "Malteada Arcoíris"], ["mon-05", "Reyecito Azul"], ["mon-06", "Moras Peludas"], ["mon-07", "Rayitas Tres Ojos"], ["mon-08", "Orejitas Tímido"], ["mon-09", "Pompón Amarillo"], ["mon-10", "Ojón Verde"], ["mon-11", "Guiño Moñitos"], ["mon-12", "Uva Manchitas"], ["mon-14", "Fueguito"], ["mon-15", "Confeti"], ["mon-16", "Dinito Azul"], ["mon-17", "Hojita Menta"], ["mon-18", "Princesa Limón"], ["mon-19", "Copetín Azul"], ["mon-21", "Nube Dormilona"], ["mon-22", "Ojito Naranja"], ["mon-24", "Chicle Lunares"], ["mon-25", "Kiwi Orejón"], ["mon-26", "Fresón Rey"], ["mon-27", "Arcoíris Peludo"]];
 const TOYS = [].concat(
-  ANIMALS.map(([id, name, o]) => ({ id, name, cat: 0, draw: P => { const r = animal(P, o); if (o.spikes) r.body = SPIKES(o.spikes) + r.body; return r; } })),
-  MON.map((m, k) => ({ id: 'mon-' + k, name: 'Monstruo ' + m[0], cat: 1, draw: P => monster(P, m) })),
+  PHOTO_ANI.map(([id, name]) => ({ id, name, cat: 0, photo: true })),
+  PHOTO_MON.map(([id, name]) => ({ id, name, cat: 1, photo: true })),
   FRUITS.map(f => ({ id: f[0], name: f[1], cat: 2, draw: P => fruit(P, f) }))
 );
 const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras'];
 const TOYBY = Object.fromEntries(TOYS.map(t => [t.id, t]));
+/* Animalitos y monstruos usan fotos (peluches/<id>.webp). Las frutas y verduras son dibujos hasta tener sus fotos. */
 let uidN = 0;
 function toySVG(t, extraCls) {
+  if (t.photo) return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="peluches/${t.id}.webp" alt="${esc(t.name)}" loading="lazy" decoding="async">`;
   const P = painter('g' + (uidN++) + '-'), r = t.draw(P);
   return `<svg class="toy${extraCls ? ' ' + extraCls : ''}" viewBox="0 0 100 100" role="img" aria-label="${esc(t.name)}"><defs>${P.defs()}</defs>
     <ellipse cx="50" cy="96" rx="30" ry="3.6" fill="#000" opacity=".16"/><g filter="url(#plush)">${r.body}</g><g>${r.face}</g></svg>`;
@@ -640,11 +526,15 @@ function awardToys(n) {
   save('esp-toys', toys); return got;
 }
 if (toys.length < totalStars()) awardToys(totalStars() - toys.length);
+let bonus = load('esp-bonus', {});
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+/* Peluche extra: repetir un ejercicio que ya tenía 3 ★ y volver a sacar 3 ★ (una vez al día por ejercicio), o terminar el repaso de errores sin fallar (una vez al día). */
+function bonusToy(k) { if (bonus[k] === today()) return []; bonus[k] = today(); save('esp-bonus', bonus); return awardToys(1); }
 const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
   const n = SHOWALL ? TOYS.length : toys.length, last = (SHOWALL ? TOYS.map(t => t.id) : toys).slice(-6).reverse();
   $('#toys').innerHTML = `<div class="gh"><h2>${n === TOYS.length ? '¡Colección completa!' : 'Mis peluches'}</h2><span class="gn">🧸 ${n} de ${TOYS.length}</span></div>
-    <p>Cada estrella nueva que ganas te regala un peluche para tus repisas.</p>
+    <p>Cada estrella nueva te regala un peluche. Si repites un ejercicio y vuelves a sacar 3 ★, ganas un peluche extra (uno por ejercicio cada día).</p>
     <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes peluches. ¡Gana tu primera estrella!</div>'}
     <button class="btn" type="button" id="toshelf">Ver mis repisas 🧸</button></div>`;
   $('#toshelf').onclick = openShelf;
@@ -756,18 +646,19 @@ function finish() {
   cur.over = true; $('#area').innerHTML = '';
   const m = cur.mistakes;
   if (cur.review) {
-    const left = errKeys().length;
+    const left = errKeys().length, got = m === 0 ? bonusToy('repaso') : [];
     $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? '¡Perfecto!' : '¡Buen repaso!'}</div>
+      ${got.length ? `<div class="gain">🧸 ¡Repaso sin errores: ganaste un peluche!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
       <div>${left ? `Te ${left === 1 ? 'queda' : 'quedan'} ${left} en tu lista de repaso.` : '¡Ya no te queda nada por repasar!'}</div>
       <div class="btns">${left ? '<button class="btn" type="button" id="again">Repasar otra vez</button>' : ''}<button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
     if (left) $('#again').onclick = startReview;
   } else {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
     best[cur.act.id] = Math.max(before, stars); save('esp-stars', best);
-    const got = awardToys(best[cur.act.id] - before);
+    const got = before === 3 && stars === 3 ? bonusToy(cur.act.id) : awardToys(best[cur.act.id] - before);
     const gain = got.length ? `<div class="gain">🧸 ¡${got.length === 1 ? 'Ganaste un peluche nuevo' : 'Ganaste ' + got.length + ' peluches nuevos'}!</div>
       <div class="newtoys">${got.map((t, k) => `<figure style="animation-delay:${k * .25}s">${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
-      : (best[cur.act.id] === 3 ? '' : '<div>Gana más estrellas en este ejercicio para llevarte otro peluche.</div>');
+      : (best[cur.act.id] === 3 ? (stars === 3 ? '<div>Ya ganaste hoy el peluche extra de este ejercicio. ¡Mañana puedes ganar otro!</div>' : '<div>Saca 3 ★ otra vez para ganar un peluche extra.</div>') : '<div>Gana más estrellas en este ejercicio para llevarte otro peluche.</div>');
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!'}</div>
       <div class="stars">${starStr(stars)}</div>
       <div>${m === 0 ? 'Sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? 'Te lo sabes muy bien.' : 'Repítelo para ganar las 3 estrellas.'}</div>

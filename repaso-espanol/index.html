@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Español">
-<meta name="theme-color" content="#F5F0E1">
+<meta name="theme-color" content="#FDE9F0">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}</style>
@@ -17,7 +17,7 @@
 <style>
 /* Workbook: a menu of exercise cards (by tema) and toy shelves where plush rewards collect; one question per screen, tap-only for iPad */
 :root{
-  --bg:#F5F0E1; --surface:#FFFFFF; --ink:#2A2418; --muted:#6B6250; --line:#DCD2B8;
+  --bg:#FDE9F0; --surface:#FFFFFF; --baby:#A8D4F7; --baby-line:#7FBCEB; --baby-ink:#123A5E; --ink:#2A2418; --muted:#6B6250; --line:#DCD2B8;
   --sun:#D99A00; --sun-soft:#FCEFC7; --petal:#F4B400; --seed:#6B3F1D; --stem:#3E8E41; --leaf:#5DAE4B; --soil:#B68A5A; --soil2:#9C7246; --sky:#E4F1F8;
   --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB;
   --ton:#2B63D1; --ton-soft:#DCE7FB; --aton:#C23B34; --aton-soft:#F9DEDB;
@@ -26,12 +26,12 @@
   --body:"Nunito", "Segoe UI", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#17140D; --surface:#231F15; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
+  --bg:#24161C; --surface:#2E2026; --baby:#3D6F9C; --baby-line:#5A8DBB; --baby-ink:#F2F8FF; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
   --sun:#F2BC3C; --sun-soft:#3D3112; --petal:#F2BC3C; --seed:#A0693A; --stem:#5DB561; --leaf:#78C566; --soil:#6E5233; --soil2:#5A4229; --sky:#1C2A33;
   --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358;
   --ton:#86ACF7; --ton-soft:#1F3358; --aton:#F07068; --aton-soft:#42201E; --wood:#6E4524; --wood2:#875733; --wood3:#4A2D16; --wall:#2E2819; --wall2:#272114; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#17140D; --surface:#231F15; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
+  --bg:#24161C; --surface:#2E2026; --baby:#3D6F9C; --baby-line:#5A8DBB; --baby-ink:#F2F8FF; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
   --sun:#F2BC3C; --sun-soft:#3D3112; --petal:#F2BC3C; --seed:#A0693A; --stem:#5DB561; --leaf:#78C566; --soil:#6E5233; --soil2:#5A4229; --sky:#1C2A33;
   --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358;
   --ton:#86ACF7; --ton-soft:#1F3358; --aton:#F07068; --aton-soft:#42201E; --wood:#6E4524; --wood2:#875733; --wood3:#4A2D16; --wall:#2E2819; --wall2:#272114; color-scheme:dark }
@@ -70,16 +70,26 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .toybar .mini{display:flex;gap:2px;flex:1;min-width:0;overflow:hidden}
 .toybar .mini .toy{width:58px;height:58px;flex:none}
 .toybar .none{color:var(--muted);font-size:15px;flex:1}
+.chipw{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:4px 12px;font-weight:800;font-size:14.5px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
+.pcard{display:flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 16px;text-align:left}
+.pcard:hover{border-color:var(--sun)}
+.pcard .pav{width:80px;height:80px;flex:none;display:grid;place-items:center;font-size:44px;background:var(--sun-soft);border-radius:16px}
+.pcard .pav .toy{width:76px;height:76px}
+.pcard .pn{display:block;font-family:var(--display);font-weight:800;font-size:21px;line-height:1.1}
+.pcard .ps{color:var(--muted);font-size:14px}
+.newp{background:var(--surface);border:2px solid var(--sun);border-radius:18px;padding:16px;margin-top:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.newp input{font:800 24px var(--display);text-align:center;width:min(100%,380px);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
 .modal{position:fixed;inset:0;background:rgba(20,14,6,.55);display:grid;place-items:center;padding:16px;z-index:10}
 .modal .box{background:var(--surface);border-radius:22px;padding:18px 22px;text-align:center;max-width:340px;width:100%;display:flex;flex-direction:column;gap:6px;align-items:center}
 .modal .toy{width:min(260px,70vw);height:auto}
 .modal .nm{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.1}
 .modal .ct{color:var(--muted);font-size:14px}
 
-.revbtn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--sun-soft);border:2px solid var(--sun);border-radius:16px;padding:14px 16px;margin-top:16px}
+.revbtn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:16px;padding:14px 16px;margin-top:16px}
 .revbtn .ico{font-size:30px;line-height:1}
 .revbtn .t{font-weight:800;font-size:18px;display:block}
-.revbtn .s{font-size:14px;color:var(--muted)}
+.revbtn .s{font-size:14px;opacity:.85}
 
 .group h2{font-family:var(--display);font-size:22px;margin:6px 0 8px;font-weight:800}
 .group p.gdesc{margin:-6px 0 10px;color:var(--muted);font-size:15px}
@@ -93,7 +103,7 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 
 /* play */
 .bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.back{background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:800}
+.back{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:6px 14px;font-weight:800}
 .ptitle{font-family:var(--display);font-size:clamp(22px,5vw,30px);font-weight:800;margin:0;line-height:1.1;flex:1;min-width:0}
 .rule{background:var(--surface);border:2px dashed var(--sun);border-radius:14px;padding:10px 14px;font-size:15.5px}
 .rule summary{font-weight:800;color:var(--sun);cursor:pointer;list-style:none}
@@ -140,17 +150,16 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .gap.on::after{display:none}
 .gap.on{background:var(--bad-soft)}
 .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.btn{border-radius:999px;padding:11px 22px;font-weight:800;border:2px solid var(--sun);background:var(--sun);color:#FFFFFF;font-size:17px}
-.btn.alt{background:transparent;color:var(--ink)}
-.btn.blue{background:var(--sel);border-color:var(--sel)}
+.btn{border-radius:999px;padding:11px 22px;font-weight:800;border:2px solid var(--baby-line);background:var(--baby);color:var(--baby-ink);font-size:17px}
+.btn.alt{background:var(--surface);color:var(--baby-ink);border-color:var(--baby-line)}
 
 .syls{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
 .syl{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:10px 16px;font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,44px);line-height:1;min-width:64px}
 .syl.ton{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
 .syl.aton{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
 .syl.bad{border-color:var(--bad);background:var(--bad-soft)}
-.say{background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:800}
-.saybig{font-size:22px;padding:14px 26px;background:var(--sel);color:#fff;border-color:var(--sel)}
+.say{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:8px 16px;font-weight:800}
+.saybig{font-size:22px;padding:14px 26px}
 .dict{display:flex;flex-direction:column;gap:12px;align-items:center}
 .dict .hint{color:var(--muted);font-size:18px;text-align:center}
 .dict input{font:800 30px var(--display);text-align:center;width:min(100%,380px);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
@@ -190,15 +199,26 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><filter id="plush" x="-8%" y="-8%" width="116%" height="116%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" result="t"/><feDisplacementMap in="SourceGraphic" in2="t" scale="1.5" xChannelSelector="R" yChannelSelector="G" result="d"/><feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="1" seed="9" result="t2"/><feColorMatrix in="t2" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.9 0 0 0 -0.42" result="lite"/><feComposite in="lite" in2="d" operator="in" result="l2"/><feColorMatrix in="t2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -0.9 0 0 0 0.36" result="dark"/><feComposite in="dark" in2="d" operator="in" result="d2"/><feMerge><feMergeNode in="d"/><feMergeNode in="l2"/><feMergeNode in="d2"/></feMerge></filter></defs></svg>
 <div class="wrap">
-  <div id="home">
+  <div id="who" hidden>
+    <header class="top"><div><div class="kicker">Español · Cuaderno espiral azul</div><h1>¿Quién va a estudiar?</h1></div></header>
+    <div id="wholist" class="plist"></div>
+    <button class="btn alt" type="button" id="addp" style="margin-top:16px">+ Nueva jugadora</button>
+    <div id="newp" class="newp" hidden>
+      <label for="pname" class="qp">Nombre de la jugadora</label>
+      <input id="pname" type="text" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+      <div class="qp">¿Qué peluche quieres primero?</div>
+      <div class="opts" id="firsts"></div>
+      <div class="actions"><button class="btn" type="button" id="pcreate">Crear</button><button class="btn alt" type="button" id="pcancel">Cancelar</button></div>
+    </div>
+  </div>
+  <div id="home" hidden>
     <header class="top">
       <div>
         <div class="kicker">Español · Cuaderno espiral azul</div>
         <h1>Repaso de Español</h1>
       </div>
-      <div class="total" id="total"></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><button class="chipw" type="button" id="whochip"></button><div class="total" id="total"></div></div>
     </header>
     <section class="toys" id="toys" aria-label="Mis peluches"></section>
     <div id="rev"></div>
@@ -426,13 +446,13 @@ const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { c
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-let best = load('esp-stars', {}), errs = load('esp-errs', {}), seen = load('esp-seen', {});
+let best = {}, errs = {}, toys = [], toysSeen = 0, bonus = {};
 const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
 const MAXSTARS = ACTS.length * 3;
 const totalStars = () => ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
 const key = q => q.act.id + ':' + q.i;
-const markErr = q => { errs[key(q)] = Math.min(3, (errs[key(q)] || 0) + 1); save('esp-errs', errs); };
-const clearErr = q => { const k = key(q); if (!errs[k]) return; if (--errs[k] <= 0) delete errs[k]; save('esp-errs', errs); };
+const markErr = q => { errs[key(q)] = Math.min(3, (errs[key(q)] || 0) + 1); save(K('errs'), errs); };
+const clearErr = q => { const k = key(q); if (!errs[k]) return; if (--errs[k] <= 0) delete errs[k]; save(K('errs'), errs); };
 const errKeys = () => Object.keys(errs).filter(k => { const [a, i] = k.split(':'); return BYID[a] && BYID[a].items && BYID[a].items[+i]; });
 
 /* voz */
@@ -444,97 +464,86 @@ function speak(parts, rate) {
   try { speechSynthesis.cancel(); [].concat(parts).forEach(t => { const u = new SpeechSynthesisUtterance(t); u.lang = VOICE ? VOICE.lang : 'es-MX'; if (VOICE) u.voice = VOICE; u.rate = rate || 0.85; speechSynthesis.speak(u); }); return true; } catch (e) { return false; }
 }
 
-/* ================= PELUCHES ================= */
-const hx = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-const mix = (a, b, t) => '#' + hx(a).map((v, i) => Math.round(v + (hx(b)[i] - v) * t).toString(16).padStart(2, '0')).join('');
-const lt = (c, t = .35) => mix(c, '#ffffff', t), dk = (c, t = .3) => mix(c, '#000000', t);
-function painter(uid) {
-  const defs = {};
-  return {
-    g(c) { const k = c.replace('#', ''); if (!defs[k]) defs[k] = `<radialGradient id="${uid}${k}" cx="36%" cy="30%" r="78%"><stop offset="0" stop-color="${lt(c, .42)}"/><stop offset=".55" stop-color="${c}"/><stop offset="1" stop-color="${dk(c, .3)}"/></radialGradient>`; return `url(#${uid}${k})`; },
-    defs() { return Object.values(defs).join(''); }
-  };
-}
-const EYE = (x, y, r = 3.6) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * 1.12}" fill="#1B1410"/><circle cx="${x - r * .34}" cy="${y - r * .42}" r="${r * .4}" fill="#fff"/><circle cx="${x + r * .32}" cy="${y + r * .38}" r="${r * .16}" fill="#fff" opacity=".85"/>`;
-const EYES = (x1, x2, y, r) => EYE(x1, y, r) + EYE(x2, y, r);
-const BLUSH = (x1, x2, y, c = '#F28B9B') => `<ellipse cx="${x1}" cy="${y}" rx="3.6" ry="2.2" fill="${c}" opacity=".5"/><ellipse cx="${x2}" cy="${y}" rx="3.6" ry="2.2" fill="${c}" opacity=".5"/>`;
-const SMILE = (x, y, w = 3, c = '#3A2418') => `<path d="M${x - w} ${y} Q${x} ${y + w * 1.05} ${x + w} ${y}" fill="none" stroke="${c}" stroke-width="1.3" stroke-linecap="round"/>`;
-const SEAM = d => `<path d="${d}" fill="none" stroke="#000" stroke-opacity=".17" stroke-width=".8" stroke-dasharray="1.5 1.3" stroke-linecap="round"/>`;
-const WHISK = (y) => `<g stroke="#3A2418" stroke-opacity=".55" stroke-width=".7" stroke-linecap="round"><path d="M39 ${y} L30 ${y - 2}"/><path d="M39 ${y + 2.5} L30 ${y + 3}"/><path d="M61 ${y} L70 ${y - 2}"/><path d="M61 ${y + 2.5} L70 ${y + 3}"/></g>`;
-
-/* frutas y verduras con piernitas */
-const LEGS = (shoe, y = 70) => `<g stroke="#3A2A20" stroke-width="1.6" stroke-linecap="round" fill="none"><path d="M44 ${y} L41 91"/><path d="M56 ${y} L59 91"/></g><ellipse cx="38.5" cy="92.5" rx="5.2" ry="2.9" fill="${shoe}"/><ellipse cx="61.5" cy="92.5" rx="5.2" ry="2.9" fill="${shoe}"/><circle cx="37" cy="91.6" r="1" fill="#fff" opacity=".5"/><circle cx="60" cy="91.6" r="1" fill="#fff" opacity=".5"/>`;
-const ARMS = (y, x1 = 27, x2 = 73) => `<g stroke="#3A2A20" stroke-width="1.4" stroke-linecap="round" fill="none"><path d="M${x1 + 4} ${y} Q${x1 - 3} ${y + 2} ${x1 - 5} ${y + 9}"/><path d="M${x2 - 4} ${y} Q${x2 + 3} ${y + 2} ${x2 + 5} ${y + 9}"/></g><circle cx="${x1 - 5}" cy="${y + 10}" r="2.2" fill="#FFFFFF" stroke="#3A2A20" stroke-width=".6"/><circle cx="${x2 + 5}" cy="${y + 10}" r="2.2" fill="#FFFFFF" stroke="#3A2A20" stroke-width=".6"/>`;
-const LEAF = (x, y, rot, c = '#5DAE4B') => `<path d="M${x} ${y} q6 -7 13 -3 q-6 7 -13 3z" fill="${c}" transform="rotate(${rot} ${x} ${y})"/>`;
-const FRUITS = [
-  ['fresa','Fresita','#E33B45','#F2C14E', (P, c) => `<path d="M50 78 C30 66 26 44 34 36 C40 31 46 33 50 34 C54 33 60 31 66 36 C74 44 70 66 50 78Z" fill="${P.g(c)}"/>${[[40,44],[50,42],[60,44],[44,54],[56,54],[40,62],[60,62],[50,64],[50,52]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx=".9" ry="1.4" fill="#FCE38A"/>`).join('')}<path d="M36 35 L42 30 L46 34 L50 27 L54 34 L58 30 L64 35 Q50 41 36 35Z" fill="${P.g('#4FA84A')}"/><rect x="49" y="21" width="2.4" height="8" rx="1.2" fill="#3E8E41"/>`, 47],
-  ['manzana','Manzanita Roja','#D7263D','#4F8CC4', (P, c) => `<path d="M50 32 C38 24 24 32 26 50 C28 68 40 76 50 72 C60 76 72 68 74 50 C76 32 62 24 50 32Z" fill="${P.g(c)}"/><path d="M50 32 Q49 24 53 19" stroke="#6B3F1D" stroke-width="2" fill="none" stroke-linecap="round"/>${LEAF(53, 23, -10)}`, 50],
-  ['platano','Plátano Sonrisas','#F6D04D','#E2557A', (P, c) => `<path d="M26 34 C24 56 40 74 66 70 C74 68 78 62 76 58 C60 64 42 56 36 34 C34 28 28 28 26 34Z" fill="${P.g(c)}"/><path d="M27 31 l-2 -6 l5 1z" fill="#6B4A2B"/><path d="M75 58 l4 2 l-2 3z" fill="#6B4A2B"/>${SEAM('M33 40 C38 56 52 64 70 63')}`, 0, {face:[47, 56], legs:69, arms:56}],
-  ['aguacate','Aguacate Huesito','#3F7D3A','#F2C14E', (P, c) => `<path d="M50 20 C40 20 37 32 34 42 C26 58 30 76 50 76 C70 76 74 58 66 42 C63 32 60 20 50 20Z" fill="${P.g(c)}"/><path d="M50 25 C43 25 41 34 39 43 C33 57 36 71 50 71 C64 71 67 57 61 43 C59 34 57 25 50 25Z" fill="${P.g('#D9E8A0')}"/><circle cx="50" cy="59" r="8.5" fill="${P.g('#8A5530')}"/>`, 42],
-  ['zanahoria','Zanahoria Saltarina','#F28C28','#5B8DEF', (P, c) => `<path d="M33 34 Q50 28 67 34 Q62 58 50 80 Q38 58 33 34Z" fill="${P.g(c)}"/><g stroke="${dk(c, .25)}" stroke-width=".9" stroke-linecap="round"><path d="M39 46 h5"/><path d="M57 52 h5"/><path d="M43 62 h4"/></g><path d="M50 32 Q42 20 38 14 Q46 18 50 28 Q51 16 56 11 Q55 22 51 31 Q60 20 66 18 Q60 26 51 33Z" fill="${P.g('#4FA84A')}"/>`, 44, {legs:72}],
-  ['brocoli','Brócoli Arbolito','#4E9A45','#E2557A', (P, c) => `<path d="M42 50 L40 74 Q50 78 60 74 L58 50Z" fill="${P.g('#B5D98A')}"/>${[[36,40,10],[50,32,11],[64,40,10],[43,47,8],[57,47,8],[50,44,9]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${P.g(c)}"/>`).join('')}`, 62, {face:[50, 62], legs:75, arms:58, eyeR:3}],
-  ['pina','Piña Coronita','#F2B63A','#4FB3A9', (P, c) => `<path d="M50 30 L40 18 L46 24 L44 10 L50 22 L56 10 L54 24 L60 18Z" fill="${P.g('#4FA84A')}"/><ellipse cx="50" cy="52" rx="20" ry="24" fill="${P.g(c)}"/><g stroke="${dk(c, .28)}" stroke-width=".8" opacity=".7" fill="none"><path d="M36 38 L64 70"/><path d="M32 50 L56 76"/><path d="M42 30 L68 58"/><path d="M64 38 L36 70"/><path d="M68 50 L44 76"/><path d="M58 30 L32 58"/></g>`, 52],
-  ['sandia','Sandía Rebanada','#F2545B','#3E8E41', (P, c) => `<path d="M22 36 L78 36 Q78 74 50 76 Q22 74 22 36Z" fill="${P.g('#3E8E41')}"/><path d="M25 36 L75 36 Q74 70 50 72 Q26 70 25 36Z" fill="${P.g('#F4F7D9')}"/><path d="M28 36 L72 36 Q70 67 50 68 Q30 67 28 36Z" fill="${P.g(c)}"/>${[[36,58],[44,63],[56,63],[64,58],[50,60]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.2" ry="2" fill="#2B1A12"/>`).join('')}`, 45, {face:[50, 45], legs:73, arms:44}],
-  ['naranja','Naranja Gajos','#F7931E','#7B61FF', (P, c) => `<circle cx="50" cy="50" r="24" fill="${P.g(c)}"/>${[[38,36],[60,34],[66,52],[36,60],[56,66],[46,46]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r=".8" fill="${dk(c, .18)}"/>`).join('')}<path d="M50 26 q-1 -3 1 -5" stroke="#6B3F1D" stroke-width="1.6" fill="none"/>${LEAF(51, 22, -20)}`, 50, {legs:72}],
-  ['limon','Limón Chispita','#F5E04A','#E2557A', (P, c) => `<path d="M24 50 Q26 30 50 28 Q74 30 76 50 Q74 70 50 72 Q26 70 24 50Z" fill="${P.g(c)}"/><path d="M76 50 l5 -1 l-5 -2z M24 50 l-5 1 l5 2z" fill="${dk(c, .1)}"/>${LEAF(52, 28, -30)}`, 50, {legs:70}],
-  ['pera','Pera Dulce','#B5D35A','#F28C28', (P, c) => `<path d="M50 24 C42 24 41 34 40 40 C30 48 28 74 50 76 C72 74 70 48 60 40 C59 34 58 24 50 24Z" fill="${P.g(c)}"/><path d="M50 25 Q50 18 54 15" stroke="#6B3F1D" stroke-width="2" fill="none" stroke-linecap="round"/>${LEAF(53, 18, -15)}`, 57],
-  ['uvas','Uvas Racimo','#8B4FBF','#F2C14E', (P, c) => `${[[38,32],[50,30],[62,32],[44,42],[56,42],[32,42],[68,42],[38,53],[50,52],[62,53],[44,63],[56,63],[50,72]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7.2" fill="${P.g(c)}"/>`).join('')}<path d="M50 24 Q50 16 56 12" stroke="#6B3F1D" stroke-width="2" fill="none" stroke-linecap="round"/>${LEAF(52, 18, -25)}`, 50, {legs:76, eyeR:3}],
-  ['cereza','Cereza Bombón','#C8102E','#F7F4EE', (P, c) => `<path d="M50 30 Q54 14 66 8" stroke="#4E7A2B" stroke-width="2" fill="none" stroke-linecap="round"/>${LEAF(62, 10, 10)}<circle cx="50" cy="52" r="22" fill="${P.g(c)}"/><path d="M50 31 q-3 2 0 4 q3 -2 0 -4z" fill="${dk(c, .3)}"/>`, 52, {legs:72}],
-  ['durazno','Durazno Pachoncito','#F7A072','#5DAE4B', (P, c) => `<circle cx="50" cy="51" r="24" fill="${P.g(c)}"/><circle cx="58" cy="44" r="14" fill="#F28C7A" opacity=".35"/>${SEAM('M50 27 Q42 50 50 74')}<path d="M50 27 q1 -4 4 -6" stroke="#6B3F1D" stroke-width="1.6" fill="none"/>${LEAF(53, 22, -15)}`, 52, {face:[56, 50], legs:73}],
-  ['jitomate','Jitomate Bolita','#E5383B','#F2C14E', (P, c) => `<ellipse cx="50" cy="52" rx="26" ry="22" fill="${P.g(c)}"/><path d="M50 30 L44 26 L47 32 L38 32 L46 35 L42 40 L50 36 L58 40 L54 35 L62 32 L53 32 L56 26Z" fill="${P.g('#3E8E41')}"/><rect x="49" y="22" width="2.4" height="7" rx="1.2" fill="#3E8E41"/>`, 52, {legs:72}],
-  ['chile','Chile Valiente','#2E8B57','#E33B45', (P, c) => `<path d="M42 28 C30 36 32 60 44 74 C50 82 58 80 56 72 C52 62 60 44 58 32 C56 26 48 24 42 28Z" fill="${P.g(c)}"/><path d="M44 28 Q48 22 54 26 Q50 30 44 28Z" fill="${P.g('#4E7A2B')}"/><path d="M50 25 Q50 17 56 14" stroke="#4E7A2B" stroke-width="2.2" fill="none" stroke-linecap="round"/>`, 0, {face:[46, 46], legs:74, arms:48, x1:30, x2:64, eyeR:3.2}],
-  ['elote','Elote Granitos','#F6D04D','#4F8CC4', (P, c) => `<path d="M34 76 Q26 52 34 28 Q38 44 44 74Z" fill="${P.g('#7DBE57')}"/><path d="M66 76 Q74 52 66 28 Q62 44 56 74Z" fill="${P.g('#7DBE57')}"/><ellipse cx="50" cy="48" rx="14" ry="28" fill="${P.g(c)}"/>${Array.from({length: 24}, (x, k) => `<ellipse cx="${42 + (k % 4) * 5.4}" cy="${26 + Math.floor(k / 4) * 8.2}" rx="2.3" ry="3.2" fill="${dk(c, .1)}" opacity=".45"/>`).join('')}<path d="M36 76 Q50 70 64 76 Q50 82 36 76Z" fill="${P.g('#5DAE4B')}"/>`, 48, {legs:80, eyeR:3.2, arms:52, x1:31, x2:69}],
-  ['hongo','Hongo Lunares','#E23D3D','#F2C14E', (P, c) => `<path d="M42 46 L40 76 Q50 80 60 76 L58 46Z" fill="${P.g('#F4EAD8')}"/><path d="M20 48 Q22 20 50 18 Q78 20 80 48 Q50 54 20 48Z" fill="${P.g(c)}"/>${[[34,34,4],[50,26,4.5],[66,34,4],[42,44,3],[60,43,3]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFFFFF" opacity=".92"/>`).join('')}`, 60, {face:[50, 60], legs:77, arms:56, eyeR:3}],
-  ['papa','Papa Pecas','#C9995F','#E2557A', (P, c) => `<path d="M26 52 Q24 30 48 28 Q72 26 75 48 Q77 72 52 74 Q28 76 26 52Z" fill="${P.g(c)}"/>${[[36,38],[62,36],[68,58],[34,64],[56,68]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="1.6" ry="1.1" fill="${dk(c, .25)}" opacity=".7"/>`).join('')}`, 50, {legs:72}],
-  ['kiwi','Kiwi Peludito','#8BC34A','#7B61FF', (P, c) => `<circle cx="50" cy="50" r="25" fill="${P.g('#8A6239')}"/><circle cx="50" cy="50" r="21.5" fill="${P.g(c)}"/><circle cx="50" cy="50" r="11.5" fill="${P.g('#F4F7D9')}"/>${Array.from({length: 14}, (x, k) => { const a = k * Math.PI / 7, X = (50 + Math.cos(a) * 16.5).toFixed(1), Y = (50 + Math.sin(a) * 16.5).toFixed(1); return `<ellipse cx="${X}" cy="${Y}" rx=".9" ry="1.7" transform="rotate(${k * 180 / 7 + 90} ${X} ${Y})" fill="#1B1410"/>`; }).join('')}`, 0, {face:[50, 50], legs:73, eyeR:2.6}],
-  ['berenjena','Berenjena Violeta','#6B3FA0','#F2C14E', (P, c) => `<path d="M44 32 C30 40 28 72 48 76 C68 80 72 56 60 36 C56 28 50 28 44 32Z" fill="${P.g(c)}"/><path d="M40 33 Q50 24 62 34 Q56 38 50 34 Q46 38 40 33Z" fill="${P.g('#4FA84A')}"/><path d="M51 27 Q52 20 56 17" stroke="#3E8E41" stroke-width="2.4" fill="none" stroke-linecap="round"/>`, 56, {legs:75}],
-  ['mango','Mango Solecito','#F6A623','#4F8CC4', (P, c) => `<path d="M30 46 Q30 26 52 26 Q74 28 72 52 Q70 76 48 74 Q28 70 30 46Z" fill="${P.g(c)}"/><ellipse cx="62" cy="38" rx="10" ry="8" fill="#E8573C" opacity=".35"/><path d="M52 26 q1 -4 4 -6" stroke="#6B3F1D" stroke-width="1.6" fill="none"/>${LEAF(55, 21, -15)}`, 52, {legs:72}],
-  ['calabaza','Calabaza Risueña','#F08A24','#7B61FF', (P, c) => `<ellipse cx="36" cy="52" rx="13" ry="21" fill="${P.g(dk(c, .06))}"/><ellipse cx="64" cy="52" rx="13" ry="21" fill="${P.g(dk(c, .06))}"/><ellipse cx="50" cy="52" rx="15" ry="22" fill="${P.g(c)}"/><path d="M50 31 q-1 -6 4 -9" stroke="#4E7A2B" stroke-width="3" fill="none" stroke-linecap="round"/>${LEAF(53, 26, -20)}`, 52, {legs:73}],
-  ['pepino','Pepino Fresquito','#4E9A45','#F2C14E', (P, c) => `<rect x="37" y="20" width="26" height="58" rx="13" fill="${P.g(c)}"/>${[[42,30],[57,36],[43,62],[58,68],[50,74]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="${lt(c, .5)}"/>`).join('')}<rect x="48" y="16" width="4" height="6" rx="2" fill="#3E7A2B"/>`, 48, {legs:77, arms:50, x1:32, x2:68, eyeR:3}],
-  ['coco','Coco Bonachón','#8A5A34','#E2557A', (P, c) => `<circle cx="50" cy="50" r="24" fill="${P.g(c)}"/><g stroke="#5E3A1E" stroke-width=".7" opacity=".6" fill="none"><path d="M30 40 q6 -2 10 2"/><path d="M60 32 q6 0 9 4"/><path d="M34 62 q5 2 9 0"/><path d="M58 64 q6 -1 9 -5"/></g><g fill="#4A2C15"><circle cx="44" cy="30" r="1.6"/><circle cx="50" cy="28" r="1.6"/><circle cx="56" cy="30" r="1.6"/></g>`, 52, {legs:72}]
-];
-function fruit(P, [id, name, c, shoe, draw, fy, o = {}]) {
-  const legs = LEGS(P.g(shoe), o.legs || 72), arms = ARMS(o.arms || 50, o.x1, o.x2);
-  const [fx, fyy] = o.face || [50, fy || 50];
-  const r = o.eyeR || 3.4;
-  let face = EYES(fx - 7.5, fx + 7.5, fyy - 2, r) + SMILE(fx, fyy + 4, 3) + BLUSH(fx - 12, fx + 12, fyy + 3);
-  return { body: legs + arms + draw(P, c), face };
-}
-
+/* ================= PELUCHES (fotos en peluches/<id>.webp) ================= */
 const PHOTO_ANI = [["ani-00", "Osito Chocolate"], ["ani-01", "Nutria Coco"], ["ani-02", "Panda Bambú"], ["ani-03", "Conejita Rosa"], ["ani-04", "Elefante Trompita"], ["ani-06", "Perezoso Siesta"], ["ani-07", "Jirafa Manchitas"], ["ani-08", "Changuito Plátano"], ["ani-09", "Pingüino Emperador"], ["ani-10", "Koala Hojitas"], ["ani-11", "Osito Moñito"], ["ani-12", "Elefanta Orejitas"], ["ani-13", "Oso Canela"], ["ani-14", "Oso Polar Copito"], ["ani-15", "Nutria Avellana"], ["ani-16", "Conejo Algodón"], ["ani-17", "Elefante Abrazos"], ["ani-18", "Jirafa Pecas"], ["ani-19", "Pingüino Frac"], ["ani-20", "Oso Miel"], ["ani-21", "Panda Dormilón"], ["ani-23", "Conejo Galleta"], ["ani-24", "Chango Travieso"], ["ani-25", "Pingüino Bebé"], ["ani-26", "Koala Nube"]];
 const PHOTO_MON = [["mon-00", "Unicornito Menta"], ["mon-01", "Mango Peludo"], ["mon-02", "Pepino Lunares"], ["mon-03", "Dragoncito Alitas"], ["mon-04", "Malteada Arcoíris"], ["mon-05", "Reyecito Azul"], ["mon-06", "Moras Peludas"], ["mon-07", "Rayitas Tres Ojos"], ["mon-08", "Orejitas Tímido"], ["mon-09", "Pompón Amarillo"], ["mon-10", "Ojón Verde"], ["mon-11", "Guiño Moñitos"], ["mon-12", "Uva Manchitas"], ["mon-14", "Fueguito"], ["mon-15", "Confeti"], ["mon-16", "Dinito Azul"], ["mon-17", "Hojita Menta"], ["mon-18", "Princesa Limón"], ["mon-19", "Copetín Azul"], ["mon-21", "Nube Dormilona"], ["mon-22", "Ojito Naranja"], ["mon-24", "Chicle Lunares"], ["mon-25", "Kiwi Orejón"], ["mon-26", "Fresón Rey"], ["mon-27", "Arcoíris Peludo"]];
+const PHOTO_FRU = [["fru-00", "Manzanita Roja"], ["fru-01", "Plátano Saludos"], ["fru-02", "Fresita"], ["fru-03", "Brócoli Arbolito"], ["fru-04", "Zanahoria Risueña"], ["fru-06", "Ciruela Feliz"], ["fru-07", "Limón Guiño"], ["fru-08", "Durazno Pachoncito"], ["fru-09", "Piña Coronita"], ["fru-10", "Berenjena Violeta"], ["fru-11", "Sandía Rebanada"], ["fru-12", "Uvas Racimo"], ["fru-13", "Pimiento Rojo"], ["fru-14", "Cerezas Gemelas"], ["fru-15", "Aguacate Huesito"], ["fru-16", "Hongo Lunares"], ["fru-17", "Pera Dulce"], ["fru-19", "Elote Granitos"], ["fru-20", "Naranja Gajos"], ["fru-22", "Jitomate Bolita"], ["fru-23", "Chile Valiente"], ["fru-24", "Papa Pecas"], ["fru-25", "Ajo Guiño"], ["fru-26", "Pepino Fresquito"], ["fru-27", "Moras Azules"]];
 const TOYS = [].concat(
-  PHOTO_ANI.map(([id, name]) => ({ id, name, cat: 0, photo: true })),
-  PHOTO_MON.map(([id, name]) => ({ id, name, cat: 1, photo: true })),
-  FRUITS.map(f => ({ id: f[0], name: f[1], cat: 2, draw: P => fruit(P, f) }))
+  PHOTO_ANI.map(([id, name]) => ({ id, name, cat: 0 })),
+  PHOTO_MON.map(([id, name]) => ({ id, name, cat: 1 })),
+  PHOTO_FRU.map(([id, name]) => ({ id, name, cat: 2 }))
 );
 const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras'];
 const TOYBY = Object.fromEntries(TOYS.map(t => [t.id, t]));
-/* Animalitos y monstruos usan fotos (peluches/<id>.webp). Las frutas y verduras son dibujos hasta tener sus fotos. */
-let uidN = 0;
+const BEARS = new Set(['ani-00', 'ani-11', 'ani-13', 'ani-20', 'ani-14']);
 function toySVG(t, extraCls) {
-  if (t.photo) return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="peluches/${t.id}.webp" alt="${esc(t.name)}" loading="lazy" decoding="async">`;
-  const P = painter('g' + (uidN++) + '-'), r = t.draw(P);
-  return `<svg class="toy${extraCls ? ' ' + extraCls : ''}" viewBox="0 0 100 100" role="img" aria-label="${esc(t.name)}"><defs>${P.defs()}</defs>
-    <ellipse cx="50" cy="96" rx="30" ry="3.6" fill="#000" opacity=".16"/><g filter="url(#plush)">${r.body}</g><g>${r.face}</g></svg>`;
+  return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="peluches/${t.id}.webp" alt="${esc(t.name)}" decoding="async">`;
 }
 
-let toys = load('esp-toys', []).filter(id => TOYBY[id]), toysSeen = load('esp-toys-seen', 0);
-function awardToys(n) {
-  const got = [], pool = TOYS.filter(t => !toys.includes(t.id));
-  for (let i = 0; i < n && pool.length; i++) { const t = pool.splice(Math.floor(Math.random() * pool.length), 1)[0]; toys.push(t.id); got.push(t); }
-  save('esp-toys', toys); return got;
+/* ================= JUGADORAS ================= */
+// Cada jugadora guarda su avance por separado. first: qué peluche le sale primero (oso, ani, mon, fru); luego se alternan los tipos.
+const FIRST = { oso: { cat: 0, label: 'Un osito' }, ani: { cat: 0, label: 'Un animalito' }, mon: { cat: 1, label: 'Un monstruito' }, fru: { cat: 2, label: 'Una fruta o verdura' } };
+let players = load('esp-players', null);
+if (!Array.isArray(players) || !players.length) { players = [{ id: 'p1', name: 'Pelonchis Cacatúa', first: 'oso' }, { id: 'p2', name: 'Pillus Makakikus', first: 'mon' }]; save('esp-players', players); }
+let PID = load('esp-cur', null);
+const K = n => `esp-${PID}-${n}`;
+const me = () => players.find(x => x.id === PID);
+function loadPlayer(id) {
+  PID = id; save('esp-cur', id);
+  // avance guardado antes de que hubiera jugadoras: pasa a la primera jugadora que se elija en este iPad
+  const legacy = load('esp-stars', null);
+  if (legacy && !load(K('stars'), null)) {
+    ['stars', 'errs', 'bonus'].forEach(n => { const v = load('esp-' + n, null); if (v) save(K(n), v); });
+    ['esp-stars', 'esp-errs', 'esp-seen', 'esp-toys', 'esp-toys-seen', 'esp-bonus'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  }
+  best = load(K('stars'), {}); errs = load(K('errs'), {}); bonus = load(K('bonus'), {});
+  toys = load(K('toys'), []).filter(t => TOYBY[t]); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
+  if (toys.length < totalStars()) awardToys(totalStars() - toys.length);
 }
-if (toys.length < totalStars()) awardToys(totalStars() - toys.length);
-let bonus = load('esp-bonus', {});
+function awardToys(n) {
+  const got = [], p = me(), start = (FIRST[p && p.first] || FIRST.ani).cat;
+  for (let i = 0; i < n; i++) {
+    const free = TOYS.filter(t => !toys.includes(t.id)); if (!free.length) break;
+    let pool = free.filter(t => t.cat === (start + toys.length) % 3);
+    if (!toys.length && p && p.first === 'oso') pool = pool.filter(t => BEARS.has(t.id));
+    if (!pool.length) pool = free;
+    const t = pool[Math.floor(Math.random() * pool.length)]; toys.push(t.id); got.push(t);
+  }
+  save(K('toys'), toys); return got;
+}
 const today = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
 /* Peluche extra: repetir un ejercicio que ya tenía 3 ★ y volver a sacar 3 ★ (una vez al día por ejercicio), o terminar el repaso de errores sin fallar (una vez al día). */
-function bonusToy(k) { if (bonus[k] === today()) return []; bonus[k] = today(); save('esp-bonus', bonus); return awardToys(1); }
+function bonusToy(k) { if (bonus[k] === today()) return []; bonus[k] = today(); save(K('bonus'), bonus); return awardToys(1); }
+
+function showWho() {
+  ['home', 'play', 'shelf'].forEach(x => $('#' + x).hidden = true); $('#who').hidden = false; window.scrollTo(0, 0);
+  const info = p => { const t = load(`esp-${p.id}-toys`, []).filter(x => TOYBY[x]); return { n: t.length, last: t.length ? TOYBY[t[t.length - 1]] : null }; };
+  $('#wholist').innerHTML = players.map(p => { const i = info(p); return `<button class="pcard" type="button" data-p="${p.id}">
+      <span class="pav">${i.last ? toySVG(i.last) : '🧸'}</span><span><span class="pn">${esc(p.name)}</span><span class="ps">${i.n} ${i.n === 1 ? 'peluche' : 'peluches'}</span></span></button>`; }).join('');
+  $('#newp').hidden = true; $('#addp').hidden = false;
+}
+$('#wholist').addEventListener('click', e => { const b = e.target.closest('.pcard'); if (!b) return; loadPlayer(b.dataset.p); $('#who').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); });
+let newFirst = 'ani';
+$('#addp').onclick = () => {
+  $('#addp').hidden = true; $('#newp').hidden = false; newFirst = 'ani';
+  $('#firsts').innerHTML = Object.entries(FIRST).map(([k, v]) => `<button class="opt small${k === newFirst ? ' ok' : ''}" type="button" data-f="${k}">${v.label}</button>`).join('');
+  $('#pname').value = ''; $('#pname').focus();
+};
+$('#firsts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; newFirst = b.dataset.f; [...$('#firsts').children].forEach(x => x.classList.toggle('ok', x === b)); });
+$('#pcancel').onclick = () => { $('#newp').hidden = true; $('#addp').hidden = false; };
+$('#pcreate').onclick = () => {
+  const name = $('#pname').value.trim().replace(/\s+/g, ' ').slice(0, 30);
+  if (!name) { shake($('#pname')); $('#pname').focus(); return; }
+  const id = 'p' + Date.now().toString(36);
+  players.push({ id, name, first: newFirst }); save('esp-players', players); showWho();
+};
+$('#pname').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#pcreate').click(); } });
+
 const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
   const n = SHOWALL ? TOYS.length : toys.length, last = (SHOWALL ? TOYS.map(t => t.id) : toys).slice(-6).reverse();
   $('#toys').innerHTML = `<div class="gh"><h2>${n === TOYS.length ? '¡Colección completa!' : 'Mis peluches'}</h2><span class="gn">🧸 ${n} de ${TOYS.length}</span></div>
-    <p>Cada estrella nueva te regala un peluche. Si repites un ejercicio y vuelves a sacar 3 ★, ganas un peluche extra (uno por ejercicio cada día).</p>
+    <p>Cada estrella nueva te regala un peluche, y se van turnando: animalito, monstruito y fruta o verdura. Si repites un ejercicio y vuelves a sacar 3 ★, ganas un peluche extra (uno por ejercicio cada día).</p>
     <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes peluches. ¡Gana tu primera estrella!</div>'}
     <button class="btn" type="button" id="toshelf">Ver mis repisas 🧸</button></div>`;
   $('#toshelf').onclick = openShelf;
@@ -549,7 +558,7 @@ function openShelf() {
       return `<div><h3>${c} <span>${got} de ${list.length}</span></h3><div class="cab">${list.map(t => have.includes(t.id)
         ? `<button class="slot${fresh.has(t.id) ? ' new' : ''}" type="button" data-t="${t.id}" aria-label="${esc(t.name)}">${toySVG(t)}</button>`
         : `<div class="slot empty" aria-label="Lugar vacío"></div>`).join('')}</div></div>`; }).join('')}`;
-  toysSeen = toys.length; save('esp-toys-seen', toysSeen);
+  toysSeen = toys.length; save(K('toys-seen'), toysSeen);
 }
 $('#sback').addEventListener('click', () => { $('#shelf').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); });
 $('#cabs').addEventListener('click', e => { const b = e.target.closest('.slot[data-t]'); if (b) showToy(TOYBY[b.dataset.t]); });
@@ -564,6 +573,7 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.targ
 /* ================= MENÚ ================= */
 function renderHome() {
   $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
+  $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Cambiar</u>`;
   renderToyBar();
   const ek = errKeys().length;
   $('#rev').innerHTML = ek ? `<button class="revbtn" type="button" id="revgo"><span class="ico">🔁</span><span><span class="t">Repaso de mis errores</span>
@@ -654,7 +664,7 @@ function finish() {
     if (left) $('#again').onclick = startReview;
   } else {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
-    best[cur.act.id] = Math.max(before, stars); save('esp-stars', best);
+    best[cur.act.id] = Math.max(before, stars); save(K('stars'), best);
     const got = before === 3 && stars === 3 ? bonusToy(cur.act.id) : awardToys(best[cur.act.id] - before);
     const gain = got.length ? `<div class="gain">🧸 ¡${got.length === 1 ? 'Ganaste un peluche nuevo' : 'Ganaste ' + got.length + ' peluches nuevos'}!</div>
       <div class="newtoys">${got.map((t, k) => `<figure style="animation-delay:${k * .25}s">${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
@@ -835,7 +845,8 @@ function renderUnir(act) {
   new ResizeObserver(draw).observe(box);
 }
 
-renderHome();
+if (me()) { loadPlayer(PID); $('#home').hidden = false; renderHome(); } else showWho();
+$('#whochip').onclick = showWho;
 </script>
 </body>
 </html>

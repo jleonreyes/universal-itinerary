@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Español">
+<meta name="theme-color" content="#F5F0E1">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}</style>
+<title>Repaso de Español</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Workbook: a menu of exercise cards (by tema) and a sunflower garden; one question per screen, tap-only for iPad */
+:root{
+  --bg:#F5F0E1; --surface:#FFFFFF; --ink:#2A2418; --muted:#6B6250; --line:#DCD2B8;
+  --sun:#D99A00; --sun-soft:#FCEFC7; --petal:#F4B400; --seed:#6B3F1D; --stem:#3E8E41; --leaf:#5DAE4B; --soil:#B68A5A; --soil2:#9C7246; --sky:#E4F1F8;
+  --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB;
+  --ton:#2B63D1; --ton-soft:#DCE7FB; --aton:#C23B34; --aton-soft:#F9DEDB;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#17140D; --surface:#231F15; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
+  --sun:#F2BC3C; --sun-soft:#3D3112; --petal:#F2BC3C; --seed:#A0693A; --stem:#5DB561; --leaf:#78C566; --soil:#6E5233; --soil2:#5A4229; --sky:#1C2A33;
+  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358;
+  --ton:#86ACF7; --ton-soft:#1F3358; --aton:#F07068; --aton-soft:#42201E; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#17140D; --surface:#231F15; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
+  --sun:#F2BC3C; --sun-soft:#3D3112; --petal:#F2BC3C; --seed:#A0693A; --stem:#5DB561; --leaf:#78C566; --soil:#6E5233; --soil2:#5A4229; --sky:#1C2A33;
+  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358;
+  --ton:#86ACF7; --ton-soft:#1F3358; --aton:#F07068; --aton-soft:#42201E; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.4;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--sun);font-weight:800}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:2px 0 0;text-wrap:balance}
+.total{font-family:var(--display);font-weight:800;font-size:20px;background:var(--sun-soft);border-radius:999px;padding:4px 14px;white-space:nowrap}
+.total b{color:var(--sun)}
+
+/* garden */
+.garden{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 14px 14px;margin-top:16px}
+.garden svg{width:100%;height:auto;display:block;border-radius:12px}
+.garden .gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.garden h2{font-family:var(--display);font-weight:800;font-size:22px;margin:0}
+.garden .gn{font-family:var(--display);font-weight:800;color:var(--sun);font-size:20px}
+.garden p{margin:8px 0 0;color:var(--muted);font-size:14.5px}
+.gsky{fill:var(--sky)} .gsoil{fill:var(--soil)} .gsoil2{fill:var(--soil2)} .gsun{fill:var(--petal)}
+.stem{stroke:var(--stem);stroke-width:3.2;stroke-linecap:round;fill:none}
+.leaf{fill:var(--leaf)} .bud{fill:var(--leaf);stroke:var(--stem);stroke-width:1.5}
+.petal{fill:var(--petal)} .disk{fill:var(--seed)} .dots{fill:var(--sun-soft);opacity:.55}
+.mound{fill:var(--soil2)} .seedp{fill:var(--seed)}
+.grow{animation:grow .9s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes grow{0%{transform:scale(.2);opacity:.2}100%{transform:scale(1);opacity:1}}
+
+.revbtn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--sun-soft);border:2px solid var(--sun);border-radius:16px;padding:14px 16px;margin-top:16px}
+.revbtn .ico{font-size:30px;line-height:1}
+.revbtn .t{font-weight:800;font-size:18px;display:block}
+.revbtn .s{font-size:14px;color:var(--muted)}
+
+.group h2{font-family:var(--display);font-size:22px;margin:6px 0 8px;font-weight:800}
+.group p.gdesc{margin:-6px 0 10px;color:var(--muted);font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:4px;min-height:100px}
+.card:hover{border-color:var(--sun)}
+.card .t{font-weight:800;font-size:18px;line-height:1.2}
+.card .s{font-size:13px;color:var(--muted)}
+.card .st{margin-top:auto;font-size:20px;letter-spacing:2px;color:var(--line)}
+.card .st .on{color:var(--sun)}
+
+/* play */
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.back{background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 14px;font-weight:800}
+.ptitle{font-family:var(--display);font-size:clamp(22px,5vw,30px);font-weight:800;margin:0;line-height:1.1;flex:1;min-width:0}
+.rule{background:var(--surface);border:2px dashed var(--sun);border-radius:14px;padding:10px 14px;font-size:15.5px}
+.rule summary{font-weight:800;color:var(--sun);cursor:pointer;list-style:none}
+.rule summary::-webkit-details-marker{display:none}
+.rule summary::before{content:"📒 "}
+.rule div{margin-top:6px;line-height:1.5}
+.inst{background:var(--sun-soft);border-radius:12px;padding:10px 14px;font-weight:600}
+.meta{display:flex;justify-content:space-between;gap:10px;font-size:15px;color:var(--muted);font-weight:700}
+.prog{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--sun);transition:width .3s}
+#fb{min-height:26px;font-weight:800;text-align:center}
+#fb.ok{color:var(--ok)} #fb.bad{color:var(--bad)}
+
+.qp{font-weight:800;font-size:18px;text-align:center}
+.qcard{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:22px 16px;text-align:center}
+.word{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.15;overflow-wrap:anywhere}
+.word.long{font-family:var(--body);font-size:clamp(22px,5vw,28px);line-height:1.5}
+.word u{text-decoration-thickness:3px;text-underline-offset:5px;text-decoration-color:var(--sun)}
+.hole{display:inline-block;min-width:1.1em;padding:0 .12em;border-bottom:4px solid var(--sel);background:var(--sel-soft);border-radius:8px 8px 0 0;color:var(--sel)}
+.hole.ok{border-bottom-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.opt{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 20px;font-weight:800;font-size:20px;min-width:72px}
+.opt.small{font-size:17px;padding:12px 16px}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft);opacity:.6}
+
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.bucket{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-height:130px}
+.bucket .bh{font-family:var(--display);font-weight:800;font-size:20px;border-bottom:3px solid var(--sun);padding-bottom:4px;text-align:center}
+.bucket .bl{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.bucket .bl span{background:var(--sun-soft);border-radius:8px;padding:2px 8px;font-size:14.5px;font-weight:700}
+.bucket.bad{border-color:var(--bad);background:var(--bad-soft)}
+.bucket.ok{border-color:var(--ok)}
+
+.sent{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tok{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-size:22px}
+.tok.ok{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.tok.bad{border-color:var(--bad);background:var(--bad-soft)}
+
+.letters{display:flex;justify-content:center;align-items:stretch;flex-wrap:nowrap;font-family:var(--display);font-weight:800;font-size:clamp(22px,6.2vw,54px);line-height:1}
+.letters .lt{padding:8px 0}
+.gap{border:none;background:transparent;width:30px;margin:0 -2px;border-radius:8px;position:relative;font-family:var(--display);font-weight:800;color:var(--bad);font-size:clamp(30px,8vw,44px);padding:0}
+.gap::after{content:"";position:absolute;left:50%;top:14%;bottom:14%;border-left:3px dotted var(--muted);opacity:.55}
+.gap.on::after{display:none}
+.gap.on{background:var(--bad-soft)}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{border-radius:999px;padding:11px 22px;font-weight:800;border:2px solid var(--sun);background:var(--sun);color:#FFFFFF;font-size:17px}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn.blue{background:var(--sel);border-color:var(--sel)}
+
+.syls{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.syl{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:10px 16px;font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,44px);line-height:1;min-width:64px}
+.syl.ton{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
+.syl.aton{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.syl.bad{border-color:var(--bad);background:var(--bad-soft)}
+.say{background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:800}
+.saybig{font-size:22px;padding:14px 26px;background:var(--sel);color:#fff;border-color:var(--sel)}
+.dict{display:flex;flex-direction:column;gap:12px;align-items:center}
+.dict .hint{color:var(--muted);font-size:18px;text-align:center}
+.dict input{font:800 30px var(--display);text-align:center;width:min(100%,380px);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+.dict input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.dict input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.dict .show{font-family:var(--display);font-weight:800;font-size:28px;color:var(--ok)}
+
+.note{background:var(--surface);border:2px solid var(--sun);border-radius:14px;padding:12px 16px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;font-weight:700}
+.note .why{font-size:17px}
+
+/* matching (une) */
+.match{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:44px;align-items:start}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mi{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;font-weight:700;font-size:17px;line-height:1.25;min-height:52px}
+.mi .pt{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--ink);border:2px solid var(--surface)}
+.left .mi .pt{right:-8px} .right .mi .pt{left:-8px}
+.mi.sel{border-color:var(--sel);background:var(--sel-soft)}
+.mi.ok{border-color:var(--ok);background:var(--ok-soft)}
+.mi.ok .pt{background:var(--ok)}
+.mi.bad{border-color:var(--bad);background:var(--bad-soft)}
+.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.lines line{stroke-width:4;stroke-linecap:round}
+.lines .ok{stroke:var(--ok)} .lines .bad{stroke:var(--bad)}
+
+.finish{background:var(--surface);border:3px solid var(--sun);border-radius:18px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.finish .big{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.finish .stars{font-size:40px;letter-spacing:6px;color:var(--line)}
+.finish .stars .on{color:var(--sun)}
+.finish .gain{font-weight:800;color:var(--stem)}
+.finish .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.06)}}
+@media (max-width:480px){ .match{column-gap:30px} .mi{font-size:15px;padding:9px 10px} .gap{width:18px} }
+@media (prefers-reduced-motion:reduce){ .shake,.pop,.grow{animation:none} .prog i{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="home">
+    <header class="top">
+      <div>
+        <div class="kicker">Español · Cuaderno espiral azul</div>
+        <h1>Repaso de Español</h1>
+      </div>
+      <div class="total" id="total"></div>
+    </header>
+    <section class="garden" id="garden" aria-label="Mi jardín de girasoles"></section>
+    <div id="rev"></div>
+    <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:18px"></div>
+  </div>
+
+  <div id="play" hidden>
+    <div class="bar">
+      <button class="back" id="back" type="button">← Menú</button>
+      <h2 class="ptitle" id="ptitle"></h2>
+    </div>
+    <details class="rule" id="rule"><summary>Lo que dice mi cuaderno</summary><div id="ruletxt"></div></details>
+    <div class="inst" id="inst"></div>
+    <div class="meta"><span id="count"></span><span id="errs"></span></div>
+    <div class="prog"><i id="progbar"></i></div>
+    <div id="area" style="display:flex;flex-direction:column;gap:16px"></div>
+    <div id="fb" aria-live="polite"></div>
+    <div id="note"></div>
+    <div id="finish"></div>
+  </div>
+</div>
+
+<script>
+/* ================= DATOS (del cuaderno, con las correcciones de la miss) ================= */
+// ojo: 1 = palabra que la miss corrigió o que costó trabajo; siempre entra en la ronda.
+const V  = (w, o) => ({t:w, b:1, why:`«${w}» es un verbo: es una acción, no nombra nada.`, ojo:o});
+const AD = (w, o) => ({t:w, b:1, why:`«${w}» es un adjetivo: dice cómo es algo o alguien.`, ojo:o});
+const N  = (w, que) => ({t:w, b:0, why:`«${w}» es un sustantivo: nombra ${que}.`});
+const CO = (w, que) => ({t:w, b:0, why:`«${w}» es común: nombra ${que} de manera general.`});
+const PR = (w) => ({t:w, b:1, why:`«${w}» es propio: nombra de manera particular y va con mayúscula.`});
+const CC = (w, como, o) => ({t:w, b:0, why:`«${w}» es concreto: ${como}.`, ojo:o});
+const AB = (w) => ({t:w, b:1, why:`«${w}» es abstracto: no lo podemos ver, tocar, oír, oler ni probar.`});
+const IN = (w) => ({t:w, b:0, why:`«${w}» es individual: nombra un solo ser o elemento.`});
+const CL = (w, de) => ({t:w, b:1, why:`«${w}» es colectivo: aunque está en singular, nombra a un conjunto de ${de}.`});
+const GN = ['masculino singular','masculino plural','femenino singular','femenino plural'];
+const GA = {el:0, los:1, la:2, las:3};
+const G  = (w, art, o, extra) => ({p:'¿Qué género y número tiene?', big:w, a:GN[GA[art]], w:GN.filter((x, i) => i !== GA[art]), why:`Decimos «${art} ${w}»: ${GN[GA[art]]}.${extra ? ' ' + extra : ''}`, ojo:o, cls:'small'});
+const L  = (big, a, w, why, o) => ({p:a.length > 1 && /^(que|qui|ca|co|cu)$/.test(a) ? '¿Qué sílaba falta?' : '¿Qué letra falta?', big, a, w, why, ojo:o});
+const Q  = (p, a, w, why, o, big) => ({p, big, a, w, why, ojo:o, cls:'small'});
+const PS = (sub, rest, a, w, why, o) => ({p:'Cambia lo subrayado por un pronombre:', html:`<u>${sub}</u> ${rest}`, after:`<b style="color:var(--ok)">${a}</b> ${rest}`, a, w, why, ojo:o, long:1});
+const MS = (big, a, w, why, o) => ({p:'¿Cómo se escribe?', big, a, w, why, ojo:o, long:1});
+
+const RULE_S = ['-oso / -osa: dice cómo es algo','-ísimo / -ísima: algo muy grande','-ense / -és / -esa: lugar de origen','-sión','-ista / -ismo: trabajos, aficiones o gustos'];
+const RS = (w, k) => Q(`¿Por qué «${w}» se escribe con S?`, RULE_S[k], RULE_S.filter((x, i) => i !== k).slice(0, 3), `«${w}» → ${RULE_S[k]}.`);
+const RULE_BV = ['Va antes de L o de R','Va después de M','Empieza con bu-, bur- o bus-','Va después de N','Empieza con vice-','Es forma de tener, estar o andar'];
+const RB = (w, k) => Q(`¿Por qué «${w}» se escribe así?`, RULE_BV[k], RULE_BV.filter((x, i) => i !== k).slice(0, 3), `«${w}» → ${RULE_BV[k].toLowerCase()}.`);
+
+// Sílabas (separación correcta). ojo = corregidas en el cuaderno.
+const SIL = [
+  ['sol','sol'],['pan','pan'],['luz','luz'],['mar','mar'],['flor','flor'],['pez','pez'],
+  ['casa','ca-sa',1],['mesa','me-sa'],['gato','ga-to',1],['lápiz','lá-piz'],['árbol','ár-bol'],['queso','que-so'],['perro','pe-rro',1],['silla','si-lla'],['camión','ca-mión'],['avión','a-vión'],
+  ['pelota','pe-lo-ta'],['camisa','ca-mi-sa'],['música','mú-si-ca'],['ventana','ven-ta-na'],['zapato','za-pa-to'],['corazón','co-ra-zón'],['girasol','gi-ra-sol'],['juguete','ju-gue-te'],['sábado','sá-ba-do'],['escuela','es-cue-la'],['abuelo','a-bue-lo'],['mosquito','mos-qui-to'],['raqueta','ra-que-ta'],['pequeño','pe-que-ño'],
+  ['mariposa','ma-ri-po-sa',1],['elefante','e-le-fan-te'],['chocolate','cho-co-la-te'],['computadora','com-pu-ta-do-ra'],['zapatilla','za-pa-ti-lla'],['caramelo','ca-ra-me-lo']
+];
+const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
+
+const ACTS = [
+  /* ---------- SUSTANTIVOS ---------- */
+  {g:'sust', id:'essust', type:'clas', title:'¿Es sustantivo?', src:'El sustantivo', buckets:['Sustantivo','No es sustantivo'],
+   rule:'El sustantivo es una palabra para nombrar a <b>personas, animales, lugares, objetos, cosas</b>… Ejemplo: niña, perro, España, lápiz.<br>¡Ojo! <b>correr</b> y <b>leer</b> son acciones (verbos). <b>bonito</b> y <b>feo</b> dicen cómo es algo (adjetivos). No son sustantivos.',
+   items:[V('correr',1), AD('bonito',1), V('leer',1), AD('feo',1), N('perro','un animal'), N('llave','un objeto'), N('Madrid','un lugar'), N('médico','a una persona'), N('María','a una persona'),
+     V('saltar'), AD('grande'), N('maestra','a una persona'), V('cantar'), AD('azul'), N('pelota','un objeto'), V('dormir'), N('escuela','un lugar'), AD('alto'), N('flor','una cosa'), V('comer'), N('alegría','un sentimiento'), AD('feliz'), N('niña','a una persona'), V('jugar')]},
+  {g:'sust', id:'comun', type:'clas', title:'Común o propio', src:'Tipos de sustantivos', buckets:['Común','Propio'],
+   rule:'<b>Común:</b> nombra de manera general. Ejemplos: casa, mesa, silla, perro, coche.<br><b>Propio:</b> nombra de manera particular y va con <b>mayúscula</b>. Ejemplos: Lucía, Sofía, Ciudad de México, Ana.',
+   items:[CO('niña','a una persona'), CO('perro','a un animal'), PR('España'), CO('lápiz','un objeto'), PR('Lucía'), PR('México'), PR('Sofía'), CO('casa','un lugar'), CO('mesa','un objeto'), CO('silla','un objeto'),
+     PR('Ciudad de México'), PR('Ana'), PR('Carlos'), CO('escuela','un lugar'), CO('coche','un objeto'), PR('Madrid'), PR('María'), PR('Perú'), CO('parque','un lugar'), PR('Pedro'), CO('gato','a un animal'), CO('mariposa','a un animal'), PR('Monterrey'), CO('río','un lugar')]},
+  {g:'sust', id:'mayus', type:'elige', title:'¿Con mayúscula?', src:'Sustantivos propios',
+   rule:'Los sustantivos <b>propios</b> van con mayúscula: María, México, Madrid.<br>Los <b>comunes</b> van con minúscula (si no están al inicio de la oración): perro, escuela, mariposa.',
+   items:[MS('Mi _ se llama Toby.','perro',['Perro'],'«perro» es común: va con minúscula. «Toby» es su nombre propio.'),
+     MS('Mi perro se llama _.','Toby',['toby'],'«Toby» es un nombre propio: va con mayúscula.'),
+     MS('Yo vivo en _.','México',['méxico'],'«México» es propio: va con mayúscula.'),
+     MS('Mi amiga _ juega futbol.','Lucía',['lucía'],'«Lucía» es un nombre propio: va con mayúscula.'),
+     MS('Fuimos de viaje a _.','España',['españa'],'«España» es propio: va con mayúscula.'),
+     MS('La _ está cerrada hoy.','escuela',['Escuela'],'«escuela» es común: va con minúscula.'),
+     MS('_ estudia en clase.','María',['maría'],'«María» es propio: va con mayúscula.'),
+     MS('Mi primo vive en _.','Madrid',['madrid'],'«Madrid» es propio: va con mayúscula.'),
+     MS('Vimos una _ en el jardín.','mariposa',['Mariposa'],'«mariposa» es común: va con minúscula.'),
+     MS('El _ Carlos es muy alto.','niño',['Niño'],'«niño» es común; «Carlos» es el propio.'),
+     MS('Mi _ tiene cinco años.','gato',['Gato'],'«gato» es común: va con minúscula.'),
+     MS('_ es la capital de nuestro país.','Ciudad de México',['ciudad de méxico','Ciudad de méxico'],'Cada palabra importante del nombre va con mayúscula: Ciudad de México.')]},
+  {g:'sust', id:'concreto', type:'clas', title:'Concreto o abstracto', src:'Sustantivos concretos y abstractos', buckets:['Concreto','Abstracto'],
+   rule:'<b>Concretos:</b> aquellos que podemos percibir a través de los sentidos (tocar, ver, oler, oír…). Ejemplo: manzana, flor, perro.<br><b>Abstractos:</b> aquellos que no podemos percibir por los sentidos. Ejemplo: alegría, amor, amistad.<br>¡Ojo! El <b>aire</b>, la <b>luz</b> y el <b>viento</b> sí se perciben con los sentidos: son <b>concretos</b>.',
+   items:[CC('aire','no lo vemos, pero lo sentimos en la piel y lo respiramos',1), CC('luz','la vemos con los ojos',1), CC('viento','lo sentimos con la piel y lo oímos',1),
+     CC('flor','la vemos, la tocamos y la olemos'), CC('perro','lo vemos y lo tocamos'), CC('mesa','la vemos y la tocamos'), CC('manzana','la vemos, la tocamos y la probamos'), CC('lápiz','lo vemos y lo tocamos'), CC('coche','lo vemos y lo tocamos'), CC('silla','la vemos y la tocamos'), CC('música','la oímos con los oídos'), CC('agua','la vemos, la tocamos y la probamos'), CC('sol','lo vemos y sentimos su calor'),
+     AB('amor'), AB('alegría'), AB('amistad'), AB('tristeza'), AB('felicidad'), AB('miedo'), AB('paz'), AB('bondad'), AB('paciencia'), AB('valentía'), AB('esperanza')]},
+  {g:'sust', id:'colectivo', type:'clas', title:'Individual o colectivo', src:'Sustantivos individuales y colectivos', buckets:['Individual','Colectivo'],
+   rule:'<b>Individuales:</b> nombran un solo ser o elemento. Ejemplo: abeja, árbol, pez, lobo.<br><b>Colectivos:</b> aunque estén escritos en singular, nombran a un conjunto de seres o elementos de la misma especie. Ejemplo: enjambre, bosque, cardumen, manada.',
+   items:[IN('abeja'), CL('enjambre','abejas'), IN('árbol'), CL('bosque','árboles'), IN('pez'), CL('banco','peces'), CL('cardumen','peces'), IN('lobo'), CL('manada','lobos'), IN('jugador'), CL('equipo','jugadores'),
+     IN('oveja'), CL('rebaño','ovejas'), IN('soldado'), CL('ejército','soldados'), IN('flor'), CL('ramo','flores'), IN('músico'), CL('orquesta','músicos'), IN('pájaro'), CL('parvada','pájaros'), IN('uva'), CL('racimo','uvas')]},
+  {g:'sust', id:'conjunto', type:'unir', title:'Un conjunto de…', src:'Sustantivos colectivos',
+   rule:'Un conjunto de abejas se llama <b>enjambre</b>. Un conjunto de árboles se llama <b>bosque</b>. Un conjunto de peces se llama <b>banco</b> o <b>cardumen</b>. Un conjunto de lobos se llama <b>manada</b>. Un conjunto de jugadores se llama <b>equipo</b>.',
+   pairs:[['abejas','enjambre'],['árboles','bosque'],['peces','banco o cardumen'],['lobos','manada'],['jugadores','equipo'],['ovejas','rebaño'],['soldados','ejército'],['flores','ramo'],['músicos','orquesta'],['pájaros','parvada'],['uvas','racimo']]},
+
+  /* ---------- GÉNERO Y NÚMERO ---------- */
+  {g:'gen', id:'genum', type:'elige', title:'Género y número', src:'Género · Número',
+   rule:'<b>Masculino:</b> el, los, un, unos. Ejemplo: niño, coche, lobos.<br><b>Femenino:</b> la, las, una, unas. Ejemplo: niña, flores, casa.<br><b>Singular:</b> 1 sola cosa (casa, mesa, coche). <b>Plural:</b> muchas cosas y terminan en -s (casas, mesas, coches).<br>Truco: pon <b>el</b> o <b>la</b> delante.',
+   items:[G('peluche','el',1,'Es un solo peluche: singular.'), G('flor','la',1,'No termina en -a, ¡pero decimos «la flor»! Y es una sola: singular.'), G('casa','la'), G('perros','los'), G('flores','las'), G('niño','el'), G('coche','el'),
+     G('lobos','los'), G('niña','la'), G('mesas','las'), G('lápiz','el'), G('lápices','los'), G('luz','la',0,'Termina en z, pero decimos «la luz».'), G('luces','las'), G('pez','el'), G('peces','los'), G('árbol','el'), G('llave','la'), G('camión','el'), G('sillas','las'), G('mariposas','las'), G('sol','el')]},
+  {g:'gen', id:'plural', type:'elige', title:'Singular y plural', src:'Número',
+   rule:'<b>Plural:</b> muchas cosas y terminan en -s: casas, mesas, coches.<br>Si la palabra termina en consonante, se agrega <b>-es</b>: flor → flores, árbol → árboles.<br>Si termina en <b>z</b>, la z cambia a <b>c</b>: lápiz → lápices, pez → peces, luz → luces.',
+   items:[Q('¿Cuál es el plural?','lápices',['lápizes','lápizs'],'lápiz → lápices: la z cambia a c.',1,'lápiz'), Q('¿Cuál es el plural?','peces',['pezes','pezs'],'pez → peces: la z cambia a c.',1,'pez'), Q('¿Cuál es el plural?','luces',['luzes','luzs'],'luz → luces: la z cambia a c.',0,'luz'),
+     Q('¿Cuál es el plural?','casas',['casaes','casa'],'casa → casas.',0,'casa'), Q('¿Cuál es el plural?','coches',['cochees','coche'],'coche → coches.',0,'coche'), Q('¿Cuál es el plural?','flores',['flors','flor'],'flor → flores: termina en consonante, se agrega -es.',0,'flor'),
+     Q('¿Cuál es el plural?','árboles',['árbols','árbol'],'árbol → árboles.',0,'árbol'), Q('¿Cuál es el plural?','ratones',['ratóns','ratón'],'ratón → ratones.',0,'ratón'), Q('¿Cuál es el plural?','camiones',['camións','camión'],'camión → camiones.',0,'camión'),
+     Q('¿Cuál es el plural?','mesas',['mesaes','mesa'],'mesa → mesas.',0,'mesa'), Q('¿Cuál es el plural?','voces',['vozes','vozs'],'voz → voces: la z cambia a c.',0,'voz'), Q('¿Cuál es el plural?','perros',['perroes','perro'],'perro → perros.',0,'perro'),
+     Q('¿Cuál es el singular?','pez',['pece','pes'],'peces → pez.',0,'peces'), Q('¿Cuál es el singular?','lápiz',['lápice','lápis'],'lápices → lápiz.',0,'lápices'), Q('¿Cuál es el singular?','flor',['flore','flo'],'flores → flor.',0,'flores')]},
+  {g:'gen', id:'mascfem', type:'unir', title:'Masculino y femenino', src:'Género',
+   rule:'<b>Masculino:</b> el niño, el perro, el maestro. <b>Femenino:</b> la niña, la perra, la maestra.<br>A veces la palabra cambia completa: el papá → la mamá, el toro → la vaca.',
+   pairs:[['niño','niña'],['perro','perra'],['gato','gata'],['maestro','maestra'],['doctor','doctora'],['león','leona'],['papá','mamá'],['rey','reina'],['abuelo','abuela'],['hombre','mujer'],['toro','vaca'],['caballo','yegua'],['hermano','hermana'],['príncipe','princesa']]},
+
+  /* ---------- PRONOMBRES ---------- */
+  {g:'pron', id:'circula', type:'toca', title:'Encuentra el pronombre', src:'Los pronombres personales',
+   rule:'Son palabras que utilizamos para <b>sustituir a personas, animales o cosas</b> y evitar que se repitan los nombres.<br>María está en clase. María estudia. ✗<br>María está en clase. <b>Ella</b> estudia. ✓',
+   items:[{s:'Nosotras aprendemos mucho.', a:'Nosotras'}, {s:'Nacho es deportista. Él juega futbol.', a:'Él'}, {s:'Ustedes hablan demasiado.', a:'Ustedes'}, {s:'Yo canto en la ducha.', a:'Yo'},
+     {s:'Mi amiga es inteligente. Ella trabaja mucho.', a:'Ella'}, {s:'Tú corres muy rápido.', a:'Tú'}, {s:'Ellos viven cerca del parque.', a:'Ellos'}, {s:'Mis primas llegaron. Ellas traen pastel.', a:'Ellas'},
+     {s:'Nosotros vamos al cine.', a:'Nosotros'}, {s:'El gato duerme porque él está cansado.', a:'él', why:'«El» sin acento acompaña al sustantivo (el gato). «Él» con acento es el pronombre.'}, {s:'Mi hermana y yo jugamos. Nosotras somos mellizas.', a:'Nosotras'}, {s:'Ustedes son mis hermanas.', a:'Ustedes'}]},
+  {g:'pron', id:'sustituye', type:'elige', title:'Cambia el nombre por un pronombre', src:'Los pronombres personales',
+   rule:'Si <b>yo</b> estoy en el grupo: <b>nosotras</b> (solo niñas) o <b>nosotros</b>.<br>Si le hablo a varias personas: <b>ustedes</b>.<br>Varias niñas: <b>ellas</b>. Varios niños, o niñas y niños juntos: <b>ellos</b>.<br>¡Ojo! «Ella y yo» todavía no es un pronombre solo: se dice <b>nosotras</b>.',
+   items:[PS('Mi hermana y yo','nos queremos mucho.','Nosotras',['Ella y yo','Ellas','Ustedes'],'Mi hermana y yo = nosotras. «Ella y yo» son dos palabras; el pronombre es uno: nosotras.',1),
+     PS('Mi mamá y yo','vamos al súper.','Nosotras',['Ellas','Ella','Yo'],'Yo + mi mamá = nosotras.',1),
+     PS('Mis amigas y yo','jugamos en el recreo.','Nosotras',['Ellas','Ustedes','Yo'],'Yo + mis amigas = nosotras.',1),
+     PS('Mi papá y yo','lavamos el coche.','Nosotros',['Nosotras','Ellos','Él y yo'],'Si en el grupo hay un niño o un señor, decimos nosotros.',1),
+     PS('María','juega en el parque.','Ella',['Él','Ellas','Nosotras'],'María es una niña: ella.'),
+     PS('Inés y Begoña','estudian juntas.','Ellas',['Ella','Ellos','Nosotras'],'Inés y Begoña son dos niñas: ellas.'),
+     PS('Nacho','es deportista.','Él',['Ella','Ellos','Tú'],'Nacho es un niño: él.'),
+     PS('Pedro y Luis','juegan futbol.','Ellos',['Ellas','Él','Nosotros'],'Dos niños: ellos.'),
+     PS('Las mariposas','vuelan alto.','Ellas',['Ella','Ellos','Ustedes'],'Las mariposas son varias y femenino: ellas.'),
+     PS('El perro','ladra mucho.','Él',['Ella','Ellos','Yo'],'El perro es uno y masculino: él.'),
+     PS('Tú y Sofía','cantan bonito.','Ustedes',['Ellas','Nosotras','Tú'],'Cuando le hablas a varias personas, usas ustedes.'),
+     PS('Ana y Pedro','son amigos.','Ellos',['Ellas','Nosotros','Él'],'Si el grupo junta niñas y niños, decimos ellos.')]},
+  {g:'pron', id:'tabla', type:'elige', title:'La tabla de los pronombres', src:'Los pronombres personales',
+   rule:'<table style="border-collapse:collapse;width:100%;max-width:420px"><tr><th></th><th style="text-align:left">Singular</th><th style="text-align:left">Plural</th></tr><tr><td><b>1.ª persona</b></td><td>yo</td><td>nosotros, nosotras</td></tr><tr><td><b>2.ª persona</b></td><td>tú</td><td>ustedes</td></tr><tr><td><b>3.ª persona</b></td><td>él, ella</td><td>ellos, ellas</td></tr></table>',
+   items:[Q('1.ª persona del singular','yo',['tú','él','nosotros']), Q('2.ª persona del singular','tú',['yo','ustedes','ella']), Q('3.ª persona del singular (una niña)','ella',['tú','ellas','yo']),
+     Q('3.ª persona del singular (un niño)','él',['ellos','tú','yo']), Q('1.ª persona del plural (solo niñas)','nosotras',['ellas','ustedes','nosotros']), Q('2.ª persona del plural','ustedes',['nosotros','ellos','tú']),
+     Q('3.ª persona del plural (solo niñas)','ellas',['ella','nosotras','ustedes']), Q('3.ª persona del plural (niños)','ellos',['él','nosotros','ustedes']),
+     Q('«nosotros» es…','1.ª persona del plural',['3.ª persona del plural','2.ª persona del plural','1.ª persona del singular']), Q('«ustedes» es…','2.ª persona del plural',['1.ª persona del plural','3.ª persona del plural','2.ª persona del singular']),
+     Q('«yo» es…','1.ª persona del singular',['2.ª persona del singular','3.ª persona del singular','1.ª persona del plural']), Q('«ellas» es…','3.ª persona del plural',['3.ª persona del singular','1.ª persona del plural','2.ª persona del plural']),
+     Q('«tú» es…','2.ª persona del singular',['1.ª persona del singular','2.ª persona del plural','3.ª persona del singular'])]},
+
+  /* ---------- SÍLABAS ---------- */
+  {g:'sil', id:'separa', type:'sil', title:'Separa en sílabas', src:'Sílabas',
+   rule:'Una sílaba es cada una de las partes en que podemos dividir una palabra al pronunciarla. Ejemplos: casa → ca-sa, pelota → pe-lo-ta, mariposa → ma-ri-po-sa.<br>Truco: da una palmada por cada parte.<br>¡Ojo! <b>ch</b>, <b>ll</b>, <b>rr</b> y <b>qu</b> no se separan: pe-rro, si-lla, que-so.',
+   items:SIL.map(([w, s, o]) => ({w, s, ojo:o}))},
+  {g:'sil', id:'cuantas', type:'clas', title:'¿Cuántas sílabas tiene?', src:'Según el número de sílabas', buckets:['Monosílaba (1)','Bisílaba (2)','Trisílaba (3)','Polisílaba (4 o más)'],
+   rule:'<b>Monosílabas:</b> tienen 1 sílaba. Ejemplo: sol, pan, luz, mar.<br><b>Bisílabas:</b> tienen 2 sílabas. Ejemplo: ca-sa, me-sa, ga-to, lá-piz.<br><b>Trisílabas:</b> tienen 3 sílabas. Ejemplo: pe-lo-ta, ca-mi-sa, mú-si-ca.<br><b>Polisílabas:</b> tienen 4 sílabas o más. Ejemplo: ma-ri-po-sa.',
+   items:SIL.map(([w, s, o]) => { const n = s.split('-').length; return {t:w, show:s, b:Math.min(n, 4) - 1, ojo:o, why:`${s} → ${n} ${n === 1 ? 'sílaba' : 'sílabas'}: es ${SNAME[Math.min(n, 4) - 1]}.${w === 'gato' ? ' ¡No es trisílaba!' : ''}`}; })},
+  {g:'sil', id:'tonica', type:'ton', title:'Sílaba tónica y átona', src:'La sílaba tónica',
+   rule:'La sílaba <b>tónica</b> es la que pronunciamos con <b>mayor</b> fuerza de voz. Ejemplo: ca-<b>mión</b>, pe-<b>lo</b>-ta, ju-<b>gue</b>-te.<br>Las sílabas <b>átonas</b> son las que pronunciamos con <b>menor</b> fuerza de voz.<br>En pe-lo-ta: <b>lo</b> es la tónica; <b>pe</b> y <b>ta</b> son átonas.<br>Truco: di la palabra como si llamaras a alguien de lejos. Si lleva acento (´), esa es la tónica.',
+   items:[['ca-sa',0,1],['pe-lo-ta',1,1],['ár-bol',0,1],['ca-mi-sa',1,1],['ven-ta-na',1,1],['co-ra-zón',2,1],['ma-ri-po-sa',2,1],['lá-piz',0,1],
+     ['ca-mión',1],['ju-gue-te',1],['mú-si-ca',0],['ra-tón',1],['pá-ja-ro',0],['za-pa-to',1],['ma-má',1],['sá-ba-do',0],['es-cue-la',1],['fe-liz',1],['pan-ta-lón',2],['me-sa',0],['ga-to',0],['cas-ti-llo',1],['a-vión',1],['gi-ra-sol',2],['pe-que-ño',1],['ca-ra-col',2]].map(([s, t, o]) => ({s, t, ojo:o}))},
+
+  /* ---------- ORTOGRAFÍA ---------- */
+  {g:'orto', id:'eses', type:'elige', title:'Palabras con S', src:'Palabras con «s»',
+   rule:'Usamos la <b>s</b> en las palabras que terminan en:<br>• <b>-oso / -osa</b> (dicen cómo es algo): hermoso, precioso<br>• <b>-ísimo / -ísima</b> (algo grande): grandísimo<br>• <b>-ense / -és / -esa</b> (lugares de origen): canadiense, francés<br>• <b>-sión</b>: televisión<br>• <b>-ista / -ismo</b> (trabajos, aficiones o gustos): deportista<br>Palabras: mariposa, casa, camisa, música, pasado, grandísimo, precioso, piso, visita, hermoso, beso, uso, deportista.',
+   items:[L('vi_ita','s',['c','z'],'visita: vi-si-ta con S. ¡No es «vicita»!',1), L('grandí_imo','s',['c','z'],'grandísimo: -ísimo va con S. ¡No es «gradicimo»!',1), Q('Algo muy, muy grande es…','grandísimo',['grandícimo','gradísimo'],'grandísimo lleva N (gran-) y S (-ísimo).',1),
+     L('hermo_o','s',['c','z'],'hermoso: -oso va con S.'), L('precio_o','s',['c','z'],'precioso: -oso va con S.'), L('maripo_a','s',['z','c'],'mariposa con S.'), L('ca_a','s',['z','c'],'casa con S.'), L('cami_a','s',['z','c'],'camisa con S.'),
+     L('mú_ica','s',['c','z'],'música con S.'), L('pa_ado','s',['c','z'],'pasado con S.'), L('pi_o','s',['z','c'],'piso con S.'), L('be_o','s',['z','c'],'beso con S.'), L('u_o','s',['z','c'],'uso con S.'), L('deporti_ta','s',['z','c'],'deportista: -ista va con S.'),
+     L('televi_ión','s',['c'],'televisión: -sión va con S.'),
+     Q('Una persona de Canadá es…','canadiense',['canadience','canadienze'],'-ense (lugar de origen) va con S.'), Q('Una niña de Francia es…','francesa',['franceza','franceca'],'-esa (lugar de origen) va con S.'), Q('Alguien que hace deporte es…','deportista',['deporticta','deportizta'],'-ista (trabajos y aficiones) va con S.'), Q('Algo con mucho cariño es…','cariñoso',['cariñozo','cariñoco'],'-oso va con S.'),
+     RS('hermoso',0), RS('grandísimo',1), RS('canadiense',2), RS('deportista',4), RS('preciosa',0), RS('francés',2)]},
+  {g:'orto', id:'ces', type:'elige', title:'Palabras con C', src:'La «C» es preciosa · Errores comunes',
+   rule:'Palabras terminadas en <b>-cial</b>: presencia → presencial, comercio → comercial.<br>Palabras terminadas en <b>-cioso / -ciosa</b>: muchas se forman a partir de sustantivos: silencio → silencioso, espacio → espacioso.<br><b>Errores comunes con la C:</b> hacer, decir, gracias, lápices, cerca, circo, peces, luces, cielo, cocina, dulce, cinco, cine.',
+   items:[L('ha_er','c',['s','z'],'hacer va con C. ¡No es «haser»!',1), L('pe_es','c',['s','z'],'peces: pez → peces, la z cambia a c.',1), L('de_ir','c',['s','z'],'decir con C.'), L('gra_ias','c',['s','z'],'gracias con C.'),
+     L('lápi_es','c',['z','s'],'lápices: lápiz → lápices, la z cambia a c.'), L('lu_es','c',['z','s'],'luces: luz → luces.'), L('_erca','c',['s','z'],'cerca con C.'), L('_irco','c',['s','z'],'circo con C.'), L('_ielo','c',['s','z'],'cielo con C.'),
+     L('co_ina','c',['s','z'],'cocina con C.'), L('dul_e','c',['s','z'],'dulce con C.'), L('_inco','c',['s','z'],'cinco con C.'), L('_ine','c',['s','z'],'cine con C.'),
+     Q('presencia → …','presencial',['presensial','presenzial'],'-cial va con C.'), Q('comercio → …','comercial',['comersial','comerzial'],'-cial va con C.'), Q('silencio → …','silencioso',['silensioso','silenzioso'],'-cioso va con C, como silencio.'),
+     Q('espacio → …','espacioso',['espasioso','espazioso'],'-cioso va con C, como espacio.'), Q('delicia → …','delicioso',['delisioso','delizioso'],'-cioso va con C.'), Q('gracia → …','gracioso',['grasioso','grazioso'],'-cioso va con C.'),
+     Q('¿Cuál está bien escrita?','hacer',['haser','aser'],'hacer: con H al inicio y con C.',1)]},
+  {g:'orto', id:'bv', type:'elige', title:'Palabras con B y V', src:'Ortografía: palabras con B y V',
+   rule:'<b>1. Se escribe con B:</b><br>• Antes de l y r: blanco, brazo<br>• Después de m: también, tambor<br>• Las palabras que empiezan por bu-, bur-, bus-: burro, buscar<br><b>2. Se escribe con V:</b><br>• Después de n: enviar, invierno<br>• Las palabras que empiezan por vice-: vicepresidente<br>• Las formas de los verbos tener, estar y andar: tuve, anduve, estuve<br>Palabras: avión, abuelo, biblioteca, ventana, verano, viernes, barca, bebé, vivir, volver, buscar.',
+   items:[L('Ayer _ino una visita a mi casa.','v',['b'],'vino con V. ¡No es «bino»!',1), L('Ayer vino una _isita a mi casa.','v',['b'],'visita con V. ¡No es «bisita»!',1),
+     L('a_ión','v',['b'],'avión con V.'), L('a_uelo','b',['v'],'abuelo con B.'), L('_iblioteca','b',['v'],'biblioteca con B.'), L('_entana','v',['b'],'ventana con V.'), L('_erano','v',['b'],'verano con V.'), L('_iernes','v',['b'],'viernes con V.'),
+     L('_arca','b',['v'],'barca con B.'), L('be_é','b',['v'],'bebé con B.'), L('vi_ir','v',['b'],'vivir: las dos con V.'), L('_olver','v',['b'],'volver con V.'), L('_uscar','b',['v'],'buscar: empieza con bus-, va con B.'),
+     L('_lanco','b',['v'],'blanco: B antes de L.'), L('_razo','b',['v'],'brazo: B antes de R.'), L('tam_ién','b',['v'],'también: después de M va B.'), L('tam_or','b',['v'],'tambor: después de M va B.'), L('_urro','b',['v'],'burro: empieza con bur-, va con B.'),
+     L('en_iar','v',['b'],'enviar: después de N va V.'), L('in_ierno','v',['b'],'invierno: después de N va V.'), L('tu_e','v',['b'],'tuve (de tener) va con V.'), L('estu_e','v',['b'],'estuve (de estar) va con V.'), L('andu_e','v',['b'],'anduve (de andar) va con V.'),
+     RB('blanco',0), RB('brazo',0), RB('también',1), RB('buscar',2), RB('enviar',3), RB('invierno',3), RB('vicepresidente',4), RB('tuve',5), RB('estuve',5)]},
+  {g:'orto', id:'qu', type:'elige', title:'Palabras con Q', src:'Ortografía: la letra Q',
+   rule:'La letra <b>Q</b> se escribe delante de <b>E</b> y de <b>I</b>, y siempre lleva una <b>U</b> después de la Q.<br>La <b>u</b> no se pronuncia: <b>que</b> y <b>qui</b>.<br><b>que</b> → queso, pequeño, parque, querer, raqueta, paquete<br><b>qui</b> → quince, quitar, equipo, esquina, mosquito, máquina',
+   items:[L('_eso','que',['ke','qe','cue'],'queso: Q + U + E. La U no suena.'), L('es_ina','qui',['ki','qi','cui'],'esquina: Q + U + I.'), L('mos_ito','qui',['ki','qi'],'mosquito con qui.'), L('ra_eta','que',['ke','qe'],'raqueta con que.'), L('pa_ete','que',['ke','qe'],'paquete con que.'),
+     L('pe_eño','que',['ke','qe'],'pequeño con que.'), L('_ince','qui',['ki','qi'],'quince con qui.'), L('_itar','qui',['ki','qi'],'quitar con qui.'), L('e_ipo','qui',['ki','qi'],'equipo con qui.'), L('par_e','que',['ke','qe'],'parque con que.'),
+     L('_erer','que',['ke','qe'],'querer con que.'), L('má_ina','qui',['ki','qi'],'máquina con qui.'), L('_emar','que',['ke','qe'],'quemar con que.'),
+     L('_sa','ca',['que','qui','co'],'casa: con A se usa C (ca). La Q solo va con E y con I.'), L('_nejo','co',['ca','que','qui'],'conejo: con O se usa C (co).'), L('_chara','cu',['co','qui','que'],'cuchara: con U se usa C (cu).'),
+     Q('¿Delante de qué vocales se escribe QU?','e, i',['a, o','o, u','a, e, i, o, u'],'Solo que y qui.'), Q('¿Qué letra va siempre después de la Q?','u',['e','i','a'],'La Q siempre lleva U: que, qui.'), Q('En «queso», ¿se oye la U?','No, la U no suena',['Sí, se oye la U'],'En que y qui la U no se pronuncia.'),
+     Q('¿Cuál está bien escrita?','queso',['keso','qeso','cueso'],'queso con QU.'), Q('¿Cuál está bien escrita?','esquina',['eskina','esqina'],'esquina con QU.'), Q('¿Cuál está bien escrita?','pequeño',['pekeño','peqeño'],'pequeño con QU.')]},
+  {g:'orto', id:'zetas', type:'elige', title:'Palabras con Z', src:'Palabras con Z',
+   rule:'La <b>Z</b> es una letra que aparece en muchas palabras: <b>za</b> → zapato, <b>zo</b> → zorro, <b>zu</b> → zumo.<br>También va al final de muchas palabras: lápiz, nariz, feliz, pez, luz, maíz, arroz.<br>Debemos aprender su escritura correcta y fijarnos en la letra que llevan.<br>Palabras: zapato, zanahoria, zorro, zapatilla, azúcar, lápiz, nariz, feliz, pez, luz, maíz, arroz.',
+   items:[Q('¿Cuál está bien escrita?','zanahoria',['zanaoria','sanahoria'],'zanahoria lleva H en medio: za-na-ho-ria.',1), L('zana_oria','h',['j','o'],'za-na-ho-ria: lleva una H que no suena.',1), MS('_ hay mucho maíz.','Allí',['Ally','Ayí'],'Allí termina en í con acento, no en y.',1),
+     L('_apato','z',['s','c'],'zapato con Z.'), L('_orro','z',['s','c'],'zorro con Z.'), L('a_úcar','z',['s','c'],'azúcar con Z.'), L('lápi_','z',['s'],'lápiz termina en Z.'), L('nari_','z',['s'],'nariz termina en Z.'), L('feli_','z',['s'],'feliz termina en Z.'),
+     L('pe_','z',['s'],'pez termina en Z.'), L('lu_','z',['s'],'luz termina en Z.'), L('maí_','z',['s'],'maíz termina en Z.'), L('arro_','z',['s'],'arroz termina en Z.'), L('_umo','z',['s','c'],'zumo con Z.'), L('_apatilla','z',['s','c'],'zapatilla con Z.'),
+     Q('¿Cuál está bien escrita?','zapato',['sapato','capato'],'zapato con Z.'), Q('¿Cuál está bien escrita?','arroz',['arros','aroz'],'arroz: RR y Z al final.'), Q('¿Cuál está bien escrita?','feliz',['felis','felic'],'feliz con Z.'), Q('¿Cuál es el plural de «nariz»?','narices',['narizes','nariz'],'nariz → narices: la z cambia a c.')]},
+  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Dictados del cuaderno', n:10,
+   rule:'Escucha con atención. Piensa en la regla: ¿lleva S, C o Z? ¿B o V? ¿QU? Fíjate también en la H y en los acentos.',
+   items:[['hacer','Me gusta hacer la tarea.',1],['visita','Ayer vino una visita a mi casa.',1],['grandísimo','El elefante es grandísimo.',1],['vino','Mi tía vino a comer.',1],['zanahoria','Me encanta la zanahoria.',1],
+     ['peces','Fui a un acuario y tenía muchos peces.'],['cerca','La escuela está cerca.'],['luces','Hay muchas luces.'],['cinco','Hay cinco conejos.'],['mariposa','Hoy vi una mariposa.'],['cielo','El cielo está nublado.'],
+     ['avión','Hoy me subí a un avión.'],['abuelo','Fui a la casa de mi abuelo.'],['viernes','Hoy es viernes.'],['queso','Compré queso.'],['esquina','Hay una panadería en la esquina.'],['mosquito','En mi casa hay un mosquito.'],
+     ['pequeño','Mi perro es pequeño.'],['zapatos','Me compré unos zapatos.'],['lápiz','Escribo con un lápiz.'],['feliz','Estoy muy feliz.'],['arroz','Hoy comí arroz.'],['maíz','Allí hay mucho maíz.'],
+     ['biblioteca','Fuimos a la biblioteca.'],['buscar','Voy a buscar mi suéter.'],['hermoso','El jardín es hermoso.'],['deportista','Nacho es deportista.'],['dulces','Voy a la tienda de dulces.'],['cocina','En la cocina tengo platos.'],['gracias','Muchas gracias.'],['parque','Hoy fui al parque.']].map(([w, s, o]) => ({w, s, ojo:o}))}
+];
+const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
+const GROUPS = [
+  {g:'sust', h:'Sustantivos', d:'Común y propio, concreto y abstracto, individual y colectivo.'},
+  {g:'gen', h:'Género y número', d:'Masculino y femenino, singular y plural.'},
+  {g:'pron', h:'Pronombres personales', d:'yo, tú, él, ella, nosotros, nosotras, ustedes, ellos, ellas.'},
+  {g:'sil', h:'Sílabas', d:'Separar, contar y encontrar la sílaba tónica.'},
+  {g:'orto', h:'Ortografía', d:'Palabras con S, C, B y V, Q y Z. Y un dictado.'}
+];
+const INST = {
+  clas:'Lee la palabra y toca la columna donde va.',
+  elige:'Toca la respuesta correcta.',
+  toca:'Toca el pronombre de la oración.',
+  sil:'Toca entre las letras para cortar la palabra en sílabas. Cuando termines, toca «Revisar».',
+  ton:'Toca la sílaba que suena más fuerte (la tónica). Toca 🔊 para oír la palabra.',
+  dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
+  unir:'Toca una palabra de un lado y luego su pareja del otro lado.'
+};
+
+/* ================= ESTADO ================= */
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+let best = load('esp-stars', {}), errs = load('esp-errs', {}), seen = load('esp-seen', {});
+const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
+const MAXSTARS = ACTS.length * 3;
+const totalStars = () => ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
+const key = q => q.act.id + ':' + q.i;
+const markErr = q => { errs[key(q)] = Math.min(3, (errs[key(q)] || 0) + 1); save('esp-errs', errs); };
+const clearErr = q => { const k = key(q); if (!errs[k]) return; if (--errs[k] <= 0) delete errs[k]; save('esp-errs', errs); };
+const errKeys = () => Object.keys(errs).filter(k => { const [a, i] = k.split(':'); return BYID[a] && BYID[a].items && BYID[a].items[+i]; });
+
+/* voz */
+let VOICE = null;
+function pickVoice() { try { const vs = speechSynthesis.getVoices(); VOICE = vs.find(v => /es[-_]MX/i.test(v.lang)) || vs.find(v => /es[-_]US/i.test(v.lang)) || vs.find(v => /^es/i.test(v.lang)) || null; } catch (e) {} }
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(parts, rate) {
+  if (!('speechSynthesis' in window)) return false;
+  try { speechSynthesis.cancel(); [].concat(parts).forEach(t => { const u = new SpeechSynthesisUtterance(t); u.lang = VOICE ? VOICE.lang : 'es-MX'; if (VOICE) u.voice = VOICE; u.rate = rate || 0.85; speechSynthesis.speak(u); }); return true; } catch (e) { return false; }
+}
+
+/* ================= JARDÍN ================= */
+function flower(x, base, stage, isNew) {
+  const anim = isNew ? ` class="grow" style="transform-origin:${x}px ${base}px"` : '';
+  let s = `<ellipse class="mound" cx="${x}" cy="${base + 2}" rx="17" ry="6"/>`;
+  if (stage === 0) return `<g${anim}>${s}<ellipse class="seedp" cx="${x}" cy="${base - 2}" rx="4" ry="5.5"/></g>`;
+  const h = [0, 20, 42, 66][stage], top = base - h;
+  s += `<path class="stem" d="M${x} ${base} C${x - 3} ${base - h * .4} ${x + 3} ${base - h * .7} ${x} ${top}"/>`;
+  const ly = stage === 1 ? top + 2 : base - h * .45;
+  s += `<path class="leaf" d="M${x} ${ly} q-14 -10 -16 2 q10 6 16 -2z"/><path class="leaf" d="M${x} ${ly + (stage === 1 ? 0 : 8)} q14 -10 16 2 q-10 6 -16 -2z"/>`;
+  if (stage === 2) s += `<ellipse class="bud" cx="${x}" cy="${top - 4}" rx="6" ry="8"/>`;
+  if (stage === 3) {
+    let p = ''; for (let k = 0; k < 14; k++) p += `<ellipse class="petal" cx="${x}" cy="${top - 15}" rx="4.2" ry="9" transform="rotate(${k * 360 / 14} ${x} ${top})"/>`;
+    s += p + `<circle class="disk" cx="${x}" cy="${top}" r="8.5"/><circle class="dots" cx="${x - 2.5}" cy="${top - 2}" r="1.3"/><circle class="dots" cx="${x + 2.5}" cy="${top + 1}" r="1.3"/><circle class="dots" cx="${x}" cy="${top + 3.5}" r="1.2"/>`;
+  }
+  return `<g${anim}>${s}</g>`;
+}
+function renderGarden() {
+  const n = ACTS.length, back = Math.ceil(n / 2), front = n - back;
+  const pos = ACTS.map((a, i) => i < back ? {x: 30 + i * (540 / (back - 1)), y: 162} : {x: 60 + (i - back) * (480 / Math.max(1, front - 1)), y: 248});
+  let bloomed = 0, out = '';
+  ACTS.forEach((a, i) => { const st = best[a.id] || 0; if (st === 3) bloomed++; out += flower(pos[i].x, pos[i].y, st, st > (seen[a.id] || 0)); });
+  const done = bloomed === n;
+  $('#garden').innerHTML = `<div class="gh"><h2>${done ? '¡Tu jardín está completo!' : 'Mi jardín de girasoles'}</h2><span class="gn">🌻 ${bloomed} de ${n}</span></div>
+    <svg viewBox="0 0 600 268" role="img" aria-label="Jardín con ${bloomed} girasoles florecidos de ${n}">
+      <rect class="gsky" width="600" height="268"/><circle class="gsun" cx="560" cy="36" r="${done ? 24 : 16}"/>
+      <path class="gsoil" d="M0 150 Q150 136 300 148 T600 146 V268 H0Z"/><path class="gsoil2" d="M0 236 Q160 226 300 236 T600 232 V268 H0Z" opacity=".55"/>${out}</svg>
+    <p>${done ? 'Ganaste las 3 estrellas en todos los ejercicios. ¡Felicidades!' : 'Cada ejercicio tiene su girasol. Cada estrella lo hace crecer: 1 ★ brota, 2 ★ sale el botón, 3 ★ ¡florece!'}</p>`;
+  ACTS.forEach(a => { seen[a.id] = best[a.id] || 0; }); save('esp-seen', seen);
+}
+
+/* ================= MENÚ ================= */
+function renderHome() {
+  $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
+  renderGarden();
+  const ek = errKeys().length;
+  $('#rev').innerHTML = ek ? `<button class="revbtn" type="button" id="revgo"><span class="ico">🔁</span><span><span class="t">Repaso de mis errores</span>
+    <span class="s">${ek} ${ek === 1 ? 'pregunta que se te dificultó' : 'preguntas que se te dificultaron'}. ¡Vamos a practicarlas!</span></span></button>` : '';
+  if (ek) $('#revgo').onclick = startReview;
+  $('#groups').innerHTML = GROUPS.map(G => `
+    <section class="group"><h2>${G.h}</h2><p class="gdesc">${G.d}</p>
+    <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
+      <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
+      <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}</div></section>`).join('');
+}
+$('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (c) start(c.dataset.id); });
+$('#back').addEventListener('click', goHome);
+function goHome() { try { speechSynthesis.cancel(); } catch (e) {} $('#play').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); }
+
+/* ================= RONDA ================= */
+let cur = null;
+function pick(act) {
+  const n = act.n || 10, all = act.items.map((x, i) => i);
+  const missed = shuffle(all.filter(i => errs[act.id + ':' + i])).slice(0, 5);
+  const ojo = shuffle(all.filter(i => act.items[i].ojo && !missed.includes(i)));
+  const rest = shuffle(all.filter(i => !missed.includes(i) && !ojo.includes(i)));
+  return shuffle(missed.concat(ojo, rest).slice(0, Math.min(n, all.length)));
+}
+function setupPlay(title, act) {
+  $('#home').hidden = true; $('#play').hidden = false;
+  $('#ptitle').textContent = title;
+  $('#rule').hidden = !act; if (act) { $('#ruletxt').innerHTML = act.rule; $('#rule').open = false; }
+  $('#finish').innerHTML = ''; $('#note').innerHTML = ''; fb('', '');
+  window.scrollTo(0, 0);
+}
+function start(id) {
+  const act = BYID[id];
+  cur = { act, mistakes: 0, done: 0, total: 0, over: false, cols: {}, k: 0 };
+  setupPlay(act.title, act);
+  $('#inst').textContent = INST[act.type];
+  if (act.type === 'unir') { renderUnir(act); progress(); return; }
+  cur.qs = pick(act).map(i => ({ act, i })); cur.total = cur.qs.length;
+  progress(); next();
+}
+function startReview() {
+  const qs = shuffle(errKeys()).slice(0, 12).map(k => { const [a, i] = k.split(':'); return { act: BYID[a], i: +i }; });
+  if (!qs.length) return;
+  cur = { review: true, mistakes: 0, done: 0, total: qs.length, over: false, cols: {}, k: 0, qs };
+  setupPlay('Repaso de mis errores', null);
+  $('#inst').textContent = 'Estas son las preguntas que se te dificultaron. Si las contestas bien a la primera, salen de tu lista.';
+  progress(); next();
+}
+function next() {
+  $('#note').innerHTML = '';
+  if (cur.k >= cur.qs.length) return finish();
+  const q = cur.qs[cur.k]; q.bad = false;
+  if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = false; $('#inst').textContent = q.act.title + ' · ' + INST[q.act.type]; }
+  RENDER[q.act.type](q, q.act.items[q.i]);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function progress() {
+  $('#count').textContent = `${cur.done} de ${cur.total}`;
+  $('#errs').textContent = cur.mistakes ? `Errores: ${cur.mistakes}` : '';
+  $('#progbar').style.width = (cur.total ? cur.done / cur.total * 100 : 0) + '%';
+}
+let fbT;
+function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = msg; clearTimeout(fbT); if (msg) fbT = setTimeout(() => { f.textContent = ''; }, 1600); }
+const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡Así se hace!'];
+const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
+function wrongQ(q, ...els) { cur.mistakes++; if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
+function rightQ(q, why) {
+  cur.over = true;
+  if (!q.bad) clearErr(q);
+  cur.done++; progress();
+  const go = () => { cur.over = false; cur.k++; next(); };
+  if (q.bad && why) {
+    fb('ok', '¡Ahora sí!');
+    $('#note').innerHTML = `<div class="note"><div class="why">💡 ${why}</div><button class="btn" type="button" id="nx">Siguiente →</button></div>`;
+    $('#nx').onclick = go; $('#nx').focus({ preventScroll: true });
+    $('#note').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else { fb('ok', PRAISE[Math.floor(Math.random() * PRAISE.length)]); setTimeout(go, 900); }
+}
+function finish() {
+  cur.over = true; $('#area').innerHTML = '';
+  const m = cur.mistakes;
+  if (cur.review) {
+    const left = errKeys().length;
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? '¡Perfecto!' : '¡Buen repaso!'}</div>
+      <div>${left ? `Te ${left === 1 ? 'queda' : 'quedan'} ${left} en tu lista de repaso.` : '¡Ya no te queda nada por repasar!'}</div>
+      <div class="btns">${left ? '<button class="btn" type="button" id="again">Repasar otra vez</button>' : ''}<button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+    if (left) $('#again').onclick = startReview;
+  } else {
+    const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
+    best[cur.act.id] = Math.max(before, stars); save('esp-stars', best);
+    const now = best[cur.act.id];
+    const gain = now > before ? (now === 3 ? '🌻 ¡Tu girasol floreció!' : now === 2 ? '🌱 ¡A tu girasol le salió el botón!' : '🌱 ¡Tu girasol brotó!') : '';
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!'}</div>
+      <div class="stars">${starStr(stars)}</div>
+      <div>${m === 0 ? 'Sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? 'Te lo sabes muy bien.' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      ${gain ? `<div class="gain">${gain}</div>` : ''}
+      <div class="btns"><button class="btn" type="button" id="again">Otra vez</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+    $('#again').onclick = () => start(cur.act.id);
+  }
+  $('#tomenu').onclick = goHome;
+  $('#finish').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ================= TIPOS DE EJERCICIO ================= */
+const RENDER = {
+  /* Clasifica en columnas */
+  clas(q, it) {
+    const B = q.act.buckets, ck = j => q.act.id + ':' + j;
+    $('#area').innerHTML = `<div class="qcard"><div class="word" id="w">${esc(it.t)}</div></div>
+      <div class="buckets" id="bk">${B.map((b, j) => `<button class="bucket" type="button" data-j="${j}"><span class="bh">${b}</span>
+        <span class="bl">${(cur.cols[ck(j)] || []).map(w => `<span>${esc(w)}</span>`).join('')}</span></button>`).join('')}</div>`;
+    $('#bk').onclick = e => {
+      const b = e.target.closest('.bucket'); if (!b || cur.over) return; const j = +b.dataset.j;
+      if (j === it.b) {
+        (cur.cols[ck(j)] = cur.cols[ck(j)] || []).push(it.t);
+        b.querySelector('.bl').insertAdjacentHTML('beforeend', `<span class="pop">${esc(it.t)}</span>`); b.classList.add('ok');
+        if (it.show) $('#w').textContent = it.show;
+        rightQ(q, it.why);
+      } else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
+    };
+  },
+  /* Elige la respuesta */
+  elige(q, it) {
+    const opts = shuffle([it.a].concat(it.w));
+    const long = it.long || (it.big && it.big.length > 14);
+    const big = it.html || (it.big ? esc(it.big).replace('_', '<span class="hole" id="hole">?</span>') : '');
+    $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>${big ? `<div class="qcard"><div class="word${long ? ' long' : ''}" id="w">${big}</div></div>` : ''}
+      <div class="opts" id="op">${opts.map(o => `<button class="opt${it.cls ? ' ' + it.cls : ''}" type="button" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
+    $('#op').onclick = e => {
+      const b = e.target.closest('.opt'); if (!b || cur.over || b.disabled) return;
+      if (b.dataset.o === it.a) {
+        b.classList.add('ok', 'pop');
+        const h = $('#hole'); if (h) { h.textContent = it.a; h.classList.add('ok'); }
+        if (it.after) $('#w').innerHTML = it.after;
+        rightQ(q, it.why);
+      } else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); }
+    };
+  },
+  /* Toca la palabra en la oración */
+  toca(q, it) {
+    const toks = it.s.split(' ');
+    $('#area').innerHTML = `<div class="qcard"><div class="sent" id="st">${toks.map((t, j) => `<button class="tok" type="button" data-j="${j}">${esc(t)}</button>`).join('')}</div></div>`;
+    $('#st').onclick = e => {
+      const b = e.target.closest('.tok'); if (!b || cur.over) return;
+      const w = toks[+b.dataset.j].replace(/[.,;:¡!¿?]/g, '');
+      if (w === it.a) { b.classList.add('ok', 'pop'); rightQ(q, it.why || `«${it.a}» es el pronombre: está en lugar del nombre.`); }
+      else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
+    };
+  },
+  /* Separa en sílabas y clasifica */
+  sil(q, it) {
+    const L = [...it.w], cuts = new Set(); let c = 0;
+    for (const ch of it.s) { if (ch === '-') cuts.add(c - 1); else c++; }
+    const on = new Set(); let tries = 0;
+    const n = it.s.split('-').length, ans = Math.min(n, 4) - 1;
+    const draw = () => L.map((ch, j) => `<span class="lt">${esc(ch)}</span>${j < L.length - 1 ? `<button class="gap${on.has(j) ? ' on' : ''}" type="button" data-j="${j}" aria-label="Cortar después de ${esc(ch)}">${on.has(j) ? '-' : ''}</button>` : ''}`).join('');
+    $('#area').innerHTML = `<div class="qp">Separa en sílabas:</div><div class="qcard"><div class="letters" id="lt">${draw()}</div></div>
+      <div class="actions" id="ac"><button class="say" type="button" id="sy">🔊 Oír</button><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="ph2"></div>`;
+    $('#sy').onclick = () => speak(it.w, 0.7);
+    $('#lt').onclick = e => { const g = e.target.closest('.gap'); if (!g || cur.over) return; const j = +g.dataset.j; on.has(j) ? on.delete(j) : on.add(j); $('#lt').innerHTML = draw(); };
+    const phase2 = () => {
+      $('#lt').innerHTML = it.s.split('-').map(x => `<span class="lt">${esc(x)}</span>`).join('<span class="lt" style="color:var(--bad)">-</span>');
+      $('#ac').innerHTML = '';
+      $('#ph2').innerHTML = `<div class="qp" style="margin-bottom:10px">Tiene ${n} ${n === 1 ? 'sílaba' : 'sílabas'}. ¿Cómo se llama?</div>
+        <div class="opts" id="op">${SNAME.map((s, j) => `<button class="opt small" type="button" data-j="${j}">${s}</button>`).join('')}</div>`;
+      $('#op').onclick = e => {
+        const b = e.target.closest('.opt'); if (!b || cur.over || b.disabled) return;
+        if (+b.dataset.j === ans) { b.classList.add('ok', 'pop'); rightQ(q, `${it.s} → ${n} ${n === 1 ? 'sílaba' : 'sílabas'}: ${SNAME[ans]}.`); }
+        else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); }
+      };
+    };
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const okk = on.size === cuts.size && [...cuts].every(j => on.has(j));
+      if (okk) { fb('ok', '¡Bien separada!'); phase2(); return; }
+      tries++; wrongQ(q, $('#lt'));
+      if (tries >= 2) { $('#ck').disabled = true; fb('bad', `Así se separa: ${it.s}`); setTimeout(phase2, 1200); }
+    };
+  },
+  /* Sílaba tónica: azul la tónica, rojo las átonas */
+  ton(q, it) {
+    const S = it.s.split('-'), word = S.join('');
+    $('#area').innerHTML = `<div class="qp">¿Cuál es la sílaba tónica de «${esc(word)}»?</div>
+      <div class="qcard"><div class="syls" id="sy">${S.map((x, j) => `<button class="syl" type="button" data-j="${j}">${esc(x)}</button>`).join('')}</div></div>
+      <div class="actions"><button class="say" type="button" id="say">🔊 Oír</button></div>`;
+    $('#say').onclick = () => speak(word, 0.7);
+    $('#sy').onclick = e => {
+      const b = e.target.closest('.syl'); if (!b || cur.over) return; const j = +b.dataset.j;
+      if (j === it.t) {
+        [...$('#sy').children].forEach((x, k) => x.classList.add(k === it.t ? 'ton' : 'aton'));
+        const at = S.filter((x, k) => k !== it.t);
+        rightQ(q, `${S.map((x, k) => k === it.t ? x.toUpperCase() : x).join('-')}: «${S[it.t]}» es la tónica (azul)${at.length ? `; ${at.map(x => '«' + x + '»').join(' y ')} ${at.length === 1 ? 'es átona' : 'son átonas'} (rojo)` : ''}.`);
+      } else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
+    };
+  },
+  /* Dictado */
+  dict(q, it) {
+    const can = 'speechSynthesis' in window;
+    const blank = it.s.replace(new RegExp(it.w, 'i'), '_____');
+    $('#area').innerHTML = `<div class="dict">
+      ${can ? '<button class="say saybig" type="button" id="say">🔊 Escuchar</button>' : '<div class="hint">Pide a alguien que te dicte la palabra.</div>'}
+      <div class="hint">${esc(blank)}</div>
+      <input id="in" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" enterkeyhint="done" aria-label="Escribe la palabra">
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div></div>`;
+    const say = () => speak([it.w, it.s, it.w]);
+    if (can) { $('#say').onclick = say; setTimeout(say, 350); }
+    const inp = $('#in'); let tries = 0;
+    const strip = s => s.normalize('NFD').replace(/[̀-́̈]/g, '').normalize('NFC');
+    const norm = s => s.trim().toLowerCase().replace(/\s+/g, ' ');
+    const check = () => {
+      if (cur.over) return;
+      const v = norm(inp.value); if (!v) return;
+      if (v === it.w) { inp.classList.add('ok'); inp.blur(); rightQ(q, `Se escribe «${it.w}».`); return; }
+      if (strip(v) === strip(it.w)) {
+        inp.classList.add('ok'); inp.blur();
+        if (!q.bad) { q.bad = true; markErr(q); }
+        rightQ(q, `¡Muy bien las letras! Solo falta el acento: se escribe «${it.w}».`); return;
+      }
+      tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+      if (tries >= 2) $('#sh').innerHTML = `<div class="hint">Se escribe:</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+    };
+    $('#ck').onclick = check;
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+  }
+};
+
+/* ---------- Une con líneas ---------- */
+function renderUnir(act) {
+  const pairs = shuffle(act.pairs).slice(0, 5);
+  cur.total = pairs.length;
+  const Lf = shuffle(pairs.map((p, k) => ({ t: p[0], k }))), Rt = shuffle(pairs.map((p, k) => ({ t: p[1], k })));
+  const col = (arr, side) => arr.map(x => `<button class="mi" type="button" data-side="${side}" data-k="${x.k}">${esc(x.t)}<span class="pt"></span></button>`).join('');
+  $('#area').innerHTML = `<div class="qp">${act.id === 'conjunto' ? 'Un conjunto de… se llama…' : 'Masculino → femenino'}</div>
+    <div class="match" id="match"><svg class="lines" id="lines" aria-hidden="true"></svg>
+    <div class="col left">${col(Lf, 'L')}</div><div class="col right">${col(Rt, 'R')}</div></div>`;
+  const box = $('#match'), sel = { L: null, R: null }, matched = new Set();
+  let temp = null;
+  const btn = (side, k) => box.querySelector(`.mi[data-side="${side}"][data-k="${k}"]`);
+  function draw() {
+    const b = box.getBoundingClientRect(), svg = $('#lines'); if (!svg) return;
+    svg.setAttribute('viewBox', `0 0 ${b.width} ${b.height}`);
+    const seg = (kl, kr, cls) => { const l = btn('L', kl).getBoundingClientRect(), r = btn('R', kr).getBoundingClientRect();
+      return `<line class="${cls}" x1="${l.right - b.left}" y1="${l.top + l.height / 2 - b.top}" x2="${r.left - b.left}" y2="${r.top + r.height / 2 - b.top}"/>`; };
+    svg.innerHTML = [...matched].map(k => seg(k, k, 'ok')).join('') + (temp ? seg(temp[0], temp[1], 'bad') : '');
+  }
+  box.addEventListener('click', e => {
+    const b = e.target.closest('.mi'); if (!b || b.classList.contains('ok') || cur.over) return;
+    const side = b.dataset.side, k = +b.dataset.k;
+    if (sel[side] !== null) btn(side, sel[side]).classList.remove('sel');
+    if (sel[side] === k) { sel[side] = null; return; }
+    sel[side] = k; b.classList.add('sel');
+    if (sel.L === null || sel.R === null) return;
+    const bl = btn('L', sel.L), br = btn('R', sel.R);
+    bl.classList.remove('sel'); br.classList.remove('sel');
+    if (sel.L === sel.R) {
+      matched.add(sel.L); bl.classList.add('ok', 'pop'); br.classList.add('ok', 'pop'); draw();
+      cur.done++; fb('ok', PRAISE[Math.floor(Math.random() * PRAISE.length)]); progress();
+      if (cur.done === cur.total) setTimeout(finish, 600);
+    } else {
+      temp = [sel.L, sel.R]; draw(); bl.classList.add('bad'); br.classList.add('bad');
+      cur.mistakes++; fb('bad', 'Casi. Inténtalo otra vez.'); progress(); shake(bl); shake(br);
+      setTimeout(() => { temp = null; bl.classList.remove('bad'); br.classList.remove('bad'); draw(); }, 700);
+    }
+    sel.L = sel.R = null;
+  });
+  new ResizeObserver(draw).observe(box);
+}
+
+renderHome();
+</script>
+</body>
+</html>

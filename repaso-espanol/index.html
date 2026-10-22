@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Español">
-<meta name="theme-color" content="#FDE9F0">
+<meta name="theme-color" content="#F9D2E0">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" type="image/png" href="icon-512.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}</style>
@@ -17,7 +17,8 @@
 <style>
 /* Workbook: a menu of exercise cards (by tema) and toy shelves where plush rewards collect; one question per screen, tap-only for iPad */
 :root{
-  --bg:#FDE9F0; --surface:#FFFFFF; --baby:#A8D4F7; --baby-line:#7FBCEB; --baby-ink:#123A5E; --ink:#2A2418; --muted:#6B6250; --line:#DCD2B8;
+  color-scheme:light;
+  --bg:#F9D2E0; --surface:#FFFFFF; --baby:#A8D4F7; --baby-line:#7FBCEB; --baby-ink:#123A5E; --ink:#2A2418; --muted:#6B6250; --line:#DCD2B8;
   --sun:#D99A00; --sun-soft:#FCEFC7; --petal:#F4B400; --seed:#6B3F1D; --stem:#3E8E41; --leaf:#5DAE4B; --soil:#B68A5A; --soil2:#9C7246; --sky:#E4F1F8;
   --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB;
   --ton:#2B63D1; --ton-soft:#DCE7FB; --aton:#C23B34; --aton-soft:#F9DEDB;
@@ -25,16 +26,6 @@
   --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
   --body:"Nunito", "Segoe UI", system-ui, sans-serif;
 }
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#24161C; --surface:#2E2026; --baby:#3D6F9C; --baby-line:#5A8DBB; --baby-ink:#F2F8FF; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
-  --sun:#F2BC3C; --sun-soft:#3D3112; --petal:#F2BC3C; --seed:#A0693A; --stem:#5DB561; --leaf:#78C566; --soil:#6E5233; --soil2:#5A4229; --sky:#1C2A33;
-  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358;
-  --ton:#86ACF7; --ton-soft:#1F3358; --aton:#F07068; --aton-soft:#42201E; --wood:#6E4524; --wood2:#875733; --wood3:#4A2D16; --wall:#2E2819; --wall2:#272114; color-scheme:dark }}
-:root[data-theme="dark"]{
-  --bg:#24161C; --surface:#2E2026; --baby:#3D6F9C; --baby-line:#5A8DBB; --baby-ink:#F2F8FF; --ink:#F1EBDD; --muted:#B3A88E; --line:#433B29;
-  --sun:#F2BC3C; --sun-soft:#3D3112; --petal:#F2BC3C; --seed:#A0693A; --stem:#5DB561; --leaf:#78C566; --soil:#6E5233; --soil2:#5A4229; --sky:#1C2A33;
-  --ok:#5CC48A; --ok-soft:#173826; --bad:#F07068; --bad-soft:#42201E; --sel:#7EA8F6; --sel-soft:#1F3358;
-  --ton:#86ACF7; --ton-soft:#1F3358; --aton:#F07068; --aton-soft:#42201E; --wood:#6E4524; --wood2:#875733; --wood3:#4A2D16; --wall:#2E2819; --wall2:#272114; color-scheme:dark }
 
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.4;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}

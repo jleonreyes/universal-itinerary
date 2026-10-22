@@ -459,7 +459,7 @@ function speak(parts, rate) {
 }
 
 /* ================= PELUCHES (fotos en peluches/<id>.webp) ================= */
-const PHOTO_ANI = [["ani3-00", "Osito Chocolate"], ["ani3-01", "Oso Negro"], ["ani3-02", "Panda Bambú"], ["ani3-03", "Oso Polar Copito"], ["ani3-04", "Koala Hojitas"], ["ani3-05", "Nutria Mamá y Bebé"], ["ani3-06", "Perrito Caramelo"], ["ani3-07", "Changuito Plátano"], ["ani3-08", "Chango Travieso"], ["ani3-09", "Orangután Naranja"], ["ani3-10", "Gorila Bonachón"], ["ani3-11", "Conejito Café"], ["ani3-12", "Ratón Queso"], ["ani3-13", "Pingüino Emperador"], ["ani3-14", "Elefante Trompita"], ["ani3-15", "Jirafa Manchitas"], ["ani3-16", "Puercoespín Pinito"], ["ani3-17", "Gatito Atigrado"], ["ani3-18", "Búho Sabio"], ["ani3-19", "Caballito Canela"], ["ani3-20", "Delfín Saltarín"], ["ani3-21", "Pez Payaso"], ["ani3-22", "Ardilla Bellota"], ["ani3-23", "Flamenco Rosa"], ["ani3-24", "Canguro Mamá"], ["ani3-25", "Leoncito Melena"], ["ani3-26", "Pollito Amarillo"], ["ani3-27", "Gallina Pinta"], ["ani3-28", "Vaquita Manchas"], ["ani3-29", "Cocodrilo Sonrisas"], ["ani3-30", "Venadito"]];
+const PHOTO_ANI = [["ani3-00", "Oso Pardo"], ["ani3-01", "Oso Negro"], ["ani3-02", "Panda Bambú"], ["ani3-03", "Oso Polar Copito"], ["ani3-04", "Koala Hojitas"], ["ani3-05", "Nutria Mamá y Bebé"], ["ani3-06", "Perrito Caramelo"], ["ani3-07", "Changuito Plátano"], ["ani3-08", "Chango Travieso"], ["ani3-09", "Orangután Naranja"], ["ani3-10", "Gorila Bonachón"], ["ani3-11", "Conejito Café"], ["ani3-12", "Ratón Queso"], ["ani3-13", "Pingüino Emperador"], ["ani3-14", "Elefante Trompita"], ["ani3-15", "Jirafa Manchitas"], ["ani3-16", "Puercoespín Pinito"], ["ani3-17", "Gatito Atigrado"], ["ani3-18", "Búho Sabio"], ["ani3-19", "Caballito Canela"], ["ani3-20", "Delfín Saltarín"], ["ani3-21", "Pez Payaso"], ["ani3-22", "Ardilla Bellota"], ["ani3-23", "Flamenco Rosa"], ["ani3-24", "Canguro Mamá"], ["ani3-25", "Leoncito Melena"], ["ani3-26", "Pollito Amarillo"], ["ani3-27", "Gallina Pinta"], ["ani3-28", "Vaquita Manchas"], ["ani3-29", "Cocodrilo Sonrisas"], ["ani3-30", "Venadito"]];
 /* Animalitos anteriores → nuevos (para no perder los que ya tenían) */
 const OLD_ANI = {"ani-00": "ani3-00", "ani-01": "ani3-01", "ani-02": "ani3-02", "ani-03": "ani3-03", "ani-04": "ani3-04", "ani-06": "ani3-05", "ani-07": "ani3-06", "ani-08": "ani3-07", "ani-09": "ani3-08", "ani-10": "ani3-09", "ani-11": "ani3-10", "ani-12": "ani3-11", "ani-13": "ani3-12", "ani-14": "ani3-13", "ani-15": "ani3-14", "ani-16": "ani3-15", "ani-17": "ani3-16", "ani-18": "ani3-17", "ani-19": "ani3-18", "ani-20": "ani3-19", "ani-21": "ani3-20", "ani-23": "ani3-21", "ani-24": "ani3-22", "ani-25": "ani3-23", "ani-26": "ani3-24"};
 const PHOTO_MON = [["mon-00", "Unicornito Menta"], ["mon-01", "Mango Peludo"], ["mon-02", "Pepino Lunares"], ["mon-03", "Dragoncito Alitas"], ["mon-04", "Malteada Arcoíris"], ["mon-05", "Reyecito Azul"], ["mon-06", "Moras Peludas"], ["mon-07", "Rayitas Tres Ojos"], ["mon-08", "Orejitas Tímido"], ["mon-09", "Pompón Amarillo"], ["mon-10", "Ojón Verde"], ["mon-11", "Guiño Moñitos"], ["mon-12", "Uva Manchitas"], ["mon-14", "Fueguito"], ["mon-15", "Confeti"], ["mon-16", "Dinito Azul"], ["mon-17", "Hojita Menta"], ["mon-18", "Princesa Limón"], ["mon-19", "Copetín Azul"], ["mon-21", "Nube Dormilona"], ["mon-22", "Ojito Naranja"], ["mon-24", "Chicle Lunares"], ["mon-25", "Kiwi Orejón"], ["mon-26", "Fresón Rey"], ["mon-27", "Arcoíris Peludo"]];
@@ -474,14 +474,13 @@ const ROYALS = [['real-8', 'Reina Nutria'], ['real-0', 'Rey Osito Dorado'], ['re
   ['real-4', 'Rey Brócoli'], ['real-5', 'Rey Monstruo Colorín'], ['real-6', 'Rey Aguacate'], ['real-7', 'Rey Monstruo Arcoíris']].map(([id, name]) => ({ id, name, cat: 3, royal: true }));
 const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras', 'Peluche real 👑'];
 const TOYBY = Object.fromEntries(TOYS.concat(ROYALS).map(t => [t.id, t]));
-const BEARS = new Set(['ani3-00', 'ani3-01', 'ani3-02', 'ani3-03']);
 function toySVG(t, extraCls) {
   return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="peluches/${t.id}.webp" alt="${esc(t.name)}" decoding="async">`;
 }
 
 /* ================= JUGADORAS ================= */
 // Cada jugadora guarda su avance por separado. first: qué peluche le sale primero (oso, ani, mon, fru); luego se alternan los tipos.
-const FIRST = { oso: { cat: 0, label: 'Un osito' }, ani: { cat: 0, label: 'Un animalito' }, mon: { cat: 1, label: 'Un monstruito' }, fru: { cat: 2, label: 'Una fruta o verdura' } };
+const FIRST = { oso: { cat: 0, label: 'El oso pardo' }, ani: { cat: 0, label: 'Un animalito' }, mon: { cat: 1, label: 'Un monstruito' }, fru: { cat: 2, label: 'Una fruta o verdura' } };
 let players = load('esp-players', null);
 if (!Array.isArray(players) || !players.length) { players = [{ id: 'p1', name: 'Pelonchis Cacatúa', first: 'oso' }, { id: 'p2', name: 'Pillus Makakikus', first: 'mon' }]; save('esp-players', players); }
 let PID = load('esp-cur', null);
@@ -506,7 +505,7 @@ function awardToys(n) {
   for (let i = 0; i < n; i++) {
     const free = TOYS.filter(t => !toys.includes(t.id)); if (!free.length) break;
     let pool = free.filter(t => t.cat === (start + toys.length) % 3);
-    if (!toys.length && p && p.first === 'oso') pool = pool.filter(t => BEARS.has(t.id));
+    if (!toys.length && p && p.first === 'oso') pool = pool.filter(t => t.id === 'ani3-00');   // Pelonchis: primero el oso pardo
     if (!pool.length) pool = free;
     const t = pool[Math.floor(Math.random() * pool.length)]; toys.push(t.id); got.push(t);
   }

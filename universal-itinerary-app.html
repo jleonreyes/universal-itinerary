@@ -269,14 +269,16 @@ const zbg = (z,strong) => z === 'log' ? 'transparent' : tint(zc(z), strong ? .5 
 /* ---------- horarios registrados de shows ---------- */
 // Muestra publicada para sáb 28 feb y dom 1 mar 2026 (TouringPlans), salvo donde se indica.
 const F26 = 'Horarios publicados 28 feb–1 mar 2026';
+const R22 = 'Horarios registrados el 22 oct 2026';
 const SHOWTIMES = {
-  'Le Cirque Arcanus': { t:['10:45','11:35','12:25','13:15','14:15','15:05','15:55','16:45','17:35','18:25','19:15','20:05'], src:F26 },
+  'Le Cirque Arcanus': { t:['11:20','12:10','12:55','13:40','14:30','15:15','16:00','16:45','17:30','18:20','19:10'], src:R22 + ' · antes de las 11:00 por confirmar' },
   'The Untrainable Dragon': { t:['11:10','12:00','12:50','13:40','14:30','15:40','16:30','17:20','18:10','19:00'], src:F26 },
-  'The Bourne Stuntacular': { t:['11:15','12:00','13:00','13:45','15:00','15:45','16:45','17:30'], src:F26 },
-  'Celestina Warbeck': { t:['11:00','12:00','13:00','14:30','15:30','16:30'], src:F26 },
-  'Tales of Beedle the Bard': { t:['14:00','15:00','16:00','17:30','18:30','19:30'], src:F26 },
-  'Frog Choir': { t:['11:00','12:00','13:00','14:30','15:30','16:30'], src:F26 },
-  'Triwizard Spirit Rally': { t:['10:30','11:30','12:00','14:00','15:00','16:00'], src:F26 },
+  'The Bourne Stuntacular': { t:['12:00','12:45','13:45','14:30','15:30','16:15'], src:R22 },
+  'Celestina Warbeck': { t:['12:00','13:30','14:30','15:30'], src:R22 },
+  'Tales of Beedle the Bard': { t:['11:30','13:00','14:00','15:00'], src:R22 },
+  'Frog Choir': { t:['12:00','13:00','14:30','15:30','16:30'], src:R22 },
+  'Triwizard Spirit Rally': { t:['10:30','11:30','12:30','14:00','15:00','16:00'], src:R22 },
+  'Meet SpongeBob': { t:['11:45','12:55','13:25','13:55','14:25','14:55','15:25'], src:R22 },
   "Oh! The Stories You'll Hear!": { t:['11:00','12:00','13:00','14:45','15:45','16:45'], src:F26 },
   'Po Live!': { t:['11:00','11:30','12:00','12:30','13:00','13:30','14:15','14:45','15:15','15:45','16:15','16:45'], src:F26 },
   'DreamWorks Imagination Celebration': { t:['11:30','12:30','13:30','14:45','15:45','16:45','18:00','19:00'], src:F26 },
@@ -645,6 +647,7 @@ const CAT = [
    r('Kang & Kodos','usf',[5,15],'1:30'),
    r('MIB Alien Attack','usf',[20,35],'4:30','sin'),
    r('Transformers','usf',[25,40],'4:30','obl'),
+   o('Meet SpongeBob','usf',20,'Production Central','show'),
    o('Comida · Fast Food Boulevard','usf',65,"Cletus: tiras de pollo · Luigi's: pizza",'meal'),
    o('Snack · Lard Lad Donuts','usf',20,'','meal'),
  ]],
@@ -769,7 +772,7 @@ function render(){
     html += `<div class="row ${major?'major':''} ${isNow?'now':''} ${ic?'hasic':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
       <span class="t ${s.clash?'bad':''}">${fmt(s.start)}</span>
       <span class="b"><span class="nm">${esc(it.name)}</span> <span class="d">${esc(detail(it))}</span>
-        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con horarios 2026</span>':''}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>${ic}
+        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con las funciones registradas</span>':''}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>${ic}
     </div>`;
   });
   $('#list').innerHTML = html || '<p class="help" style="padding:24px 0">Sin actividades. Toca ＋ Agregar.</p>';

@@ -564,8 +564,12 @@ function openShelf() {
   $('#home').hidden = true; $('#shelf').hidden = false; window.scrollTo(0, 0);
   const fresh = new Set(toys.slice(toysSeen));
   const have = SHOWALL ? TOYS.concat(ROYALS).map(t => t.id) : toys.concat(royals), TOT = TOYS.length + ROYALS.length, n = have.length;
-  const mixed = have.slice().sort((x, y) => hash(PID + x) - hash(PID + y));   // mezclados, siempre en el mismo lugar
-  const slots = mixed.concat(Array(Math.max(0, TOT - n)).fill(null));
+  // Orden de la repisa: arriba los demás peluches mezclados (siempre en el mismo lugar); al final, los reyes en el orden en que se ganaron
+  // y justo después de ellos el primer peluche que obtuvo la jugadora.
+  const kings = have.filter(id => TOYBY[id].royal), first = have.find(id => !TOYBY[id].royal);
+  const rest = have.filter(id => !TOYBY[id].royal && id !== first).sort((x, y) => hash(PID + x) - hash(PID + y));
+  const tail = kings.concat(first ? [first] : []);
+  const slots = rest.concat(Array(Math.max(0, TOT - n)).fill(null), tail);
   $('#cabs').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mi colección'}</h2><span class="gn">🧸 ${n} de ${TOT}</span></div>
     <p>${n === TOT ? 'Juntaste todos los peluches. ¡Felicidades!' : 'Toca un peluche para verlo de cerca. Los peluches reales 👑 brillan en dorado.'}</p>
     <div class="cab">${slots.map(id => { if (!id) return '<div class="slot empty" aria-label="Lugar vacío"></div>'; const t = TOYBY[id];

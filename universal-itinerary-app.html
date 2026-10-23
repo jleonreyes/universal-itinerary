@@ -663,6 +663,26 @@ const CAT = [
  ]],
 ];
 
+/* ---------- duración real de cada atracción (solo el recorrido) ---------- */
+// Fuentes: RCDB, Wikipedia y fichas de cada atracción; los marcados ~ son aproximados (oct 2026)
+const RIDE_TIME = {
+  'Battle at the Ministry':'5:00', 'Mine-Cart Madness':'3:00', 'Mario Kart':'5:00', "Yoshi's Adventure":'5:00',
+  "Hiccup's Wing Gliders":'2:00', "Dragon Racer's Rally":'3:00', 'Fyre Drill':'4:00', 'Monsters Unchained':'5:00',
+  'Curse of the Werewolf':'2:00', 'Constellation Carousel':'3:00', 'Stardust Racers':'3:00',
+  "Hagrid's":'3:25', 'Forbidden Journey':'4:06', 'Flight of the Hippogriff':'1:06', 'Hogwarts Express':'4:00',
+  'Spider-Man':'5:00', 'Storm Force Accelatron':'3:00', 'The Incredible Hulk Coaster':'2:15', "Doctor Doom's Fearfall":'2:00',
+  'Ripsaw Falls':'7:00', 'Bilge-Rat Barges':'6:00', 'Jurassic River Adventure':'6:00', 'VelociCoaster':'2:00',
+  'Pteranodon Flyers':'1:00', 'Skull Island: Reign of Kong':'6:00', 'The Cat in the Hat':'6:00', 'Caro-Seuss-el':'2:00',
+  'One Fish, Two Fish':'4:00', 'High in the Sky Trolley Train':'6:00',
+  'Escape from Gringotts':'5:00', 'Minion Mayhem':'4:00', 'Villain-Con Minion Blast':'5:00', 'E.T. Adventure':'4:30',
+  'Trolls Trollercoaster':'0:44', 'Transformers':'4:30', 'Jimmy Fallon':'4:00', 'MIB Alien Attack':'5:00',
+  'The Simpsons Ride':'4:30', 'Kang & Kodos':'2:00', 'Revenge of the Mummy':'2:57',
+};
+const RIDE_KEYS_T = Object.keys(RIDE_TIME).sort((a,b) => b.length - a.length);
+const rideSecsFor = name => { const k = RIDE_KEYS_T.find(k => String(name).startsWith(k)); return k ? secs(RIDE_TIME[k]) : null; };
+DAYS.forEach(d => d.seed.forEach(x => { if(x.type === 'ride'){ const v = rideSecsFor(x.name); if(v !== null) x.ride = v; } }));
+CAT.forEach(([g,arr]) => arr.forEach(c => { if(c.type === 'ride'){ const v = rideSecsFor(c.name); if(v !== null) c.ride = v; } }));
+
 /* ---------- estado ---------- */
 const KEY = 'uo27.itinerario.v2';
 function build(seed){
@@ -689,6 +709,11 @@ DAYS.forEach(d => { if(!Array.isArray(state.days[d.key])) state.days[d.key] = bu
   }));
 })();
 // Rehace los días de vuelo una sola vez para borrar de los teléfonos los datos de la versión anterior
+// Pasa a lo guardado en los teléfonos la duración real de cada atracción (una sola vez)
+if(state.rideV !== 1){
+  DAYS.forEach(d => state.days[d.key].forEach(it => { if(it.type === 'ride'){ const v = rideSecsFor(it.name); if(v !== null) it.ride = v; } }));
+  state.rideV = 1;
+}
 if(state.travelV !== 2){
   ['2027-02-26','2027-03-04'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
   state.travelV = 2;
@@ -772,7 +797,7 @@ function render(){
     html += `<div class="row ${major?'major':''} ${isNow?'now':''} ${ic?'hasic':''}" data-id="${it.id}" style="--z:${zc(it.zone)};--zb:${zbg(it.zone, major)}">
       <span class="t ${s.clash?'bad':''}">${fmt(s.start)}</span>
       <span class="b"><span class="nm">${esc(it.name)}</span> <span class="d">${esc(detail(it))}</span>
-        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con las funciones registradas</span>':''}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>${ic}
+        <span class="m">${chips(it)}${off?'<span class="chip warn">No coincide con las funciones registradas</span>':''}${(() => { if(it.type !== 'ride') return ''; const over = Math.ceil(it.qMax + it.ride/60 + (it.walk ?? 5) - it.dur); return over > 0 ? `<span class="chip warn">Con la fila máxima te pasas ${over} min</span>` : ''; })()}${it.type==='flight'?'':`<span class="occ">${it.dur} min · hasta ${fmt(s.end)}</span>`}</span>${pills}</span>${ic}
     </div>`;
   });
   $('#list').innerHTML = html || '<p class="help" style="padding:24px 0">Sin actividades. Toca ＋ Agregar.</p>';

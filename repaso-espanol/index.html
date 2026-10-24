@@ -52,6 +52,13 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .slot .toy{position:absolute;left:2%;bottom:0;width:96%;height:auto}
 .toy.photo{object-fit:contain;aspect-ratio:1/1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.22))}
 .slot.royal{background:radial-gradient(circle at 50% 60%,rgba(255,206,84,.55),rgba(255,206,84,0) 70%)}
+.slot.special{background:radial-gradient(circle at 50% 60%,rgba(255,120,200,.45),rgba(120,200,255,.25) 45%,rgba(255,255,255,0) 72%)}
+.slot.doll{background:radial-gradient(circle at 50% 58%,rgba(255,205,60,.75),rgba(255,205,60,0) 72%);animation:dollbg 1.8s ease-in-out infinite}
+.toy.glow,.slot.doll .toy{animation:dollglow 1.8s ease-in-out infinite}
+@keyframes dollglow{0%,100%{filter:drop-shadow(0 0 4px rgba(255,200,40,.7)) drop-shadow(0 0 10px rgba(255,215,0,.5))}50%{filter:drop-shadow(0 0 12px rgba(255,200,40,1)) drop-shadow(0 0 28px rgba(255,215,0,.9))}}
+@keyframes dollbg{0%,100%{background-size:100% 100%}50%{background-size:125% 125%}}
+.newtoys .dollwin .toy{width:220px;height:220px}
+@media (prefers-reduced-motion:reduce){.toy.glow,.slot.doll .toy,.slot.doll{animation:none}}
 .slot.empty::before{content:"?";position:absolute;inset:18% 20% 10%;border:2px dashed var(--line);border-radius:50%;display:grid;place-items:center;color:var(--muted);font:800 18px var(--display);opacity:.6}
 .slot.new .toy{animation:drop .8s cubic-bezier(.3,1.5,.5,1) both}
 @keyframes drop{0%{transform:translateY(-40%) scale(.4);opacity:0}100%{transform:none;opacity:1}}
@@ -91,6 +98,11 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:4px;min-height:100px}
 .card.exam{border:3px solid var(--aton);background:#FFF4F6}
 .card.exam .t{color:var(--aton)}
+.card.exam{position:relative;padding-right:110px;grid-column:span 2;min-height:118px}
+@media (max-width:480px){.card.exam{grid-column:auto}}
+.prize{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:96px;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:800;color:#C2187A;text-align:center;line-height:1.1}
+.prize .toy{width:88px;height:88px;filter:grayscale(.85) opacity(.55)}
+.prize.got .toy{filter:none}
 .topic{font-family:var(--display);font-weight:800;font-size:clamp(26px,6vw,36px);line-height:1.1;color:#D21F3C;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
 .card:hover{border-color:var(--sun)}
 .card .t{font-weight:800;font-size:18px;line-height:1.2}
@@ -461,7 +473,7 @@ ACTS.filter(a => a.type === 'unir').forEach(a => {
 const examActs = g => ACTS.filter(a => a.g === g).map(a => a.type === 'unir' ? BYID[a.id + 'Q'] : a);
 const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-let errTot = {}, best = {}, errs = {}, toys = [], toysSeen = 0, crown = {}, royals = [];
+let errTot = {}, best = {}, errs = {}, toys = [], toysSeen = 0, crown = {}, royals = [], specials = [], doll = null;
 const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
 const MAXSTARS = ACTS.length * 3;
 const totalStars = () => ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
@@ -493,8 +505,18 @@ const TOYS = [].concat(
 /* Peluches reales 👑: se ganan al tener 3 ★ en TODAS las prácticas de una sección. La nutria real sale primero. */
 const ROYALS = [['real-8', 'Reina Nutria'], ['real-0', 'Rey Osito Dorado'], ['real-1', 'Rey Monstruo Pachón'], ['real-2', 'Reina Fresita'], ['real-3', 'Rey Oso Polar'],
   ['real-4', 'Rey Brócoli'], ['real-5', 'Rey Monstruo Colorín'], ['real-6', 'Rey Aguacate'], ['real-7', 'Rey Monstruo Arcoíris']].map(([id, name]) => ({ id, name, cat: 3, royal: true }));
-const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras', 'Peluche real 👑'];
-const TOYBY = Object.fromEntries(TOYS.concat(ROYALS).map(t => [t.id, t]));
+const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras', 'Peluche real 👑', 'Peluche de reto ⭐', 'Muñeca final 💛'];
+/* Peluches de reto ⭐: uno por cada reto final, solo se ganan sacando 3 ★ en ese reto */
+const SPECIALS = [['reto-sust', 'sust', 'Galletita Fresa'], ['reto-gen', 'gen', 'Calcetín Arcoíris'], ['reto-pron', 'pron', 'Mundito'],
+  ['reto-sil', 'sil', 'Remolino Arcoíris'], ['reto-orto', 'orto', 'Chispitas']].map(([id, g, name]) => ({ id, g, name, cat: 4, special: true }));
+/* Muñeca final 💛: se gana al tener 3 ★ en TODAS las prácticas de TODAS las secciones. Rubia para Pillus, castaña para Pelonchis. */
+const DOLLS = [{ id: 'muneca-rubia', name: 'Muñeca Rubia', cat: 5, doll: true }, { id: 'muneca-castana', name: 'Muñeca Castaña', cat: 5, doll: true }];
+const myDoll = () => { const p = me(); const k = p && (p.doll || (p.id === 'p1' ? 'castana' : p.id === 'p2' ? 'rubia' : (hashS(p.id) % 2 ? 'rubia' : 'castana'))); return DOLLS.find(d => d.id === 'muneca-' + k); };
+function hashS(str) { let h = 2166136261; for (const c of String(str)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }
+const TOYBY = Object.fromEntries(TOYS.concat(ROYALS, SPECIALS, DOLLS).map(t => [t.id, t]));
+const ALLIDS = () => TOYS.concat(ROYALS, SPECIALS).map(t => t.id).concat(myDoll() ? [myDoll().id] : []);
+const TOTAL = TOYS.length + ROYALS.length + SPECIALS.length + 1;
+const owned = () => toys.concat(royals, specials, doll ? [doll] : []);
 function toySVG(t, extraCls) {
   return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="peluches/${t.id}.webp" alt="${esc(t.name)}" decoding="async">`;
 }
@@ -520,7 +542,7 @@ function loadPlayer(id) {
   best = load(K('stars'), {}); errs = load(K('errs'), {}); errTot = load(K('errtot'), {});
   if (!load(K('fix-tabla'), 0)) { Object.keys(errs).forEach(k => { if (k.startsWith('tabla:')) delete errs[k]; }); save(K('errs'), errs); save(K('fix-tabla'), 1); }
   toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
-  royals = load(K('royals'), []).filter(t => TOYBY[t]);
+  royals = load(K('royals'), []).filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
   crown = load(K('crown'), null);
   if (!crown) { crown = {}; GROUPS.forEach(G => { crown[G.g] = ACTS.filter(a => a.g === G.g && best[a.id] === 3).map(a => a.id); }); save(K('crown'), crown); }
 }
@@ -535,6 +557,8 @@ function awardToys(n) {
   }
   save(K('toys'), toys); return got;
 }
+const allThree = () => ACTS.every(a => best[a.id] === 3);
+function dollCheck() { if (doll || !allThree() || !myDoll()) return null; doll = myDoll().id; save(K('doll'), doll); return myDoll(); }
 /* Ronda de corona: cada vez que todas las prácticas de una sección llegan a 3 ★ (desde la última corona), se gana un peluche real. */
 function crownCheck(act, stars) {
   if (stars < 3) return null;
@@ -576,7 +600,7 @@ $('#pname').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preven
 
 const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
-  const all = SHOWALL ? TOYS.concat(ROYALS).map(t => t.id) : toys.concat(royals), n = all.length, TOT = TOYS.length + ROYALS.length, last = (SHOWALL ? all : toys.concat(royals)).slice(-6).reverse();
+  const all = SHOWALL ? ALLIDS() : owned(), n = all.length, TOT = TOTAL, last = all.slice(-6).reverse();
   $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mis peluches'}</h2><span class="gn">🧸 ${n} de ${TOT}</span></div>
     <p>Cada práctica que terminas con 2 ★ o más te regala un peluche. Cuando ya sacaste 3 ★ en una práctica, desde ahí el peluche se gana solo con 3 ★. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas un peluche real con corona.</p>
     <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes peluches. ¡Gana tu primera estrella!</div>'}
@@ -587,17 +611,18 @@ const hash = str => { let h = 2166136261; for (const c of str) h = Math.imul(h ^
 function openShelf() {
   $('#home').hidden = true; $('#shelf').hidden = false; window.scrollTo(0, 0);
   const fresh = new Set(toys.slice(toysSeen));
-  const have = SHOWALL ? TOYS.concat(ROYALS).map(t => t.id) : toys.concat(royals), TOT = TOYS.length + ROYALS.length, n = have.length;
+  const have = SHOWALL ? ALLIDS() : owned(), TOT = TOTAL, n = have.length;
   // Orden de la repisa: hasta arriba los reyes en el orden en que se ganaron, luego el primer peluche que obtuvo la jugadora,
   // y después los demás mezclados (siempre en el mismo lugar). Al final, los lugares vacíos.
-  const kings = have.filter(id => TOYBY[id].royal), first = have.find(id => !TOYBY[id].royal);
-  const rest = have.filter(id => !TOYBY[id].royal && id !== first).sort((x, y) => hash(PID + x) - hash(PID + y));
-  const tail = kings.concat(first ? [first] : []);
+  // Después del primer peluche van los peluches de reto ⭐ en el orden en que se ganaron.
+  const dolls = have.filter(id => TOYBY[id].doll), kings = have.filter(id => TOYBY[id].royal), stars5 = have.filter(id => TOYBY[id].special), first = have.find(id => !TOYBY[id].royal && !TOYBY[id].special && !TOYBY[id].doll);
+  const rest = have.filter(id => !TOYBY[id].royal && !TOYBY[id].special && !TOYBY[id].doll && id !== first).sort((x, y) => hash(PID + x) - hash(PID + y));
+  const tail = dolls.concat(kings, first ? [first] : [], stars5);
   const slots = tail.concat(rest, Array(Math.max(0, TOT - n)).fill(null));
   $('#cabs').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mi colección'}</h2><span class="gn">🧸 ${n} de ${TOT}</span></div>
-    <p>${n === TOT ? 'Juntaste todos los peluches. ¡Felicidades!' : 'Toca un peluche para verlo de cerca. Los peluches reales 👑 brillan en dorado.'}</p>
+    <p>${n === TOT ? 'Juntaste todos los peluches. ¡Felicidades!' : 'Toca un peluche para verlo de cerca. Los peluches reales 👑 brillan en dorado y los de reto ⭐ en arcoíris.'}</p>
     <div class="cab">${slots.map(id => { if (!id) return '<div class="slot empty" aria-label="Lugar vacío"></div>'; const t = TOYBY[id];
-      return `<button class="slot${t.royal ? ' royal' : ''}${fresh.has(id) ? ' new' : ''}" type="button" data-t="${id}" aria-label="${esc(t.name)}">${toySVG(t)}</button>`; }).join('')}</div>`;
+      return `<button class="slot${t.royal ? ' royal' : ''}${t.special ? ' special' : ''}${t.doll ? ' doll' : ''}${fresh.has(id) ? ' new' : ''}" type="button" data-t="${id}" aria-label="${esc(t.name)}">${toySVG(t)}</button>`; }).join('')}</div>`;
   toysSeen = toys.length; save(K('toys-seen'), toysSeen);
 }
 $('#sback').addEventListener('click', () => { $('#shelf').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); });
@@ -605,7 +630,7 @@ $('#cabs').addEventListener('click', e => { const b = e.target.closest('.slot[da
 $('#toys').addEventListener('click', e => { if (e.target.closest('.mini .toy')) openShelf(); });
 function showToy(t) {
   const m = $('#modal');
-  m.innerHTML = `<div class="box" role="dialog" aria-label="${esc(t.name)}">${toySVG(t)}<div class="nm">${esc(t.name)}</div><div class="ct">${CATS[t.cat]}</div><button class="btn" type="button" id="mclose">Cerrar</button></div>`;
+  m.innerHTML = `<div class="box" role="dialog" aria-label="${esc(t.name)}">${toySVG(t, t.doll ? 'glow' : '')}<div class="nm">${esc(t.name)}</div><div class="ct">${CATS[t.cat]}</div><button class="btn" type="button" id="mclose">Cerrar</button></div>`;
   m.hidden = false; $('#mclose').onclick = () => { m.hidden = true; };
 }
 $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.target.hidden = true; });
@@ -625,7 +650,8 @@ function renderHome() {
       <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
       <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}
       <button class="card exam" type="button" data-exam="${G.g}"><span class="t">${G.x}</span><span class="s">El reto final: preguntas de todo ${G.h}, mezcladas. Más preguntas de lo que más se te dificulta.</span>
-      <span class="st">${starStr(best['exam-' + G.g] || 0)}</span></button></div></section>`).join('');
+      <span class="st">${starStr(best['exam-' + G.g] || 0)}</span>${(() => { const sp = SPECIALS.find(t => t.g === G.g), h = specials.includes(sp.id);
+        return `<span class="prize${h ? ' got' : ''}">${toySVG(sp)}<span>${h ? '⭐ ¡Ya es tuyo!' : '⭐ Premio con 3 ★'}</span></span>`; })()}</button></div></section>`).join('');
 }
 $('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; if (c.dataset.exam) startExam(c.dataset.exam); else start(c.dataset.id); });
 $('#back').addEventListener('click', goHome);
@@ -720,11 +746,15 @@ function finish() {
     const id = 'exam-' + cur.exam, G = GROUPS.find(x => x.g === cur.exam);
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[id] || 0;
     best[id] = Math.max(before, stars); save(K('stars'), best);
-    const got = stars >= (before === 3 ? 3 : 2) ? awardToys(1) : [];
+    const sp = SPECIALS.find(t => t.g === cur.exam), hasSp = specials.includes(sp.id);
+    let spGot = null, got = [];
+    if (stars === 3) { if (!hasSp) { specials.push(sp.id); save(K('specials'), specials); spGot = sp; } else got = awardToys(1); }
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Lo lograste! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? '¡Muy bien, casi lo logras!' : '¡Terminaste el reto!'}</div>
       <div class="stars">${starStr(stars)}</div>
       <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen de la escuela!' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      ${spGot ? `<div class="gain" style="color:#C2187A">⭐ ¡Ganaste el peluche especial de este reto!</div><div class="newtoys"><figure class="royalwin">${toySVG(spGot)}<figcaption>${esc(spGot.name)}</figcaption></figure></div>` : ''}
       ${got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
+      ${stars < 3 ? `<div>${hasSp ? 'Saca 3 ★ en el reto para ganar otro peluche.' : `⭐ Saca 3 ★ para ganar a <b>${esc(sp.name)}</b>, el peluche especial de este reto.`}</div>` : ''}
       <div class="btns"><button class="btn" type="button" id="again">Otro reto</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
     const g = cur.exam; $('#again').onclick = () => startExam(g);
   } else if (cur.review) {
@@ -738,9 +768,10 @@ function finish() {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
     best[cur.act.id] = Math.max(before, stars); save(K('stars'), best);
     const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora el peluche solo con 3 ★
-    const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars);
+    const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars), dg = dollCheck();
     const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
-    const gain = (rg ? `<div class="gain" style="color:#B8860B">👑 ¡Completaste ${esc(G.h)} con 3 ★ en todo! Ganaste un peluche real:</div>
+    const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Tienes 3 ★ en TODO. Ganaste el premio más especial:</div>
+      <div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>` : '') + (rg ? `<div class="gain" style="color:#B8860B">👑 ¡Completaste ${esc(G.h)} con 3 ★ en todo! Ganaste un peluche real:</div>
       <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
       + (got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div>
       <div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`

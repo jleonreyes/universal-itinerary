@@ -431,11 +431,11 @@ const ACTS = [
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
 const GROUPS = [
-  {g:'sust', h:'Sustantivos', d:'Común y propio, concreto y abstracto, individual y colectivo.'},
-  {g:'gen', h:'Género y número', d:'Masculino y femenino, singular y plural.'},
-  {g:'pron', h:'Pronombres personales', d:'yo, tú, él, ella, nosotros, nosotras, ustedes, ellos, ellas.'},
-  {g:'sil', h:'Sílabas', d:'Separar, contar y encontrar la sílaba tónica.'},
-  {g:'orto', h:'Ortografía', d:'Palabras con S, C, B y V, Q y Z. Y un dictado.'}
+  {g:'sust', x:'👑 ¡Reina de los Sustantivos!', h:'Sustantivos', d:'Común y propio, concreto y abstracto, individual y colectivo.'},
+  {g:'gen', x:'🏆 ¡Campeona de Género y Número!', h:'Género y número', d:'Masculino y femenino, singular y plural.'},
+  {g:'pron', x:'🚀 ¡El Gran Reto de los Pronombres!', h:'Pronombres personales', d:'yo, tú, él, ella, nosotros, nosotras, ustedes, ellos, ellas.'},
+  {g:'sil', x:'✨ ¡La Prueba Mágica de las Sílabas!', h:'Sílabas', d:'Separar, contar y encontrar la sílaba tónica.'},
+  {g:'orto', x:'👑 ¡Reina de la Ortografía!', h:'Ortografía', d:'Palabras con S, C, B y V, Q y Z. Y un dictado.'}
 ];
 const INST = {
   clas:'Lee la palabra y toca la columna donde va.',
@@ -624,7 +624,7 @@ function renderHome() {
     <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
       <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
       <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}
-      <button class="card exam" type="button" data-exam="${G.g}"><span class="t">📝 Examen final</span><span class="s">Preguntas de todo ${G.h}, mezcladas. Más preguntas de lo que más se te dificulta.</span>
+      <button class="card exam" type="button" data-exam="${G.g}"><span class="t">${G.x}</span><span class="s">El reto final: preguntas de todo ${G.h}, mezcladas. Más preguntas de lo que más se te dificulta.</span>
       <span class="st">${starStr(best['exam-' + G.g] || 0)}</span></button></div></section>`).join('');
 }
 $('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; if (c.dataset.exam) startExam(c.dataset.exam); else start(c.dataset.id); });
@@ -669,7 +669,7 @@ function startExam(g) {
     miss.concat(ojo, rest).slice(0, n[j]).forEach(i => qs.push({ act: a, i })); });
   const G = GROUPS.find(x => x.g === g);
   cur = { review: true, exam: g, mistakes: 0, done: 0, total: qs.length, over: false, cols: {}, k: 0, qs: shuffle(qs) };
-  setupPlay('📝 Examen final: ' + G.h, null);
+  setupPlay(G.x, null);
   progress(); next();
 }
 function startReview() {
@@ -721,11 +721,11 @@ function finish() {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[id] || 0;
     best[id] = Math.max(before, stars); save(K('stars'), best);
     const got = stars >= (before === 3 ? 3 : 2) ? awardToys(1) : [];
-    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Examen perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste el examen!'}</div>
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Lo lograste! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? '¡Muy bien, casi lo logras!' : '¡Terminaste el reto!'}</div>
       <div class="stars">${starStr(stars)}</div>
-      <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen!' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen de la escuela!' : 'Repítelo para ganar las 3 estrellas.'}</div>
       ${got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
-      <div class="btns"><button class="btn" type="button" id="again">Otro examen</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+      <div class="btns"><button class="btn" type="button" id="again">Otro reto</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
     const g = cur.exam; $('#again').onclick = () => startExam(g);
   } else if (cur.review) {
     const left = errKeys().length, got = m <= 3 ? awardToys(1) : [];

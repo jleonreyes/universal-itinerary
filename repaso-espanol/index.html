@@ -151,6 +151,9 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .syl{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:10px 16px;font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,44px);line-height:1;min-width:64px}
 .syl.ton{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
 .syl.aton{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.sylw{display:flex;flex-direction:column;align-items:center;gap:4px}
+.syll{font-weight:800;font-size:15px;min-height:20px;text-transform:uppercase;letter-spacing:.04em}
+.syll.ton{color:var(--ton)} .syll.aton{color:var(--aton)}
 .syl.bad{border-color:var(--bad);background:var(--bad-soft)}
 .say{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:8px 16px;font-weight:800}
 .saybig{font-size:22px;padding:14px 26px}
@@ -274,6 +277,8 @@ const SIL = [
   ['pelota','pe-lo-ta'],['camisa','ca-mi-sa'],['música','mú-si-ca'],['ventana','ven-ta-na'],['zapato','za-pa-to'],['corazón','co-ra-zón'],['girasol','gi-ra-sol'],['juguete','ju-gue-te'],['sábado','sá-ba-do'],['escuela','es-cue-la'],['abuelo','a-bue-lo'],['mosquito','mos-qui-to'],['raqueta','ra-que-ta'],['pequeño','pe-que-ño'],
   ['mariposa','ma-ri-po-sa',1],['elefante','e-le-fan-te'],['chocolate','cho-co-la-te'],['computadora','com-pu-ta-do-ra'],['zapatilla','za-pa-ti-lla'],['caramelo','ca-ra-me-lo']
 ];
+const SILTON = [['ca-sa',0,1],['pe-lo-ta',1,1],['ár-bol',0,1],['ca-mi-sa',1,1],['ven-ta-na',1,1],['co-ra-zón',2,1],['ma-ri-po-sa',2,1],['lá-piz',0,1],
+     ['ca-mión',1],['ju-gue-te',1],['mú-si-ca',0],['ra-tón',1],['pá-ja-ro',0],['za-pa-to',1],['ma-má',1],['sá-ba-do',0],['es-cue-la',1],['fe-liz',1],['pan-ta-lón',2],['me-sa',0],['ga-to',0],['cas-ti-llo',1],['a-vión',1],['gi-ra-sol',2],['pe-que-ño',1],['ca-ra-col',2]].map(([s, t, o]) => ({s, t, ojo:o}));
 const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
 
 const ACTS = [
@@ -367,10 +372,12 @@ const ACTS = [
   {g:'sil', id:'cuantas', type:'clas', title:'¿Cuántas sílabas tiene?', src:'Según el número de sílabas', buckets:['Monosílaba (1)','Bisílaba (2)','Trisílaba (3)','Polisílaba (4 o más)'],
    rule:'<b>Monosílabas:</b> tienen 1 sílaba. Ejemplo: sol, pan, luz, mar.<br><b>Bisílabas:</b> tienen 2 sílabas. Ejemplo: ca-sa, me-sa, ga-to, lá-piz.<br><b>Trisílabas:</b> tienen 3 sílabas. Ejemplo: pe-lo-ta, ca-mi-sa, mú-si-ca.<br><b>Polisílabas:</b> tienen 4 sílabas o más. Ejemplo: ma-ri-po-sa.',
    items:SIL.map(([w, s, o]) => { const n = s.split('-').length; return {t:w, show:s, b:Math.min(n, 4) - 1, ojo:o, why:`${s} → ${n} ${n === 1 ? 'sílaba' : 'sílabas'}: es ${SNAME[Math.min(n, 4) - 1]}.${w === 'gato' ? ' ¡No es trisílaba!' : ''}`}; })},
-  {g:'sil', id:'tonica', type:'ton', title:'Sílaba tónica y átona', src:'La sílaba tónica',
-   rule:'La sílaba <b>tónica</b> es la que pronunciamos con <b>mayor</b> fuerza de voz. Ejemplo: ca-<b>mión</b>, pe-<b>lo</b>-ta, ju-<b>gue</b>-te.<br>Las sílabas <b>átonas</b> son las que pronunciamos con <b>menor</b> fuerza de voz.<br>En pe-lo-ta: <b>lo</b> es la tónica; <b>pe</b> y <b>ta</b> son átonas.<br>Truco: di la palabra como si llamaras a alguien de lejos. Si lleva acento (´), esa es la tónica.',
-   items:[['ca-sa',0,1],['pe-lo-ta',1,1],['ár-bol',0,1],['ca-mi-sa',1,1],['ven-ta-na',1,1],['co-ra-zón',2,1],['ma-ri-po-sa',2,1],['lá-piz',0,1],
-     ['ca-mión',1],['ju-gue-te',1],['mú-si-ca',0],['ra-tón',1],['pá-ja-ro',0],['za-pa-to',1],['ma-má',1],['sá-ba-do',0],['es-cue-la',1],['fe-liz',1],['pan-ta-lón',2],['me-sa',0],['ga-to',0],['cas-ti-llo',1],['a-vión',1],['gi-ra-sol',2],['pe-que-ño',1],['ca-ra-col',2]].map(([s, t, o]) => ({s, t, ojo:o}))},
+  {g:'sil', id:'tonica', type:'ton', title:'Sílaba TÓNICA 🔵', src:'La sílaba tónica',
+   rule:'La sílaba <b style="color:var(--ton)">tónica</b> es la que pronunciamos con <b>MAYOR</b> fuerza de voz. Solo hay <b>una</b> en cada palabra.<br>Ejemplo: ca-<b style="color:var(--ton)">mión</b>, pe-<b style="color:var(--ton)">lo</b>-ta, ju-<b style="color:var(--ton)">gue</b>-te.<br>Truco: di la palabra como si llamaras a alguien de lejos. Si lleva acento (´), esa es la tónica.<br>En la app la tónica se pinta de <b style="color:var(--ton)">azul</b>.',
+   items:SILTON},
+  {g:'sil', id:'atona', type:'aton', title:'Sílabas ÁTONAS 🔴', src:'Las sílabas átonas',
+   rule:'Las sílabas <b style="color:var(--aton)">átonas</b> son las que pronunciamos con <b>MENOR</b> fuerza de voz. Son <b>todas las que no son la tónica</b>, y puede haber varias.<br>Ejemplo: en <b style="color:var(--aton)">pe</b>-lo-<b style="color:var(--aton)">ta</b>, «pe» y «ta» son átonas; «lo» es la tónica.<br>Truco: primero encuentra la que suena más fuerte; las demás son las átonas.<br>En la app las átonas se pintan de <b style="color:var(--aton)">rojo</b>.',
+   items:SILTON},
 
   /* ---------- ORTOGRAFÍA ---------- */
   {g:'orto', id:'eses', type:'elige', title:'Palabras con S', src:'Palabras con «s»',
@@ -432,7 +439,8 @@ const INST = {
   elige:'Toca la respuesta correcta.',
   toca:'Toca el pronombre de la oración.',
   sil:'Toca entre las letras para cortar la palabra en sílabas. Cuando termines, toca «Revisar».',
-  ton:'Toca la sílaba que suena más fuerte (la tónica). Toca 🔊 para oír la palabra.',
+  ton:'🔵 Toca la sílaba TÓNICA: la que suena más FUERTE. Solo hay una. Toca 🔊 para oír la palabra.',
+  aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
   dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
   unir:'Toca una palabra de un lado y luego su pareja del otro lado.'
 };
@@ -662,13 +670,13 @@ function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = m
 const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡Así se hace!'];
 const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
 function wrongQ(q, ...els) { cur.mistakes++; if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
-function rightQ(q, why) {
+function rightQ(q, why, wait) {
   cur.over = true;
   if (!q.bad) clearErr(q);
   cur.done++; progress();
   const go = () => { cur.over = false; cur.k++; next(); };
-  if (q.bad && why) {
-    fb('ok', '¡Ahora sí!');
+  if ((q.bad || wait) && why) {
+    fb('ok', q.bad ? '¡Ahora sí!' : PRAISE[Math.floor(Math.random() * PRAISE.length)]);
     $('#note').innerHTML = `<div class="note"><div class="why">💡 ${why}</div><button class="btn" type="button" id="nx">Siguiente →</button></div>`;
     $('#nx').onclick = go; $('#nx').focus({ preventScroll: true });
     $('#note').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -783,21 +791,8 @@ const RENDER = {
     };
   },
   /* Sílaba tónica: azul la tónica, rojo las átonas */
-  ton(q, it) {
-    const S = it.s.split('-'), word = S.join('');
-    $('#area').innerHTML = `<div class="qp">¿Cuál es la sílaba tónica de «${esc(word)}»?</div>
-      <div class="qcard"><div class="syls" id="sy">${S.map((x, j) => `<button class="syl" type="button" data-j="${j}">${esc(x)}</button>`).join('')}</div></div>
-      <div class="actions"><button class="say" type="button" id="say">🔊 Oír</button></div>`;
-    $('#say').onclick = () => speak(word, 0.7);
-    $('#sy').onclick = e => {
-      const b = e.target.closest('.syl'); if (!b || cur.over) return; const j = +b.dataset.j;
-      if (j === it.t) {
-        [...$('#sy').children].forEach((x, k) => x.classList.add(k === it.t ? 'ton' : 'aton'));
-        const at = S.filter((x, k) => k !== it.t);
-        rightQ(q, `${S.map((x, k) => k === it.t ? x.toUpperCase() : x).join('-')}: «${S[it.t]}» es la tónica (azul)${at.length ? `; ${at.map(x => '«' + x + '»').join(' y ')} ${at.length === 1 ? 'es átona' : 'son átonas'} (rojo)` : ''}.`);
-      } else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
-    };
-  },
+  ton(q, it) { silRender(q, it, 'ton'); },
+  aton(q, it) { silRender(q, it, 'aton'); },
   /* Dictado */
   dict(q, it) {
     const can = 'speechSynthesis' in window;
@@ -828,6 +823,30 @@ const RENDER = {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
   }
 };
+
+/* ---------- Sílaba tónica (azul) / átonas (rojo) ---------- */
+function silRender(q, it, mode) {
+  const S = it.s.split('-'), word = S.join(''), need = mode === 'ton' ? 1 : S.length - 1, got = new Set();
+  $('#area').innerHTML = `<div class="qp">${mode === 'ton' ? `🔵 ¿Cuál es la sílaba <span style="color:var(--ton)">TÓNICA</span> de «${esc(word)}»?`
+      : `🔴 Toca las sílabas <span style="color:var(--aton)">ÁTONAS</span> de «${esc(word)}» ${need > 1 ? `(son ${need})` : '(es 1)'}`}</div>
+    <div class="qcard"><div class="syls" id="sy">${S.map((x, j) => `<div class="sylw"><button class="syl" type="button" data-j="${j}">${esc(x)}</button><span class="syll" id="sl${j}"></span></div>`).join('')}</div></div>
+    <div class="actions"><button class="say" type="button" id="say">🔊 Oír</button></div>`;
+  $('#say').onclick = () => speak(word, 0.7);
+  const reveal = () => {
+    S.forEach((x, k) => { const b = $(`.syl[data-j="${k}"]`); b.classList.remove('bad'); b.classList.add(k === it.t ? 'ton' : 'aton'); $('#sl' + k).textContent = k === it.t ? 'tónica' : 'átona'; $('#sl' + k).className = 'syll ' + (k === it.t ? 'ton' : 'aton'); });
+    const at = S.filter((x, k) => k !== it.t);
+    rightQ(q, `<span style="color:var(--ton)">🔵 Tónica: «${S[it.t]}»</span> (la que suena más fuerte)<br><span style="color:var(--aton)">🔴 ${at.length === 1 ? 'Átona' : 'Átonas'}: ${at.map(x => '«' + x + '»').join(', ')}</span> (suenan más suave)`, true);
+  };
+  $('#sy').onclick = e => {
+    const b = e.target.closest('.syl'); if (!b || cur.over) return; const j = +b.dataset.j;
+    const ok = mode === 'ton' ? j === it.t : j !== it.t;
+    if (!ok) { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); return; }
+    if (mode === 'ton') return reveal();
+    if (got.has(j)) return;
+    got.add(j); b.classList.add('aton', 'pop'); $('#sl' + j).textContent = 'átona'; $('#sl' + j).className = 'syll aton';
+    if (got.size === need) reveal(); else fb('ok', `¡Bien! Te ${need - got.size === 1 ? 'falta 1' : 'faltan ' + (need - got.size)}.`);
+  };
+}
 
 /* ---------- Une con líneas ---------- */
 function renderUnir(act) {

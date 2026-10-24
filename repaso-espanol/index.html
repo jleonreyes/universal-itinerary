@@ -509,7 +509,7 @@ const CATS = ['Animalitos', 'Monstruos amigables', 'Frutas y verduras', 'Peluche
 /* Peluches de reto ⭐: uno por cada reto final, solo se ganan sacando 3 ★ en ese reto */
 const SPECIALS = [['reto-sust', 'sust', 'Galletita Fresa'], ['reto-gen', 'gen', 'Calcetín Arcoíris'], ['reto-pron', 'pron', 'Mundito'],
   ['reto-sil', 'sil', 'Remolino Arcoíris'], ['reto-orto', 'orto', 'Chispitas']].map(([id, g, name]) => ({ id, g, name, cat: 4, special: true }));
-/* Muñeca final 💛: se gana al tener 3 ★ en TODAS las prácticas de TODAS las secciones. Rubia para Pillus, castaña para Pelonchis. */
+/* Muñeca final 💛: se gana al tener los 5 retos finales con 3 ★. Rubia para Pillus, castaña para Pelonchis. */
 const DOLLS = [{ id: 'muneca-rubia', name: 'Muñeca Rubia', cat: 5, doll: true }, { id: 'muneca-castana', name: 'Muñeca Castaña', cat: 5, doll: true }];
 const myDoll = () => { const p = me(); const k = p && (p.doll || (p.id === 'p1' ? 'castana' : p.id === 'p2' ? 'rubia' : (hashS(p.id) % 2 ? 'rubia' : 'castana'))); return DOLLS.find(d => d.id === 'muneca-' + k); };
 function hashS(str) { let h = 2166136261; for (const c of String(str)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }
@@ -557,7 +557,7 @@ function awardToys(n) {
   }
   save(K('toys'), toys); return got;
 }
-const allThree = () => ACTS.every(a => best[a.id] === 3);
+const allThree = () => GROUPS.every(G => best['exam-' + G.g] === 3);   // los 5 retos finales con 3 ★
 function dollCheck() { if (doll || !allThree() || !myDoll()) return null; doll = myDoll().id; save(K('doll'), doll); return myDoll(); }
 /* Ronda de corona: cada vez que todas las prácticas de una sección llegan a 3 ★ (desde la última corona), se gana un peluche real. */
 function crownCheck(act, stars) {
@@ -749,9 +749,12 @@ function finish() {
     const sp = SPECIALS.find(t => t.g === cur.exam), hasSp = specials.includes(sp.id);
     let spGot = null, got = [];
     if (stars === 3) { if (!hasSp) { specials.push(sp.id); save(K('specials'), specials); spGot = sp; } else got = awardToys(1); }
+    const dg = dollCheck(), retos = GROUPS.filter(x => best['exam-' + x.g] === 3).length;
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Lo lograste! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? '¡Muy bien, casi lo logras!' : '¡Terminaste el reto!'}</div>
       <div class="stars">${starStr(stars)}</div>
       <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen de la escuela!' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      ${dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste los 5 retos con 3 ★. Este es el premio más especial:</div><div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>`
+        : (!doll ? `<div style="color:#B8860B;font-weight:800">💛 Retos con 3 ★: ${retos} de ${GROUPS.length}. ¡Gana los 5 para la muñeca final!</div>` : '')}
       ${spGot ? `<div class="gain" style="color:#C2187A">⭐ ¡Ganaste el peluche especial de este reto!</div><div class="newtoys"><figure class="royalwin">${toySVG(spGot)}<figcaption>${esc(spGot.name)}</figcaption></figure></div>` : ''}
       ${got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
       ${stars < 3 ? `<div>${hasSp ? 'Saca 3 ★ en el reto para ganar otro peluche.' : `⭐ Saca 3 ★ para ganar a <b>${esc(sp.name)}</b>, el peluche especial de este reto.`}</div>` : ''}
@@ -770,7 +773,7 @@ function finish() {
     const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora el peluche solo con 3 ★
     const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars), dg = dollCheck();
     const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
-    const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Tienes 3 ★ en TODO. Ganaste el premio más especial:</div>
+    const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste los 5 retos con 3 ★. Este es el premio más especial:</div>
       <div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>` : '') + (rg ? `<div class="gain" style="color:#B8860B">👑 ¡Completaste ${esc(G.h)} con 3 ★ en todo! Ganaste un peluche real:</div>
       <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
       + (got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div>

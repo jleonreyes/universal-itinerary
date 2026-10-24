@@ -568,7 +568,7 @@ const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
   const all = SHOWALL ? TOYS.concat(ROYALS).map(t => t.id) : toys.concat(royals), n = all.length, TOT = TOYS.length + ROYALS.length, last = (SHOWALL ? all : toys.concat(royals)).slice(-6).reverse();
   $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mis peluches'}</h2><span class="gn">🧸 ${n} de ${TOT}</span></div>
-    <p>Cada práctica que terminas con 2 ★ o más te regala un peluche. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas un peluche real con corona.</p>
+    <p>Cada práctica que terminas con 2 ★ o más te regala un peluche. Cuando ya sacaste 3 ★ en una práctica, desde ahí el peluche se gana solo con 3 ★. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas un peluche real con corona.</p>
     <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes peluches. ¡Gana tu primera estrella!</div>'}
     <button class="btn" type="button" id="toshelf">Ver mis repisas 🧸</button></div>`;
   $('#toshelf').onclick = openShelf;
@@ -695,13 +695,14 @@ function finish() {
   } else {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
     best[cur.act.id] = Math.max(before, stars); save(K('stars'), best);
-    const got = stars >= 2 ? awardToys(1) : [], rg = crownCheck(cur.act, stars);
+    const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora el peluche solo con 3 ★
+    const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars);
     const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
     const gain = (rg ? `<div class="gain" style="color:#B8860B">👑 ¡Completaste ${esc(G.h)} con 3 ★ en todo! Ganaste un peluche real:</div>
       <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
       + (got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div>
       <div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
-      : '<div>Termina la práctica con 2 ★ o más para ganar un peluche.</div>')
+      : `<div>${need === 3 ? 'Ya sacaste 3 ★ en esta práctica: ahora el peluche se gana solo con 3 ★. ¡Tú puedes!' : 'Termina la práctica con 2 ★ o más para ganar un peluche.'}</div>`)
       + (!rg && ROYALS.some(r => !royals.includes(r.id)) ? `<div style="color:var(--muted);font-size:15px">👑 ${esc(G.h)}: ${done3} de ${sec.length} prácticas con 3 ★ para el peluche real.</div>` : '');
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!'}</div>
       <div class="stars">${starStr(stars)}</div>

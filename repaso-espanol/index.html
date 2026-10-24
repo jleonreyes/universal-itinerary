@@ -433,13 +433,14 @@ const ACTS = [
      L('_apato','z',['s','c'],'zapato con Z.'), L('_orro','z',['s','c'],'zorro con Z.'), L('a_úcar','z',['s','c'],'azúcar con Z.'), L('lápi_','z',['s'],'lápiz termina en Z.'), L('nari_','z',['s'],'nariz termina en Z.'), L('feli_','z',['s'],'feliz termina en Z.'),
      L('pe_','z',['s'],'pez termina en Z.'), L('lu_','z',['s'],'luz termina en Z.'), L('maí_','z',['s'],'maíz termina en Z.'), L('arro_','z',['s'],'arroz termina en Z.'), L('_umo','z',['s','c'],'zumo con Z.'), L('_apatilla','z',['s','c'],'zapatilla con Z.'),
      Q('¿Cuál está bien escrita?','zapato',['sapato','capato'],'zapato con Z.'), Q('¿Cuál está bien escrita?','arroz',['arros','aroz'],'arroz: RR y Z al final.'), Q('¿Cuál está bien escrita?','feliz',['felis','felic'],'feliz con Z.'), Q('¿Cuál es el plural de «nariz»?','narices',['narizes','nariz'],'nariz → narices: la z cambia a c.')]},
-  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Dictados del cuaderno', n:10,
+  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Todas las palabras de S, C, B, V y Z', n:12,
    rule:'Escucha con atención. Piensa en la regla: ¿lleva S, C o Z? ¿B o V? ¿QU? Fíjate también en la H y en los acentos.',
    items:[['hacer','Me gusta hacer la tarea.',1],['visita','Ayer vino una visita a mi casa.',1],['grandísimo','El elefante es grandísimo.',1],['vino','Mi tía vino a comer.',1],['zanahoria','Me encanta la zanahoria.',1],
      ['peces','Fui a un acuario y tenía muchos peces.'],['cerca','La escuela está cerca.'],['luces','Hay muchas luces.'],['cinco','Hay cinco conejos.'],['mariposa','Hoy vi una mariposa.'],['cielo','El cielo está nublado.'],
      ['avión','Hoy me subí a un avión.'],['abuelo','Fui a la casa de mi abuelo.'],['viernes','Hoy es viernes.'],['queso','Compré queso.'],['esquina','Hay una panadería en la esquina.'],['mosquito','En mi casa hay un mosquito.'],
      ['pequeño','Mi perro es pequeño.'],['zapatos','Me compré unos zapatos.'],['lápiz','Escribo con un lápiz.'],['feliz','Estoy muy feliz.'],['arroz','Hoy comí arroz.'],['maíz','Allí hay mucho maíz.'],
-     ['biblioteca','Fuimos a la biblioteca.'],['buscar','Voy a buscar mi suéter.'],['hermoso','El jardín es hermoso.'],['deportista','Nacho es deportista.'],['dulces','Voy a la tienda de dulces.'],['cocina','En la cocina tengo platos.'],['gracias','Muchas gracias.'],['parque','Hoy fui al parque.']].map(([w, s, o]) => ({w, s, ojo:o}))}
+     ['biblioteca','Fuimos a la biblioteca.'],['buscar','Voy a buscar mi suéter.'],['hermoso','El jardín es hermoso.'],['deportista','Nacho es deportista.'],['dulces','Voy a la tienda de dulces.'],['cocina','En la cocina tengo platos.'],['gracias','Muchas gracias.'],['parque','Hoy fui al parque.'],
+     ['casa','Vivo en una casa grande.'],['camisa','Me puse mi camisa nueva.'],['música','Me gusta escuchar música.'],['pasado','El año pasado fuimos a la playa.'],['precioso','El vestido es precioso.'],['piso','El piso está limpio.'],['beso','Le di un beso a mi mamá.'],['uso','Uso mi lápiz para escribir.'],['grandísima','La ballena es grandísima.'],['televisión','Vimos una película en la televisión.'],['canadiense','Mi amigo es canadiense.'],['francés','El pan francés es delicioso.'],['cariñoso','Mi perro es muy cariñoso.'],['decir','Voy a decir la verdad.'],['lápices','Tengo muchos lápices de colores.'],['circo','Fuimos al circo.'],['dulce','El pastel es muy dulce.'],['cine','Vamos al cine el sábado.'],['comercial','Vimos un comercial en la tele.'],['silencioso','El salón está silencioso.'],['espacioso','Mi cuarto es espacioso.'],['delicioso','El postre está delicioso.'],['gracioso','El payaso es muy gracioso.'],['ventana','Abre la ventana, por favor.'],['verano','En verano hace calor.'],['barca','Paseamos en una barca.'],['bebé','El bebé está dormido.'],['vivir','Me gusta vivir en mi ciudad.'],['volver','Vamos a volver temprano.'],['blanco','El gato es blanco.'],['brazo','Me lastimé el brazo.'],['también','Yo también quiero jugar.'],['tambor','Mi hermana toca el tambor.'],['burro','El burro come zanahorias.'],['enviar','Voy a enviar una carta.'],['invierno','En invierno hace frío.'],['vicepresidente','El vicepresidente dio un discurso.'],['tuve','Ayer tuve clase de música.'],['estuve','Estuve en casa de mi abuela.'],['anduve','Anduve en bicicleta.'],['abuela','Mi abuela hace galletas.'],['zapato','Se me perdió un zapato.'],['zorro','El zorro es naranja.'],['zapatilla','Me amarré la zapatilla.'],['azúcar','Le puse azúcar al agua.'],['nariz','Me pica la nariz.'],['pez','Mi pez es dorado.'],['luz','Apaga la luz, por favor.'],['zumo','Tomé zumo de naranja.']].map(([w, s, o]) => ({w, s, ojo:o}))}
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
 const GROUPS = [
@@ -473,12 +474,12 @@ ACTS.filter(a => a.type === 'unir').forEach(a => {
 const examActs = g => ACTS.filter(a => a.g === g).map(a => a.type === 'unir' ? BYID[a.id + 'Q'] : a);
 const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
 const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-let errTot = {}, best = {}, errs = {}, toys = [], toysSeen = 0, crown = {}, royals = [], specials = [], doll = null;
+let errHist = {}, errTot = {}, best = {}, errs = {}, toys = [], toysSeen = 0, crown = {}, royals = [], specials = [], doll = null;
 const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
 const MAXSTARS = ACTS.length * 3;
 const totalStars = () => ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
 const key = q => q.act.id + ':' + q.i;
-const markErr = q => { errs[key(q)] = Math.min(3, (errs[key(q)] || 0) + 1); save(K('errs'), errs); };
+const markErr = q => { errHist[key(q)] = (errHist[key(q)] || 0) + 1; save(K('errhist'), errHist); errs[key(q)] = Math.min(3, (errs[key(q)] || 0) + 1); save(K('errs'), errs); };
 const clearErr = q => { const k = key(q); if (!errs[k]) return; if (--errs[k] <= 0) delete errs[k]; save(K('errs'), errs); };
 const errKeys = () => Object.keys(errs).filter(k => { const [a, i] = k.split(':'); return BYID[a] && BYID[a].items && BYID[a].items[+i]; });
 
@@ -539,7 +540,7 @@ function loadPlayer(id) {
     ['stars', 'errs'].forEach(n => { const v = load('esp-' + n, null); if (v) save(K(n), v); });
     ['esp-stars', 'esp-errs', 'esp-seen', 'esp-toys', 'esp-toys-seen', 'esp-bonus'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
   }
-  best = load(K('stars'), {}); errs = load(K('errs'), {}); errTot = load(K('errtot'), {});
+  best = load(K('stars'), {}); errs = load(K('errs'), {}); errTot = load(K('errtot'), {}); errHist = load(K('errhist'), {});
   if (!load(K('fix-tabla'), 0)) { Object.keys(errs).forEach(k => { if (k.startsWith('tabla:')) delete errs[k]; }); save(K('errs'), errs); save(K('fix-tabla'), 1); }
   toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
   royals = load(K('royals'), []).filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
@@ -661,9 +662,13 @@ function goHome() { try { speechSynthesis.cancel(); } catch (e) {} $('#play').hi
 let cur = null;
 function pick(act) {
   const n = act.n || 10, all = act.items.map((x, i) => i);
-  const missed = shuffle(all.filter(i => errs[act.id + ':' + i])).slice(0, 5);
-  const ojo = shuffle(all.filter(i => act.items[i].ojo && !missed.includes(i)));
-  const rest = shuffle(all.filter(i => !missed.includes(i) && !ojo.includes(i)));
+  // Primero las que tiene pendientes por error (las de más errores primero), luego algunas que corrigió la miss,
+  // y el resto al azar pero con más probabilidad para las que se han equivocado antes.
+  const E = i => errs[act.id + ':' + i] || 0, Hh = i => errHist[act.id + ':' + i] || 0;
+  const big = act.type === 'dict';
+  const missed = shuffle(all.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, big ? 8 : 5);
+  const ojo = shuffle(all.filter(i => act.items[i].ojo && !missed.includes(i))).slice(0, big ? 2 : 99);
+  const rest = all.filter(i => !missed.includes(i) && !ojo.includes(i)).map(i => [i, Math.random() / (1 + 2 * Hh(i))]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
   return shuffle(missed.concat(ojo, rest).slice(0, Math.min(n, all.length)));
 }
 function setupPlay(title, act) {

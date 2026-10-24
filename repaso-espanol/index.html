@@ -258,6 +258,7 @@ const GA = {el:0, los:1, la:2, las:3};
 const G  = (w, art, o, extra) => ({p:'¿Qué género y número tiene?', big:w, a:GN[GA[art]], w:GN.filter((x, i) => i !== GA[art]), why:`Decimos «${art} ${w}»: ${GN[GA[art]]}.${extra ? ' ' + extra : ''}`, ojo:o, cls:'small'});
 const L  = (big, a, w, why, o) => ({p:a.length > 1 && /^(que|qui|ca|co|cu)$/.test(a) ? '¿Qué sílaba falta?' : '¿Qué letra falta?', big, a, w, why, ojo:o});
 const Q  = (p, a, w, why, o, big) => ({p, big, a, w, why, ojo:o, cls:'small'});
+const QA = (p, ok, w) => ({p, a:ok[0], alt:ok.slice(1), w:ok.slice(1).concat(w), why:`${ok.join(' y ')}: ${p}. ¡Los dos cuentan!`, cls:'small'});
 const PS = (sub, rest, a, w, why, o) => ({p:'Cambia lo subrayado por un pronombre:', html:`<u>${sub}</u> ${rest}`, after:`<b style="color:var(--ok)">${a}</b> ${rest}`, a, w, why, ojo:o, long:1});
 const MS = (big, a, w, why, o) => ({p:'¿Cómo se escribe?', big, a, w, why, ojo:o, long:1});
 
@@ -350,12 +351,14 @@ const ACTS = [
      PS('Ana y Pedro','son amigos.','Ellos',['Ellas','Nosotros','Él'],'Si el grupo junta niñas y niños, decimos ellos.')]},
   {g:'pron', id:'tabla', type:'elige', title:'La tabla de los pronombres', src:'Los pronombres personales',
    rule:'<table style="border-collapse:collapse;width:100%;max-width:420px"><tr><th></th><th style="text-align:left">Singular</th><th style="text-align:left">Plural</th></tr><tr><td><b>1.ª persona</b></td><td>yo</td><td>nosotros, nosotras</td></tr><tr><td><b>2.ª persona</b></td><td>tú</td><td>ustedes</td></tr><tr><td><b>3.ª persona</b></td><td>él, ella</td><td>ellos, ellas</td></tr></table>',
-   items:[Q('1.ª persona del singular','yo',['tú','él','nosotros']), Q('2.ª persona del singular','tú',['yo','ustedes','ella']), Q('3.ª persona del singular (una niña)','ella',['tú','ellas','yo']),
-     Q('3.ª persona del singular (un niño)','él',['ellos','tú','yo']), Q('1.ª persona del plural (solo niñas)','nosotras',['ellas','ustedes','nosotros']), Q('2.ª persona del plural','ustedes',['nosotros','ellos','tú']),
-     Q('3.ª persona del plural (solo niñas)','ellas',['ella','nosotras','ustedes']), Q('3.ª persona del plural (niños)','ellos',['él','nosotros','ustedes']),
-     Q('«nosotros» es…','1.ª persona del plural',['3.ª persona del plural','2.ª persona del plural','1.ª persona del singular']), Q('«ustedes» es…','2.ª persona del plural',['1.ª persona del plural','3.ª persona del plural','2.ª persona del singular']),
-     Q('«yo» es…','1.ª persona del singular',['2.ª persona del singular','3.ª persona del singular','1.ª persona del plural']), Q('«ellas» es…','3.ª persona del plural',['3.ª persona del singular','1.ª persona del plural','2.ª persona del plural']),
-     Q('«tú» es…','2.ª persona del singular',['1.ª persona del singular','2.ª persona del plural','3.ª persona del singular'])]},
+   items:[Q('1.ª persona del singular','yo',['tú','él','nosotros']), Q('2.ª persona del singular','tú',['yo','ustedes','ellos']),
+     QA('3.ª persona del singular',['él','ella'],['tú','ellos','yo']), QA('1.ª persona del plural',['nosotros','nosotras'],['ellos','ustedes','yo']),
+     Q('2.ª persona del plural','ustedes',['nosotros','ellos','tú']), QA('3.ª persona del plural',['ellos','ellas'],['él','nosotros','ustedes']),
+     Q('«nosotros» es…','1.ª persona del plural',['3.ª persona del plural','2.ª persona del plural','1.ª persona del singular']), Q('«nosotras» es…','1.ª persona del plural',['3.ª persona del plural','2.ª persona del plural','3.ª persona del singular']),
+     Q('«ustedes» es…','2.ª persona del plural',['1.ª persona del plural','3.ª persona del plural','2.ª persona del singular']), Q('«yo» es…','1.ª persona del singular',['2.ª persona del singular','3.ª persona del singular','1.ª persona del plural']),
+     Q('«tú» es…','2.ª persona del singular',['1.ª persona del singular','2.ª persona del plural','3.ª persona del singular']), Q('«él» es…','3.ª persona del singular',['3.ª persona del plural','1.ª persona del singular','2.ª persona del singular']),
+     Q('«ella» es…','3.ª persona del singular',['3.ª persona del plural','1.ª persona del plural','2.ª persona del singular']), Q('«ellos» es…','3.ª persona del plural',['3.ª persona del singular','1.ª persona del plural','2.ª persona del plural']),
+     Q('«ellas» es…','3.ª persona del plural',['3.ª persona del singular','1.ª persona del plural','2.ª persona del plural'])]},
 
   /* ---------- SÍLABAS ---------- */
   {g:'sil', id:'separa', type:'sil', title:'Separa en sílabas', src:'Sílabas',
@@ -497,6 +500,7 @@ function loadPlayer(id) {
     ['esp-stars', 'esp-errs', 'esp-seen', 'esp-toys', 'esp-toys-seen', 'esp-bonus'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
   }
   best = load(K('stars'), {}); errs = load(K('errs'), {});
+  if (!load(K('fix-tabla'), 0)) { Object.keys(errs).forEach(k => { if (k.startsWith('tabla:')) delete errs[k]; }); save(K('errs'), errs); save(K('fix-tabla'), 1); }
   toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
   royals = load(K('royals'), []).filter(t => TOYBY[t]);
   crown = load(K('crown'), null);
@@ -729,9 +733,9 @@ const RENDER = {
       <div class="opts" id="op">${opts.map(o => `<button class="opt${it.cls ? ' ' + it.cls : ''}" type="button" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
     $('#op').onclick = e => {
       const b = e.target.closest('.opt'); if (!b || cur.over || b.disabled) return;
-      if (b.dataset.o === it.a) {
+      if (b.dataset.o === it.a || (it.alt || []).includes(b.dataset.o)) {
         b.classList.add('ok', 'pop');
-        const h = $('#hole'); if (h) { h.textContent = it.a; h.classList.add('ok'); }
+        const h = $('#hole'); if (h) { h.textContent = b.dataset.o; h.classList.add('ok'); }
         if (it.after) $('#w').innerHTML = it.after;
         rightQ(q, it.why);
       } else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); }

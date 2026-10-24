@@ -433,14 +433,14 @@ const ACTS = [
      L('_apato','z',['s','c'],'zapato con Z.'), L('_orro','z',['s','c'],'zorro con Z.'), L('a_úcar','z',['s','c'],'azúcar con Z.'), L('lápi_','z',['s'],'lápiz termina en Z.'), L('nari_','z',['s'],'nariz termina en Z.'), L('feli_','z',['s'],'feliz termina en Z.'),
      L('pe_','z',['s'],'pez termina en Z.'), L('lu_','z',['s'],'luz termina en Z.'), L('maí_','z',['s'],'maíz termina en Z.'), L('arro_','z',['s'],'arroz termina en Z.'), L('_umo','z',['s','c'],'zumo con Z.'), L('_apatilla','z',['s','c'],'zapatilla con Z.'),
      Q('¿Cuál está bien escrita?','zapato',['sapato','capato'],'zapato con Z.'), Q('¿Cuál está bien escrita?','arroz',['arros','aroz'],'arroz: RR y Z al final.'), Q('¿Cuál está bien escrita?','feliz',['felis','felic'],'feliz con Z.'), Q('¿Cuál es el plural de «nariz»?','narices',['narizes','nariz'],'nariz → narices: la z cambia a c.')]},
-  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Todas las palabras de S, C, B, V y Z', n:20,
+  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Todas las palabras de S, C, Z, B, V y Q', n:20,
    rule:'Escucha con atención. Piensa en la regla: ¿lleva S, C o Z? ¿B o V? ¿QU? Fíjate también en la H y en los acentos.',
    items:[['hacer','Me gusta hacer la tarea.',1],['visita','Ayer vino una visita a mi casa.',1],['grandísimo','El elefante es grandísimo.',1],['vino','Mi tía vino a comer.',1],['zanahoria','Me encanta la zanahoria.',1],
      ['peces','Fui a un acuario y tenía muchos peces.'],['cerca','La escuela está cerca.'],['luces','Hay muchas luces.'],['cinco','Hay cinco conejos.'],['mariposa','Hoy vi una mariposa.'],['cielo','El cielo está nublado.'],
      ['avión','Hoy me subí a un avión.'],['abuelo','Fui a la casa de mi abuelo.'],['viernes','Hoy es viernes.'],['queso','Compré queso.'],['esquina','Hay una panadería en la esquina.'],['mosquito','En mi casa hay un mosquito.'],
      ['pequeño','Mi perro es pequeño.'],['zapatos','Me compré unos zapatos.'],['lápiz','Escribo con un lápiz.'],['feliz','Estoy muy feliz.'],['arroz','Hoy comí arroz.'],['maíz','Allí hay mucho maíz.'],
      ['biblioteca','Fuimos a la biblioteca.'],['buscar','Voy a buscar mi suéter.'],['hermoso','El jardín es hermoso.'],['deportista','Nacho es deportista.'],['dulces','Voy a la tienda de dulces.'],['cocina','En la cocina tengo platos.'],['gracias','Muchas gracias.'],['parque','Hoy fui al parque.'],
-     ['casa','Vivo en una casa grande.'],['camisa','Me puse mi camisa nueva.'],['música','Me gusta escuchar música.'],['pasado','El año pasado fuimos a la playa.'],['precioso','El vestido es precioso.'],['piso','El piso está limpio.'],['beso','Le di un beso a mi mamá.'],['uso','Uso mi lápiz para escribir.'],['grandísima','La ballena es grandísima.'],['televisión','Vimos una película en la televisión.'],['canadiense','Mi amigo es canadiense.'],['francés','El pan francés es delicioso.'],['cariñoso','Mi perro es muy cariñoso.'],['decir','Voy a decir la verdad.'],['lápices','Tengo muchos lápices de colores.'],['circo','Fuimos al circo.'],['dulce','El pastel es muy dulce.'],['cine','Vamos al cine el sábado.'],['comercial','Vimos un comercial en la tele.'],['silencioso','El salón está silencioso.'],['espacioso','Mi cuarto es espacioso.'],['delicioso','El postre está delicioso.'],['gracioso','El payaso es muy gracioso.'],['ventana','Abre la ventana, por favor.'],['verano','En verano hace calor.'],['barca','Paseamos en una barca.'],['bebé','El bebé está dormido.'],['vivir','Me gusta vivir en mi ciudad.'],['volver','Vamos a volver temprano.'],['blanco','El gato es blanco.'],['brazo','Me lastimé el brazo.'],['también','Yo también quiero jugar.'],['tambor','Mi hermana toca el tambor.'],['burro','El burro come zanahorias.'],['enviar','Voy a enviar una carta.'],['invierno','En invierno hace frío.'],['vicepresidente','El vicepresidente dio un discurso.'],['tuve','Ayer tuve clase de música.'],['estuve','Estuve en casa de mi abuela.'],['anduve','Anduve en bicicleta.'],['abuela','Mi abuela hace galletas.'],['zapato','Se me perdió un zapato.'],['zorro','El zorro es naranja.'],['zapatilla','Me amarré la zapatilla.'],['azúcar','Le puse azúcar al agua.'],['nariz','Me pica la nariz.'],['pez','Mi pez es dorado.'],['luz','Apaga la luz, por favor.'],['zumo','Tomé zumo de naranja.']].map(([w, s, o]) => ({w, s, ojo:o}))}
+     ['casa','Vivo en una casa grande.'],['camisa','Me puse mi camisa nueva.'],['música','Me gusta escuchar música.'],['pasado','El año pasado fuimos a la playa.'],['precioso','El vestido es precioso.'],['piso','El piso está limpio.'],['beso','Le di un beso a mi mamá.'],['uso','Uso mi lápiz para escribir.'],['grandísima','La ballena es grandísima.'],['televisión','Vimos una película en la televisión.'],['canadiense','Mi amigo es canadiense.'],['francés','El pan francés es delicioso.'],['cariñoso','Mi perro es muy cariñoso.'],['decir','Voy a decir la verdad.'],['lápices','Tengo muchos lápices de colores.'],['circo','Fuimos al circo.'],['dulce','El pastel es muy dulce.'],['cine','Vamos al cine el sábado.'],['comercial','Vimos un comercial en la tele.'],['silencioso','El salón está silencioso.'],['espacioso','Mi cuarto es espacioso.'],['delicioso','El postre está delicioso.'],['gracioso','El payaso es muy gracioso.'],['ventana','Abre la ventana, por favor.'],['verano','En verano hace calor.'],['barca','Paseamos en una barca.'],['bebé','El bebé está dormido.'],['vivir','Me gusta vivir en mi ciudad.'],['volver','Vamos a volver temprano.'],['blanco','El gato es blanco.'],['brazo','Me lastimé el brazo.'],['también','Yo también quiero jugar.'],['tambor','Mi hermana toca el tambor.'],['burro','El burro come zanahorias.'],['enviar','Voy a enviar una carta.'],['invierno','En invierno hace frío.'],['vicepresidente','El vicepresidente dio un discurso.'],['tuve','Ayer tuve clase de música.'],['estuve','Estuve en casa de mi abuela.'],['anduve','Anduve en bicicleta.'],['abuela','Mi abuela hace galletas.'],['zapato','Se me perdió un zapato.'],['zorro','El zorro es naranja.'],['zapatilla','Me amarré la zapatilla.'],['azúcar','Le puse azúcar al agua.'],['nariz','Me pica la nariz.'],['pez','Mi pez es dorado.'],['luz','Apaga la luz, por favor.'],['zumo','Tomé zumo de naranja.'],['raqueta','Tengo una raqueta nueva.'],['paquete','Llegó un paquete a la casa.'],['quince','Mi primo tiene quince años.'],['quitar','Voy a quitar los platos de la mesa.'],['equipo','Mi equipo ganó el partido.'],['querer','Te voy a querer siempre.'],['máquina','La máquina hace mucho ruido.'],['quemar','Cuidado, el sol te puede quemar.']].map(([w, s, o]) => ({w, s, ojo:o}))}
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
 const GROUPS = [
@@ -660,22 +660,31 @@ function goHome() { try { speechSynthesis.cancel(); } catch (e) {} $('#play').hi
 
 /* ================= RONDA ================= */
 let cur = null;
-/* Dictado: 20 palabras por ronda sin repetir de una práctica a otra. Se va recorriendo toda la lista (una «bolsa»)
-   antes de volver a usar una palabra. Solo las que tienen pendientes por error pueden repetirse, para reforzarlas. */
+/* Dictado: 20 palabras por ronda, repartidas entre S, C, Z, B, V y Q (3 o 4 de cada letra), sin repetir de una práctica a otra:
+   cada letra tiene su «bolsa» que se recorre completa antes de volver a usar una palabra. Solo las de error pendiente pueden repetirse. */
+const DLET = {"visita": "S", "grandísimo": "S", "mariposa": "S", "hermoso": "S", "deportista": "S", "casa": "S", "camisa": "S", "música": "S", "pasado": "S", "precioso": "S", "piso": "S", "beso": "S", "uso": "S", "grandísima": "S", "televisión": "S", "canadiense": "S", "francés": "S", "cariñoso": "S", "hacer": "C", "peces": "C", "cerca": "C", "luces": "C", "cinco": "C", "cielo": "C", "dulces": "C", "cocina": "C", "gracias": "C", "decir": "C", "lápices": "C", "circo": "C", "dulce": "C", "cine": "C", "comercial": "C", "silencioso": "C", "espacioso": "C", "delicioso": "C", "gracioso": "C", "zanahoria": "Z", "zapatos": "Z", "lápiz": "Z", "feliz": "Z", "arroz": "Z", "maíz": "Z", "zapato": "Z", "zorro": "Z", "zapatilla": "Z", "azúcar": "Z", "nariz": "Z", "pez": "Z", "luz": "Z", "zumo": "Z", "abuelo": "B", "biblioteca": "B", "buscar": "B", "barca": "B", "bebé": "B", "blanco": "B", "brazo": "B", "también": "B", "tambor": "B", "burro": "B", "abuela": "B", "vino": "V", "avión": "V", "viernes": "V", "ventana": "V", "verano": "V", "vivir": "V", "volver": "V", "enviar": "V", "invierno": "V", "vicepresidente": "V", "tuve": "V", "estuve": "V", "anduve": "V", "queso": "Q", "esquina": "Q", "mosquito": "Q", "pequeño": "Q", "parque": "Q", "raqueta": "Q", "paquete": "Q", "quince": "Q", "quitar": "Q", "equipo": "Q", "querer": "Q", "máquina": "Q", "quemar": "Q"};
+const LETS = ['S', 'C', 'Z', 'B', 'V', 'Q'];
 function pickDict(act) {
   const n = act.n, all = act.items.map((x, i) => i), E = i => errs[act.id + ':' + i] || 0, Hh = i => errHist[act.id + ':' + i] || 0;
-  const last = load(K('dict-last'), []);
-  let bag = load(K('dict-bag'), []).filter(i => act.items[i]);
-  const missed = shuffle(all.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, 6);
-  const take = [];
+  const letOf = i => DLET[act.items[i].w] || 'S';
+  const last = load(K('dict-last'), []), bags = load(K('dict-bags'), {});
+  const quota = {}, extra = shuffle(LETS).slice(0, n - 3 * LETS.length);   // 20 = 3 de cada una + 2 letras con 4
+  LETS.forEach(l => quota[l] = 3 + (extra.includes(l) ? 1 : 0));
   const weighted = arr => arr.map(i => [i, Math.random() / (1 + 2 * Hh(i))]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
-  while (missed.length + take.length < n) {
-    bag = bag.filter(i => !missed.includes(i) && !take.includes(i));
-    if (!bag.length) { bag = all.filter(i => !missed.includes(i) && !take.includes(i) && !last.includes(i)); if (!bag.length) break; }
-    const i = weighted(bag)[0]; take.push(i); bag = bag.filter(x => x !== i);
-  }
-  const q = missed.concat(take);
-  save(K('dict-bag'), bag); save(K('dict-last'), q);
+  const q = [];
+  LETS.forEach(l => {
+    const mine = all.filter(i => letOf(i) === l);
+    const missed = shuffle(mine.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, Math.min(2, quota[l]));
+    q.push(...missed);
+    let bag = (bags[l] || []).filter(i => act.items[i] && letOf(i) === l && !missed.includes(i));
+    let need = quota[l] - missed.length;
+    while (need > 0) {
+      if (!bag.length) { bag = mine.filter(i => !q.includes(i) && !last.includes(i)); if (!bag.length) bag = mine.filter(i => !q.includes(i)); if (!bag.length) break; }
+      const i = weighted(bag)[0]; q.push(i); bag = bag.filter(x => x !== i); need--;
+    }
+    bags[l] = bag;
+  });
+  save(K('dict-bags'), bags); save(K('dict-last'), q);
   return shuffle(q);
 }
 function pick(act) {

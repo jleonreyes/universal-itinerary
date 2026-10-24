@@ -433,7 +433,7 @@ const ACTS = [
      L('_apato','z',['s','c'],'zapato con Z.'), L('_orro','z',['s','c'],'zorro con Z.'), L('a_úcar','z',['s','c'],'azúcar con Z.'), L('lápi_','z',['s'],'lápiz termina en Z.'), L('nari_','z',['s'],'nariz termina en Z.'), L('feli_','z',['s'],'feliz termina en Z.'),
      L('pe_','z',['s'],'pez termina en Z.'), L('lu_','z',['s'],'luz termina en Z.'), L('maí_','z',['s'],'maíz termina en Z.'), L('arro_','z',['s'],'arroz termina en Z.'), L('_umo','z',['s','c'],'zumo con Z.'), L('_apatilla','z',['s','c'],'zapatilla con Z.'),
      Q('¿Cuál está bien escrita?','zapato',['sapato','capato'],'zapato con Z.'), Q('¿Cuál está bien escrita?','arroz',['arros','aroz'],'arroz: RR y Z al final.'), Q('¿Cuál está bien escrita?','feliz',['felis','felic'],'feliz con Z.'), Q('¿Cuál es el plural de «nariz»?','narices',['narizes','nariz'],'nariz → narices: la z cambia a c.')]},
-  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Todas las palabras de S, C, B, V y Z', n:12,
+  {g:'orto', id:'dictado', type:'dict', title:'Dictado', src:'Todas las palabras de S, C, B, V y Z', n:20,
    rule:'Escucha con atención. Piensa en la regla: ¿lleva S, C o Z? ¿B o V? ¿QU? Fíjate también en la H y en los acentos.',
    items:[['hacer','Me gusta hacer la tarea.',1],['visita','Ayer vino una visita a mi casa.',1],['grandísimo','El elefante es grandísimo.',1],['vino','Mi tía vino a comer.',1],['zanahoria','Me encanta la zanahoria.',1],
      ['peces','Fui a un acuario y tenía muchos peces.'],['cerca','La escuela está cerca.'],['luces','Hay muchas luces.'],['cinco','Hay cinco conejos.'],['mariposa','Hoy vi una mariposa.'],['cielo','El cielo está nublado.'],
@@ -660,7 +660,26 @@ function goHome() { try { speechSynthesis.cancel(); } catch (e) {} $('#play').hi
 
 /* ================= RONDA ================= */
 let cur = null;
+/* Dictado: 20 palabras por ronda sin repetir de una práctica a otra. Se va recorriendo toda la lista (una «bolsa»)
+   antes de volver a usar una palabra. Solo las que tienen pendientes por error pueden repetirse, para reforzarlas. */
+function pickDict(act) {
+  const n = act.n, all = act.items.map((x, i) => i), E = i => errs[act.id + ':' + i] || 0, Hh = i => errHist[act.id + ':' + i] || 0;
+  const last = load(K('dict-last'), []);
+  let bag = load(K('dict-bag'), []).filter(i => act.items[i]);
+  const missed = shuffle(all.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, 6);
+  const take = [];
+  const weighted = arr => arr.map(i => [i, Math.random() / (1 + 2 * Hh(i))]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
+  while (missed.length + take.length < n) {
+    bag = bag.filter(i => !missed.includes(i) && !take.includes(i));
+    if (!bag.length) { bag = all.filter(i => !missed.includes(i) && !take.includes(i) && !last.includes(i)); if (!bag.length) break; }
+    const i = weighted(bag)[0]; take.push(i); bag = bag.filter(x => x !== i);
+  }
+  const q = missed.concat(take);
+  save(K('dict-bag'), bag); save(K('dict-last'), q);
+  return shuffle(q);
+}
 function pick(act) {
+  if (act.type === 'dict') return pickDict(act);
   const n = act.n || 10, all = act.items.map((x, i) => i);
   // Primero las que tiene pendientes por error (las de más errores primero), luego algunas que corrigió la miss,
   // y el resto al azar pero con más probabilidad para las que se han equivocado antes.

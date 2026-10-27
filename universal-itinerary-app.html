@@ -270,13 +270,14 @@ const zbg = (z,strong) => z === 'log' ? 'transparent' : tint(zc(z), strong ? .5 
 // Muestra publicada para sáb 28 feb y dom 1 mar 2026 (TouringPlans), salvo donde se indica.
 const F26 = 'Horarios publicados 28 feb–1 mar 2026';
 const R22 = 'Horarios registrados el 22 oct 2026';
+const R27 = 'Horarios registrados el 22 y 27 oct 2026';
 const SHOWTIMES = {
-  'Le Cirque Arcanus': { t:['11:20','12:10','12:55','13:40','14:30','15:15','16:00','16:45','17:30','18:20','19:10'], src:R22 + ' · antes de las 11:00 por confirmar' },
+  'Le Cirque Arcanus': { t:['10:30','11:20','12:10','12:55','13:40','14:30','15:15','16:00','16:45','17:30','18:20','19:10'], src:R27 },
   'The Untrainable Dragon': { t:['11:10','12:00','12:50','13:40','14:30','15:40','16:30','17:20','18:10','19:00'], src:F26 },
-  'The Bourne Stuntacular': { t:['12:00','12:45','13:45','14:30','15:30','16:15'], src:R22 },
-  'Celestina Warbeck': { t:['12:00','13:30','14:30','15:30'], src:R22 },
-  'Tales of Beedle the Bard': { t:['11:30','13:00','14:00','15:00'], src:R22 },
-  'Frog Choir': { t:['12:00','13:00','14:30','15:30','16:30'], src:R22 },
+  'The Bourne Stuntacular': { t:['11:15','12:00','12:45','13:45','14:30','15:30','16:15'], src:R27 },
+  'Celestina Warbeck': { t:['11:30','12:00','13:30','14:30','15:30'], src:R27 },
+  'Tales of Beedle the Bard': { t:['11:00','11:30','13:00','14:00','15:00'], src:R27 },
+  'Frog Choir': { t:['11:00','12:00','13:00','14:30','15:30','16:30'], src:R27 },
   'Triwizard Spirit Rally': { t:['10:30','11:30','12:30','14:00','15:00','16:00'], src:R22 },
   'Meet SpongeBob': { t:['11:45','12:55','13:25','13:55','14:25','14:55','15:25'], src:R22 },
   "Oh! The Stories You'll Hear!": { t:['11:00','12:00','13:00','14:45','15:45','16:45'], src:F26 },

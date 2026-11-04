@@ -230,6 +230,22 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .sticker.empty.gslot{border-color:var(--gold-deep);color:var(--gold-deep)}
 .s-name{font-weight:700;font-size:.9rem;text-align:center;line-height:1.15}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
+.story-card{background:var(--paper);color:var(--ink);border-radius:26px;padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 7px 0 var(--paper-2)}
+.story-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.story-head h3{flex:1;min-width:0;font-size:1.6rem}
+.story-text{margin:0;font-size:clamp(1.15rem,3.8vw,1.4rem);line-height:2.1;font-weight:700}
+.sb{display:inline-block;min-width:4.5em;padding:0 8px;margin:0 2px;border-bottom:4px solid var(--ink-soft);border-radius:6px;text-align:center;line-height:1.5;color:var(--ink-soft)}
+.sb.cur{border-color:var(--berry);background:#ffe3ee;color:var(--berry);animation:pulse 1.2s ease-in-out infinite}
+.sb.ok{border-color:var(--mint-deep);background:#dcf7ec;color:var(--mint-deep)}
+.sb.miss{border-color:var(--gold-deep);background:#fff1cc;color:var(--gold-deep)}
+.sb.shake{animation:shake .35s}
+.sb small{font-size:.7em;opacity:.7;margin-right:4px}
+.bank{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.bank .opt{width:auto;min-height:54px;font-size:clamp(1.1rem,4vw,1.4rem)}
+.bank .opt.used{opacity:.35}
+.kb-row .key.wide{flex:2 1 0;max-width:140px;font-size:1.1rem}
+.kb-row .key.ok-key{background:var(--mint);color:var(--ink)}
+.story-q{margin:0;font-size:clamp(1.15rem,4vw,1.4rem);font-weight:700;text-align:center}
 .ptab[aria-selected="true"]{background:var(--mint);color:var(--ink);border-color:var(--mint)}
 .empty-period{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:28px 16px;border-radius:24px;background:var(--sky-2);border:2px dashed var(--sky-line)}
 .empty-period span{font-size:3rem}
@@ -445,6 +461,20 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
     <button class="btn gold" data-act="next" id="next-btn">Next ➜</button>
   </div>
   <div class="owl"><span class="owl-face" aria-hidden="true">🦉</span><p id="owl-msg">Let's spell!</p></div>
+</section>
+
+<section class="screen" id="s-story" hidden>
+  <div class="gbar">
+    <button class="back" data-act="squit" id="squit">✕ Stop</button>
+    <div class="gprog"><div class="gprog-txt" id="st-count"></div><div class="meter thin"><span id="st-bar"></span></div></div>
+    <span class="chip stat">⭐ <b id="st-pts">0</b></span>
+  </div>
+  <div class="story-card">
+    <div class="story-head"><span class="def-label">Story time</span><h3 id="st-title"></h3><button class="tool" data-act="sread">🔊 Read it</button></div>
+    <p class="story-text" id="st-text"></p>
+  </div>
+  <div class="qcard"><p class="q-inst" id="st-inst"></p><p class="story-q" id="st-q" hidden></p><div class="input" id="st-input" style="width:100%"></div></div>
+  <div class="owl"><span class="owl-face" aria-hidden="true">🦉</span><p id="st-owl">Read the story!</p></div>
 </section>
 
 <section class="screen" id="s-results" hidden>
@@ -733,7 +763,7 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const rand=a=>a[Math.floor(Math.random()*a.length)];
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0)}
-const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,track:c.track||'spell',period:c.period||1,words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
+const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,story:c.story||null,track:c.track||'spell',period:c.period||1,words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
 let curPeriod=null;
 const getPeriod=()=>{if(curPeriod==null){const sp=+state.period;curPeriod=PERIODS.includes(sp)?sp:(allBlocks().some(b=>b.period===2)?2:1)}return curPeriod};
 const pBlocks=(track,per=getPeriod())=>allBlocks(track).filter(b=>b.period===per);
@@ -823,7 +853,7 @@ function renderPractice(){
     if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match words with meanings and fill in the blanks, like the quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
     if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
     h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
-      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
+      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}${hasStory(b)?`<button class="btn berry small" data-act="story" data-b="${b.id}">Story 📖</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
     return h+'</div>'};
   $('#prac-ptabs').innerHTML=periodTabs();
   $('#practice-list').innerHTML=(sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean'))||emptyPeriod();
@@ -840,6 +870,85 @@ function renderLook(id){
 const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice');if(S)S.blockId=id};
 const playMatch=(ids,n)=>{const w=wordsOf(ids).filter(x=>x.def&&canChoose(x));if(!w.length)return renderPractice();start('match',n?pickWeighted(w,Math.min(n,w.length)):shuffle(w.slice()),null,()=>playMatch(ids,n),'practice');if(S&&ids.length===1)S.blockId=ids[0]};
 const playTricky=track=>{const t=trickyWords(track);if(!t.length)return renderPractice();start('practice',t,null,()=>playTricky(track),'practice')};
+
+/* ---------- STORY TIME (2nd period on): a tiny story with every word of the block ----------
+   block.story = {title, text:'Mia found an [acorn] in the [garden]...', qs:[['What did Mia find?','acorn'], ...]}
+   Each [word] must be a word of the block. Blanks are mixed: tap the word, or write it. Then questions about the story. */
+let ST=null;
+const storyParts=b=>{const out=[];String(b.story.text).split(/\[([^\]]+)\]/).forEach((t,i)=>{if(i%2===0){if(t)out.push({t})}else{const w=b.words.find(x=>x[0].toLowerCase()===t.toLowerCase());out.push({w:t,key:keyOf(b,w?w[0]:t)})}});return out};
+const hasStory=b=>!!(b&&b.story&&b.story.text&&/\[[^\]]+\]/.test(b.story.text));
+function playStory(id){
+  const b=allBlocks().find(x=>x.id===id);if(!hasStory(b))return renderPractice();
+  const parts=storyParts(b),blanks=parts.filter(x=>x.w),spell=b.track==='spell';
+  blanks.forEach(x=>{x.mode=x.w.length>12?'choose':Math.random()<(spell?.5:.3)?'write':'choose'});
+  if(blanks.length>=3){const ws=blanks.filter(x=>x.w.length<=12);if(ws.length&&!ws.some(x=>x.mode==='write'))rand(ws).mode='write';if(!blanks.some(x=>x.mode==='choose'))rand(blanks).mode='choose'}
+  const qs=(b.story.qs||[]).filter(q=>q&&q[0]&&q[1]).map(([q,a])=>{const others=shuffle(b.words.map(x=>x[0]).filter(x=>x.toLowerCase()!==a.toLowerCase())).slice(0,3);return{q,a,opts:shuffle(others.concat([a]))}});
+  ST={b,parts,blanks,qs,bi:0,qi:0,phase:'blanks',typed:'',tries:0,bank:shuffle([...new Set(blanks.map(x=>x.w))]),busy:false};
+  S={kind:'story',levelId:null,from:'practice',blockId:b.id,flawless:true,first:{},pts:0,streak:0,queue:[],i:0,uniq:blanks.length,replay:()=>playStory(id)};
+  $('#squit').dataset.armed='';$('#squit').textContent='✕ Stop';
+  $('#st-title').textContent=b.story.title||b.name;$('#st-pts').textContent=me().points;
+  show('s-story');renderStory();say(storyRead());
+}
+function storyRead(){return ST.parts.map(x=>x.t!=null?x.t:(x.done?x.w:'blank')).join('')}
+function renderStory(){
+  const total=ST.blanks.length+ST.qs.length,doneN=ST.blanks.filter(x=>x.done).length+(ST.phase==='qs'?ST.qi:0);
+  $('#st-count').textContent=ST.phase==='blanks'?`Blank ${Math.min(ST.bi+1,ST.blanks.length)} of ${ST.blanks.length}`:`Question ${ST.qi+1} of ${ST.qs.length}`;
+  $('#st-bar').style.width=(doneN/total*100)+'%';
+  let n=0;
+  $('#st-text').innerHTML=ST.parts.map(x=>{if(x.t!=null)return esc(x.t);n++;const i=ST.blanks.indexOf(x),cur=ST.phase==='blanks'&&i===ST.bi;
+    const txt=x.done?esc(x.w):cur&&x.mode==='write'?esc(ST.typed)||'&nbsp;':'';
+    return`<span class="sb ${x.done?(x.ok?'ok':'miss'):''} ${cur?'cur':''}" id="sb${i}"><small>${n}</small>${txt}</span>`}).join('');
+  const inp=$('#st-input'),q=$('#st-q');
+  if(ST.phase==='blanks'){
+    const x=ST.blanks[ST.bi];q.hidden=true;
+    if(x.mode==='choose'){$('#st-inst').textContent=`Blank ${ST.bi+1}: tap the word that fits.`;
+      inp.innerHTML='<div class="bank">'+ST.bank.map(w=>{const used=ST.blanks.some(y=>y.done&&y.w===w);return`<button class="opt ${used?'used':''}" data-act="sword" data-w="${esc(w)}">${esc(w)}</button>`}).join('')+'</div>'}
+    else{$('#st-inst').textContent=`Blank ${ST.bi+1}: write the word.`;
+      const rows=KB.map(r=>'<div class="kb-row">'+[...r].map(k=>`<button class="key" data-act="skey" data-k="${k}">${k}</button>`).join('')+'</div>');
+      rows.push(`<div class="kb-row"><button class="key wide" data-act="skey" data-k="back" aria-label="Delete">⌫</button>${/\s/.test(x.w)?'<button class="key wide" data-act="skey" data-k=" ">space</button>':''}<button class="key wide ok-key" data-act="skey" data-k="ok">OK ✓</button></div>`);
+      inp.innerHTML=rows.join('')}
+  }else{
+    const Qn=ST.qs[ST.qi];q.hidden=false;q.textContent=Qn.q;$('#st-inst').textContent='Answer with a word from the story.';
+    inp.innerHTML='<div class="opts">'+Qn.opts.map(w=>`<button class="opt" data-act="sans" data-w="${esc(w)}">${esc(w)}</button>`).join('')+'</div>';
+  }
+}
+function storyMark(key,ok){
+  const p=me(),s=p.words[key]||(p.words[key]={box:0,r:0,w:0,seen:0});s.seen++;
+  if(ok){s.box=Math.min(5,s.box+1);s.r++}else{s.box=Math.max(0,s.box-1);s.w++}
+  S.first[key]=(S.first[key]??true)&&ok;
+  const pts=ok?10:3;S.pts+=pts;p.points+=pts;p.toward+=pts;save();$('#st-pts').textContent=p.points;
+}
+function storyNext(delay){
+  ST.busy=true;setTimeout(()=>{ST.busy=false;ST.tries=0;ST.typed='';
+    if(ST.phase==='blanks'){ST.bi++;if(ST.bi>=ST.blanks.length){if(ST.qs.length){ST.phase='qs';ST.qi=0;owl('Now answer the questions!')}else return finish()}}
+    else{ST.qi++;if(ST.qi>=ST.qs.length)return finish()}
+    renderStory();if(ST.phase==='qs')say(ST.qs[ST.qi].q)},delay);
+}
+function storyBlank(ans,el){
+  if(!ST||ST.busy||ST.phase!=='blanks')return;
+  const x=ST.blanks[ST.bi],ok=ans.trim().toLowerCase()===x.w.toLowerCase();
+  if(ok){x.done=true;x.ok=ST.tries===0;storyMark(x.key,x.ok);sBlip();owl(rand(OWL.good));renderStory();say(x.w);storyNext(700);return}
+  ST.tries++;S.flawless=false;sBonk();
+  const sb=$('#sb'+ST.bi);if(sb){sb.classList.remove('shake');void sb.offsetWidth;sb.classList.add('shake')}
+  if(el){el.classList.add('wrong');setTimeout(()=>el.classList.remove('wrong'),400)}
+  if(ST.tries>=2){x.done=true;x.ok=false;storyMark(x.key,false);owl(`It is "${x.w}". Look at it!`);renderStory();spellOut(x.w);storyNext(2200)}
+  else{ST.typed='';owl(x.mode==='write'?`Try again! It starts with "${x.w[0]}".`:rand(OWL.nope));if(x.mode==='write')renderStory()}
+}
+function storyAnswer(w,el){
+  if(!ST||ST.busy||ST.phase!=='qs')return;
+  const Qn=ST.qs[ST.qi],b=ST.b,wd=b.words.find(x=>x[0].toLowerCase()===Qn.a.toLowerCase()),key=keyOf(b,wd?wd[0]:Qn.a);
+  if(w.toLowerCase()===Qn.a.toLowerCase()){el.classList.add('right');sBlip();owl(rand(OWL.good));storyMark(key,ST.tries===0);say(Qn.a);storyNext(800);return}
+  ST.tries++;S.flawless=false;sBonk();el.classList.add('wrong');el.disabled=true;
+  if(ST.tries>=2){storyMark(key,false);const r=[...document.querySelectorAll('#st-input .opt')].find(o=>o.dataset.w.toLowerCase()===Qn.a.toLowerCase());if(r)r.classList.add('right');owl(`The answer is "${Qn.a}".`);storyNext(2000)}
+  else owl(rand(OWL.nope));
+}
+function storyKey(k){
+  if(!ST||ST.busy||ST.phase!=='blanks')return;const x=ST.blanks[ST.bi];if(x.mode!=='write')return;
+  if(k==='ok'){if(ST.typed.trim())storyBlank(ST.typed);return}
+  if(k==='back')ST.typed=ST.typed.slice(0,-1);else if(ST.typed.length<x.w.length+3)ST.typed+=k;
+  sBlip();renderStory();
+}
+const playStoryOwl=t=>{const o=$('#st-owl');if(o)o.textContent=t};
 
 /* ---------- GAME ---------- */
 let S=null,Q=null;
@@ -858,7 +967,7 @@ const OWL={
   meaning:['What does it mean?','Find the right meaning!'],
   nope:['Not that one. Try again!','Hmm, read it again.','Almost! Try another one.']};
 const INST={context:'Tap the word that fits in the blank.',pickspell:'Which one is spelled right? Tap it.',match:'Tap the word that matches the meaning.',meaning:'Tap the right meaning.',scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
-function owl(t){$('#owl-msg').textContent=t}
+function owl(t){$('#owl-msg').textContent=t;const o=$('#st-owl');if(o)o.textContent=t}
 
 function start(kind,list,levelId,replay,from){
   if(!list.length)return;
@@ -1066,7 +1175,7 @@ function finish(){
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
-  $('#r-line').textContent=S.kind==='match'?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
+  $('#r-line').textContent=S.kind==='story'?`You got ${good} of ${keys.length} story words right on the first try.`:S.kind==='match'?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
   if(motivGot)got.unshift(motivGot);
   const rule=practice?'3 stars and no mistakes':'3 stars';
@@ -1195,6 +1304,10 @@ function renderParents(){
     <p class="muted" id="nb-help">${esc(NB_HELP[nbTrack])} It appears in Practice and on its map.</p>
     <input type="text" id="nb-name" placeholder="${nbDefaultName(nbTrack)}" maxlength="30" aria-label="Block name">
     <textarea id="nb-words" placeholder="${esc(NB_PH[nbTrack])}" aria-label="Words"></textarea>
+    <p class="muted">Story (optional): a tiny story with every word in [brackets]. Then questions, one per line, like <i>What did Mia find? = acorn</i>.</p>
+    <input type="text" id="nb-stitle" placeholder="Story title" maxlength="40" aria-label="Story title">
+    <textarea id="nb-story" placeholder="Mia found an [acorn] in the [garden]." aria-label="Story"></textarea>
+    <textarea id="nb-qs" placeholder="What did Mia find? = acorn" aria-label="Story questions"></textarea>
     <div class="row" style="justify-content:flex-start"><button class="btn gold small" data-act="addblock">Add block</button></div>
     ${state.custom.length?`<p class="blk-title">Blocks you added</p>`+state.custom.map(c=>`<div class="prow"><span style="flex:1;min-width:0"><b>${esc(c.name)}</b> · ${PERIOD_NAME[c.period||1]} · ${c.words.length} words</span><button class="btn small" data-act="delblock" data-id="${c.id}">Remove</button></div>`).join(''):''}
   </div>
@@ -1223,6 +1336,12 @@ const acts={
   level:b=>startLevel(+b.dataset.i),
   play:b=>playBlock(b.dataset.b),
   look:b=>renderLook(b.dataset.b),
+  story:b=>playStory(b.dataset.b),
+  sword:b=>storyBlank(b.dataset.w,b),
+  sans:b=>storyAnswer(b.dataset.w,b),
+  skey:b=>storyKey(b.dataset.k),
+  sread:()=>ST&&say(ST.phase==='qs'?storyRead()+'. '+ST.qs[ST.qi].q:storyRead(),.8),
+  squit:b=>{if(!armed(b))return;speechSynthesis&&speechSynthesis.cancel();ST=null;S=null;renderPractice()},
   lookplay:()=>lookBlock&&playBlock(lookBlock),
   tricky:b=>playTricky(b.dataset.track),
   sayword:b=>spellOut(b.dataset.w,b.dataset.def||''),
@@ -1265,7 +1384,14 @@ const acts={
       if(words.length){const miss=words.filter(x=>!x[1]).length;if(miss)parentMsg=`${miss} word(s) have no meaning yet. `}}
     else words=[...new Set($('#nb-words').value.split(/\n|,/).map(clean).filter(w=>w.length>0))];
     if(!words.length){status('Write at least one word.');return}
-    state.custom.push({id:'c'+uid(),name,track:nbTrack,period:nbPeriod,words});save();parentMsg+=`${name} added with ${words.length} words.`;renderParents()},
+    const stx=($('#nb-story').value||'').trim();let story=null;
+    if(stx){const ws=words.map(x=>(Array.isArray(x)?x[0]:x).toLowerCase()),inS=[...stx.matchAll(/\[([^\]]+)\]/g)].map(m=>m[1].toLowerCase().trim()),bad=inS.filter(w=>!ws.includes(w));
+      if(!inS.length){status('Put the words of the story in [brackets].');return}
+      if(bad.length){status(`These words in [brackets] are not in the list: ${bad.join(', ')}`);return}
+      const qs=($('#nb-qs').value||'').split('\n').map(l=>l.split('=')).filter(a=>a.length>=2&&a[0].trim()&&a[1].trim()).map(a=>[a[0].trim(),a.slice(1).join('=').trim().toLowerCase()]).filter(a=>ws.includes(a[1]));
+      story={title:($('#nb-stitle').value||'').trim()||name,text:stx,qs};
+      const missing=ws.filter(w=>!inS.includes(w));if(missing.length)parentMsg=`Story is missing: ${missing.join(', ')}. `}
+    state.custom.push({id:'c'+uid(),name,track:nbTrack,period:nbPeriod,words,story});save();parentMsg+=`${name} added with ${words.length} words.`;renderParents()},
   delblock:b=>{if(!armed(b))return;state.custom=state.custom.filter(c=>c.id!==b.dataset.id);save();parentMsg='Block removed.';renderParents()},
   mkbackup:()=>{$('#backup-code').value=encodeState();status('Backup code ready. Tap Copy.')},
   copybackup:()=>{const ta=$('#backup-code');if(!ta.value)ta.value=encodeState();const ok=()=>status('Copied. Paste it in Notes.');const fb=()=>{ta.focus();ta.select();try{document.execCommand('copy');ok()}catch(e){status('Select the code and copy it.')}};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}},
@@ -1275,6 +1401,7 @@ const acts={
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;unlockAudio();const f=acts[b.dataset.act];if(f)f(b,e)});
 document.addEventListener('keydown',e=>{
+  if(!$('#s-story').hidden&&ST){if(e.metaKey||e.ctrlKey)return;const k=e.key;if(k==='Enter')storyKey('ok');else if(k==='Backspace')storyKey('back');else if(k===' ')storyKey(' ');else if(/^[a-zA-Z']$/.test(k))storyKey(k.toLowerCase());return}
   if($('#s-game').hidden||!Q)return;
   if(Q.done&&e.key==='Enter'){acts.next();return}
   const k=e.key.toLowerCase();if(/^[a-z]$/.test(k)&&!e.metaKey&&!e.ctrlKey){unlockAudio();press(k,Q.mode==='scramble'?null:document.querySelector(`.key[data-k="${k}"]`))}

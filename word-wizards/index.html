@@ -230,6 +230,12 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .sticker.empty.gslot{border-color:var(--gold-deep);color:var(--gold-deep)}
 .s-name{font-weight:700;font-size:.9rem;text-align:center;line-height:1.15}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
+.ptab[aria-selected="true"]{background:var(--mint);color:var(--ink);border-color:var(--mint)}
+.empty-period{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:28px 16px;border-radius:24px;background:var(--sky-2);border:2px dashed var(--sky-line)}
+.empty-period span{font-size:3rem}
+.empty-period b{font-family:var(--display);font-size:1.4rem}
+.empty-period small{color:var(--lilac);font-size:1rem}
+#map-list li:has(.empty-period){list-style:none}
 .tab{min-height:46px;padding:0 16px;border-radius:999px;background:var(--sky-2);border:2px solid var(--sky-line);font-family:var(--display);font-weight:800;font-size:1.05rem}
 .tab[aria-selected="true"]{background:var(--gold);color:var(--ink);border-color:var(--gold)}
 .album-page{background:var(--sky-2);border:2px solid var(--sky-line);border-radius:26px;padding:18px 14px;display:flex;flex-direction:column;gap:14px}
@@ -400,11 +406,13 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 
 <section class="screen" id="s-map" hidden>
   <div class="bar"><button class="back" data-act="go" data-to="home">← Home</button><h2 id="map-title">Spelling Map</h2></div>
+  <div class="tabs" id="map-ptabs" role="tablist"></div>
   <ol class="path" id="map-list"></ol>
 </section>
 
 <section class="screen" id="s-practice" hidden>
   <div class="bar"><button class="back" data-act="go" data-to="home">← Home</button><h2>Practice</h2></div>
+  <div class="tabs" id="prac-ptabs" role="tablist"></div>
   <div id="practice-list" style="display:flex;flex-direction:column;gap:14px"></div>
 </section>
 
@@ -636,6 +644,9 @@ const VOCAB=[
   ['start school','🖍️','Go to school for the first time.','My little brother is three. This year he will ___.']]}
 ];
 const BASE=BLOCKS.concat(VOCAB);
+/* school periods: everything above is the 1st period; 2nd-period blocks are added below as the teacher hands them out */
+BASE.forEach(b=>{if(!b.period)b.period=1});
+const PERIODS=[1,2],PERIOD_NAME={1:'1st Period',2:'2nd Period'};
 const TRACK_NAME={spell:'Spelling',vocab:'Vocabulary'};
 
 /* ---------- STICKERS ---------- */
@@ -689,7 +700,7 @@ const RIDE={};
 PARKS.forEach(pk=>{pk.ids=pk.rides.map((n,i)=>{const id=pk.id+String(i+1).padStart(2,'0');RIDE[id]={id,n,park:pk};return id})});
 const passCost=()=>state.passCost||4;
 /* a block is mastered when its own level and every mix level with it have 3 stars */
-function masteredBlocks(p){const out=[];['spell','vocab'].forEach(t=>{const L=getLevels(t);allBlocks(t).forEach(b=>{const mine=L.filter(l=>l.kind!=='final'&&l.blocks.includes(b.id));if(mine.length&&mine.every(l=>(p.levels[l.id]||0)>=3))out.push(t+':'+b.id)})});return out}
+function masteredBlocks(p){const out=[];['spell','vocab'].forEach(t=>{const L=allLevels(t);allBlocks(t).forEach(b=>{const mine=L.filter(l=>l.kind!=='final'&&l.blocks.includes(b.id));if(mine.length&&mine.every(l=>(p.levels[l.id]||0)>=3))out.push(t+':'+b.id)})});return out}
 function passOf(p){
   if(!p.pass){const three=Object.values(p.levels||{}).filter(v=>v>=3).length,m=masteredBlocks(p);
     /* starting tickets for the 3-star levels already won, and a free pass for each block already mastered */
@@ -722,7 +733,13 @@ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'
 const rand=a=>a[Math.floor(Math.random()*a.length)];
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0)}
-const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,track:c.track||'spell',words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
+const allBlocks=track=>{const all=BASE.concat(state.custom.map(c=>({id:c.id,name:c.name,custom:true,track:c.track||'spell',period:c.period||1,words:c.words.map(w=>Array.isArray(w)?[w[0],'✏️',w[1]||'']:[w,'✏️',''])})));return track?all.filter(b=>b.track===track):all};
+let curPeriod=null;
+const getPeriod=()=>{if(curPeriod==null){const sp=+state.period;curPeriod=PERIODS.includes(sp)?sp:(allBlocks().some(b=>b.period===2)?2:1)}return curPeriod};
+const pBlocks=(track,per=getPeriod())=>allBlocks(track).filter(b=>b.period===per);
+const allLevels=t=>PERIODS.flatMap(per=>getLevels(t,per));
+const periodTabs=()=>PERIODS.map(n=>`<button class="tab ptab" role="tab" aria-selected="${getPeriod()===n}" data-act="period" data-p="${n}">${PERIOD_NAME[n]}</button>`).join('');
+const emptyPeriod=()=>`<div class="empty-period"><span>📭</span><b>No words yet in the ${PERIOD_NAME[getPeriod()]}.</b><small>New words will show up here when your teacher gives them in class.</small></div>`;
 const keyOf=(b,w)=>b.track==='vocab'?'v:'+w:w;
 /* give existing players their starting Park Pass tickets right away */
 state.players.forEach(p=>passOf(p));save();
@@ -768,14 +785,14 @@ function renderHome(){
 
 /* ---------- LEVELS ---------- */
 let mapTrack='spell';
-function getLevels(track=mapTrack){
-  const bl=allBlocks(track),L=[];
+function getLevels(track=mapTrack,per=getPeriod()){
+  const bl=pBlocks(track,per),L=[];
   bl.forEach(b=>L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`}));
   const groups=[];for(let i=0;i<bl.length;i+=2)groups.push(bl.slice(i,i+2));
   if(groups.length>1&&groups[groups.length-1].length===1){groups[groups.length-1]=[bl[bl.length-2],bl[bl.length-1]]}
   if(bl.length>1)groups.forEach(g=>L.push({id:'m:'+g.map(b=>b.id).join('+'),kind:'mix',blocks:g.map(b=>b.id),sub:g.map(b=>b.name).join(' + ')+' mixed'}));
   if(!bl.length)return L;
-  L.push({id:track==='spell'?'final':'final:'+track,kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
+  L.push({id:(track==='spell'?'final':'final:'+track)+(per===1?'':':p'+per),kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
   L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:`Level ${i+1}`);
   return L;
 }
@@ -783,6 +800,8 @@ const isOpen=(i,L)=>{const lv=me().levels;return i===0||(lv[L[i-1].id]||0)>0||L.
 function renderMap(){
   const L=getLevels(),p=me();
   $('#map-title').textContent=TRACK_NAME[mapTrack]+' Map';
+  $('#map-ptabs').innerHTML=periodTabs();
+  if(!L.length){$('#map-list').innerHTML=`<li>${emptyPeriod()}</li>`;show('s-map');return}
   $('#map-list').innerHTML=L.map((lv,i)=>{const s=p.levels[lv.id]||0,open=isOpen(i,L);
     return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
   show('s-map');
@@ -796,17 +815,18 @@ function startLevel(i){
 function owlToast(){sBonk()}
 
 /* ---------- PRACTICE ---------- */
-function trickyWords(track){const all=wordsOf(allBlocks(track).map(b=>b.id)),seen={};return all.filter(w=>{if(seen[w.key])return false;seen[w.key]=1;const s=st(w.key);return s.seen>0&&(s.box<=1||s.w>s.r)}).sort((a,b)=>st(a.key).box-st(b.key).box).slice(0,10)}
+function trickyWords(track){const all=wordsOf(pBlocks(track).map(b=>b.id)),seen={};return all.filter(w=>{if(seen[w.key])return false;seen[w.key]=1;const s=st(w.key);return s.seen>0&&(s.box<=1||s.w>s.r)}).sort((a,b)=>st(a.key).box-st(b.key).box).slice(0,10)}
 function renderPractice(){
   const sec=(track,title,note)=>{
-    const tr=trickyWords(track),bl=allBlocks(track);if(!bl.length)return'';
+    const tr=trickyWords(track),bl=pBlocks(track);if(!bl.length)return'';
     let h=`<h3 class="sec-title">${title}<small>${note}</small></h3><div class="cards">`;
     if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match words with meanings and fill in the blanks, like the quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
     if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
     h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
       return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
     return h+'</div>'};
-  $('#practice-list').innerHTML=sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean');
+  $('#prac-ptabs').innerHTML=periodTabs();
+  $('#practice-list').innerHTML=(sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean'))||emptyPeriod();
   show('s-practice');
 }
 let lookBlock=null;
@@ -1019,7 +1039,7 @@ function specArt(x,p){const a=buddy(p);
   </svg><span class="spe">${a}</span></div>`}
 function checkSpecial(p){
   p.special=p.special||[];
-  const L=getLevels('spell').concat(getLevels('vocab')),three=L.filter(l=>(p.levels[l.id]||0)>=3).length,out=[];
+  const L=allLevels('spell').concat(allLevels('vocab')),three=L.filter(l=>(p.levels[l.id]||0)>=3).length,out=[];
   const want={sp1:three>=1,sp2:three>=3,sp3:three>=6,sp4:three>=9,sp5:three>=12,tr1:L.length>0&&L.every(l=>(p.levels[l.id]||0)>0),tr2:L.length>0&&three===L.length};
   SPECIAL.forEach(x=>{if(want[x.id]&&!p.special.includes(x.id)){p.special.push(x.id);out.push({id:x.id,special:true})}});
   return out;
@@ -1082,7 +1102,7 @@ const diamondBlocks=()=>allBlocks().filter(b=>b.id!=='b6');
 const diamondCell=(b,d)=>`<div class="cell"><div class="dia-wrap"><div class="dia ${d?'':'empty'}"><span class="de">💎</span></div>${d?`<span class="dia-g">${esc(d.g)}</span>`:''}</div><span class="s-name">${esc(b.name)}</span></div>`;
 function renderDiamonds(){
   const p=me(),bl=diamondBlocks(),dm=p.diamonds||{},n=bl.filter(b=>dm[b.id]).length;
-  const sec=(t,title)=>{const xs=bl.filter(b=>b.track===t);return xs.length?`<p class="gold-title" style="color:#7fd3f5">${title}</p><div class="grid">${xs.map(b=>diamondCell(b,dm[b.id])).join('')}</div>`:''};
+  const sec=(t,title)=>PERIODS.map(per=>{const xs=bl.filter(b=>b.track===t&&b.period===per);return xs.length?`<p class="gold-title" style="color:#7fd3f5">${PERIOD_NAME[per]} · ${title}</p><div class="grid">${xs.map(b=>diamondCell(b,dm[b.id])).join('')}</div>`:''}).join('');
   $('#album-page').innerHTML=`<div class="album-head"><h3>💎 Diamond Awards</h3><span>${n} / ${bl.length}</span></div>
    <p class="note" style="text-align:left">Get 9, 9.5 or 10 on your quiz at school and a grown-up puts a diamond here. One for each block!</p>${sec('spell','Spelling')}${sec('vocab','Vocabulary')}`;
   let changed=false;Object.values(dm).forEach(d=>{if(!d.seen){d.seen=true;changed=true}});if(changed)save();
@@ -1139,13 +1159,14 @@ function buyRide(b){
 let parentPlayer=null,parentMsg='',nbTrack='spell';
 const NB_HELP={spell:'Spelling block: write one word per line.',vocab:'Vocabulary block: write one word per line, then a dash and its meaning. Example: crop - plants grown by farmers for food'};
 const NB_PH={spell:'dragonfly\nsandcastle\nteapot',vocab:'crop - plants grown by farmers for food\nprize - a reward for winning'};
-const nbDefaultName=t=>`${t==='vocab'?'Vocab':'Block'} ${allBlocks(t).length+1}`;
+let nbPeriod=2;
+const nbDefaultName=t=>`${t==='vocab'?'Vocab':'Spelling'} ${pBlocks(t,nbPeriod).length+1}`;
 function chipClass(s){if(!s.seen)return'';if(s.box>=4)return'good';if(s.box===0||s.w>s.r)return'weak';return'learn'}
 function renderParents(){
   if(!state.players.find(p=>p.id===parentPlayer))parentPlayer=me().id;
   const pp=state.players.find(p=>p.id===parentPlayer);
-  const prog=['spell','vocab'].map(t=>`<p class="blk-title" style="font-size:1.1rem;margin-top:10px">${TRACK_NAME[t]}</p>`+allBlocks(t).map(b=>`<p class="blk-title">${esc(b.name)}</p><div class="wchips">${b.words.map(([w])=>`<span class="wchip ${chipClass(st(keyOf(b,w),pp))}">${esc(w)}</span>`).join('')}</div>`).join('')).join('');
-  const L=getLevels('spell').concat(getLevels('vocab'));
+  const prog=PERIODS.flatMap(per=>['spell','vocab'].map(t=>[per,t])).filter(([per,t])=>pBlocks(t,per).length).map(([per,t])=>`<p class="blk-title" style="font-size:1.1rem;margin-top:10px">${PERIOD_NAME[per]} · ${TRACK_NAME[t]}</p>`+pBlocks(t,per).map(b=>`<p class="blk-title">${esc(b.name)}</p><div class="wchips">${b.words.map(([w])=>`<span class="wchip ${chipClass(st(keyOf(b,w),pp))}">${esc(w)}</span>`).join('')}</div>`).join('')).join('');
+  const L=allLevels('spell').concat(allLevels('vocab'));
   const doneLv=L.filter(l=>pp.levels[l.id]).length;
   $('#parents-body').innerHTML=`
   <div class="panel"><h3>Progress</h3>
@@ -1156,7 +1177,7 @@ function renderParents(){
   </div>
   <div class="panel"><h3>💎 Diamond awards (school quiz)</h3>
     <p class="muted">When ${esc(pp.name)} gets 9, 9.5 or 10 on a quiz at school, tap the grade next to that block. One diamond per block. Change the player at the top of this page.</p>
-    ${['spell','vocab'].map(t=>`<p class="blk-title" style="font-size:1.05rem;margin-top:8px">${TRACK_NAME[t]}</p>`+diamondBlocks().filter(b=>b.track===t).map(b=>{const d=(pp.diamonds||{})[b.id];return`<div class="prow"><span style="flex:1;min-width:120px"><b>${esc(b.name)}</b> ${d?`· 💎 ${esc(d.g)}`:''}</span>${['9','9.5','10'].map(g=>`<button class="pchip gbtn" data-act="dset" data-b="${b.id}" data-g="${g}" aria-pressed="${!!d&&d.g===g}">${g}</button>`).join('')}${d?`<button class="btn small" data-act="ddel" data-b="${b.id}">Remove</button>`:''}</div>`}).join('')).join('')}
+    ${PERIODS.flatMap(per=>['spell','vocab'].map(t=>[per,t])).filter(([per,t])=>diamondBlocks().some(b=>b.track===t&&b.period===per)).map(([per,t])=>`<p class="blk-title" style="font-size:1.05rem;margin-top:8px">${PERIOD_NAME[per]} · ${TRACK_NAME[t]}</p>`+diamondBlocks().filter(b=>b.track===t&&b.period===per).map(b=>{const d=(pp.diamonds||{})[b.id];return`<div class="prow"><span style="flex:1;min-width:120px"><b>${esc(b.name)}</b> ${d?`· 💎 ${esc(d.g)}`:''}</span>${['9','9.5','10'].map(g=>`<button class="pchip gbtn" data-act="dset" data-b="${b.id}" data-g="${g}" aria-pressed="${!!d&&d.g===g}">${g}</button>`).join('')}${d?`<button class="btn small" data-act="ddel" data-b="${b.id}">Remove</button>`:''}</div>`}).join('')).join('')}
   </div>
   <div class="panel"><h3>🎟️ Park Pass</h3>
     <p class="muted">${esc(pp.name)}: ${passOf(pp).tickets} tickets · ${passOf(pp).picks} free passes · ${passOf(pp).owned.length} of 42 rides. A ticket comes with every 3-star game; a free pass with every mastered block.</p>
@@ -1169,12 +1190,13 @@ function renderParents(){
     <div class="row" style="justify-content:flex-start"><button class="btn gold small" data-act="savenames">Save names</button><button class="btn small" data-act="addplayer">Add player</button></div>
   </div>
   <div class="panel"><h3>Add a new block of words</h3>
+    <div class="pchips">${PERIODS.map(n=>`<button class="pchip" data-act="nbperiod" data-p="${n}" aria-pressed="${nbPeriod===n}">${PERIOD_NAME[n]}</button>`).join('')}</div>
     <div class="pchips"><button class="pchip" data-act="nbtrack" data-t="spell" aria-pressed="${nbTrack==='spell'}">Spelling</button><button class="pchip" data-act="nbtrack" data-t="vocab" aria-pressed="${nbTrack==='vocab'}">Vocabulary</button></div>
     <p class="muted" id="nb-help">${esc(NB_HELP[nbTrack])} It appears in Practice and on its map.</p>
     <input type="text" id="nb-name" placeholder="${nbDefaultName(nbTrack)}" maxlength="30" aria-label="Block name">
     <textarea id="nb-words" placeholder="${esc(NB_PH[nbTrack])}" aria-label="Words"></textarea>
     <div class="row" style="justify-content:flex-start"><button class="btn gold small" data-act="addblock">Add block</button></div>
-    ${state.custom.length?`<p class="blk-title">Blocks you added</p>`+state.custom.map(c=>`<div class="prow"><span style="flex:1;min-width:0"><b>${esc(c.name)}</b> · ${c.words.length} words</span><button class="btn small" data-act="delblock" data-id="${c.id}">Remove</button></div>`).join(''):''}
+    ${state.custom.length?`<p class="blk-title">Blocks you added</p>`+state.custom.map(c=>`<div class="prow"><span style="flex:1;min-width:0"><b>${esc(c.name)}</b> · ${PERIOD_NAME[c.period||1]} · ${c.words.length} words</span><button class="btn small" data-act="delblock" data-id="${c.id}">Remove</button></div>`).join(''):''}
   </div>
   <div class="panel"><h3>Backup</h3>
     <p class="muted">Progress lives in this browser. Copy a backup code and keep it in Notes. Paste it here to bring everything back.</p>
@@ -1210,7 +1232,8 @@ const acts={
   hear:()=>Q&&say(Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word,.7),
   opt:b=>pickOpt(+b.dataset.j,b),
   matchblock:b=>playMatch([b.dataset.b]),
-  matchall:()=>playMatch(allBlocks('vocab').map(x=>x.id),10),
+  matchall:()=>playMatch(pBlocks('vocab').map(x=>x.id),10),
+  period:b=>{curPeriod=+b.dataset.p;state.period=curPeriod;save();$('#s-map').hidden?renderPractice():renderMap()},
   next:()=>{if(!S)return;S.i++;nextQ()},
   quit:b=>{if(!armed(b))return;speechSynthesis&&speechSynthesis.cancel();S&&S.from==='map'?renderMap():S&&S.from==='practice'?renderPractice():renderHome();S=null;Q=null},
   again:()=>S&&S.replay(),
@@ -1234,6 +1257,7 @@ const acts={
   addplayer:()=>{if(state.players.length>=6){status('Up to 6 players.');return}state.players.push(mkPlayer('Player '+(state.players.length+1),AVATARS[state.players.length%AVATARS.length]));save();parentMsg='Player added. Type a name and tap Save names.';renderParents()},
   delplayer:b=>{if(!armed(b))return;state.players=state.players.filter(p=>p.id!==b.dataset.id);if(!state.players.find(p=>p.id===state.current))state.current=state.players[0].id;save();parentMsg='Player removed.';renderParents()},
   nbtrack:b=>{nbTrack=b.dataset.t;document.querySelectorAll('[data-act="nbtrack"]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.t===nbTrack));$('#nb-help').textContent=NB_HELP[nbTrack]+' It appears in Practice and on its map.';$('#nb-words').placeholder=NB_PH[nbTrack];$('#nb-name').placeholder=nbDefaultName(nbTrack)},
+  nbperiod:b=>{nbPeriod=+b.dataset.p;document.querySelectorAll('[data-act="nbperiod"]').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.p===nbPeriod));$('#nb-name').placeholder=nbDefaultName(nbTrack)},
   addblock:()=>{const name=($('#nb-name').value.trim()||nbDefaultName(nbTrack)).slice(0,30);
     const clean=w=>w.trim().toLowerCase().replace(/[^a-z' -]/g,'').replace(/\s+/g,' ').trim();
     let words;
@@ -1241,7 +1265,7 @@ const acts={
       if(words.length){const miss=words.filter(x=>!x[1]).length;if(miss)parentMsg=`${miss} word(s) have no meaning yet. `}}
     else words=[...new Set($('#nb-words').value.split(/\n|,/).map(clean).filter(w=>w.length>0))];
     if(!words.length){status('Write at least one word.');return}
-    state.custom.push({id:'c'+uid(),name,track:nbTrack,words});save();parentMsg+=`${name} added with ${words.length} words.`;renderParents()},
+    state.custom.push({id:'c'+uid(),name,track:nbTrack,period:nbPeriod,words});save();parentMsg+=`${name} added with ${words.length} words.`;renderParents()},
   delblock:b=>{if(!armed(b))return;state.custom=state.custom.filter(c=>c.id!==b.dataset.id);save();parentMsg='Block removed.';renderParents()},
   mkbackup:()=>{$('#backup-code').value=encodeState();status('Backup code ready. Tap Copy.')},
   copybackup:()=>{const ta=$('#backup-code');if(!ta.value)ta.value=encodeState();const ok=()=>status('Copied. Paste it in Notes.');const fb=()=>{ta.focus();ta.select();try{document.execCommand('copy');ok()}catch(e){status('Select the code and copy it.')}};try{navigator.clipboard.writeText(ta.value).then(ok,fb)}catch(e){fb()}},

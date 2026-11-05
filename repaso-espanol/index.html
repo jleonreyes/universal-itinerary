@@ -311,6 +311,7 @@ const ACEN = [
   return { s, t, k, ojo: o, word: S.join(''), show: S.map((x, j) => j === t ? x.toUpperCase() : x).join('-'), why: `${S.map((x, j) => j === t ? x.toUpperCase() : x).join('-')}: la fuerza va en la ${ACEN_POS[k]} sílaba → ${ACEN_N[k].toLowerCase()}.` }; });
 const RULE_ACEN = '<b>Agudas:</b> se pronuncian con mayor intensidad en la <b>última</b> sílaba. Ejemplo: pa-<b>red</b>, me-<b>nú</b>.<br><b>Graves:</b> en la <b>penúltima</b> sílaba. Ejemplo: hor-<b>mi</b>-ga, i-<b>ma</b>-gen.<br><b>Esdrújulas:</b> en la <b>antepenúltima</b> sílaba. Ejemplo: <b>ú</b>-ni-co, <b>mé</b>-di-ca.<br><b>Sobresdrújulas:</b> en una sílaba <b>anterior a la antepenúltima</b>. Ejemplo: <b>dí</b>-ga-me-lo.<br>¡Ojo! Primero encuentra la tónica y luego <b>cuenta desde el final</b>: última (1), penúltima (2), antepenúltima (3). Que una palabra tenga acento (´) <b>no</b> quiere decir que sea aguda: fa-<b>ná</b>-ti-co es esdrújula y a-<b>zú</b>-car es grave.';
 const RULE_G = 'La <b>g</b> tiene 2 sonidos.<br><b>Suave:</b> delante de la <b>a, o, u</b> (ga, go, gu): gato, goma, guante. Para que suene suave con e, i se escribe <b>gue, gui</b>: guerra, guitarra.<br><b>Fuerte:</b> delante de la <b>e, i</b> (ge, gi), sonando igual que la <b>j</b>: gigante, magia, girasol.<br><b>Regla clave:</b> se escriben con g las palabras que empiezan por <b>geo-</b> y <b>gest-</b> (geografía, gestión) y las que llevan <b>-gésimo</b> y <b>-gente</b> (vigésimo, inteligente, gente).<br>Palabras: gato, goma, guante, guitarra, guerra, gigante, geografía, gestión, magia, inteligente, vigésimo, girasol, biología.';
+const GL = (big, a, w, why, o) => ({p:'¿Qué va en el hueco: g, gu o j?', big, a, w, why, ojo:o});
 const GS = (w, b, o) => ({ t: w, b, ojo: o, why: b === 0 ? `En «${w}» la g suena suave, como en gato.` : `En «${w}» la g suena fuerte, igual que la j (ge, gi).` });
 const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
 
@@ -485,11 +486,22 @@ const ACTS = [
    items:[GS('gato',0),GS('goma',0),GS('guante',0),GS('guitarra',0,1),GS('guerra',0),GS('gusano',0),GS('gota',0),GS('lago',0),GS('amigo',0),GS('juguete',0),GS('hormiga',0),GS('tortuga',0),
      GS('magia',1),GS('inteligente',1,1),GS('girasol',1),GS('gente',1),GS('gemelo',1),GS('gestión',1),GS('página',1),GS('gimnasio',1),GS('ángel',1),GS('biología',1,1),GS('vigésimo',1,1),GS('mágico',1)]},
   {g:'orto2', id:'gletra', type:'elige', title:'Palabras con G', src:'G, J, gue, gui y la regla clave', rule:RULE_G,
-   items:[L('inteli_ente','g',['j'],'inteligente: -gente va con G. ¡No es «inligente»!',1), L('_uitarra','gu',['g'],'guitarra: gui para que suene suave. Y lleva RR: gui-ta-rra.',1),
-     L('vi_ésimo','g',['j'],'vigésimo: -gésimo va con G.',1), L('biolo_ía','g',['j'],'biología: bio-lo-gí-a, con G. ¡No es «biolagía»!',1),
-     L('_ato','g',['j'],'gato: ga suena suave.'), L('_oma','g',['j'],'goma: go suena suave.'), L('_uante','g',['j'],'guante con G.'), L('_erra','gu',['g'],'guerra: gue para que suene suave.'),
-     L('_igante','g',['j'],'gigante con G.'), L('_eografía','g',['j'],'geografía: geo- va con G.'), L('_estión','g',['j'],'gestión: gest- va con G.'), L('ma_ia','g',['j'],'magia con G.'),
-     L('_irasol','g',['j'],'girasol con G.'), L('_ente','g',['j'],'gente: -gente va con G.'), L('ju_ete','gu',['g'],'juguete: gue para que suene suave.'), L('hormi_a','g',['j'],'hormiga: ga suena suave.'),
+   items:[GL('inteli_ente','g',['j','gu'],'inteligente: -gente se escribe con G. Con «gu» diría «inteliguente».',1),
+     GL('_itarra','gu',['g','j'],'gui-ta-rra: con «g» sola diría «gitarra» (como j). Para que suene suave antes de la i se escribe GUI. Y lleva RR.',1),
+     GL('vi_ésimo','g',['j','gu'],'vigésimo: -gésimo se escribe con G.',1),
+     GL('biolo_ía','g',['j','gu'],'bio-lo-gí-a: suena como j, pero se escribe con G. ¡No es «biolagía»!',1),
+     GL('_erra','gu',['g','j'],'gue-rra: con «g» sola diría «gerra» (como j). Para que suene suave antes de la e se escribe GUE.'),
+     GL('ju_ete','gu',['g','j'],'ju-gue-te: GUE para que la g suene suave antes de la e.'),
+     GL('_ato','g',['gu','j'],'ga-to: delante de la a la g ya suena suave, no necesita u.'),
+     GL('_oma','g',['gu','j'],'go-ma: delante de la o la g ya suena suave, no necesita u.'),
+     GL('hormi_a','g',['gu','j'],'hor-mi-ga: delante de la a la g ya suena suave.'),
+     GL('_ante','gu',['g','j'],'guan-te: la u sí se oye: gu-an-te. Con «g» sola diría «gante».'),
+     GL('_igante','g',['j','gu'],'gi-gan-te: gi suena fuerte (como j) y gan suena suave. Las dos con G.'),
+     GL('_eografía','g',['j','gu'],'geografía: las palabras que empiezan con geo- se escriben con G.'),
+     GL('_estión','g',['j','gu'],'gestión: las palabras que empiezan con gest- se escriben con G.'),
+     GL('ma_ia','g',['j','gu'],'magia: suena como j, pero se escribe con G.'),
+     GL('_irasol','g',['j','gu'],'girasol: gi suena fuerte, como j, pero se escribe con G.'),
+     GL('_ente','g',['j','gu'],'gente: se escribe con G. Con «gu» diría «guente».'),
      Q('¿Cómo suena la G delante de a, o, u?','suave, como en gato',['fuerte, como la J'],'ga, go, gu: suave.'), Q('¿Cómo suena la G delante de e, i?','fuerte, como la J',['suave, como en gato'],'ge, gi: fuerte, igual que la j.'),
      Q('Para que la G suene suave delante de e, i se escribe…','gue, gui',['ge, gi','je, ji'],'guerra, guitarra.'), Q('Las palabras que empiezan con geo- y gest- se escriben con…','G',['J'],'geografía, gestión.'),
      Q('¿Cuál está bien escrita?','inteligente',['inligente','intelijente'],'in-te-li-gen-te.',1), Q('¿Cuál está bien escrita?','biología',['biolagía','biolojía'],'bio-lo-gí-a.',1),

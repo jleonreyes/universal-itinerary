@@ -104,6 +104,9 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .prize .toy{width:88px;height:88px;filter:grayscale(.85) opacity(.55)}
 .prize.got .toy{filter:none}
 .topic{font-family:var(--display);font-weight:800;font-size:clamp(26px,6vw,36px);line-height:1.1;color:#D21F3C;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
+.pertabs{display:flex;gap:8px;margin-top:20px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:5px}
+.ptab{flex:1;border:none;border-radius:999px;padding:10px 12px;font-weight:800;font-size:17px;background:transparent;color:var(--muted)}
+.ptab.on{background:var(--baby);color:var(--baby-ink);box-shadow:0 1px 0 var(--baby-line)}
 .card:hover{border-color:var(--sun)}
 .card .t{font-weight:800;font-size:18px;line-height:1.2}
 .card .s{font-size:13px;color:var(--muted)}
@@ -168,7 +171,8 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .syl.aton{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
 .sylw{display:flex;flex-direction:column;align-items:center;gap:4px}
 .syll{font-weight:800;font-size:15px;min-height:20px;text-transform:uppercase;letter-spacing:.04em}
-.syll.ton{color:var(--ton)} .syll.aton{color:var(--aton)}
+.syll.ton{color:var(--ton)} .syll.pos{color:var(--muted);text-transform:none;font-size:13px}
+.syll.pos.ton{color:var(--ton)} .syll.aton{color:var(--aton)}
 .syl.bad{border-color:var(--bad);background:var(--bad-soft)}
 .say{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:8px 16px;font-weight:800}
 .saybig{font-size:22px;padding:14px 26px}
@@ -234,7 +238,8 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
     </header>
     <section class="toys" id="toys" aria-label="Mis peluches"></section>
     <div id="rev"></div>
-    <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:18px"></div>
+    <div id="pertabs" class="pertabs" role="tablist"></div>
+    <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:14px"></div>
   </div>
 
   <div id="shelf" hidden>
@@ -294,6 +299,19 @@ const SIL = [
 ];
 const SILTON = [['ca-sa',0,1],['pe-lo-ta',1,1],['ár-bol',0,1],['ca-mi-sa',1,1],['ven-ta-na',1,1],['co-ra-zón',2,1],['ma-ri-po-sa',2,1],['lá-piz',0,1],
      ['ca-mión',1],['ju-gue-te',1],['mú-si-ca',0],['ra-tón',1],['pá-ja-ro',0],['za-pa-to',1],['ma-má',1],['sá-ba-do',0],['es-cue-la',1],['fe-liz',1],['pan-ta-lón',2],['me-sa',0],['ga-to',0],['cas-ti-llo',1],['a-vión',1],['gi-ra-sol',2],['pe-que-ño',1],['ca-ra-col',2]].map(([s, t, o]) => ({s, t, ojo:o}));
+/* ===== 2.º periodo: clasificación de las palabras según la sílaba tónica (ojo = las que fallaron en el cuaderno) ===== */
+const ACEN_N = ['Aguda', 'Grave', 'Esdrújula', 'Sobresdrújula'];
+const ACEN_POS = ['última', 'penúltima', 'antepenúltima', 'anterior a la antepenúltima'];
+const ACEN = [
+  ['pa-red',1],['me-nú',1],['a-mén',1,1],['fran-cés',1,1],['ho-tel',1],['ca-mión',1],['ra-tón',1],['re-loj',1],['co-ra-zón',2],['a-vión',1],['pa-pel',1],['ca-fé',1],['so-fá',1],['jar-dín',1],['a-zul',1],['fe-liz',1],['can-ción',1],['gi-ra-sol',2],
+  ['hor-mi-ga',1],['i-ma-gen',1],['a-zú-car',1,1],['ca-rre-ra',1,1],['ár-bol',0],['lá-piz',0],['ca-sa',0],['pe-lo-ta',1],['ven-ta-na',1],['fá-cil',0],['cés-ped',0],['es-cue-la',1],['gui-ta-rra',1],['za-pa-to',1],['gi-gan-te',1],['ca-mi-sa',1],
+  ['ú-ni-co',0],['mé-di-ca',0],['fa-ná-ti-co',1,1],['e-xá-me-nes',1,1],['di-ná-mi-cas',1,1],['mú-si-ca',0],['sá-ba-do',0],['pá-ja-ro',0],['plá-ta-no',0],['lám-pa-ra',0],['brú-ju-la',0],['ma-te-má-ti-cas',2],['te-lé-fo-no',1],['mur-cié-la-go',1],['pe-lí-cu-la',1],['nú-me-ro',0],['mé-di-co',0],
+  ['dí-ga-me-lo',0],['cóm-pra-me-lo',0],['cuén-ta-me-lo',0],['llé-va-te-lo',0],['dé-ja-me-lo',0],['prés-ta-me-lo',0]
+].map(([s, t, o]) => { const S = s.split('-'), k = Math.min(3, S.length - 1 - t);
+  return { s, t, k, ojo: o, word: S.join(''), show: S.map((x, j) => j === t ? x.toUpperCase() : x).join('-'), why: `${S.map((x, j) => j === t ? x.toUpperCase() : x).join('-')}: la fuerza va en la ${ACEN_POS[k]} sílaba → ${ACEN_N[k].toLowerCase()}.` }; });
+const RULE_ACEN = '<b>Agudas:</b> se pronuncian con mayor intensidad en la <b>última</b> sílaba. Ejemplo: pa-<b>red</b>, me-<b>nú</b>.<br><b>Graves:</b> en la <b>penúltima</b> sílaba. Ejemplo: hor-<b>mi</b>-ga, i-<b>ma</b>-gen.<br><b>Esdrújulas:</b> en la <b>antepenúltima</b> sílaba. Ejemplo: <b>ú</b>-ni-co, <b>mé</b>-di-ca.<br><b>Sobresdrújulas:</b> en una sílaba <b>anterior a la antepenúltima</b>. Ejemplo: <b>dí</b>-ga-me-lo.<br>¡Ojo! Primero encuentra la tónica y luego <b>cuenta desde el final</b>: última (1), penúltima (2), antepenúltima (3). Que una palabra tenga acento (´) <b>no</b> quiere decir que sea aguda: fa-<b>ná</b>-ti-co es esdrújula y a-<b>zú</b>-car es grave.';
+const RULE_G = 'La <b>g</b> tiene 2 sonidos.<br><b>Suave:</b> delante de la <b>a, o, u</b> (ga, go, gu): gato, goma, guante. Para que suene suave con e, i se escribe <b>gue, gui</b>: guerra, guitarra.<br><b>Fuerte:</b> delante de la <b>e, i</b> (ge, gi), sonando igual que la <b>j</b>: gigante, magia, girasol.<br><b>Regla clave:</b> se escriben con g las palabras que empiezan por <b>geo-</b> y <b>gest-</b> (geografía, gestión) y las que llevan <b>-gésimo</b> y <b>-gente</b> (vigésimo, inteligente, gente).<br>Palabras: gato, goma, guante, guitarra, guerra, gigante, geografía, gestión, magia, inteligente, vigésimo, girasol, biología.';
+const GS = (w, b, o) => ({ t: w, b, ojo: o, why: b === 0 ? `En «${w}» la g suena suave, como en gato.` : `En «${w}» la g suena fuerte, igual que la j (ge, gi).` });
 const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
 
 const ACTS = [
@@ -440,16 +458,70 @@ const ACTS = [
      ['avión','Hoy me subí a un avión.'],['abuelo','Fui a la casa de mi abuelo.'],['viernes','Hoy es viernes.'],['queso','Compré queso.'],['esquina','Hay una panadería en la esquina.'],['mosquito','En mi casa hay un mosquito.'],
      ['pequeño','Mi perro es pequeño.'],['zapatos','Me compré unos zapatos.'],['lápiz','Escribo con un lápiz.'],['feliz','Estoy muy feliz.'],['arroz','Hoy comí arroz.'],['maíz','Allí hay mucho maíz.'],
      ['biblioteca','Fuimos a la biblioteca.'],['buscar','Voy a buscar mi suéter.'],['hermoso','El jardín es hermoso.'],['deportista','Nacho es deportista.'],['dulces','Voy a la tienda de dulces.'],['cocina','En la cocina tengo platos.'],['gracias','Muchas gracias.'],['parque','Hoy fui al parque.'],
-     ['casa','Vivo en una casa grande.'],['camisa','Me puse mi camisa nueva.'],['música','Me gusta escuchar música.'],['pasado','El año pasado fuimos a la playa.'],['precioso','El vestido es precioso.'],['piso','El piso está limpio.'],['beso','Le di un beso a mi mamá.'],['uso','Uso mi lápiz para escribir.'],['grandísima','La ballena es grandísima.'],['televisión','Vimos una película en la televisión.'],['canadiense','Mi amigo es canadiense.'],['francés','El pan francés es delicioso.'],['cariñoso','Mi perro es muy cariñoso.'],['decir','Voy a decir la verdad.'],['lápices','Tengo muchos lápices de colores.'],['circo','Fuimos al circo.'],['dulce','El pastel es muy dulce.'],['cine','Vamos al cine el sábado.'],['comercial','Vimos un comercial en la tele.'],['silencioso','El salón está silencioso.'],['espacioso','Mi cuarto es espacioso.'],['delicioso','El postre está delicioso.'],['gracioso','El payaso es muy gracioso.'],['ventana','Abre la ventana, por favor.'],['verano','En verano hace calor.'],['barca','Paseamos en una barca.'],['bebé','El bebé está dormido.'],['vivir','Me gusta vivir en mi ciudad.'],['volver','Vamos a volver temprano.'],['blanco','El gato es blanco.'],['brazo','Me lastimé el brazo.'],['también','Yo también quiero jugar.'],['tambor','Mi hermana toca el tambor.'],['burro','El burro come zanahorias.'],['enviar','Voy a enviar una carta.'],['invierno','En invierno hace frío.'],['vicepresidente','El vicepresidente dio un discurso.'],['tuve','Ayer tuve clase de música.'],['estuve','Estuve en casa de mi abuela.'],['anduve','Anduve en bicicleta.'],['abuela','Mi abuela hace galletas.'],['zapato','Se me perdió un zapato.'],['zorro','El zorro es naranja.'],['zapatilla','Me amarré la zapatilla.'],['azúcar','Le puse azúcar al agua.'],['nariz','Me pica la nariz.'],['pez','Mi pez es dorado.'],['luz','Apaga la luz, por favor.'],['zumo','Tomé zumo de naranja.'],['raqueta','Tengo una raqueta nueva.'],['paquete','Llegó un paquete a la casa.'],['quince','Mi primo tiene quince años.'],['quitar','Voy a quitar los platos de la mesa.'],['equipo','Mi equipo ganó el partido.'],['querer','Te voy a querer siempre.'],['máquina','La máquina hace mucho ruido.'],['quemar','Cuidado, el sol te puede quemar.']].map(([w, s, o]) => ({w, s, ojo:o}))}
+     ['casa','Vivo en una casa grande.'],['camisa','Me puse mi camisa nueva.'],['música','Me gusta escuchar música.'],['pasado','El año pasado fuimos a la playa.'],['precioso','El vestido es precioso.'],['piso','El piso está limpio.'],['beso','Le di un beso a mi mamá.'],['uso','Uso mi lápiz para escribir.'],['grandísima','La ballena es grandísima.'],['televisión','Vimos una película en la televisión.'],['canadiense','Mi amigo es canadiense.'],['francés','El pan francés es delicioso.'],['cariñoso','Mi perro es muy cariñoso.'],['decir','Voy a decir la verdad.'],['lápices','Tengo muchos lápices de colores.'],['circo','Fuimos al circo.'],['dulce','El pastel es muy dulce.'],['cine','Vamos al cine el sábado.'],['comercial','Vimos un comercial en la tele.'],['silencioso','El salón está silencioso.'],['espacioso','Mi cuarto es espacioso.'],['delicioso','El postre está delicioso.'],['gracioso','El payaso es muy gracioso.'],['ventana','Abre la ventana, por favor.'],['verano','En verano hace calor.'],['barca','Paseamos en una barca.'],['bebé','El bebé está dormido.'],['vivir','Me gusta vivir en mi ciudad.'],['volver','Vamos a volver temprano.'],['blanco','El gato es blanco.'],['brazo','Me lastimé el brazo.'],['también','Yo también quiero jugar.'],['tambor','Mi hermana toca el tambor.'],['burro','El burro come zanahorias.'],['enviar','Voy a enviar una carta.'],['invierno','En invierno hace frío.'],['vicepresidente','El vicepresidente dio un discurso.'],['tuve','Ayer tuve clase de música.'],['estuve','Estuve en casa de mi abuela.'],['anduve','Anduve en bicicleta.'],['abuela','Mi abuela hace galletas.'],['zapato','Se me perdió un zapato.'],['zorro','El zorro es naranja.'],['zapatilla','Me amarré la zapatilla.'],['azúcar','Le puse azúcar al agua.'],['nariz','Me pica la nariz.'],['pez','Mi pez es dorado.'],['luz','Apaga la luz, por favor.'],['zumo','Tomé zumo de naranja.'],['raqueta','Tengo una raqueta nueva.'],['paquete','Llegó un paquete a la casa.'],['quince','Mi primo tiene quince años.'],['quitar','Voy a quitar los platos de la mesa.'],['equipo','Mi equipo ganó el partido.'],['querer','Te voy a querer siempre.'],['máquina','La máquina hace mucho ruido.'],['quemar','Cuidado, el sol te puede quemar.']].map(([w, s, o]) => ({w, s, ojo:o}))},
+
+  /* ======================= 2.º PERIODO ======================= */
+  {g:'acen', id:'acenpasos', type:'acen', title:'¿Aguda, grave o esdrújula?', src:'Paso 1: la tónica · Paso 2: el tipo', rule:RULE_ACEN, items:ACEN},
+  {g:'acen', id:'acentabla', type:'clas', title:'Completa la tabla', src:'Clasificación según la sílaba tónica', buckets:ACEN_N,
+   rule:RULE_ACEN, items:ACEN.map(a => ({ t:a.word, b:a.k, show:a.show, why:a.why, ojo:a.ojo }))},
+  {g:'acen', id:'acenregla', type:'elige', title:'Las reglas', src:'Agudas, graves, esdrújulas y sobresdrújulas', rule:RULE_ACEN,
+   items:[Q('Las palabras agudas llevan la fuerza en la…','última sílaba',['penúltima sílaba','antepenúltima sílaba'],'Agudas: en la última. pa-RED, me-NÚ.'),
+     Q('Las palabras graves llevan la fuerza en la…','penúltima sílaba',['última sílaba','antepenúltima sílaba'],'Graves: en la penúltima. hor-MI-ga.',1),
+     Q('Las palabras esdrújulas llevan la fuerza en la…','antepenúltima sílaba',['penúltima sílaba','última sílaba'],'Esdrújulas: en la antepenúltima. Ú-ni-co.',1),
+     Q('Las sobresdrújulas llevan la fuerza en…','una sílaba antes de la antepenúltima',['la última sílaba','la penúltima sílaba'],'Sobresdrújulas: antes de la antepenúltima. DÍ-ga-me-lo.'),
+     Q('¿Cuál es la penúltima sílaba de «ca-rre-ra»?','rre',['ra','ca'],'Contando desde el final: ra (última), RRE (penúltima), ca (antepenúltima).',1,'ca-rre-ra'),
+     Q('¿Cuál es la antepenúltima sílaba de «di-ná-mi-cas»?','ná',['mi','cas','di'],'Desde el final: cas (1), mi (2), NÁ (3).',1,'di-ná-mi-cas'),
+     Q('¿Cuál es la última sílaba de «ho-tel»?','tel',['ho'],'La última es «tel».',0,'ho-tel'),
+     Q('Si la tónica es la penúltima, la palabra es…','grave',['aguda','esdrújula'],'Penúltima → grave.',1),
+     Q('Si la tónica es la antepenúltima, la palabra es…','esdrújula',['grave','aguda'],'Antepenúltima → esdrújula.',1),
+     Q('Si la tónica es la última, la palabra es…','aguda',['grave','esdrújula'],'Última → aguda.'),
+     Q('¿Una palabra con acento (´) siempre es aguda?','No',['Sí'],'¡No! a-ZÚ-car es grave y fa-NÁ-ti-co es esdrújula. Hay que contar desde el final.',1),
+     Q('¿Qué tipo de palabra es «carrera»?','grave',['aguda','esdrújula'],'ca-RRE-ra: penúltima → grave.',1,'carrera'),
+     Q('¿Qué tipo de palabra es «dinámicas»?','esdrújula',['aguda','grave'],'di-NÁ-mi-cas: antepenúltima → esdrújula.',1,'dinámicas'),
+     Q('¿Qué tipo de palabra es «azúcar»?','grave',['aguda','esdrújula'],'a-ZÚ-car: penúltima → grave.',1,'azúcar'),
+     Q('¿Qué tipo de palabra es «hotel»?','aguda',['grave','esdrújula'],'ho-TEL: última → aguda.',0,'hotel')]},
+
+  {g:'orto2', id:'gsonido', type:'clas', title:'G suave o G fuerte', src:'Regla de la G: 2 sonidos', buckets:['G suave (gato)','G fuerte (suena como J)'], rule:RULE_G,
+   items:[GS('gato',0),GS('goma',0),GS('guante',0),GS('guitarra',0,1),GS('guerra',0),GS('gusano',0),GS('gota',0),GS('lago',0),GS('amigo',0),GS('juguete',0),GS('hormiga',0),GS('tortuga',0),
+     GS('magia',1),GS('inteligente',1,1),GS('girasol',1),GS('gente',1),GS('gemelo',1),GS('gestión',1),GS('página',1),GS('gimnasio',1),GS('ángel',1),GS('biología',1,1),GS('vigésimo',1,1),GS('mágico',1)]},
+  {g:'orto2', id:'gletra', type:'elige', title:'Palabras con G', src:'G, J, gue, gui y la regla clave', rule:RULE_G,
+   items:[L('inteli_ente','g',['j'],'inteligente: -gente va con G. ¡No es «inligente»!',1), L('_uitarra','gu',['g'],'guitarra: gui para que suene suave. Y lleva RR: gui-ta-rra.',1),
+     L('vi_ésimo','g',['j'],'vigésimo: -gésimo va con G.',1), L('biolo_ía','g',['j'],'biología: bio-lo-gí-a, con G. ¡No es «biolagía»!',1),
+     L('_ato','g',['j'],'gato: ga suena suave.'), L('_oma','g',['j'],'goma: go suena suave.'), L('_uante','g',['j'],'guante con G.'), L('_erra','gu',['g'],'guerra: gue para que suene suave.'),
+     L('_igante','g',['j'],'gigante con G.'), L('_eografía','g',['j'],'geografía: geo- va con G.'), L('_estión','g',['j'],'gestión: gest- va con G.'), L('ma_ia','g',['j'],'magia con G.'),
+     L('_irasol','g',['j'],'girasol con G.'), L('_ente','g',['j'],'gente: -gente va con G.'), L('ju_ete','gu',['g'],'juguete: gue para que suene suave.'), L('hormi_a','g',['j'],'hormiga: ga suena suave.'),
+     Q('¿Cómo suena la G delante de a, o, u?','suave, como en gato',['fuerte, como la J'],'ga, go, gu: suave.'), Q('¿Cómo suena la G delante de e, i?','fuerte, como la J',['suave, como en gato'],'ge, gi: fuerte, igual que la j.'),
+     Q('Para que la G suene suave delante de e, i se escribe…','gue, gui',['ge, gi','je, ji'],'guerra, guitarra.'), Q('Las palabras que empiezan con geo- y gest- se escriben con…','G',['J'],'geografía, gestión.'),
+     Q('¿Cuál está bien escrita?','inteligente',['inligente','intelijente'],'in-te-li-gen-te.',1), Q('¿Cuál está bien escrita?','biología',['biolagía','biolojía'],'bio-lo-gí-a.',1),
+     Q('¿Cuál está bien escrita?','vigésimo',['vigestibo','vijésimo'],'vigésimo: -gésimo con G.',1)]},
+  {g:'orto2', id:'goraciones', type:'elige', title:'Mis oraciones', src:'Las oraciones del cuaderno', rule:RULE_G + '<br>¡Ojo también con la <b>RR</b> (guitarra, borro), la <b>H</b> (hay) y el acento de <b>allí</b>!',
+   items:[MS('Soy muy _.','inteligente',['inligente','intelijente'],'in-te-li-gen-te: no te comas el «te».',1), MS('Yo toco la _.','guitarra',['guitara','gitarra'],'guitarra: gui y RR.',1),
+     MS('_ con la goma.','Borro',['Boro','Vorro'],'Borro lleva RR (suena fuerte en medio).',1), MS('_ hay un gato.','Allí',['Alli','Ally'],'Allí lleva acento en la í.',1),
+     MS('Allí _ un gato.','hay',['ay','ahy'],'«hay» (de haber) lleva H al inicio y Y al final.',1), MS('Los doctores usan _.','guantes',['gantes','guantez'],'guantes: gua suena suave.'),
+     MS('Estamos en el mes de _.','noviembre',['nobiembre','noviembra'],'noviembre: después de N va V.',1), MS('Me gusta la _.','geografía',['jeografía','geografia'],'geografía: geo- va con G.'),
+     MS('El _ es muy alto.','gigante',['jigante','gihante'],'gigante con G.'), MS('Mi hermana hace _.','magia',['majia','magía'],'magia con G.'),
+     MS('El _ mira al sol.','girasol',['jirasol','girasól'],'girasol con G.'), MS('En _ estudiamos a los seres vivos.','biología',['biolagía','biolojía'],'biología: bio-lo-gí-a.',1)]},
+  {g:'orto2', id:'dictado2', type:'dict', title:'Dictado de la G', src:'Las palabras de la regla de la G', n:15,
+   rule:'Escucha con atención. ¿La g suena suave o fuerte? ¿Lleva gue o gui? Fíjate también en la RR, la H y los acentos.',
+   items:[['gato','Mi gato es negro.'],['goma','Mi goma es rosa.'],['guantes','Los doctores usan guantes.'],['guitarra','Yo toco la guitarra.',1],['guerra','Jugamos guerra de almohadas.'],
+     ['gigante','El gigante es muy alto.'],['geografía','Hoy tuvimos clase de geografía.'],['gestión','Mi papá hizo una gestión en el banco.'],['magia','Me gusta la magia.'],['inteligente','Soy muy inteligente.',1],
+     ['vigésimo','Hoy es el vigésimo día del mes.',1],['girasol','El girasol mira al sol.'],['biología','En biología estudiamos las plantas.',1],['gente','Hay mucha gente en el parque.'],['juguete','Me regalaron un juguete.'],
+     ['hormiga','Vi una hormiga en el jardín.'],['borro','Borro con la goma.',1],['allí','Allí hay un gato.',1],['hay','Mi gato está allí, hay que darle de comer.',1],['noviembre','Estamos en noviembre.',1],
+     ['página','Abre el libro en la página diez.'],['ángel','Mi ángel de la guarda me cuida.']].map(([w, s, o]) => ({w, s, ojo:o}))}
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
 const GROUPS = [
-  {g:'sust', x:'👑 ¡Reina de los Sustantivos!', h:'Sustantivos', d:'Común y propio, concreto y abstracto, individual y colectivo.'},
-  {g:'gen', x:'🏆 ¡Campeona de Género y Número!', h:'Género y número', d:'Masculino y femenino, singular y plural.'},
-  {g:'pron', x:'🚀 ¡El Gran Reto de los Pronombres!', h:'Pronombres personales', d:'yo, tú, él, ella, nosotros, nosotras, ustedes, ellos, ellas.'},
-  {g:'sil', x:'✨ ¡La Prueba Mágica de las Sílabas!', h:'Sílabas', d:'Separar, contar y encontrar la sílaba tónica.'},
-  {g:'orto', x:'👑 ¡Reina de la Ortografía!', h:'Ortografía', d:'Palabras con S, C, B y V, Q y Z. Y un dictado.'}
+  {g:'sust', p:1, x:'👑 ¡Reina de los Sustantivos!', h:'Sustantivos', d:'Común y propio, concreto y abstracto, individual y colectivo.'},
+  {g:'gen', p:1, x:'🏆 ¡Campeona de Género y Número!', h:'Género y número', d:'Masculino y femenino, singular y plural.'},
+  {g:'pron', p:1, x:'🚀 ¡El Gran Reto de los Pronombres!', h:'Pronombres personales', d:'yo, tú, él, ella, nosotros, nosotras, ustedes, ellos, ellas.'},
+  {g:'sil', p:1, x:'✨ ¡La Prueba Mágica de las Sílabas!', h:'Sílabas', d:'Separar, contar y encontrar la sílaba tónica.'},
+  {g:'orto', p:1, x:'👑 ¡Reina de la Ortografía!', h:'Ortografía', d:'Palabras con S, C, B y V, Q y Z. Y un dictado.'},
+  {g:'acen', p:2, x:'🏆 ¡Campeona de las Agudas, Graves y Esdrújulas!', h:'Agudas, graves y esdrújulas', d:'Clasificación de las palabras según la sílaba tónica.'},
+  {g:'orto2', p:2, x:'👑 ¡Reina de la G!', h:'Ortografía: la G', d:'G suave y G fuerte, gue y gui, y la regla clave. Y un dictado.'}
 ];
+const PERIODS = [{ p: 1, h: '1.er periodo' }, { p: 2, h: '2.º periodo' }];
+const P1G = GROUPS.filter(G => G.p === 1);
+let PER = 2;
 const INST = {
   clas:'Lee la palabra y toca la columna donde va.',
   elige:'Toca la respuesta correcta.',
@@ -458,7 +530,8 @@ const INST = {
   ton:'🔵 Toca la sílaba TÓNICA: la que suena más FUERTE. Solo hay una. Toca 🔊 para oír la palabra.',
   aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
   dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
-  unir:'Toca una palabra de un lado y luego su pareja del otro lado.'
+  unir:'Toca una palabra de un lado y luego su pareja del otro lado.',
+  acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.'
 };
 
 /* ================= ESTADO ================= */
@@ -533,7 +606,7 @@ let PID = load('esp-cur', null);
 const K = n => `esp-${PID}-${n}`;
 const me = () => players.find(x => x.id === PID);
 function loadPlayer(id) {
-  PID = id; save('esp-cur', id);
+  PID = id; save('esp-cur', id); PER = load(K('period'), 2);
   // avance guardado antes de que hubiera jugadoras: pasa a la primera jugadora que se elija en este iPad
   const legacy = load('esp-stars', null);
   if (legacy && !load(K('stars'), null)) {
@@ -558,7 +631,7 @@ function awardToys(n) {
   }
   save(K('toys'), toys); return got;
 }
-const allThree = () => GROUPS.every(G => best['exam-' + G.g] === 3);   // los 5 retos finales con 3 ★
+const allThree = () => P1G.every(G => best['exam-' + G.g] === 3);   // los 5 retos finales con 3 ★
 function dollCheck() { if (doll || !allThree() || !myDoll()) return null; doll = myDoll().id; save(K('doll'), doll); return myDoll(); }
 /* Ronda de corona: cada vez que todas las prácticas de una sección llegan a 3 ★ (desde la última corona), se gana un peluche real. */
 function crownCheck(act, stars) {
@@ -645,15 +718,17 @@ function renderHome() {
   $('#rev').innerHTML = ek ? `<button class="revbtn" type="button" id="revgo"><span class="ico">🔁</span><span><span class="t">Repaso de mis errores</span>
     <span class="s">${ek} ${ek === 1 ? 'pregunta que se te dificultó' : 'preguntas que se te dificultaron'}. ¡Vamos a practicarlas!</span></span></button>` : '';
   if (ek) $('#revgo').onclick = startReview;
-  $('#groups').innerHTML = GROUPS.map(G => `
+  $('#pertabs').innerHTML = PERIODS.map(P => `<button type="button" class="ptab${P.p === PER ? ' on' : ''}" data-p="${P.p}">${P.h}</button>`).join('');
+  $('#groups').innerHTML = GROUPS.filter(G => G.p === PER).map(G => `
     <section class="group"><h2>${G.h} <span class="crownp">👑 ${(crown[G.g] || []).length}/${ACTS.filter(x => x.g === G.g).length}</span></h2><p class="gdesc">${G.d}</p>
     <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
       <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
       <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}
       <button class="card exam" type="button" data-exam="${G.g}"><span class="t">${G.x}</span><span class="s">El reto final: preguntas de todo ${G.h}, mezcladas. Más preguntas de lo que más se te dificulta.</span>
-      <span class="st">${starStr(best['exam-' + G.g] || 0)}</span>${(() => { const sp = SPECIALS.find(t => t.g === G.g), h = specials.includes(sp.id);
+      <span class="st">${starStr(best['exam-' + G.g] || 0)}</span>${(() => { const sp = SPECIALS.find(t => t.g === G.g); if (!sp) return ''; const h = specials.includes(sp.id);
         return `<span class="prize${h ? ' got' : ''}">${toySVG(sp)}<span>${h ? '⭐ ¡Ya es tuyo!' : '⭐ Premio con 3 ★'}</span></span>`; })()}</button></div></section>`).join('');
 }
+$('#pertabs').addEventListener('click', e => { const b = e.target.closest('.ptab'); if (!b) return; PER = +b.dataset.p; save(K('period'), PER); renderHome(); });
 $('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; if (c.dataset.exam) startExam(c.dataset.exam); else start(c.dataset.id); });
 $('#back').addEventListener('click', goHome);
 function goHome() { try { speechSynthesis.cancel(); } catch (e) {} $('#play').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); }
@@ -688,7 +763,7 @@ function pickDict(act) {
   return shuffle(q);
 }
 function pick(act) {
-  if (act.type === 'dict') return pickDict(act);
+  if (act.id === 'dictado') return pickDict(act);
   const n = act.n || 10, all = act.items.map((x, i) => i);
   // Primero las que tiene pendientes por error (las de más errores primero), luego algunas que corrigió la miss,
   // y el resto al azar pero con más probabilidad para las que se han equivocado antes.
@@ -779,18 +854,18 @@ function finish() {
     const id = 'exam-' + cur.exam, G = GROUPS.find(x => x.g === cur.exam);
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[id] || 0;
     best[id] = Math.max(before, stars); save(K('stars'), best);
-    const sp = SPECIALS.find(t => t.g === cur.exam), hasSp = specials.includes(sp.id);
+    const sp = SPECIALS.find(t => t.g === cur.exam), hasSp = !sp || specials.includes(sp.id);
     let spGot = null, got = [];
     if (stars === 3) { if (!hasSp) { specials.push(sp.id); save(K('specials'), specials); spGot = sp; } else got = awardToys(1); }
-    const dg = dollCheck(), retos = GROUPS.filter(x => best['exam-' + x.g] === 3).length;
+    const dg = dollCheck(), retos = P1G.filter(x => best['exam-' + x.g] === 3).length;
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Lo lograste! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? '¡Muy bien, casi lo logras!' : '¡Terminaste el reto!'}</div>
       <div class="stars">${starStr(stars)}</div>
       <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen de la escuela!' : 'Repítelo para ganar las 3 estrellas.'}</div>
       ${dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste los 5 retos con 3 ★. Este es el premio más especial:</div><div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>`
-        : (!doll ? `<div style="color:#B8860B;font-weight:800">💛 Retos con 3 ★: ${retos} de ${GROUPS.length}. ¡Gana los 5 para la muñeca final!</div>` : '')}
+        : (!doll && G.p === 1 ? `<div style="color:#B8860B;font-weight:800">💛 Retos con 3 ★: ${retos} de ${P1G.length}. ¡Gana los 5 para la muñeca final!</div>` : '')}
       ${spGot ? `<div class="gain" style="color:#C2187A">⭐ ¡Ganaste el peluche especial de este reto!</div><div class="newtoys"><figure class="royalwin">${toySVG(spGot)}<figcaption>${esc(spGot.name)}</figcaption></figure></div>` : ''}
       ${got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
-      ${stars < 3 ? `<div>${hasSp ? 'Saca 3 ★ en el reto para ganar otro peluche.' : `⭐ Saca 3 ★ para ganar a <b>${esc(sp.name)}</b>, el peluche especial de este reto.`}</div>` : ''}
+      ${stars < 3 ? `<div>${hasSp ? 'Saca 3 ★ en el reto para ganar un peluche.' : `⭐ Saca 3 ★ para ganar a <b>${esc(sp.name)}</b>, el peluche especial de este reto.`}</div>` : ''}
       <div class="btns"><button class="btn" type="button" id="again">Otro reto</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
     const g = cur.exam; $('#again').onclick = () => startExam(g);
   } else if (cur.review) {
@@ -903,6 +978,26 @@ const RENDER = {
   /* Sílaba tónica: azul la tónica, rojo las átonas */
   ton(q, it) { silRender(q, it, 'ton'); },
   aton(q, it) { silRender(q, it, 'aton'); },
+  acen(q, it) {
+    const S = it.s.split('-'), n = S.length, pos = j => n - 1 - j;
+    $('#area').innerHTML = `<div class="qp" id="ap">Paso 1: 🔵 toca la sílaba <span style="color:var(--ton)">TÓNICA</span> de «${esc(it.word)}»</div>
+      <div class="qcard"><div class="syls" id="sy">${S.map((x, j) => `<div class="sylw"><button class="syl" type="button" data-j="${j}">${esc(x)}</button><span class="syll" id="sl${j}"></span></div>`).join('')}</div></div>
+      <div class="actions"><button class="say" type="button" id="say">🔊 Oír</button></div><div id="ph2"></div>`;
+    $('#say').onclick = () => speak(it.word, 0.7);
+    $('#sy').onclick = e => {
+      const b = e.target.closest('.syl'); if (!b || cur.over || $('#ph2').innerHTML) return; const j = +b.dataset.j;
+      if (j !== it.t) { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); return; }
+      S.forEach((x, k) => { $(`.syl[data-j="${k}"]`).classList.add(k === it.t ? 'ton' : 'aton'); const p = pos(k); $('#sl' + k).textContent = p < 3 ? ACEN_POS[p] : ''; $('#sl' + k).className = 'syll pos' + (k === it.t ? ' ton' : ''); });
+      fb('ok', '¡Esa es la tónica!');
+      $('#ap').innerHTML = 'Paso 2: la tónica es la <span style="color:var(--ton)">' + (it.k < 3 ? ACEN_POS[it.k] : 'anterior a la antepenúltima') + '</span>. ¿Qué tipo de palabra es?';
+      $('#ph2').innerHTML = `<div class="opts" id="op">${ACEN_N.map((x, k) => `<button class="opt small" type="button" data-k="${k}">${x}</button>`).join('')}</div>`;
+      $('#op').onclick = ev => {
+        const o = ev.target.closest('.opt'); if (!o || cur.over || o.disabled) return;
+        if (+o.dataset.k === it.k) { o.classList.add('ok', 'pop'); rightQ(q, `<span style="color:var(--ton)">🔵 ${esc(it.show)}</span>: la fuerza va en la <b>${ACEN_POS[it.k]}</b> sílaba → <b>${ACEN_N[it.k].toLowerCase()}</b>.`, true); }
+        else { o.classList.add('bad'); o.disabled = true; wrongQ(q, o); }
+      };
+    };
+  },
   /* Dictado */
   dict(q, it) {
     const can = 'speechSynthesis' in window;

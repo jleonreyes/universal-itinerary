@@ -1023,17 +1023,19 @@ const RENDER = {
     if (can) { $('#say').onclick = say; setTimeout(say, 350); }
     const inp = $('#in'); let tries = 0;
     const strip = s => s.normalize('NFD').replace(/[̀-́̈]/g, '').normalize('NFC');
-    const norm = s => s.trim().toLowerCase().replace(/\s+/g, ' ');
+    const norm = s => s.normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
+    const accented = /[áéíóúü]/.test(it.w);
     const check = () => {
       if (cur.over) return;
       const v = norm(inp.value); if (!v) return;
-      if (v === it.w) { inp.classList.add('ok'); inp.blur(); rightQ(q, `Se escribe «${it.w}».`); return; }
-      if (strip(v) === strip(it.w)) {
-        inp.classList.add('ok'); inp.blur();
-        if (!q.bad) { q.bad = true; markErr(q); }
-        rightQ(q, `¡Muy bien las letras! Solo falta el acento: se escribe «${it.w}».`); return;
-      }
+      if (v === it.w) { inp.classList.add('ok'); inp.blur(); rightQ(q, accented ? `Se escribe «${it.w}», con acento.` : `Se escribe «${it.w}».`); return; }
       tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+      // Las letras están bien pero el acento no: cuenta como error y no avanza hasta que lo escriban bien.
+      if (strip(v) === strip(it.w)) {
+        fb('bad', accented ? '¡Casi! Revisa el acento (´).' : '¡Casi! Esta palabra no lleva acento.');
+        if (tries >= 2) $('#sh').innerHTML = `<div class="hint">${accented ? 'Lleva acento:' : 'No lleva acento:'}</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+        return;
+      }
       if (tries >= 2) $('#sh').innerHTML = `<div class="hint">Se escribe:</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
     };
     $('#ck').onclick = check;

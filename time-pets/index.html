@@ -632,6 +632,42 @@ function vFullTable(){
   })), hint:"Look at each verb: present → past → past participle."});
 }
 
+/* --- 2nd period: new irregular verbs from the notebook (present → past → past participle) --- */
+const VERBS_P2 = [
+  {p:"awake",past:"awoke",pp:"awoken"},{p:"blow",past:"blew",pp:"blown"},{p:"break",past:"broke",pp:"broken"},
+  {p:"bring",past:"brought",pp:"brought"},{p:"build",past:"built",pp:"built"},{p:"buy",past:"bought",pp:"bought"},
+  {p:"catch",past:"caught",pp:"caught"}
+];
+/* wrong choices kids really make: "catched", "buyed", and mixing brought / bought */
+const MIX_UP = {bring:["bought"], buy:["brought"], catch:["catched"], build:["builded"], break:["breaked"], blow:["blowed"], awake:["awaked"]};
+function v2Opts(v, which){
+  const ans = v[which], c = [...new Set([v.p, v.past, v.pp, ...(MIX_UP[v.p]||[]), ingOf(v.p)])].filter(x => x!==ans);
+  return [ans, ...shuffle(c).slice(0,2)];
+}
+function v2Choose(w){
+  const v = R(VERBS_P2), which = w || R(["past","pp"]);
+  return Qc({key:"v2c"+which+v.p, prompt: which==="past" ? `Circle the past of “${v.p}”.` : `Circle the past participle of “${v.p}”.`, text:`${v.p} → ___`, options:v2Opts(v,which), answers:[v[which]], show:v[which], hint:vHint(v)});
+}
+function v2Write(){
+  const v = R(VERBS_P2), which = R(["past","pp"]);
+  return which==="past" ? W1(`Write the past of “${v.p}”.`, `${v.p} → ___`, [v.past], vHint(v))
+                        : W1(`Write the past participle of “${v.p}”.`, `${v.p} → ${v.past} → ___`, [v.pp], vHint(v));
+}
+const V2_SENT = {
+  awake:"[[This morning]] I ___ at seven o'clock.", blow:"[[Yesterday]] the wind ___ my hat away.", break:"[[Last week]] my cousin ___ his toy car.",
+  bring:"[[Yesterday]] Grandpa ___ cookies to our house.", build:"[[Last summer]] we ___ a sandcastle at the beach.",
+  buy:"[[Yesterday]] Mom ___ new shoes at the mall.", catch:"[[Last night]] our cat ___ a mouse."
+};
+function v2Sent(){
+  const v = R(VERBS_P2);
+  return Qc({key:"v2s"+v.p, prompt:"Choose the past to complete the sentence.", text:V2_SENT[v.p], cue:`(${v.p})`, options:v2Opts(v,"past"), answers:[v.past], show:v.past, hint:vHint(v)});
+}
+function v2FullTable(){
+  return Qw({key:"v2full", layout:"table", prompt:"Complete the table: tap the past and the past participle.", rows:shuffle(VERBS_P2).map(v => ({
+    present:v.p, text:`${v.p} → ___ → ___`, blanks:[[v.past],[v.pp]], picks:{0:shuffle(v2Opts(v,"past")), 1:shuffle(v2Opts(v,"pp"))}
+  })), hint:"Look at each verb: present → past → past participle."});
+}
+
 /* --- Era 5: simple past --- */
 const FIXED_PAST = [
   {text:"We ___ friends [[last year]].", options:["became","become","becoming"], a:"became", hint:"become → became → become"},
@@ -853,6 +889,9 @@ const ERAS = [
   {id:"space", name:"Moon Base", topic:"Time Mix: which tense?", year:"3026", hat:"helmet", hatName:"Space Helmet",
     levels:[{n:"Time words", make:()=>makeSet(mixChoose,8)}, {n:"Write", make:()=>makeSet(mixWrite,8)}, {n:"Fix it", make:()=>makeSet(mixFix,8)}],
     boss:()=>[...makeSet(mixChoose,5), ...makeSet(mixWrite,3), ...makeSet(mixFix,2)]},
+  {id:"pirates2", extra:1, after:"dino", name:"Treasure Island", topic:"Verbs 2 · 2nd Period", year:"1720", hat:"pirate", hatName:"Pirate Hat",
+    levels:[{n:"Past", make:()=>makeSet(()=>v2Choose("past"),7)}, {n:"Past participle", make:()=>makeSet(()=>v2Choose("pp"),7)}, {n:"Write", make:()=>makeSet(v2Write,7)}, {n:"In a sentence", make:()=>makeSet(v2Sent,7)}, {n:"Full table", make:()=>[v2FullTable()]}],
+    boss:()=>[...makeSet(()=>v2Choose(),3), ...makeSet(v2Write,2), ...makeSet(v2Sent,2), v2FullTable()]},
   {id:"clock", extra:1, after:"egypt", name:"Clock Tower", topic:"Adverbs of Frequency", year:"1859", hat:"tophat", hatName:"Top Hat",
     levels:[{n:"How often?", make:()=>makeSet(mixGen(advPercent,advMeaning),8)}, {n:"Where does it go?", make:()=>makeSet(advOrder,6)}, {n:"Write", make:()=>makeSet(advWrite,8)}, {n:"Adverb + verb", make:()=>makeSet(advVerb,6)}],
     boss:()=>[...makeSet(advPercent,3), ...makeSet(advMeaning,2), ...makeSet(advOrder,2), ...makeSet(advWrite,2), ...makeSet(advVerb,1)]}
@@ -1043,6 +1082,7 @@ function scene(id){
     case "dino": return W+'<rect width="400" height="220" fill="#FFD7A3"/><circle cx="330" cy="52" r="26" fill="#FFF2CF"/><circle cx="120" cy="38" r="11" fill="#C9B6A8" opacity=".8"/><circle cx="136" cy="22" r="15" fill="#C9B6A8" opacity=".6"/><path d="M30 176 L112 66 L138 66 L220 176Z" fill="#9B5E3C"/><path d="M112 66 Q125 54 138 66 L132 84 Q125 74 118 84Z" fill="#D9434B"/><rect y="168" width="400" height="52" fill="#7FB24A"/><rect x="306" y="106" width="9" height="66" rx="4" fill="#8A5A2B"/><ellipse cx="292" cy="106" rx="27" ry="9" fill="#4E8F34" transform="rotate(-20 292 106)"/><ellipse cx="330" cy="106" rx="27" ry="9" fill="#4E8F34" transform="rotate(20 330 106)"/><ellipse cx="311" cy="98" rx="9" ry="22" fill="#4E8F34"/></svg>';
     case "egypt": return W+'<rect width="400" height="220" fill="#FFE6A6"/><circle cx="70" cy="56" r="28" fill="#FFF6D6"/><path d="M150 180 L238 68 L326 180Z" fill="#D9A54C"/><path d="M238 68 L326 180 L276 180Z" fill="#BE8832"/><path d="M58 180 L115 108 L172 180Z" fill="#E2B35E"/><path d="M115 108 L172 180 L142 180Z" fill="#C79842"/><rect y="172" width="400" height="48" fill="#E9C277"/><path d="M0 192 Q100 180 200 192 T400 186 V220 H0Z" fill="#DBAE62"/></svg>';
     case "castle": return W+'<rect width="400" height="220" fill="#BFE3FF"/><ellipse cx="80" cy="48" rx="34" ry="12" fill="#fff"/><ellipse cx="310" cy="36" rx="28" ry="10" fill="#fff"/><path d="M0 182 Q200 132 400 182 V220 H0Z" fill="#79B95B"/><g fill="#AAB3C7" stroke="#6E7891" stroke-width="2"><rect x="150" y="92" width="100" height="72"/><rect x="128" y="66" width="34" height="98"/><rect x="238" y="66" width="34" height="98"/><rect x="128" y="56" width="8" height="10"/><rect x="141" y="56" width="8" height="10"/><rect x="154" y="56" width="8" height="10"/><rect x="238" y="56" width="8" height="10"/><rect x="251" y="56" width="8" height="10"/><rect x="264" y="56" width="8" height="10"/></g><path d="M185 164 V134 Q200 118 215 134 V164Z" fill="#4C5468"/><line x1="145" y1="56" x2="145" y2="30" stroke="#4C5468" stroke-width="3"/><path d="M145 30 L166 36 L145 42Z" fill="#D9434B"/></svg>';
+    case "pirates2":
     case "pirates": return W+'<rect width="400" height="220" fill="#A9E2F2"/><circle cx="340" cy="46" r="24" fill="#FFF3C4"/><rect y="150" width="400" height="70" fill="#2C8FB8"/><path d="M0 160 Q25 150 50 160 T100 160 T150 160 T200 160 T250 160 T300 160 T350 160 T400 160" stroke="#BDE8F5" stroke-width="4" fill="none"/><path d="M110 150 L290 150 L268 182 L132 182Z" fill="#8A5A2B" stroke="#5A3417" stroke-width="3"/><line x1="200" y1="150" x2="200" y2="44" stroke="#5A3417" stroke-width="5"/><path d="M204 54 Q250 92 204 132Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M196 58 Q156 94 196 130Z" fill="#FFFDF5" stroke="#BDB39A" stroke-width="2"/><path d="M200 44 L226 50 L200 58Z" fill="#2B2D3A"/></svg>';
     case "clock": return W+'<rect width="400" height="220" fill="#C9D8F2"/><ellipse cx="90" cy="46" rx="36" ry="11" fill="#fff"/><ellipse cx="320" cy="64" rx="30" ry="10" fill="#fff"/><rect x="40" y="132" width="70" height="48" fill="#B7A48C"/><rect x="290" y="126" width="80" height="54" fill="#B7A48C"/><g stroke="#6E5A44" stroke-width="2"><rect x="168" y="70" width="64" height="110" fill="#D8C09A"/><path d="M162 70 L200 24 L238 70Z" fill="#5C6E8C"/></g><circle cx="200" cy="100" r="22" fill="#FFF9EC" stroke="#6E5A44" stroke-width="3"/><line x1="200" y1="100" x2="200" y2="85" stroke="#2B2D3A" stroke-width="3" stroke-linecap="round"/><line x1="200" y1="100" x2="212" y2="106" stroke="#2B2D3A" stroke-width="3" stroke-linecap="round"/><rect x="190" y="146" width="20" height="34" rx="10" fill="#6E5A44"/><rect y="176" width="400" height="44" fill="#8CBF6A"/></svg>';
     case "jazz": return W+'<rect width="400" height="220" fill="#2C2A4A"/><circle cx="330" cy="44" r="20" fill="#FFF3C4"/><rect x="20" y="70" width="90" height="110" fill="#5A3F5E"/><rect x="120" y="50" width="110" height="130" fill="#6E4A3C"/><rect x="240" y="80" width="80" height="100" fill="#4A4F6A"/><g fill="#F5C84C"><rect x="34" y="86" width="14" height="18"/><rect x="66" y="86" width="14" height="18"/><rect x="34" y="120" width="14" height="18"/><rect x="138" y="66" width="16" height="20"/><rect x="176" y="66" width="16" height="20"/><rect x="138" y="104" width="16" height="20"/><rect x="254" y="96" width="14" height="18"/><rect x="290" y="96" width="14" height="18"/></g><rect x="150" y="140" width="50" height="40" fill="#3A2416"/><text x="175" y="132" text-anchor="middle" font-family="Lilita One, sans-serif" font-size="16" fill="#FF6FA5">JAZZ</text><rect y="178" width="400" height="42" fill="#3E3B52"/><line x1="360" y1="100" x2="360" y2="180" stroke="#1E2A3A" stroke-width="5"/><circle cx="360" cy="96" r="9" fill="#FFE68A"/></svg>';
@@ -1204,7 +1244,7 @@ const RULES = {
 function learnHTML(){
   const e = ERAS[V.learn], back = V.learnBack==="play" ? "Back to the exercise" : "Back to the map";
   let body;
-  if(e.id==="pirates") body = `<div class="rtab rverbs"><div class="rh">Present</div><div class="rh">Past</div><div class="rh">Past participle</div>${S.verbs.map(v => `<div>${esc(v.p)}</div><div><b>${esc(v.past)}</b></div><div><b>${esc(v.pp)}</b></div>`).join("")}</div>`;
+  if(e.id==="pirates"||e.id==="pirates2") body = `<div class="rtab rverbs"><div class="rh">Present</div><div class="rh">Past</div><div class="rh">Past participle</div>${(e.id==="pirates2"?VERBS_P2:S.verbs).map(v => `<div>${esc(v.p)}</div><div><b>${esc(v.past)}</b></div><div><b>${esc(v.pp)}</b></div>`).join("")}</div>`;
   else { const R2 = RULES[e.id];
     body = `<div class="rem">${R2.rules.map(r => `<div>• ${esc(r)}</div>`).join("")}</div><div class="rcols">${R2.cols.map(c => `<div class="rcol"><h3>${c.t}</h3><div class="rtab">${c.rows.map(([a,b]) => `<div>${a}</div><div>${b}</div>`).join("")}</div></div>`).join("")}</div>`; }
   return `<div class="row"><button class="btn small white" data-act="unlearn">${back}</button></div>

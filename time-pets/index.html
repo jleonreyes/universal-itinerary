@@ -889,7 +889,7 @@ const ERAS = [
   {id:"space", name:"Moon Base", topic:"Time Mix: which tense?", year:"3026", hat:"helmet", hatName:"Space Helmet",
     levels:[{n:"Time words", make:()=>makeSet(mixChoose,8)}, {n:"Write", make:()=>makeSet(mixWrite,8)}, {n:"Fix it", make:()=>makeSet(mixFix,8)}],
     boss:()=>[...makeSet(mixChoose,5), ...makeSet(mixWrite,3), ...makeSet(mixFix,2)]},
-  {id:"pirates2", extra:1, after:"dino", name:"Treasure Island", topic:"Verbs 2 · 2nd Period", year:"1720", hat:"pirate", hatName:"Pirate Hat",
+  {id:"pirates2", extra:1, period:2, after:"dino", name:"Treasure Island", topic:"New Irregular Verbs", year:"1720", hat:"pirate", hatName:"Pirate Hat",
     levels:[{n:"Past", make:()=>makeSet(()=>v2Choose("past"),7)}, {n:"Past participle", make:()=>makeSet(()=>v2Choose("pp"),7)}, {n:"Write", make:()=>makeSet(v2Write,7)}, {n:"In a sentence", make:()=>makeSet(v2Sent,7)}, {n:"Full table", make:()=>[v2FullTable()]}],
     boss:()=>[...makeSet(()=>v2Choose(),3), ...makeSet(v2Write,2), ...makeSet(v2Sent,2), v2FullTable()]},
   {id:"clock", extra:1, after:"egypt", name:"Clock Tower", topic:"Adverbs of Frequency", year:"1859", hat:"tophat", hatName:"Top Hat",
@@ -1115,6 +1115,11 @@ function tone(fs){
 const prog = (p,id) => { p.progress = p.progress || {}; return p.progress[id] = p.progress[id] || {l:[], boss:0}; };
 const prevMain = i => { for(let k=i-1;k>=0;k--) if(!ERAS[k].extra) return ERAS[k]; return ERAS[0]; };
 const nextMain = i => ERAS.slice(i+1).find(x => !x.extra);
+/* school periods: every era is 1st period unless it says period:2 */
+const perOf = e => e.period || 1;
+const PERIOD_NAME = {1:"1st Period", 2:"2nd Period"};
+const curPer = () => S.period===1 || S.period===2 ? S.period : 2;
+const periodTabs = () => `<div class="row" role="tablist">${[1,2].map(n => `<button class="btn small ${curPer()===n?"":"white"}" role="tab" data-act="period" data-p="${n}" aria-pressed="${curPer()===n}" aria-selected="${curPer()===n}">${PERIOD_NAME[n]}</button>`).join("")}</div>`;
 const eraBefore = i => ERAS.find(x => x.id===ERAS[i].after) || prevMain(i);
 const eraOpen = (p,i) => i===0 || prog(p, eraBefore(i).id).boss >= 7;
 const levelOpen = (p,i,l) => eraOpen(p,i) && (l===0 || (prog(p, ERAS[i].id).l[l-1]||0) >= 1);
@@ -1255,6 +1260,7 @@ function mapHTML(){
   const p = P(); const st = stageOf(p);
   let track = "", extra = "", nMain = 0;
   ERAS.forEach((e,i) => {
+    if(perOf(e)!==curPer()) return;
     const open = eraOpen(p,i), pr = prog(p,e.id);
     const lv = e.levels.map((L,l) => `<button class="lvb" data-act="play" data-e="${i}" data-l="${l}" ${levelOpen(p,i,l)?"":"disabled"}>${l+1}. ${L.n}${stars(pr.l[l]||0)}</button>`).join("");
     const boss = `<button class="lvb boss" data-act="play" data-e="${i}" data-l="-1" ${bossOpen(p,i)?"":"disabled"}>${e.extra?"Final quiz":"Time Quiz"}<span style="font-size:13px">${pr.boss?`best ${pr.boss}/10`:e.extra?"practice":"need 7/10"}</span></button>`;
@@ -1268,8 +1274,10 @@ function mapHTML(){
   <div class="petcard"><div style="min-width:0"><h2>${esc(petTitle(p))}</h2>${growBar(p)}<div class="muted" style="font-size:15px">Three-star wins: ${threes(p)}${nextOutfit(p)?` · next outfit at ${nextOutfit(p).n}`:" · all outfits won!"}</div></div><button class="btn white" data-act="room">Pet room</button></div>
   ${diaNew(p)?`<button class="dbanner" data-act="room"><span style="font-size:44px">💎</span><span><b>New Diamond Award!</b>For your great grammar quiz at school. Tap to see it in the Pet room.</span></button>`:""}
   ${p.house ? `<div class="cupbar" style="--h1:${HOUSES[p.house].c1};--h2:${HOUSES[p.house].c2};--hi:${HOUSES[p.house].ink}"><div class="row" style="gap:10px;flex-wrap:nowrap">${crest(p.house,"crest sm")}<div><b>${HOUSES[p.house].name}</b><div>${ownPts(p)} house points · ${stickersOf(p)} of ${HOUSES[p.house].st.length} stickers</div></div></div><button class="btn small white" data-act="cup">House Cup</button></div>` : `<div class="panel"><h2>Choose your house!</h2><div>Every right answer gives 10 points to your house. Every mistake gives 20 points to a rival house!</div><div><button class="btn" data-act="sort">Choose my house</button></div></div>`}
-  <h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>
-  ${extra?`<h2 style="font-size:26px">Extra practice</h2><div class="muted">Not part of the time trip. Practice here any time. Stars still help your pet grow.</div><div class="track">${extra}</div>`:""}`;
+  ${periodTabs()}
+  ${curPer()===1 ? `<h2 style="font-size:26px">Time map</h2><div class="track">${track}</div>
+  ${extra?`<h2 style="font-size:26px">Extra practice</h2><div class="muted">Not part of the time trip. Practice here any time. Stars still help your pet grow.</div><div class="track">${extra}</div>`:""}`
+  : `<h2 style="font-size:26px">2nd Period</h2><div class="muted">New topics from class. More will show up here when your teacher gives them. Stars still help your pet grow.</div>${extra||track?`<div class="track">${track}${extra}</div>`:`<div class="panel" style="text-align:center">📭 No topics yet in the 2nd Period.</div>`}`}`;
 }
 
 function wardrobeItems(p){
@@ -1285,7 +1293,7 @@ function roomHTML(){
     return `<button class="hat" data-act="hat" data-h="${e.hat}" ${got?"":"disabled"} aria-pressed="${p.hat===e.hat}"><svg viewBox="${vb}">${got?hatSVG(e.hat):'<text x="100" y="100" text-anchor="middle" font-size="44" font-family="Lilita One, sans-serif" fill="#9AA6B5">?</text>'}</svg>${got?e.hatName:`Win the ${e.name} quiz`}</button>`; }).join("");
   const trav = ERAS.map((e,i) => eraOpen(p,i) && !e.extra ? `<button class="btn small ${p.era===e.id?"":"white"}" data-act="travel" data-e="${e.id}" aria-pressed="${p.era===e.id}">${e.name} · ${e.year}</button>` : "").join("");
   return topBar(p) + `${stageBox(p, V.roomMood||"idle", V.roomSay||`Hi ${p.name.split(" ")[0]}! Where are we going today?`)}
-  <div class="panel"><h2>💎 Diamond awards</h2><div class="muted">Get 9, 9.5 or 10 on your grammar quiz at school and a grown-up puts a diamond here. One for each topic!</div><div class="dgrid">${ERAS.map(e => diaCell(e, dmOf(p)[e.id])).join("")}</div></div>${(()=>{ let ch=false; Object.values(dmOf(p)).forEach(d=>{ if(!d.seen){ d.seen=true; ch=true; } }); if(ch) save(); return ""; })()}
+  <div class="panel"><h2>💎 Diamond awards</h2><div class="muted">Get 9, 9.5 or 10 on your grammar quiz at school and a grown-up puts a diamond here. One for each topic!</div>${[1,2].map(n => { const es = ERAS.filter(e => perOf(e)===n); return es.length ? `<h3 style="margin:10px 0 6px">${PERIOD_NAME[n]}</h3><div class="dgrid">${es.map(e => diaCell(e, dmOf(p)[e.id])).join("")}</div>` : ""; }).join("")}</div>${(()=>{ let ch=false; Object.values(dmOf(p)).forEach(d=>{ if(!d.seen){ d.seen=true; ch=true; } }); if(ch) save(); return ""; })()}
   <div class="panel"><h2>Time machine</h2><div class="muted">Pick a time to visit. Win each Time Quiz to unlock a new one.</div><div class="travel">${trav}</div></div>
   <div class="panel"><h2>Hat closet</h2><div class="closet">${hats}</div></div>
   <div class="panel"><h2>Wardrobe</h2><div class="muted">Tap a thing to put it on or take it off.</div>
@@ -1522,7 +1530,7 @@ function grownHTML(){
   <div class="row"><button class="btn small white" data-act="vreset">${V.arm==="v"?"Tap again to restore":"Restore notebook list"}</button><span class="muted" id="v-msg"></span></div></div>
   <div class="panel"><h2>💎 Diamond awards (school quiz)</h2><div class="muted">When she gets 9, 9.5 or 10 on a grammar quiz at school, pick her name and tap the grade next to the topic. One diamond per topic.</div>
   <div class="row">${S.players.map(p => `<button class="btn small ${dp.id===p.id?"":"white"}" data-act="dpick" data-id="${p.id}" aria-pressed="${dp.id===p.id}">${esc(p.name)}</button>`).join("")}</div>
-  <div>${ERAS.map(e => { const d = dmOf(dp)[e.id]; return `<div class="drow"><span class="dn"><b>${esc(e.topic)}</b>${d?` · 💎 ${esc(d.g)}`:""}</span>${["9","9.5","10"].map(g => `<button class="btn small white" data-act="dset" data-e="${e.id}" data-g="${g}" aria-pressed="${!!d && d.g===g}">${g}</button>`).join("")}${d?`<button class="btn small white" data-act="ddel" data-e="${e.id}">${V.arm==="d"+e.id?"Tap again to remove":"Remove"}</button>`:""}</div>`; }).join("")}</div></div>
+  <div>${[1,2].flatMap(n => [{hd:n}, ...ERAS.filter(e => perOf(e)===n)]).map(e => { if(e.hd) return `<h3 style="margin:12px 0 4px">${PERIOD_NAME[e.hd]}</h3>`; const d = dmOf(dp)[e.id]; return `<div class="drow"><span class="dn"><b>${esc(e.topic)}</b>${d?` · 💎 ${esc(d.g)}`:""}</span>${["9","9.5","10"].map(g => `<button class="btn small white" data-act="dset" data-e="${e.id}" data-g="${g}" aria-pressed="${!!d && d.g===g}">${g}</button>`).join("")}${d?`<button class="btn small white" data-act="ddel" data-e="${e.id}">${V.arm==="d"+e.id?"Tap again to remove":"Remove"}</button>`:""}</div>`; }).join("")}</div></div>
   <div class="panel"><h2>Players</h2>${players}</div>`;
 }
 
@@ -1542,6 +1550,7 @@ function bindGate(){
 function go(screen){ V.screen = screen; V.arm = null; render(); window.scrollTo(0,0); }
 
 const ACT = {
+  period(el){ S.period = +el.dataset.p; save(); render(); },
   dpick(el){ V.dp = el.dataset.id; V.arm = null; render(); },
   dset(el){ const p = S.players.find(x => x.id===V.dp) || S.players[0]; if(!p) return; const old = dmOf(p)[el.dataset.e]; dmOf(p)[el.dataset.e] = {g:el.dataset.g, at:Date.now(), seen: old && old.g===el.dataset.g ? old.seen : false}; V.arm = null; save(); render(); },
   ddel(el){ const k = "d"+el.dataset.e; if(V.arm!==k){ V.arm = k; render(); return; } const p = S.players.find(x => x.id===V.dp) || S.players[0]; if(p) delete dmOf(p)[el.dataset.e]; V.arm = null; save(); render(); },

@@ -313,6 +313,12 @@ const RULE_ACEN = '<b>Agudas:</b> se pronuncian con mayor intensidad en la <b>ú
 const RULE_G = 'La <b>g</b> tiene 2 sonidos.<br><b>Suave:</b> delante de la <b>a, o, u</b> (ga, go, gu): gato, goma, guante. Para que suene suave con e, i se escribe <b>gue, gui</b>: guerra, guitarra.<br><b>Fuerte:</b> delante de la <b>e, i</b> (ge, gi), sonando igual que la <b>j</b>: gigante, magia, girasol.<br><b>Regla clave:</b> se escriben con g las palabras que empiezan por <b>geo-</b> y <b>gest-</b> (geografía, gestión) y las que llevan <b>-gésimo</b> y <b>-gente</b> (vigésimo, inteligente, gente).<br>Palabras: gato, goma, guante, guitarra, guerra, gigante, geografía, gestión, magia, inteligente, vigésimo, girasol, biología.';
 const GL = (big, a, w, why, o) => ({p:'¿Qué va en el hueco: g, gu o j?', big, a, w, why, ojo:o});
 const GS = (w, b, o) => ({ t: w, b, ojo: o, why: b === 0 ? `En «${w}» la g suena suave, como en gato.` : `En «${w}» la g suena fuerte, igual que la j (ge, gi).` });
+const RULE_J = 'La <b>J</b> suena fuerte con todas las vocales: <b>ja, je, ji, jo, ju</b>.<br>Palabras del cuaderno: juego, joven, jarra, jardín, jirafa, jamón, jarrón, junio, julio, jugo, joya.<br>¡Ojo! <b>ge</b> y <b>gi</b> suenan igual que <b>je</b> y <b>ji</b> (girasol, gigante). Esas hay que aprenderlas de memoria.';
+const RULE_ART = 'Los <b>artículos</b> son palabras que <b>acompañan al sustantivo</b> y nos indican su <b>género</b> (masculino y femenino) y su <b>número</b> (singular y plural).<br><b>Determinados o definidos:</b> se usan cuando hablamos de algo <b>conocido o específico</b>: <b>el, la, lo, los, las</b>. Ejemplo: <b>El</b> perro de mi vecino.<br><b>Indeterminados o indefinidos:</b> se usan cuando hablamos de algo <b>no específico</b> o que no conocemos bien: <b>un, una, unos, unas</b>. Ejemplo: <b>Un</b> niño tocó la puerta.';
+const AR = (t, b) => ({t, b, why: b === 0 ? `«${t}» lleva artículo determinado (el, la, lo, los, las): algo conocido.` : `«${t}» lleva artículo indeterminado (un, una, unos, unas): algo no conocido.`});
+const TA = (s, a, alt) => ({s, a, alt, why: /^(el|la|lo|los|las)$/i.test(a) ? `«${a}» es un artículo determinado.` : `«${a}» es un artículo indeterminado.`});
+const AE = (w, a, o) => ({p:'¿Qué artículo DETERMINADO va?', big:'_ ' + w, a, w:['el','la','los','las'].filter(x => x !== a), why:`Decimos «${a} ${w}».`, ojo:o, cls:'small'});
+const AU = (w, a, o) => ({p:'¿Qué artículo INDETERMINADO va?', big:'_ ' + w, a, w:['un','una','unos','unas'].filter(x => x !== a), why:`Decimos «${a} ${w}».`, ojo:o, cls:'small'});
 const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
 
 const ACTS = [
@@ -523,7 +529,64 @@ const ACTS = [
      ['gigante','El gigante es muy alto.'],['geografía','Hoy tuvimos clase de geografía.'],['gestión','Mi papá hizo una gestión en el banco.'],['magia','Me gusta la magia.'],['inteligente','Soy muy inteligente.',1],
      ['vigésimo','Hoy es el vigésimo día del mes.',1],['girasol','El girasol mira al sol.'],['biología','En biología estudiamos las plantas.',1],['gente','Hay mucha gente en el parque.'],['juguete','Me regalaron un juguete.'],
      ['hormiga','Vi una hormiga en el jardín.'],['borro','Borro con la goma.',1],['allí','Allí hay un gato.',1],['hay','Mi gato está allí, hay que darle de comer.',1],['noviembre','Estamos en noviembre.',1],
-     ['página','Abre el libro en la página diez.'],['ángel','Mi ángel de la guarda me cuida.']].map(([w, s, o]) => ({w, s, ojo:o}))}
+     ['página','Abre el libro en la página diez.'],['ángel','Mi ángel de la guarda me cuida.']].map(([w, s, o]) => ({w, s, ojo:o}))},
+  /* ---------- 2.º periodo · Ortografía: palabras con J (cuaderno 10 nov) ---------- */
+  {g:'orto3', id:'jletra', type:'elige', title:'Palabras con J', src:'Ortografía: palabras con J', rule:RULE_J,
+   items:[GL('_irafa','j',['g','gu'],'jirafa se escribe con J. ¡Y al final lleva F, no J: ji-ra-FA!',1),
+     MS('Fui al zoológico y _ una jirafa.','vi',['bi'],'vi (de ver) va con V. ¡No es «bi»!',1),
+     MS('Fui al _ y vi una jirafa.','zoológico',['zológico','zoologico'],'zo-o-ló-gi-co: lleva dos O y acento en la ó.',1),
+     GL('_ardín','j',['g','gu'],'jardín con J y acento en la í: jar-DÍN.'),
+     GL('_uego','j',['g','gu'],'juego con J.'), GL('_oven','j',['g','gu'],'joven con J.'), GL('_arra','j',['g','gu'],'jarra con J y RR.'),
+     GL('_amón','j',['g','gu'],'jamón con J y acento en la ó.'), GL('_arrón','j',['g','gu'],'jarrón con J, RR y acento en la ó.'),
+     GL('_unio','j',['g','gu'],'junio con J.'), GL('_ulio','j',['g','gu'],'julio con J.'), GL('_ugo','j',['g','gu'],'jugo con J.'), GL('_oya','j',['g','gu'],'joya con J.'),
+     GL('_irasol','g',['j','gu'],'¡Cuidado! girasol va con G, aunque suene como jirafa. Hay que aprenderlas.'),
+     GL('_igante','g',['j','gu'],'gigante va con G, aunque suene como j.'),
+     Q('¿Cuál está bien escrita?','jirafa',['girafa','jiraja','jirafá'],'ji-ra-fa: J al inicio y F al final.',1),
+     Q('¿Cuál está bien escrita?','jardín',['jardin','gardín','hardín'],'jardín lleva acento en la í.'),
+     Q('¿Cuál está bien escrita?','jamón',['jamon','gamón'],'jamón lleva acento en la ó.'),
+     Q('¿Cuál está bien escrita?','jarrón',['jarón','jarron'],'jarrón: RR y acento en la ó.')]},
+  {g:'orto3', id:'joraciones', type:'elige', title:'Mis oraciones con J', src:'Las oraciones del cuaderno', rule:RULE_J + '<br>¡Ojo también con la <b>V</b> de «vi» y la mayúscula al inicio!',
+   items:[MS('Me gusta ir al _ con mis amigos.','jardín',['jardin','gardín'],'jardín con J y acento.'),
+     MS('En el zoológico _ una jirafa.','vi',['bi'],'vi (de ver) con V.',1),
+     MS('Fui al zoológico y vi una _.','jirafa',['jiraja','girafa'],'ji-ra-fa: termina en FA.',1),
+     MS('En mi casa hay un _.','jarrón',['jarón','jarron'],'jarrón: RR y acento en la ó.'),
+     MS('Yo cumplo en _.','junio',['Junio','gunio'],'Los meses van con minúscula: junio.'),
+     MS('Me gusta el _ de manzana.','jugo',['gugo','jugó'],'jugo (la bebida) no lleva acento. «jugó» es de jugar.'),
+     MS('Mi abuela tiene una _ muy bonita.','joya',['goya','jolla'],'joya con J y Y.'),
+     MS('El _ salta muy alto.','joven',['goven','jóven'],'joven: con J y sin acento.'),
+     MS('Sirvo agua de la _.','jarra',['jara','garra'],'jarra lleva RR. «garra» es la uña de un animal.'),
+     MS('De vacaciones nos vamos en _.','julio',['Julio','gulio'],'julio con minúscula.'),
+     MS('Mi sándwich es de _.','jamón',['jamon','gamón'],'jamón lleva acento.'),
+     MS('Mi _ favorito es el escondite.','juego',['guego','juejo'],'juego con J.')]},
+  {g:'orto3', id:'dictado3', type:'dict', title:'Dictado de la J', src:'Las palabras con J del cuaderno', n:12,
+   rule:'Escucha con atención. Todas llevan J. Fíjate también en la RR y en los acentos (jardín, jamón, jarrón).',
+   items:[['juego','Mi juego favorito es el escondite.'],['joven','Mi tío es joven.'],['jarra','Sirvo agua de la jarra.'],['jardín','Me gusta ir al jardín con mis amigos.'],
+     ['jirafa','Fui al zoológico y vi una jirafa.',1],['jamón','Me gusta el jamón.'],['jarrón','En mi casa hay un jarrón.'],['junio','Yo cumplo en junio.'],
+     ['julio','En julio hay vacaciones.'],['jugo','Me gusta el jugo de manzana.'],['joya','Mi abuela tiene una joya.'],['zoológico','Fui al zoológico.',1],['vi','Ayer vi una jirafa.',1]].map(([w, s, o]) => ({w, s, ojo:o}))},
+
+  /* ---------- 2.º periodo · Los artículos (cuaderno 10 nov) ---------- */
+  {g:'art', id:'artclas', type:'clas', title:'¿Definido o indefinido?', src:'Los artículos', buckets:['Determinado (definido)','Indeterminado (indefinido)'], rule:RULE_ART,
+   items:['el','la','los','las','lo'].map(a => AR(a, 0)).concat(['un','una','unos','unas'].map(a => AR(a, 1)),
+     [['la maestra',0],['unos colores',1],['el libro',0],['unos pingüinos',1],['el sol',0],['un niño',1],['la puerta',0],['una jirafa',1],['las joyas',0],['unas jarras',1],['los jugos',0],['un jardín',1]].map(([t, b]) => AR(t, b)))},
+  {g:'art', id:'artcircula', type:'toca', title:'Encuentra el artículo', src:'Circula los artículos', rule:RULE_ART, inst:'Toca el artículo de la oración.',
+   items:[TA('La maestra llegó tarde.','La'), TA('Compré unos colores.','unos'), TA('El libro está en la mochila.','El',['la']), TA('Unos pingüinos pescaron.','Unos'),
+     TA('El sol brilla mucho.','El'), TA('Un niño tocó la puerta.','Un',['la']), TA('El perro de mi vecino ladra.','El'), TA('Vi una jirafa enorme.','una'),
+     TA('Las jirafas comen hojas.','Las'), TA('Mi abuela tiene unas joyas.','unas'), TA('Los niños juegan futbol.','Los'), TA('Me tomé un jugo.','un')]},
+  {g:'art', id:'artelige', type:'elige', title:'¿Qué artículo va?', src:'Género y número del artículo', rule:RULE_ART,
+   items:[AE('jirafa','la',1), AE('jardín','el'), AE('jarras','las'), AE('jugos','los'), AE('joya','la'), AE('jamón','el'), AE('flores','las'), AE('niños','los'), AE('mochila','la'), AE('sol','el'),
+     AU('jirafa','una'), AU('jarrón','un'), AU('pingüinos','unos',1), AU('colores','unos'), AU('joyas','unas'), AU('niño','un'), AU('casa','una'), AU('peces','unos')]},
+  {g:'art', id:'artsentido', type:'elige', title:'¿Conocido o no?', src:'¿Cuándo uso cada uno?', rule:RULE_ART,
+   items:[Q('«El perro de mi vecino» — ¿sabemos de qué perro hablamos?','Sí: es un perro conocido',['No: es cualquier perro'],'«el» es determinado: hablamos de un perro conocido, el de mi vecino.'),
+     Q('«Un niño tocó la puerta» — ¿sabemos qué niño fue?','No: es un niño que no conocemos',['Sí: es un niño conocido'],'«un» es indeterminado: no sabemos qué niño fue.',1),
+     Q('Los artículos acompañan al…','sustantivo',['verbo','adjetivo'],'El artículo va antes del sustantivo: la maestra, un niño.'),
+     Q('Los artículos nos dicen el…','género y número del sustantivo',['tiempo del verbo','tamaño de las cosas'],'la → femenino singular; unos → masculino plural.'),
+     Q('¿Cuáles son los artículos determinados?','el, la, lo, los, las',['un, una, unos, unas','yo, tú, él, ella'],'Determinados: el, la, lo, los, las.'),
+     Q('¿Cuáles son los artículos indeterminados?','un, una, unos, unas',['el, la, lo, los, las','este, esta, ese'],'Indeterminados: un, una, unos, unas.'),
+     Q('Si hablamos de algo conocido o específico, usamos un artículo…','determinado',['indeterminado'],'Algo conocido: el, la, los, las.'),
+     Q('Si hablamos de algo no específico o que no conocemos bien, usamos un artículo…','indeterminado',['determinado'],'Algo no conocido: un, una, unos, unas.',1),
+     Q('«unas» es…','femenino plural',['masculino singular','femenino singular','masculino plural'],'unas jirafas: femenino y plural.'),
+     Q('«el» es…','masculino singular',['femenino singular','masculino plural'],'el jardín: masculino y singular.'),
+     Q('¿«él» con acento es un artículo?','No: «él» es un pronombre',['Sí: es un artículo'],'«el» sin acento es artículo (el gato). «él» con acento es pronombre (él juega).',1)]},
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
 const GROUPS = [
@@ -533,7 +596,9 @@ const GROUPS = [
   {g:'sil', p:1, x:'✨ ¡La Prueba Mágica de las Sílabas!', h:'Sílabas', d:'Separar, contar y encontrar la sílaba tónica.'},
   {g:'orto', p:1, x:'👑 ¡Reina de la Ortografía!', h:'Ortografía', d:'Palabras con S, C, B y V, Q y Z. Y un dictado.'},
   {g:'acen', p:2, x:'🏆 ¡Campeona de las Agudas, Graves y Esdrújulas!', h:'Agudas, graves y esdrújulas', d:'Clasificación de las palabras según la sílaba tónica.'},
-  {g:'orto2', p:2, x:'👑 ¡Reina de la G!', h:'Ortografía: la G', d:'G suave y G fuerte, gue y gui, y la regla clave. Y un dictado.'}
+  {g:'orto2', p:2, x:'👑 ¡Reina de la G!', h:'Ortografía: la G', d:'G suave y G fuerte, gue y gui, y la regla clave. Y un dictado.'},
+  {g:'orto3', p:2, x:'👑 ¡Reina de la J!', h:'Ortografía: la J', d:'Las palabras con J del cuaderno, sus oraciones y un dictado.'},
+  {g:'art', p:2, x:'🏆 ¡Campeona de los Artículos!', h:'Los artículos', d:'Determinados (el, la, lo, los, las) e indeterminados (un, una, unos, unas).'}
 ];
 const PERIODS = [{ p: 1, h: '1.er periodo' }, { p: 2, h: '2.º periodo' }];
 const P1G = GROUPS.filter(G => G.p === 1);
@@ -801,7 +866,7 @@ function start(id) {
   const act = BYID[id];
   cur = { act, mistakes: 0, done: 0, total: 0, over: false, cols: {}, k: 0 };
   setupPlay(act.title, act);
-  $('#inst').textContent = INST[act.type];
+  $('#inst').textContent = act.inst || INST[act.type];
   if (act.type === 'unir') { renderUnir(act); progress(); return; }
   cur.qs = pick(act).map(i => ({ act, i })); cur.total = cur.qs.length;
   progress(); next();
@@ -835,8 +900,8 @@ function next() {
   if (cur.k >= cur.qs.length) return finish();
   const q = cur.qs[cur.k]; q.bad = false;
   if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = false; $('#rule').open = false;
-    if (cur.exam) $('#inst').innerHTML = `<div class="topic">${esc(q.act.title.replace(/ [🔵🔴]/u, ''))}</div>${esc(INST[q.act.type])}`;
-    else $('#inst').textContent = q.act.title + ' · ' + INST[q.act.type]; }
+    if (cur.exam) $('#inst').innerHTML = `<div class="topic">${esc(q.act.title.replace(/ [🔵🔴]/u, ''))}</div>${esc(q.act.inst || INST[q.act.type])}`;
+    else $('#inst').textContent = q.act.title + ' · ' + (q.act.inst || INST[q.act.type]); }
   RENDER[q.act.type](q, q.act.items[q.i]);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -957,7 +1022,7 @@ const RENDER = {
     $('#st').onclick = e => {
       const b = e.target.closest('.tok'); if (!b || cur.over) return;
       const w = toks[+b.dataset.j].replace(/[.,;:¡!¿?]/g, '');
-      if (w === it.a) { b.classList.add('ok', 'pop'); rightQ(q, it.why || `«${it.a}» es el pronombre: está en lugar del nombre.`); }
+      if (w === it.a || (it.alt || []).includes(w)) { b.classList.add('ok', 'pop'); rightQ(q, it.why || `«${it.a}» es el pronombre: está en lugar del nombre.`); }
       else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
     };
   },

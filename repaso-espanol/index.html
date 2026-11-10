@@ -154,6 +154,28 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .tok{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-size:22px}
 .tok.ok{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
 .tok.bad{border-color:var(--bad);background:var(--bad-soft)}
+.tok.blu{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
+.tok.red{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.tok.miss{outline:3px dashed var(--bad)}
+.pens{display:flex;gap:10px;justify-content:center;margin:10px 0}
+.pen{font:800 18px var(--display);padding:8px 16px;border-radius:999px;border:3px solid var(--line);background:var(--surface)}
+.pen.blu.on{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
+.pen.red.on{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.wr{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.wr .bad-s{font:700 22px var(--display);text-align:center;color:var(--muted)}
+.wr textarea{font:700 22px var(--display);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);min-height:96px;width:100%;box-sizing:border-box}
+.wr textarea.bad{border-color:var(--bad);background:var(--bad-soft)}
+.wr textarea.ok{border-color:var(--ok);background:var(--ok-soft)}
+.wr .hint{color:var(--muted);font-size:18px;text-align:center}
+.wr .show{font:800 22px var(--display);color:var(--ok);text-align:center}
+.trow{display:grid;gap:10px}
+.tcol{display:flex;flex-direction:column;gap:6px}
+.tcol .th{font-weight:800;font-size:16px;color:var(--muted)}
+.tcol .ops{display:flex;gap:8px;flex-wrap:wrap}
+.tcol .op{font:700 18px var(--display);padding:8px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface)}
+.tcol .op.on{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.tcol .op.ok{border-color:var(--ok);background:var(--ok-soft)}
+.tcol .op.bad{border-color:var(--bad);background:var(--bad-soft)}
 
 .letters{display:flex;justify-content:center;align-items:stretch;flex-wrap:nowrap;font-family:var(--display);font-weight:800;font-size:clamp(22px,6.2vw,54px);line-height:1}
 .letters .lt{padding:8px 0}
@@ -319,6 +341,13 @@ const AR = (t, b) => ({t, b, why: b === 0 ? `«${t}» lleva artículo determinad
 const TA = (s, a, alt) => ({s, a, alt, why: /^(el|la|lo|los|las)$/i.test(a) ? `«${a}» es un artículo determinado.` : `«${a}» es un artículo indeterminado.`});
 const AE = (w, a, o) => ({p:'¿Qué artículo DETERMINADO va?', big:'_ ' + w, a, w:['el','la','los','las'].filter(x => x !== a), why:`Decimos «${a} ${w}».`, ojo:o, cls:'small'});
 const AU = (w, a, o) => ({p:'¿Qué artículo INDETERMINADO va?', big:'_ ' + w, a, w:['un','una','unos','unas'].filter(x => x !== a), why:`Decimos «${a} ${w}».`, ojo:o, cls:'small'});
+const ART_D = ['el','la','lo','los','las'], ART_I = ['un','una','unos','unas'];
+const ART_GN = {el:['masculino','singular'], la:['femenino','singular'], lo:['neutro','singular'], los:['masculino','plural'], las:['femenino','plural'], un:['masculino','singular'], una:['femenino','singular'], unos:['masculino','plural'], unas:['femenino','plural']};
+const AT = (frase) => { const a = frase.split(' ')[0].toLowerCase(), d = ART_D.includes(a), [g, n] = ART_GN[a];
+  return { p:'Completa la tabla del artículo:', w:frase, cols:[['Tipo', d ? 'determinado' : 'indeterminado', ['determinado','indeterminado']], ['Género', g, ['masculino','femenino']], ['Número', n, ['singular','plural']]],
+    why:`En «${frase}», «${a}» es artículo ${d ? 'determinado' : 'indeterminado'}, ${g} y ${n}.` }; };
+const CR = (s, a, why, o) => ({ s, a, why, ojo:o });
+const ES = (w, hint, o) => ({ w, hint, ojo:o });
 const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
 
 const ACTS = [
@@ -530,8 +559,24 @@ const ACTS = [
      ['vigésimo','Hoy es el vigésimo día del mes.',1],['girasol','El girasol mira al sol.'],['biología','En biología estudiamos las plantas.',1],['gente','Hay mucha gente en el parque.'],['juguete','Me regalaron un juguete.'],
      ['hormiga','Vi una hormiga en el jardín.'],['borro','Borro con la goma.',1],['allí','Allí hay un gato.',1],['hay','Mi gato está allí, hay que darle de comer.',1],['noviembre','Estamos en noviembre.',1],
      ['página','Abre el libro en la página diez.'],['ángel','Mi ángel de la guarda me cuida.']].map(([w, s, o]) => ({w, s, ojo:o}))},
-  /* ---------- 2.º periodo · Ortografía: palabras con J (cuaderno 10 nov) ---------- */
-  {g:'orto3', id:'jletra', type:'elige', title:'Palabras con J', src:'Ortografía: palabras con J', rule:RULE_J,
+  /* ---------- 2.º periodo · Ortografía: palabras con J (cuaderno 10 nov) — estructura del examen de Español ---------- */
+  {g:'orto3', id:'dictado3', type:'dict', title:'1. Dictado', src:'Las palabras con J del cuaderno', n:12,
+   rule:'Escucha con atención. Todas llevan J. Fíjate también en la RR y en los acentos (jardín, jamón, jarrón).',
+   items:[['juego','Mi juego favorito es el escondite.'],['joven','Mi tío es joven.'],['jarra','Sirvo agua de la jarra.'],['jardín','Me gusta ir al jardín con mis amigos.'],
+     ['jirafa','Fui al zoológico y vi una jirafa.',1],['jamón','Me gusta el jamón.'],['jarrón','En mi casa hay un jarrón.'],['junio','Yo cumplo en junio.'],
+     ['julio','En julio hay vacaciones.'],['jugo','Me gusta el jugo de manzana.'],['joya','Mi abuela tiene una joya.'],['zoológico','Fui al zoológico.',1],['vi','Ayer vi una jirafa.',1]].map(([w, s, o]) => ({w, s, ojo:o}))},
+  {g:'orto3', id:'joracexam', type:'escribe', title:'2. Escribe oraciones con palabras del dictado', src:'Como en el examen: oraciones con las palabras del dictado', rule:RULE_J + '<br>Una oración empieza con <b>mayúscula</b> y termina con <b>punto</b>.',
+   items:[ES('jirafa','',1), ES('jardín','Lleva acento.'), ES('jugo'), ES('joven'), ES('jarra'), ES('jamón','Lleva acento.'), ES('jarrón','Lleva acento.'), ES('junio'), ES('julio'), ES('joya'), ES('juego'), ES('zoológico','Lleva acento.',1)]},
+  {g:'orto3', id:'jcorrige', type:'corrige', title:'3. Corrige las oraciones', src:'Como en el examen: corrige las siguientes oraciones', rule:RULE_J + '<br>Revisa: <b>mayúscula</b> al inicio y en los nombres propios, <b>acentos</b>, letras <b>J/G</b>, <b>B/V</b>, <b>RR</b> y el <b>punto</b> final.',
+   items:[CR('fui al zológico y bi una jiraja.','Fui al zoológico y vi una jirafa.','Fui (mayúscula), zoológico (dos O y acento), vi (con V), jirafa (con J y F).',1),
+     CR('me gusta el gugo de manzana.','Me gusta el jugo de manzana.','Me con mayúscula y jugo con J.'),
+     CR('en junio vamos al jardin.','En junio vamos al jardín.','En con mayúscula y jardín con acento.'),
+     CR('mi abuela tiene una goya.','Mi abuela tiene una joya.','Mi con mayúscula y joya con J.'),
+     CR('en mi casa hay un jaron.','En mi casa hay un jarrón.','En con mayúscula; jarrón lleva RR y acento.'),
+     CR('el joven come jamon.','El joven come jamón.','El con mayúscula y jamón con acento.'),
+     CR('la girafa de mexico es alta.','La jirafa de México es alta.','La con mayúscula, jirafa con J y México con mayúscula y acento.',1),
+     CR('ayer bi una jarra en el jardin','Ayer vi una jarra en el jardín.','Ayer con mayúscula, vi con V, jardín con acento y el punto final.',1)]},
+  {g:'orto3', id:'jletra', type:'elige', title:'Completa la palabra', src:'Ortografía: palabras con J', rule:RULE_J,
    items:[GL('_irafa','j',['g','gu'],'jirafa se escribe con J. ¡Y al final lleva F, no J: ji-ra-FA!',1),
      MS('Fui al zoológico y _ una jirafa.','vi',['bi'],'vi (de ver) va con V. ¡No es «bi»!',1),
      MS('Fui al _ y vi una jirafa.','zoológico',['zológico','zoologico'],'zo-o-ló-gi-co: lleva dos O y acento en la ó.',1),
@@ -545,33 +590,23 @@ const ACTS = [
      Q('¿Cuál está bien escrita?','jardín',['jardin','gardín','hardín'],'jardín lleva acento en la í.'),
      Q('¿Cuál está bien escrita?','jamón',['jamon','gamón'],'jamón lleva acento en la ó.'),
      Q('¿Cuál está bien escrita?','jarrón',['jarón','jarron'],'jarrón: RR y acento en la ó.')]},
-  {g:'orto3', id:'joraciones', type:'elige', title:'Mis oraciones con J', src:'Las oraciones del cuaderno', rule:RULE_J + '<br>¡Ojo también con la <b>V</b> de «vi» y la mayúscula al inicio!',
-   items:[MS('Me gusta ir al _ con mis amigos.','jardín',['jardin','gardín'],'jardín con J y acento.'),
-     MS('En el zoológico _ una jirafa.','vi',['bi'],'vi (de ver) con V.',1),
-     MS('Fui al zoológico y vi una _.','jirafa',['jiraja','girafa'],'ji-ra-fa: termina en FA.',1),
-     MS('En mi casa hay un _.','jarrón',['jarón','jarron'],'jarrón: RR y acento en la ó.'),
-     MS('Yo cumplo en _.','junio',['Junio','gunio'],'Los meses van con minúscula: junio.'),
-     MS('Me gusta el _ de manzana.','jugo',['gugo','jugó'],'jugo (la bebida) no lleva acento. «jugó» es de jugar.'),
-     MS('Mi abuela tiene una _ muy bonita.','joya',['goya','jolla'],'joya con J y Y.'),
-     MS('El _ salta muy alto.','joven',['goven','jóven'],'joven: con J y sin acento.'),
-     MS('Sirvo agua de la _.','jarra',['jara','garra'],'jarra lleva RR. «garra» es la uña de un animal.'),
-     MS('De vacaciones nos vamos en _.','julio',['Julio','gulio'],'julio con minúscula.'),
-     MS('Mi sándwich es de _.','jamón',['jamon','gamón'],'jamón lleva acento.'),
-     MS('Mi _ favorito es el escondite.','juego',['guego','juejo'],'juego con J.')]},
-  {g:'orto3', id:'dictado3', type:'dict', title:'Dictado de la J', src:'Las palabras con J del cuaderno', n:12,
-   rule:'Escucha con atención. Todas llevan J. Fíjate también en la RR y en los acentos (jardín, jamón, jarrón).',
-   items:[['juego','Mi juego favorito es el escondite.'],['joven','Mi tío es joven.'],['jarra','Sirvo agua de la jarra.'],['jardín','Me gusta ir al jardín con mis amigos.'],
-     ['jirafa','Fui al zoológico y vi una jirafa.',1],['jamón','Me gusta el jamón.'],['jarrón','En mi casa hay un jarrón.'],['junio','Yo cumplo en junio.'],
-     ['julio','En julio hay vacaciones.'],['jugo','Me gusta el jugo de manzana.'],['joya','Mi abuela tiene una joya.'],['zoológico','Fui al zoológico.',1],['vi','Ayer vi una jirafa.',1]].map(([w, s, o]) => ({w, s, ojo:o}))},
 
-  /* ---------- 2.º periodo · Los artículos (cuaderno 10 nov) ---------- */
-  {g:'art', id:'artclas', type:'clas', title:'¿Definido o indefinido?', src:'Los artículos', buckets:['Determinado (definido)','Indeterminado (indefinido)'], rule:RULE_ART,
+  /* ---------- 2.º periodo · Los artículos (cuaderno 10 nov) — estructura del examen de Español ---------- */
+  {g:'art', id:'artclas', type:'clas', title:'Escribe en la caja que corresponda', src:'Los artículos', buckets:['Determinado (definido)','Indeterminado (indefinido)'], rule:RULE_ART,
    items:['el','la','los','las','lo'].map(a => AR(a, 0)).concat(['un','una','unos','unas'].map(a => AR(a, 1)),
      [['la maestra',0],['unos colores',1],['el libro',0],['unos pingüinos',1],['el sol',0],['un niño',1],['la puerta',0],['una jirafa',1],['las joyas',0],['unas jarras',1],['los jugos',0],['un jardín',1]].map(([t, b]) => AR(t, b)))},
-  {g:'art', id:'artcircula', type:'toca', title:'Encuentra el artículo', src:'Circula los artículos', rule:RULE_ART, inst:'Toca el artículo de la oración.',
-   items:[TA('La maestra llegó tarde.','La'), TA('Compré unos colores.','unos'), TA('El libro está en la mochila.','El',['la']), TA('Unos pingüinos pescaron.','Unos'),
-     TA('El sol brilla mucho.','El'), TA('Un niño tocó la puerta.','Un',['la']), TA('El perro de mi vecino ladra.','El'), TA('Vi una jirafa enorme.','una'),
-     TA('Las jirafas comen hojas.','Las'), TA('Mi abuela tiene unas joyas.','unas'), TA('Los niños juegan futbol.','Los'), TA('Me tomé un jugo.','un')]},
+  {g:'art', id:'arttabla', type:'tabla', title:'Completa la tabla', src:'Como en el examen: tipo, género y número', rule:RULE_ART,
+   items:['la maestra','unos colores','el libro','unos pingüinos','el sol','un niño','la puerta','una jirafa','las joyas','unas jarras','los jugos','un jardín','el perro','unas niñas'].map(AT)},
+  {g:'art', id:'artlectura', type:'circ', title:'Lee y encierra los artículos', src:'Como en el examen: lee la lectura y circula', rule:RULE_ART,
+   items:[
+     {p:'Encierra con azul los artículos determinados y con rojo los indeterminados.', blueName:'Determinados', redName:'Indeterminados', blue:ART_D, red:ART_I,
+      text:'La maestra llegó tarde. Los niños leían unos libros. Una niña encontró un lápiz debajo de la mesa.'},
+     {p:'Encierra con azul los artículos determinados y con rojo los indeterminados.', blueName:'Determinados', redName:'Indeterminados', blue:ART_D, red:ART_I,
+      text:'Unas niñas visitaron el zoológico. Vieron una jirafa muy alta y unos monos. La jirafa comía las hojas de un árbol.', ojo:1},
+     {p:'Encierra con azul los artículos determinados y con rojo los indeterminados.', blueName:'Determinados', redName:'Indeterminados', blue:ART_D, red:ART_I,
+      text:'Un día Lucía vio un cartel en la plaza. El sábado habría un concurso de mascotas. Lucía le hizo a Toby un collar con un lazo azul.'},
+     {p:'Encierra con azul los artículos determinados y con rojo los indeterminados.', blueName:'Determinados', redName:'Indeterminados', blue:ART_D, red:ART_I,
+      text:'El perro de mi vecino es grande. Un gato negro duerme en la ventana. Las niñas compraron unos dulces en la tienda.'}]},
   {g:'art', id:'artelige', type:'elige', title:'¿Qué artículo va?', src:'Género y número del artículo', rule:RULE_ART,
    items:[AE('jirafa','la',1), AE('jardín','el'), AE('jarras','las'), AE('jugos','los'), AE('joya','la'), AE('jamón','el'), AE('flores','las'), AE('niños','los'), AE('mochila','la'), AE('sol','el'),
      AU('jirafa','una'), AU('jarrón','un'), AU('pingüinos','unos',1), AU('colores','unos'), AU('joyas','unas'), AU('niño','un'), AU('casa','una'), AU('peces','unos')]},
@@ -586,7 +621,7 @@ const ACTS = [
      Q('Si hablamos de algo no específico o que no conocemos bien, usamos un artículo…','indeterminado',['determinado'],'Algo no conocido: un, una, unos, unas.',1),
      Q('«unas» es…','femenino plural',['masculino singular','femenino singular','masculino plural'],'unas jirafas: femenino y plural.'),
      Q('«el» es…','masculino singular',['femenino singular','masculino plural'],'el jardín: masculino y singular.'),
-     Q('¿«él» con acento es un artículo?','No: «él» es un pronombre',['Sí: es un artículo'],'«el» sin acento es artículo (el gato). «él» con acento es pronombre (él juega).',1)]},
+     Q('¿«él» con acento es un artículo?','No: «él» es un pronombre',['Sí: es un artículo'],'«el» sin acento es artículo (el gato). «él» con acento es pronombre (él juega).',1)]}
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
 const GROUPS = [
@@ -612,7 +647,11 @@ const INST = {
   aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
   dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
   unir:'Toca una palabra de un lado y luego su pareja del otro lado.',
-  acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.'
+  acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.',
+  corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
+  escribe:'Escribe una oración completa con la palabra. Empieza con mayúscula y termina con punto.',
+  circ:'Lee el texto. Elige el color y toca las palabras. Cuando termines, toca «Revisar».',
+  tabla:'Completa la fila de la tabla: elige una opción en cada columna y toca «Revisar».'
 };
 
 /* ================= ESTADO ================= */
@@ -1024,6 +1063,86 @@ const RENDER = {
       const w = toks[+b.dataset.j].replace(/[.,;:¡!¿?]/g, '');
       if (w === it.a || (it.alt || []).includes(w)) { b.classList.add('ok', 'pop'); rightQ(q, it.why || `«${it.a}» es el pronombre: está en lugar del nombre.`); }
       else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
+    };
+  },
+  /* Corrige la oración (como en el examen: se vuelve a escribir bien) */
+  corrige(q, it) {
+    $('#area').innerHTML = `<div class="wr"><div class="qp">Corrige la oración:</div><div class="qcard"><div class="bad-s">${esc(it.s)}</div></div>
+      <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Escribe la oración corregida">${esc(it.s)}</textarea>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div></div>`;
+    const inp = $('#in'); let tries = 0;
+    const N = x => x.normalize('NFC').trim().replace(/\s+/g, ' ');
+    const W = x => N(x).split(' ');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const v = N(inp.value);
+      if (v === N(it.a)) { inp.classList.add('ok'); inp.blur(); rightQ(q, it.why, 1); return; }
+      tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+      const A = W(it.a), B = W(v), bad = A.filter((w, j) => B[j] !== w).length;
+      if (tries < 3) fb('bad', bad === 1 ? 'Casi. Te falta corregir 1 palabra.' : `Casi. Revisa ${bad || 'algunas'} palabras: mayúsculas, acentos, letras y el punto.`);
+      else $('#sh').innerHTML = `<div class="hint">Se escribe así:</div><div class="show">${esc(it.a)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+    };
+  },
+  /* Escribe una oración con la palabra */
+  escribe(q, it) {
+    $('#area').innerHTML = `<div class="wr"><div class="qp">Escribe una oración con esta palabra:</div><div class="qcard"><div class="word">${esc(it.w)}</div>${it.hint ? `<div class="hint">${esc(it.hint)}</div>` : ''}</div>
+      <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Escribe tu oración"></textarea>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div></div>`;
+    const inp = $('#in');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const v = inp.value.normalize('NFC').trim().replace(/\s+/g, ' '); if (!v) return;
+      const words = v.replace(/[.,;:¡!¿?"«»]/g, ' ').split(/\s+/).filter(Boolean);
+      const has = words.some(x => x.toLowerCase() === it.w.toLowerCase());
+      const near = !has && words.some(x => x.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') === it.w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''));
+      let msg = '';
+      if (!has) msg = near ? `Revisa cómo escribiste «${it.w}»: ¿lleva acento?` : `Tu oración debe llevar la palabra «${it.w}», bien escrita.`;
+      else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
+      else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
+      else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
+      if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
+      inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
+    };
+  },
+  /* Lee y encierra con azul / rojo */
+  circ(q, it) {
+    const toks = it.text.split(' '), col = toks.map(() => ''), clean = t => t.replace(/[.,;:¡!¿?"«»]/g, '');
+    const want = toks.map(t => { const w = clean(t).toLowerCase(); return it.blue.includes(w) ? 'blu' : it.red.includes(w) ? 'red' : ''; });
+    let pen = 'blu';
+    const draw = () => toks.map((t, j) => `<button class="tok${col[j] ? ' ' + col[j] : ''}" type="button" data-j="${j}">${esc(t)}</button>`).join('');
+    $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>
+      <div class="pens"><button type="button" class="pen blu on" data-c="blu">🔵 ${esc(it.blueName)}</button><button type="button" class="pen red" data-c="red">🔴 ${esc(it.redName)}</button></div>
+      <div class="qcard"><div class="sent" id="st" style="justify-content:flex-start">${draw()}</div></div>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+    document.querySelectorAll('.pen').forEach(b => b.onclick = () => { pen = b.dataset.c; document.querySelectorAll('.pen').forEach(x => x.classList.toggle('on', x === b)); });
+    $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over) return; const j = +b.dataset.j; col[j] = col[j] === pen ? '' : pen; $('#st').innerHTML = draw(); };
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const wrong = toks.map((t, j) => col[j] !== want[j] ? j : -1).filter(j => j >= 0);
+      if (!wrong.length) { const nb = want.filter(x => x === 'blu').length, nr = want.filter(x => x === 'red').length;
+        rightQ(q, `¡Los encontraste todos! ${nb} en azul (${it.blueName.toLowerCase()}) y ${nr} en rojo (${it.redName.toLowerCase()}).`, 1); return; }
+      const missing = wrong.filter(j => want[j] && !col[j]).length, extra = wrong.filter(j => !want[j]).length, swapped = wrong.length - missing - extra;
+      wrongQ(q, $('#st'));
+      const parts = []; if (missing) parts.push(`te faltan ${missing}`); if (swapped) parts.push(`${swapped} ${swapped === 1 ? 'tiene' : 'tienen'} el color equivocado`); if (extra) parts.push(`${extra} no ${extra === 1 ? 'es artículo' : 'son artículos'}`);
+      fb('bad', 'Casi: ' + parts.join(', ') + '.');
+      if (q.tries = (q.tries || 0) + 1, q.tries >= 3) wrong.forEach(j => { const b = $('#st').querySelector(`[data-j="${j}"]`); if (b) b.classList.add('miss'); });
+    };
+  },
+  /* Fila de una tabla con varias columnas */
+  tabla(q, it) {
+    const sel = it.cols.map(() => null);
+    $('#area').innerHTML = `<div class="qp">${esc(it.p || 'Completa la tabla:')}</div><div class="qcard"><div class="word">${esc(it.w)}</div></div>
+      <div class="trow">${it.cols.map((c, k) => `<div class="tcol" data-k="${k}"><div class="th">${esc(c[0])}</div><div class="ops">${c[2].map(o => `<button type="button" class="op" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`).join('')}</div>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+    $('#area').querySelectorAll('.tcol').forEach(tc => tc.onclick = e => { const b = e.target.closest('.op'); if (!b || cur.over) return; const k = +tc.dataset.k; sel[k] = b.dataset.o;
+      tc.querySelectorAll('.op').forEach(x => { x.classList.toggle('on', x === b); x.classList.remove('bad', 'ok'); }); });
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (sel.some(x => x === null)) { fb('bad', 'Falta elegir en alguna columna.'); return; }
+      let bad = 0;
+      it.cols.forEach((c, k) => { const b = $('#area').querySelector(`.tcol[data-k="${k}"] .op.on`); const ok = sel[k] === c[1]; if (!ok) bad++; b.classList.add(ok ? 'ok' : 'bad'); });
+      if (!bad) { rightQ(q, it.why, 1); return; }
+      wrongQ(q); fb('bad', bad === 1 ? 'Casi. Una columna está mal.' : `Casi. ${bad} columnas están mal.`);
     };
   },
   /* Separa en sílabas y clasifica */

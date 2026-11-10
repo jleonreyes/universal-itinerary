@@ -257,10 +257,19 @@ const RIDE_IC = {
  'Caro-Seuss-el':'ioa17','High in the Sky Trolley Train':'ioa18',
  'Escape from Gringotts':'usf01','Hogwarts Express → Hogsmeade':'usf02','Hogwarts Express → IOA':'usf02','Revenge of the Mummy':'usf03','Transformers':'usf04',
  'MIB Alien Attack':'usf06','E.T. Adventure':'usf07','The Simpsons Ride':'usf08','Kang & Kodos':'usf09','Jimmy Fallon':'usf10',
- 'Minion Mayhem':'usf11','Villain-Con Minion Blast':'usf12','Trolls Trollercoaster':'usf13'
+ 'Minion Mayhem':'usf11','Villain-Con Minion Blast':'usf12','Trolls Trollercoaster':'usf13',
+ // iconos propios del itinerario (carpeta itinerary-icons)
+ 'Descanso en hotel':'I/hotel','Salida a pie del hotel':'I/hotel','Check-in en el hotel':'I/hotel','Regreso al hotel':'I/hotel','Traslado al hotel':'I/hotel',
+ 'Autobús a IOA':'I/bus',
+ 'The Untrainable Dragon':'I/untrainable','Fila para The Untrainable Dragon':'I/untrainable','Le Cirque Arcanus':'I/cirque',
+ 'Celestial Park':'I/celestial','Universal Celestial Goodnight':'I/celestial','Posición para Celestial Goodnight':'I/celestial',
+ 'Meet Mario y Luigi':'I/mario-luigi','Fila de Mario y Luigi':'I/mario-luigi','Meet Princess Peach':'I/peach','Fila de Peach':'I/peach',
+ 'Power-Up Band':'I/powerup','Retos · segunda ronda':'I/powerup','Batalla con Bowser Jr.':'I/bowser','Meet Toothless':'I/toothless',
+ 'Ollivanders':'I/ollivanders','Desfile de Mardi Gras':'I/mardigras','Mardi Gras · comida internacional':'I/mardigras','Posición para el desfile':'I/mardigras',
+ 'The Bourne Stuntacular':'I/bourne'
 };
 const RIDE_KEYS = Object.keys(RIDE_IC).sort((a,b) => b.length - a.length);
-const rideIcon = name => { const n = String(name||''); const k = RIDE_IC[n] ? n : RIDE_KEYS.find(k => n.startsWith(k)); return k ? `word-wizards/park/${RIDE_IC[k]}.webp` : ''; };
+const rideIcon = name => { const n = String(name||''); const k = RIDE_IC[n] ? n : RIDE_KEYS.find(k => n.startsWith(k)); if(!k) return ''; const v = RIDE_IC[k]; return v.startsWith('I/') ? `itinerary-icons/it-${v.slice(2)}.webp` : `word-wizards/park/${v}.webp`; };
 const icImg = name => { const u = rideIcon(name); return u ? `<img class="ri" src="${u}" alt="" loading="lazy" onerror="this.remove()">` : ''; };
 // Fondo de color del renglón: más intenso en atracciones y shows
 const tint = (hex,a) => { const n = parseInt(hex.slice(1),16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${a})`; };

@@ -253,15 +253,15 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 <body>
 <div class="wrap">
   <div id="who" hidden>
-    <header class="top"><div><div class="kicker">Science · 3rd grade</div><h1>¿Quién va a estudiar?</h1></div></header>
+    <header class="top"><div><div class="kicker">Science · 3rd grade</div><h1>Who is going to study?</h1></div></header>
     <div id="wholist" class="plist"></div>
-    <button class="btn alt" type="button" id="addp" style="margin-top:16px">+ Nueva jugadora</button>
+    <button class="btn alt" type="button" id="addp" style="margin-top:16px">+ New player</button>
     <div id="newp" class="newp" hidden>
-      <label for="pname" class="qp">Nombre de la jugadora</label>
+      <label for="pname" class="qp">Player's name</label>
       <input id="pname" type="text" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
-      <div class="qp">¿Qué slime quieres primero?</div>
+      <div class="qp">Which slime do you want first?</div>
       <div class="opts" id="firsts"></div>
-      <div class="actions"><button class="btn" type="button" id="pcreate">Crear</button><button class="btn alt" type="button" id="pcancel">Cancelar</button></div>
+      <div class="actions"><button class="btn" type="button" id="pcreate">Create</button><button class="btn alt" type="button" id="pcancel">Cancel</button></div>
     </div>
   </div>
   <div id="home" hidden>
@@ -272,23 +272,23 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><button class="chipw" type="button" id="whochip"></button><div class="total" id="total"></div></div>
     </header>
-    <section class="toys" id="toys" aria-label="Mis slimes"></section>
+    <section class="toys" id="toys" aria-label="My slimes"></section>
     <div id="rev"></div>
     <div id="pertabs" class="pertabs" role="tablist"></div>
     <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:14px"></div>
   </div>
 
   <div id="shelf" hidden>
-    <div class="bar"><button class="back" id="sback" type="button">← Menú</button><h2 class="ptitle">Mi colección de slimes</h2></div>
-    <section class="toys" id="cabs" aria-label="Mis slimes"></section>
+    <div class="bar"><button class="back" id="sback" type="button">← Menu</button><h2 class="ptitle">My slime collection</h2></div>
+    <section class="toys" id="cabs" aria-label="My slimes"></section>
   </div>
 
   <div id="play" hidden>
     <div class="bar">
-      <button class="back" id="back" type="button">← Menú</button>
+      <button class="back" id="back" type="button">← Menu</button>
       <h2 class="ptitle" id="ptitle"></h2>
     </div>
-    <details class="rule" id="rule"><summary>Lo que dice mi cuaderno</summary><div id="ruletxt"></div></details>
+    <details class="rule" id="rule"><summary>What my notebook says</summary><div id="ruletxt"></div></details>
     <div class="inst" id="inst"></div>
     <div class="meta"><span id="count"></span><span id="errs"></span></div>
     <div class="prog"><i id="progbar"></i></div>
@@ -453,7 +453,7 @@ const ACTS = [
      MC('Which is the long bone of the thigh?','Femur',['Tibia','Humerus'],'The femur is in the thigh, above the knee.',1)]},
   /* ---------- II. Fill in the blanks (paragraph) ---------- */
   {g:'sci', id:'fill1', type:'campos', title:'II. Fill in the blanks', src:'Write the missing word in the paragraph', rule:RULE_ALL, inst:'Write the missing word. Check your spelling!',
-   items:[{p:'Complete the paragraph:', big:'The skeletal system gives our body ___, the ___ system helps us move, and the digestive system gives us the ___ and energy our body needs.', f:[{l:'1.', a:'structure', w:10},{l:'2.', a:'muscular', w:10},{l:'3.', a:'nutrients', w:10}], why:'structure · muscular · nutrients. ¡Ojo! «structure» starts with S (not «estructure»).', ojo:1},
+   items:[{p:'Complete the paragraph:', big:'The skeletal system gives our body ___, the ___ system helps us move, and the digestive system gives us the ___ and energy our body needs.', f:[{l:'1.', a:'structure', w:10},{l:'2.', a:'muscular', w:10},{l:'3.', a:'nutrients', w:10}], why:'structure · muscular · nutrients. Careful! «structure» starts with ST (not «estructure»).', ojo:1},
      {p:'Complete:', big:'The skeletal system gives our body ___.', f:[{a:'structure'}], why:'structure: starts with ST, not «estructure».', ojo:1},
      {p:'Complete:', big:'The ___ system helps us move.', f:[{a:'muscular'}], why:'muscular: M-U-S-C-U-L-A-R.', ojo:1},
      {p:'Complete:', big:'The digestive system gives us the ___ and energy our body needs.', f:[{a:'nutrients'}], why:'nutrients.'}]},
@@ -471,7 +471,7 @@ const ACTS = [
      {p:'Order the whole trip of the food:', nums:['mouth','esophagus','stomach','small intestine','large intestine','rectum','anus'], a:['mouth','esophagus','stomach','small intestine','large intestine','rectum','anus'], why:'mouth → esophagus → stomach → small intestine → large intestine → rectum → anus.', ojo:1}]},
   /* ---------- V. Questions (write a complete sentence) ---------- */
   {g:'sci', id:'quest', type:'elige', title:'V. Questions', src:'Answer the questions', rule:RULE_ALL + '<br><br>Answer with a complete sentence: <b>We would not be able to…</b> · <b>We can…</b> · <b>I take care of my body by…</b>', inst:'Choose the best complete answer.',
-   items:[MC('What might happen if we did not have a skeletal system?','We would not be able to stand or move.',['We can doesn\'t move.','We would not eat.'],'Use «We would not be able to…». ¡No «We can doesn\'t»!',1),
+   items:[MC('What might happen if we did not have a skeletal system?','We would not be able to stand or move.',['We can doesn\'t move.','We would not eat.'],'Use «We would not be able to…». Not «We can doesn\'t»!',1),
      MC('What can we do to take care of our bones?','We can eat things with calcium, like milk.',['We can eat candy.','We can sleep all day.'],'Calcium makes our bones strong.'),
      MC('What can we do to take care of our muscles?','We can stretch before and after exercise.',['We can stretch after and den of doing exercise.','We can stop moving.'],'stretch BEFORE and AFTER exercise.',1),
      MC('What can we do to take care of our digestive system?','We can eat healthy food and drink water.',['We can eat a lot of junk food.','We can skip breakfast.'],'Healthy food and water help digestion.'),
@@ -492,26 +492,26 @@ const GROUPS = [
 ];
 
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
-const PERIODS = [{ p: 1, h: '1.er periodo' }, { p: 2, h: '2.º periodo' }];
+const PERIODS = [{ p: 1, h: '1st Period' }, { p: 2, h: '2nd Period' }];
 const P1G = GROUPS.filter(G => G.p === 1);
 let PER = 2;
 const INST = {
-  clas:'Lee la palabra y toca la columna donde va.',
-  elige:'Toca la respuesta correcta.',
+  clas:'Read the word and tap the column where it goes.',
+  elige:'Tap the correct answer.',
   toca:'Toca el pronombre de la oración.',
   sil:'Toca entre las letras para cortar la palabra en sílabas. Cuando termines, toca «Revisar».',
   ton:'🔵 Toca la sílaba TÓNICA: la que suena más FUERTE. Solo hay una. Toca 🔊 para oír la palabra.',
   aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
   dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
-  unir:'Toca una palabra de un lado y luego su pareja del otro lado.',
+  unir:'Tap a word on one side and then its match on the other side.',
   acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.',
   corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
-  escribe:'Escribe una oración completa con la palabra. Empieza con mayúscula y termina con punto.',
+  escribe:'Write a complete sentence with the word. Start with a capital letter and end with a period.',
   circ:'Lee el texto. Elige el color y toca las palabras. Cuando termines, toca «Revisar».',
-  campos:'Escribe la respuesta en el espacio y toca «Revisar».',
-  ordena:'Toca los elementos en el orden correcto. Toca uno de arriba para quitarlo.',
+  campos:'Write the answer in the space and tap «Check».',
+  ordena:'Tap the words in the correct order. Tap one at the top to remove it.',
   prob:'Sigue los pasos del examen: Comprendo, Planeo, Resuelvo y Resultado.',
-  tabla:'Completa la fila de la tabla: elige una opción en cada columna y toca «Revisar».'
+  tabla:'Complete the row: choose one option in each column and tap «Check».'
 };
 
 /* ================= ESTADO ================= */
@@ -545,7 +545,8 @@ function speak(parts, rate) {
   try { speechSynthesis.cancel(); [].concat(parts).forEach(t => { const u = new SpeechSynthesisUtterance(t); u.lang = VOICE ? VOICE.lang : 'en-US'; if (VOICE) u.voice = VOICE; u.rate = rate || 0.85; speechSynthesis.speak(u); }); return true; } catch (e) { return false; }
 }
 
-const THEME = { kind:'slime', cats:['Slimes de colores','Slimes con brillitos','Slimes esponjosos'], name:(c, n) => ['Slime ', 'Brillito ', 'Esponjoso '][c] + n, royals:['Reina Slime Fresa','Rey Slime Menta','Reina Slime Uva','Rey Slime Océano','Reina Slime Chicle','Rey Slime Kiwi','Reina Slime Lavanda','Rey Slime Mango','Reina Slime Galaxia'], specials:['Slime Estrella Fugaz','Slime Cometa','Slime Arcoíris'], finals:['Slime Gigante Galaxia','Slime Gigante Arcoíris'], word:{ realCap:'Slime real', retoCap:'Slime de reto', finalCap:'Slime gigante' } };
+const SL_EN = {Fresa:'Strawberry',Menta:'Mint',Uva:'Grape',Limón:'Lemon',Cielo:'Sky',Mango:'Mango',Chicle:'Bubblegum',Lima:'Lime',Coral:'Coral',Lavanda:'Lavender',Turquesa:'Turquoise',Durazno:'Peach',Arándano:'Blueberry',Sandía:'Watermelon',Pistache:'Pistachio',Caramelo:'Caramel',Algodón:'Cotton Candy',Océano:'Ocean',Kiwi:'Kiwi',Mora:'Blackberry',Naranja:'Orange',Nube:'Cloud',Cereza:'Cherry',Plátano:'Banana',Galaxia:'Galaxy'};
+const THEME = { kind:'slime', cats:['Color slimes','Glitter slimes','Fluffy slimes'], name:(c, n) => SL_EN[n] + [' Slime', ' Glitter Slime', ' Fluffy Slime'][c], royals:['Queen Strawberry Slime','King Mint Slime','Queen Grape Slime','King Ocean Slime','Queen Bubblegum Slime','King Kiwi Slime','Queen Lavender Slime','King Mango Slime','Queen Galaxy Slime'], specials:['Shooting Star Slime','Comet Slime','Rainbow Slime'], finals:['Giant Galaxy Slime','Giant Rainbow Slime'], word:{ realCap:'Royal slime', retoCap:'Challenge slime', finalCap:'Giant slime' } };
 /* ================= PREMIOS (dibujos generados, sin imágenes) ================= */
 const PAL = [['Fresa','#FF7AA8'],['Menta','#6FE0B5'],['Uva','#A983F2'],['Limón','#F5E04A'],['Cielo','#7CC8FF'],['Mango','#FFB347'],['Chicle','#FF9FE0'],['Lima','#9BE15D'],['Coral','#FF7F6E'],['Lavanda','#C3A6FF'],
   ['Turquesa','#3CD3C9'],['Durazno','#FFC3A0'],['Arándano','#5B7CFA'],['Sandía','#FF5E7E'],['Pistache','#B5D99C'],['Caramelo','#E3A35B'],['Algodón','#FFC9EC'],['Océano','#3A9BDC'],['Kiwi','#8CC63F'],['Mora','#8E44AD'],
@@ -698,10 +699,10 @@ $('#pname').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preven
 const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
   const all = SHOWALL ? ALLIDS() : owned(), n = all.length, TOT = TOTAL, last = all.slice(-6).reverse();
-  $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mis slimes'}</h2><span class="gn">🟢 ${n} de ${TOT}</span></div>
-    <p>Cada práctica que terminas con 2 ★ o más te regala un slime. Cuando ya sacaste 3 ★ en una práctica, desde ahí el slime se gana solo con 3 ★. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas un slime real con corona.</p>
-    <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes slimes. ¡Gana tu primera estrella!</div>'}
-    <button class="btn" type="button" id="toshelf">Ver mis repisas 🟢</button></div>`;
+  $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? 'Collection complete!' : 'My slimes'}</h2><span class="gn">🟢 ${n} of ${TOT}</span></div>
+    <p>Every practice you finish with 2 ★ or more gives you a slime. Once you get 3 ★ in a practice, from then on you win a slime only with 3 ★. 👑 If you get 3 ★ in <b>all</b> the practices of a section, you win a royal slime with a crown.</p>
+    <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">You have no slimes yet. Win your first star!</div>'}
+    <button class="btn" type="button" id="toshelf">See my shelves 🟢</button></div>`;
   $('#toshelf').onclick = openShelf;
 }
 const hash = str => { let h = 2166136261; for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
@@ -716,9 +717,9 @@ function openShelf() {
   const rest = have.filter(id => !TOYBY[id].royal && !TOYBY[id].special && !TOYBY[id].doll && id !== first).sort((x, y) => hash(PID + x) - hash(PID + y));
   const tail = dolls.concat(kings, first ? [first] : [], stars5);
   const slots = tail.concat(rest, Array(Math.max(0, TOT - n)).fill(null));
-  $('#cabs').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mi colección'}</h2><span class="gn">🟢 ${n} de ${TOT}</span></div>
-    <p>${n === TOT ? 'Juntaste todos los slimes. ¡Felicidades!' : 'Toca un slime para verlo de cerca. Los slimes reales 👑 brillan en dorado y los de reto ⭐ en arcoíris.'}</p>
-    <div class="cab">${slots.map(id => { if (!id) return '<div class="slot empty" aria-label="Lugar vacío"></div>'; const t = TOYBY[id];
+  $('#cabs').innerHTML = `<div class="gh"><h2>${n === TOT ? 'Collection complete!' : 'My collection'}</h2><span class="gn">🟢 ${n} of ${TOT}</span></div>
+    <p>${n === TOT ? 'You collected all the slimes. Congratulations!' : 'Tap a slime to see it up close. Royal slimes 👑 shine in gold and challenge slimes ⭐ in rainbow.'}</p>
+    <div class="cab">${slots.map(id => { if (!id) return '<div class="slot empty" aria-label="Empty spot"></div>'; const t = TOYBY[id];
       return `<button class="slot${t.royal ? ' royal' : ''}${t.special ? ' special' : ''}${t.doll ? ' doll' : ''}${fresh.has(id) ? ' new' : ''}" type="button" data-t="${id}" aria-label="${esc(t.name)}">${toySVG(t)}</button>`; }).join('')}</div>`;
   toysSeen = toys.length; save(K('toys-seen'), toysSeen);
 }
@@ -735,22 +736,22 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.targ
 /* ================= MENÚ ================= */
 function renderHome() {
   $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
-  $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Cambiar</u>`;
+  $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Change</u>`;
   renderToyBar();
   const ek = errKeys().length;
-  $('#rev').innerHTML = ek ? `<button class="revbtn" type="button" id="revgo"><span class="ico">🔁</span><span><span class="t">Repaso de mis errores</span>
-    <span class="s">${ek} ${ek === 1 ? 'pregunta que se te dificultó' : 'preguntas que se te dificultaron'}. ¡Vamos a practicarlas!</span></span></button>` : '';
+  $('#rev').innerHTML = ek ? `<button class="revbtn" type="button" id="revgo"><span class="ico">🔁</span><span><span class="t">Review my mistakes</span>
+    <span class="s">${ek} ${ek === 1 ? 'question was hard for you' : 'questions were hard for you'}. Let's practice them!</span></span></button>` : '';
   if (ek) $('#revgo').onclick = startReview;
   $('#pertabs').innerHTML = PERIODS.map(P => `<button type="button" class="ptab${P.p === PER ? ' on' : ''}" data-p="${P.p}">${P.h}</button>`).join('');
-  if (!GROUPS.some(G => G.p === PER)) { $('#groups').innerHTML = `<div class="p2empty"><b>📒 ${PERIODS.find(P => P.p === PER).h}</b><br>Aquí van a aparecer los temas nuevos en cuanto lleguen los apuntes del cuaderno.<br>Mientras, repasa el 1.er periodo.</div>`; return; }
+  if (!GROUPS.some(G => G.p === PER)) { $('#groups').innerHTML = `<div class="p2empty"><b>📒 ${PERIODS.find(P => P.p === PER).h}</b><br>The new topics will appear here as soon as the new notebook notes arrive.<br>Meanwhile, review the 1st Period.</div>`; return; }
   $('#groups').innerHTML = GROUPS.filter(G => G.p === PER).map(G => `
     <section class="group"><h2>${G.h} <span class="crownp">👑 ${(crown[G.g] || []).length}/${ACTS.filter(x => x.g === G.g).length}</span></h2><p class="gdesc">${G.d}</p>
     <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
       <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
       <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}
-      <button class="card exam" type="button" data-exam="${G.g}"><span class="t">${G.x}</span><span class="s">El reto final: preguntas de todo ${G.h}, mezcladas. Más preguntas de lo que más se te dificulta.</span>
+      <button class="card exam" type="button" data-exam="${G.g}"><span class="t">${G.x}</span><span class="s">The final challenge: questions about all of ${G.h}, mixed up. More questions about what is hardest for you.</span>
       <span class="st">${starStr(best['exam-' + G.g] || 0)}</span>${(() => { const sp = SPECIALS.find(t => t.g === G.g); if (!sp) return ''; const h = specials.includes(sp.id);
-        return `<span class="prize${h ? ' got' : ''}">${toySVG(sp)}<span>${h ? '⭐ ¡Ya es tuyo!' : '⭐ Premio con 3 ★'}</span></span>`; })()}</button></div></section>`).join('');
+        return `<span class="prize${h ? ' got' : ''}">${toySVG(sp)}<span>${h ? '⭐ It\'s yours!' : '⭐ Prize with 3 ★'}</span></span>`; })()}</button></div></section>`).join('');
 }
 $('#pertabs').addEventListener('click', e => { const b = e.target.closest('.ptab'); if (!b) return; PER = +b.dataset.p; save(K('period'), PER); renderHome(); });
 $('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; if (c.dataset.exam) startExam(c.dataset.exam); else start(c.dataset.id); });
@@ -834,8 +835,8 @@ function startReview() {
   const qs = shuffle(errKeys()).slice(0, 12).map(k => { const [a, i] = k.split(':'); return { act: BYID[a], i: +i }; });
   if (!qs.length) return;
   cur = { review: true, mistakes: 0, done: 0, total: qs.length, over: false, cols: {}, k: 0, qs };
-  setupPlay('Repaso de mis errores', null);
-  $('#inst').textContent = 'Estas son las preguntas que se te dificultaron. Si las contestas bien a la primera, salen de tu lista.';
+  setupPlay('Review my mistakes', null);
+  $('#inst').textContent = 'These are the questions that were hard for you. If you answer them right the first time, they leave your list.';
   progress(); next();
 }
 function next() {
@@ -849,24 +850,24 @@ function next() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function progress() {
-  $('#count').textContent = `${cur.done} de ${cur.total}`;
-  $('#errs').textContent = cur.mistakes ? `Errores: ${cur.mistakes}` : '';
+  $('#count').textContent = `${cur.done} of ${cur.total}`;
+  $('#errs').textContent = cur.mistakes ? `Mistakes: ${cur.mistakes}` : '';
   $('#progbar').style.width = (cur.total ? cur.done / cur.total * 100 : 0) + '%';
 }
 let fbT;
 function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = msg; clearTimeout(fbT); if (msg) fbT = setTimeout(() => { f.textContent = ''; }, 1600); }
-const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡Así se hace!'];
+const PRAISE = ['Correct!', 'Very good!', "That's it!", 'Excellent!', 'Great job!'];
 const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
 const addErrTot = id => { id = (BYID[id] && BYID[id].base) || id; errTot[id] = (errTot[id] || 0) + 1; save(K('errtot'), errTot); };
-function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
+function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Almost. Try again.'); progress(); els.forEach(shake); }
 function rightQ(q, why, wait) {
   cur.over = true;
   if (!q.bad) clearErr(q);
   cur.done++; progress();
   const go = () => { cur.over = false; cur.k++; next(); };
   if ((q.bad || wait) && why) {
-    fb('ok', q.bad ? '¡Ahora sí!' : PRAISE[Math.floor(Math.random() * PRAISE.length)]);
-    $('#note').innerHTML = `<div class="note"><div class="why">💡 ${why}</div><button class="btn" type="button" id="nx">Siguiente →</button></div>`;
+    fb('ok', q.bad ? 'Now you got it!' : PRAISE[Math.floor(Math.random() * PRAISE.length)]);
+    $('#note').innerHTML = `<div class="note"><div class="why">💡 ${why}</div><button class="btn" type="button" id="nx">Next →</button></div>`;
     $('#nx').onclick = go; $('#nx').focus({ preventScroll: true });
     $('#note').scrollIntoView({ behavior: 'smooth', block: 'center' });
   } else { fb('ok', PRAISE[Math.floor(Math.random() * PRAISE.length)]); setTimeout(go, 900); }
@@ -882,22 +883,22 @@ function finish() {
     let spGot = null, got = [];
     if (stars === 3) { if (!hasSp) { specials.push(sp.id); save(K('specials'), specials); spGot = sp; } else got = awardToys(1); }
     const dg = dollCheck(), retos = P1G.filter(x => best['exam-' + x.g] === 3).length;
-    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Lo lograste! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? '¡Muy bien, casi lo logras!' : '¡Terminaste el reto!'}</div>
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? 'You did it! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? 'Very good, almost there!' : 'You finished the challenge!'}</div>
       <div class="stars">${starStr(stars)}</div>
-      <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen de la escuela!' : 'Repítelo para ganar las 3 estrellas.'}</div>
-      ${dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste todos los retos con 3 ★. Este es el premio más especial:</div><div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>`
-        : (!doll && G.p === 1 ? `<div style="color:#B8860B;font-weight:800">💛 Retos con 3 ★: ${retos} de ${P1G.length}. ¡Gánalos todos para el premio final!</div>` : '')}
-      ${spGot ? `<div class="gain" style="color:#C2187A">⭐ ¡Ganaste el slime especial de este reto!</div><div class="newtoys"><figure class="royalwin">${toySVG(spGot)}<figcaption>${esc(spGot.name)}</figcaption></figure></div>` : ''}
-      ${got.length ? `<div class="gain">🟢 ¡Ganaste un slime!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
-      ${stars < 3 ? `<div>${hasSp ? 'Saca 3 ★ en el reto para ganar un slime.' : `⭐ Saca 3 ★ para ganar a <b>${esc(sp.name)}</b>, el slime especial de este reto.`}</div>` : ''}
-      <div class="btns"><button class="btn" type="button" id="again">Otro reto</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+      <div>${G.h}: ${m === 0 ? 'no mistakes.' : m === 1 ? '1 mistake.' : m + ' mistakes.'} ${stars === 3 ? 'You are ready for the school exam!' : 'Do it again to win the 3 stars.'}</div>
+      ${dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 AMAZING! You won all the challenges with 3 ★. This is the most special prize:</div><div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>`
+        : (!doll && G.p === 1 ? `<div style="color:#B8860B;font-weight:800">💛 Challenges with 3 ★: ${retos} of ${P1G.length}. Win them all for the final prize!</div>` : '')}
+      ${spGot ? `<div class="gain" style="color:#C2187A">⭐ You won the special slime of this challenge!</div><div class="newtoys"><figure class="royalwin">${toySVG(spGot)}<figcaption>${esc(spGot.name)}</figcaption></figure></div>` : ''}
+      ${got.length ? `<div class="gain">🟢 You won a slime!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
+      ${stars < 3 ? `<div>${hasSp ? 'Get 3 ★ in the challenge to win a slime.' : `⭐ Get 3 ★ to win <b>${esc(sp.name)}</b>, the special slime of this challenge.`}</div>` : ''}
+      <div class="btns"><button class="btn" type="button" id="again">Another challenge</button><button class="btn alt" type="button" id="tomenu">Menu</button></div></div>`;
     const g = cur.exam; $('#again').onclick = () => startExam(g);
   } else if (cur.review) {
     const left = errKeys().length, got = m <= 3 ? awardToys(1) : [];
-    $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? '¡Perfecto!' : '¡Buen repaso!'}</div>
-      ${got.length ? `<div class="gain">🟢 ¡Ganaste un slime!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
-      <div>${left ? `Te ${left === 1 ? 'queda' : 'quedan'} ${left} en tu lista de repaso.` : '¡Ya no te queda nada por repasar!'}</div>
-      <div class="btns">${left ? '<button class="btn" type="button" id="again">Repasar otra vez</button>' : ''}<button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? 'Perfect!' : 'Good review!'}</div>
+      ${got.length ? `<div class="gain">🟢 You won a slime!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
+      <div>${left ? `You have ${left} left on your review list.` : 'Nothing left to review!'}</div>
+      <div class="btns">${left ? '<button class="btn" type="button" id="again">Review again</button>' : ''}<button class="btn alt" type="button" id="tomenu">Menu</button></div></div>`;
     if (left) $('#again').onclick = startReview;
   } else {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
@@ -905,18 +906,18 @@ function finish() {
     const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora el slime solo con 3 ★
     const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars), dg = dollCheck();
     const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
-    const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste todos los retos con 3 ★. Este es el premio más especial:</div>
-      <div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>` : '') + (rg ? `<div class="gain" style="color:#B8860B">👑 ¡Completaste ${esc(G.h)} con 3 ★ en todo! Ganaste un slime real:</div>
+    const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 AMAZING! You won all the challenges with 3 ★. This is the most special prize:</div>
+      <div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>` : '') + (rg ? `<div class="gain" style="color:#B8860B">👑 You completed ${esc(G.h)} with 3 ★ in everything! You won a royal slime:</div>
       <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
-      + (got.length ? `<div class="gain">🟢 ¡Ganaste un slime!</div>
+      + (got.length ? `<div class="gain">🟢 You won a slime!</div>
       <div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
-      : `<div>${need === 3 ? 'Ya sacaste 3 ★ en esta práctica: ahora el slime se gana solo con 3 ★. ¡Tú puedes!' : 'Termina la práctica con 2 ★ o más para ganar un slime.'}</div>`)
-      + (!rg && ROYALS.some(r => !royals.includes(r.id)) ? `<div style="color:var(--muted);font-size:15px">👑 ${esc(G.h)}: ${done3} de ${sec.length} prácticas con 3 ★ para el slime real.</div>` : '');
-    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!'}</div>
+      : `<div>${need === 3 ? 'You already got 3 ★ in this practice: now you win a slime only with 3 ★. You can do it!' : 'Finish the practice with 2 ★ or more to win a slime.'}</div>`)
+      + (!rg && ROYALS.some(r => !royals.includes(r.id)) ? `<div style="color:var(--muted);font-size:15px">👑 ${esc(G.h)}: ${done3} of ${sec.length} practices with 3 ★ for the royal slime.</div>` : '');
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? 'Perfect!' : stars === 2 ? 'Very good!' : 'You finished!'}</div>
       <div class="stars">${starStr(stars)}</div>
-      <div>${m === 0 ? 'Sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? 'Te lo sabes muy bien.' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      <div>${m === 0 ? 'No mistakes.' : m === 1 ? '1 mistake.' : m + ' mistakes.'} ${stars === 3 ? 'You know it very well.' : 'Do it again to win the 3 stars.'}</div>
       ${gain}
-      <div class="btns"><button class="btn" type="button" id="again">Otra vez</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+      <div class="btns"><button class="btn" type="button" id="again">Again</button><button class="btn alt" type="button" id="tomenu">Menu</button></div></div>`;
     $('#again').onclick = () => start(cur.act.id);
   }
   $('#tomenu').onclick = goHome;
@@ -973,7 +974,7 @@ const RENDER = {
   corrige(q, it) {
     $('#area').innerHTML = `<div class="wr"><div class="qp">Corrige la oración:</div><div class="qcard"><div class="bad-s">${esc(it.s)}</div></div>
       <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Escribe la oración corregida">${esc(it.s)}</textarea>
-      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div></div>`;
+      <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div><div id="sh"></div></div>`;
     const inp = $('#in'); let tries = 0;
     const N = x => x.normalize('NFC').trim().replace(/\s+/g, ' ');
     const W = x => N(x).split(' ');
@@ -984,14 +985,14 @@ const RENDER = {
       tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
       const A = W(it.a), B = W(v), bad = A.filter((w, j) => B[j] !== w).length;
       if (tries < 3) fb('bad', bad === 1 ? 'Casi. Te falta corregir 1 palabra.' : `Casi. Revisa ${bad || 'algunas'} palabras: mayúsculas, acentos, letras y el punto.`);
-      else $('#sh').innerHTML = `<div class="hint">Se escribe así:</div><div class="show">${esc(it.a)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+      else $('#sh').innerHTML = `<div class="hint">Se escribe así:</div><div class="show">${esc(it.a)}</div><div class="hint">Write it yourself to continue.</div>`;
     };
   },
   /* Escribe una oración con la palabra */
   escribe(q, it) {
-    $('#area').innerHTML = `<div class="wr"><div class="qp">Escribe una oración con esta palabra:</div><div class="qcard"><div class="word">${esc(it.w)}</div>${it.hint ? `<div class="hint">${esc(it.hint)}</div>` : ''}</div>
-      <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Escribe tu oración"></textarea>
-      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div></div>`;
+    $('#area').innerHTML = `<div class="wr"><div class="qp">Write a sentence with this word:</div><div class="qcard"><div class="word">${esc(it.w)}</div>${it.hint ? `<div class="hint">${esc(it.hint)}</div>` : ''}</div>
+      <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Write your sentence"></textarea>
+      <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div></div>`;
     const inp = $('#in');
     $('#ck').onclick = () => {
       if (cur.over) return;
@@ -1000,11 +1001,11 @@ const RENDER = {
       const has = words.some(x => x.toLowerCase() === it.w.toLowerCase());
       const near = !has && words.some(x => x.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') === it.w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''));
       let msg = '';
-      if (!has) msg = near ? `Revisa cómo escribiste «${it.w}»: ¿lleva acento?` : `Tu oración debe llevar la palabra «${it.w}», bien escrita.`;
-      else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
-      else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
-      else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
-      if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
+      if (!has) msg = near ? `Check how you spelled «${it.w}».` : `Your sentence must have the word «${it.w}», spelled correctly.`;
+      else if (words.length < 4) msg = 'Write a more complete sentence: at least 4 words.';
+      else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'A sentence starts with a CAPITAL letter.';
+      else if (!/[.!?]$/.test(v)) msg = 'Don\'t forget the period at the end.';
+      if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `Great sentence! It has «${it.w}», starts with a capital letter and ends with a period.`, 1); return; }
       inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
     };
   },
@@ -1017,7 +1018,7 @@ const RENDER = {
     $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>
       <div class="pens"><button type="button" class="pen blu on" data-c="blu">🔵 ${esc(it.blueName)}</button><button type="button" class="pen red" data-c="red">🔴 ${esc(it.redName)}</button></div>
       <div class="qcard"><div class="sent" id="st" style="justify-content:flex-start">${draw()}</div></div>
-      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+      <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div>`;
     document.querySelectorAll('.pen').forEach(b => b.onclick = () => { pen = b.dataset.c; document.querySelectorAll('.pen').forEach(x => x.classList.toggle('on', x === b)); });
     $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over) return; const j = +b.dataset.j; col[j] = col[j] === pen ? '' : pen; $('#st').innerHTML = draw(); };
     $('#ck').onclick = () => {
@@ -1028,16 +1029,16 @@ const RENDER = {
       const missing = wrong.filter(j => want[j] && !col[j]).length, extra = wrong.filter(j => !want[j]).length, swapped = wrong.length - missing - extra;
       wrongQ(q, $('#st'));
       const parts = []; if (missing) parts.push(`te faltan ${missing}`); if (swapped) parts.push(`${swapped} ${swapped === 1 ? 'tiene' : 'tienen'} el color equivocado`); if (extra) parts.push(`${extra} no ${extra === 1 ? 'es artículo' : 'son artículos'}`);
-      fb('bad', 'Casi: ' + parts.join(', ') + '.');
+      fb('bad', 'Almost: ' + parts.join(', ') + '.');
       if (q.tries = (q.tries || 0) + 1, q.tries >= 3) wrong.forEach(j => { const b = $('#st').querySelector(`[data-j="${j}"]`); if (b) b.classList.add('miss'); });
     };
   },
   /* Fila de una tabla con varias columnas */
   tabla(q, it) {
     const sel = it.cols.map(() => null);
-    $('#area').innerHTML = `<div class="qp">${esc(it.p || 'Completa la tabla:')}</div><div class="qcard"><div class="word">${esc(it.w)}</div></div>
+    $('#area').innerHTML = `<div class="qp">${esc(it.p || 'Complete the table:')}</div><div class="qcard"><div class="word">${esc(it.w)}</div></div>
       <div class="trow">${it.cols.map((c, k) => `<div class="tcol" data-k="${k}"><div class="th">${esc(c[0])}</div><div class="ops">${c[2].map(o => `<button type="button" class="op" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`).join('')}</div>
-      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+      <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div>`;
     $('#area').querySelectorAll('.tcol').forEach(tc => tc.onclick = e => { const b = e.target.closest('.op'); if (!b || cur.over) return; const k = +tc.dataset.k; sel[k] = b.dataset.o;
       tc.querySelectorAll('.op').forEach(x => { x.classList.toggle('on', x === b); x.classList.remove('bad', 'ok'); }); });
     $('#ck').onclick = () => {
@@ -1046,7 +1047,7 @@ const RENDER = {
       let bad = 0;
       it.cols.forEach((c, k) => { const b = $('#area').querySelector(`.tcol[data-k="${k}"] .op.on`); const ok = sel[k] === c[1]; if (!ok) bad++; b.classList.add(ok ? 'ok' : 'bad'); });
       if (!bad) { rightQ(q, it.why, 1); return; }
-      wrongQ(q); fb('bad', bad === 1 ? 'Casi. Una columna está mal.' : `Casi. ${bad} columnas están mal.`);
+      wrongQ(q); fb('bad', bad === 1 ? 'Almost. One column is wrong.' : `Almost. ${bad} columns are wrong.`);
     };
   },
   /* Escribe la respuesta en uno o varios espacios (como en el examen) */
@@ -1054,13 +1055,13 @@ const RENDER = {
     const top = it.html ? `<div class="qcard">${it.html}</div>` : it.big ? `<div class="qcard"><div class="word${it.big.length > 14 ? ' long' : ''}">${esc(it.big)}</div></div>` : '';
     $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>${top}
       <div class="flds">${it.f.map((f, k) => `<label class="fld">${f.l ? `<span>${esc(f.l)}</span>` : ''}<input data-k="${k}" type="text" ${f.num ? 'inputmode="numeric"' : ''} autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="width:${f.w || (f.num ? 6 : 12)}ch">${f.r ? `<span>${esc(f.r)}</span>` : ''}</label>`).join('')}</div>
-      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div>`;
+      <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div><div id="sh"></div>`;
     const ins = [...document.querySelectorAll('.flds input')]; let tries = 0;
     const N = (v, num) => { v = v.normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' '); return num ? v.replace(/[\s,.]/g, '') : v.replace(/[.]$/, ''); };
     const S = v => v.normalize('NFD').replace(/[̀-ͯ]/g, '');
     $('#ck').onclick = () => {
       if (cur.over) return;
-      if (ins.some(x => !x.value.trim())) { fb('bad', 'Falta llenar algún espacio.'); return; }
+      if (ins.some(x => !x.value.trim())) { fb('bad', 'Fill in all the spaces.'); return; }
       let bad = 0, acc = 0;
       const used = new Set();
       it.f.forEach((f, k) => { const v = N(ins[k].value, f.num), ok = [].concat(f.a).map(a => N(String(a), f.num));
@@ -1068,9 +1069,9 @@ const RENDER = {
         ins[k].classList.toggle('ok', good); ins[k].classList.toggle('bad', !good); });
       if (!bad) { ins.forEach(x => x.blur()); rightQ(q, it.why, 1); return; }
       tries++; wrongQ(q, ...ins.filter(x => x.classList.contains('bad')));
-      if (acc) fb('bad', '¡Casi! Revisa los acentos (´).');
+      if (acc) fb('bad', 'Almost! Check your spelling.');
       else if (it.hint && tries === 1) fb('bad', it.hint);
-      if (tries >= 2) $('#sh').innerHTML = `<div class="hint" style="text-align:center">La respuesta es:</div><div class="show" style="text-align:center">${it.f.map(f => esc(String([].concat(f.a)[0]))).join(' · ')}</div><div class="hint" style="text-align:center">Escríbela tú para seguir.</div>`;
+      if (tries >= 2) $('#sh').innerHTML = `<div class="hint" style="text-align:center">The answer is:</div><div class="show" style="text-align:center">${it.f.map(f => esc(String([].concat(f.a)[0]))).join(' · ')}</div><div class="hint" style="text-align:center">Write it yourself to continue.</div>`;
     };
   },
   /* Ordena tocando en orden */
@@ -1080,15 +1081,15 @@ const RENDER = {
       $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>
         <div class="qcard"><div class="slots">${it.nums.map((_, k) => `<button type="button" class="tok slotb${put[k] ? ' ok' : ''}" data-k="${k}">${put[k] ? esc(put[k].n) : '___'}</button>`).join('')}</div></div>
         <div class="sent" id="pool">${pool.map(x => put.includes(x) ? '' : `<button type="button" class="tok" data-j="${x.j}">${esc(x.n)}</button>`).join('')}</div>
-        <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+        <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div>`;
       $('#pool').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over) return; put.push(pool.find(x => x.j === +b.dataset.j)); draw(); };
       document.querySelectorAll('.slotb').forEach(b => b.onclick = () => { if (cur.over) return; const k = +b.dataset.k; if (put[k]) { put.splice(k, 1); draw(); } });
       $('#ck').onclick = () => {
         if (cur.over) return;
-        if (put.length < it.nums.length) { fb('bad', 'Coloca todos los números.'); return; }
+        if (put.length < it.nums.length) { fb('bad', 'Place all of them.'); return; }
         const okk = put.every((x, k) => String(x.n) === String(it.a[k]));
         if (okk) { rightQ(q, it.why, 1); return; }
-        wrongQ(q); fb('bad', 'Casi. Toca un número de arriba para quitarlo y vuelve a acomodarlo.');
+        wrongQ(q); fb('bad', 'Almost. Tap one at the top to remove it and place it again.');
       };
     };
     draw();
@@ -1101,10 +1102,10 @@ const RENDER = {
       $('#area').innerHTML = `<div class="qcard"><div class="word long">${esc(it.text)}</div></div>
         <div class="psteps">${['Comprendo', 'Planeo (barras)', 'Resuelvo', 'Resultado'].map((s, j) => `<span class="pst${j < Math.min(k, 3) ? ' done' : j === Math.min(k, 3) ? ' now' : ''}">${s}</span>`).join('')}</div>
         ${fin ? `<div class="qp">Resultado:</div><div class="flds"><label class="fld"><span>${esc(it.res[0])}</span><input id="in" type="text" inputmode="numeric" autocomplete="off" style="width:7ch"><span>${esc(it.res[1])}</span></label></div>
-          <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div>`
+          <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div><div id="sh"></div>`
         : `<div class="qp">${esc(st.p)}</div><div class="opts" id="op">${shuffle(st.o.map((o, j) => ({ o, j }))).map(x => `<button class="opt small" type="button" data-j="${x.j}">${x.o}</button>`).join('')}</div>`}`;
       if (!fin) $('#op').onclick = e => { const b = e.target.closest('.opt'); if (!b || cur.over) return;
-        if (+b.dataset.j === st.a) { b.classList.add('ok'); fb('ok', '¡Bien!'); $('#note').innerHTML = st.why ? `<div class="note"><div class="why">💡 ${st.why}</div></div>` : ''; setTimeout(() => { k++; draw(); }, 1100); }
+        if (+b.dataset.j === st.a) { b.classList.add('ok'); fb('ok', 'Good!'); $('#note').innerHTML = st.why ? `<div class="note"><div class="why">💡 ${st.why}</div></div>` : ''; setTimeout(() => { k++; draw(); }, 1100); }
         else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); if (st.no) fb('bad', st.no); } };
       else { let tries = 0; const inp = $('#in');
         $('#ck').onclick = () => { if (cur.over) return; const v = inp.value.replace(/[\s,.]/g, ''); if (!v) return;
@@ -1123,7 +1124,7 @@ const RENDER = {
     const n = it.s.split('-').length, ans = Math.min(n, 4) - 1;
     const draw = () => L.map((ch, j) => `<span class="lt">${esc(ch)}</span>${j < L.length - 1 ? `<button class="gap${on.has(j) ? ' on' : ''}" type="button" data-j="${j}" aria-label="Cortar después de ${esc(ch)}">${on.has(j) ? '-' : ''}</button>` : ''}`).join('');
     $('#area').innerHTML = `<div class="qp">Separa en sílabas:</div><div class="qcard"><div class="letters" id="lt">${draw()}</div></div>
-      <div class="actions" id="ac"><button class="say" type="button" id="sy">🔊 Oír</button><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="ph2"></div>`;
+      <div class="actions" id="ac"><button class="say" type="button" id="sy">🔊 Oír</button><button class="btn" type="button" id="ck">Check ✓</button></div><div id="ph2"></div>`;
     $('#sy').onclick = () => speak(it.w, 0.7);
     $('#lt').onclick = e => { const g = e.target.closest('.gap'); if (!g || cur.over) return; const j = +g.dataset.j; on.has(j) ? on.delete(j) : on.add(j); $('#lt').innerHTML = draw(); };
     const phase2 = () => {
@@ -1176,7 +1177,7 @@ const RENDER = {
       ${can ? '<button class="say saybig" type="button" id="say">🔊 Escuchar</button>' : '<div class="hint">Pide a alguien que te dicte la palabra.</div>'}
       <div class="hint">${esc(blank)}</div>
       <input id="in" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" enterkeyhint="done" aria-label="Escribe la palabra">
-      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div></div>`;
+      <div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div><div id="sh"></div></div>`;
     const say = () => speak([it.w, it.s, it.w]);
     if (can) { $('#say').onclick = say; setTimeout(say, 350); }
     const inp = $('#in'); let tries = 0;
@@ -1191,10 +1192,10 @@ const RENDER = {
       // Las letras están bien pero el acento no: cuenta como error y no avanza hasta que lo escriban bien.
       if (strip(v) === strip(it.w)) {
         fb('bad', accented ? '¡Casi! Revisa el acento (´).' : '¡Casi! Esta palabra no lleva acento.');
-        if (tries >= 2) $('#sh').innerHTML = `<div class="hint">${accented ? 'Lleva acento:' : 'No lleva acento:'}</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+        if (tries >= 2) $('#sh').innerHTML = `<div class="hint">${accented ? 'Lleva acento:' : 'No lleva acento:'}</div><div class="show">${esc(it.w)}</div><div class="hint">Write it yourself to continue.</div>`;
         return;
       }
-      if (tries >= 2) $('#sh').innerHTML = `<div class="hint">Se escribe:</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+      if (tries >= 2) $('#sh').innerHTML = `<div class="hint">Se escribe:</div><div class="show">${esc(it.w)}</div><div class="hint">Write it yourself to continue.</div>`;
     };
     $('#ck').onclick = check;
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
@@ -1259,7 +1260,7 @@ function renderUnir(act) {
       if (cur.done === cur.total) setTimeout(finish, 600);
     } else {
       temp = [sel.L, sel.R]; draw(); bl.classList.add('bad'); br.classList.add('bad');
-      cur.mistakes++; addErrTot(cur.act.id); fb('bad', 'Casi. Inténtalo otra vez.'); progress(); shake(bl); shake(br);
+      cur.mistakes++; addErrTot(cur.act.id); fb('bad', 'Almost. Try again.'); progress(); shake(bl); shake(br);
       setTimeout(() => { temp = null; bl.classList.remove('bad'); br.classList.remove('bad'); draw(); }, 700);
     }
     sel.L = sel.R = null;

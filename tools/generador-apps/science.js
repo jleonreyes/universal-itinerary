@@ -87,7 +87,7 @@ const ACTS = [
      MC('Which is the long bone of the thigh?','Femur',['Tibia','Humerus'],'The femur is in the thigh, above the knee.',1)]},
   /* ---------- II. Fill in the blanks (paragraph) ---------- */
   {g:'sci', id:'fill1', type:'campos', title:'II. Fill in the blanks', src:'Write the missing word in the paragraph', rule:RULE_ALL, inst:'Write the missing word. Check your spelling!',
-   items:[{p:'Complete the paragraph:', big:'The skeletal system gives our body ___, the ___ system helps us move, and the digestive system gives us the ___ and energy our body needs.', f:[{l:'1.', a:'structure', w:10},{l:'2.', a:'muscular', w:10},{l:'3.', a:'nutrients', w:10}], why:'structure · muscular · nutrients. ¡Ojo! «structure» starts with S (not «estructure»).', ojo:1},
+   items:[{p:'Complete the paragraph:', big:'The skeletal system gives our body ___, the ___ system helps us move, and the digestive system gives us the ___ and energy our body needs.', f:[{l:'1.', a:'structure', w:10},{l:'2.', a:'muscular', w:10},{l:'3.', a:'nutrients', w:10}], why:'structure · muscular · nutrients. Careful! «structure» starts with ST (not «estructure»).', ojo:1},
      {p:'Complete:', big:'The skeletal system gives our body ___.', f:[{a:'structure'}], why:'structure: starts with ST, not «estructure».', ojo:1},
      {p:'Complete:', big:'The ___ system helps us move.', f:[{a:'muscular'}], why:'muscular: M-U-S-C-U-L-A-R.', ojo:1},
      {p:'Complete:', big:'The digestive system gives us the ___ and energy our body needs.', f:[{a:'nutrients'}], why:'nutrients.'}]},
@@ -105,7 +105,7 @@ const ACTS = [
      {p:'Order the whole trip of the food:', nums:['mouth','esophagus','stomach','small intestine','large intestine','rectum','anus'], a:['mouth','esophagus','stomach','small intestine','large intestine','rectum','anus'], why:'mouth → esophagus → stomach → small intestine → large intestine → rectum → anus.', ojo:1}]},
   /* ---------- V. Questions (write a complete sentence) ---------- */
   {g:'sci', id:'quest', type:'elige', title:'V. Questions', src:'Answer the questions', rule:RULE_ALL + '<br><br>Answer with a complete sentence: <b>We would not be able to…</b> · <b>We can…</b> · <b>I take care of my body by…</b>', inst:'Choose the best complete answer.',
-   items:[MC('What might happen if we did not have a skeletal system?','We would not be able to stand or move.',['We can doesn\'t move.','We would not eat.'],'Use «We would not be able to…». ¡No «We can doesn\'t»!',1),
+   items:[MC('What might happen if we did not have a skeletal system?','We would not be able to stand or move.',['We can doesn\'t move.','We would not eat.'],'Use «We would not be able to…». Not «We can doesn\'t»!',1),
      MC('What can we do to take care of our bones?','We can eat things with calcium, like milk.',['We can eat candy.','We can sleep all day.'],'Calcium makes our bones strong.'),
      MC('What can we do to take care of our muscles?','We can stretch before and after exercise.',['We can stretch after and den of doing exercise.','We can stop moving.'],'stretch BEFORE and AFTER exercise.',1),
      MC('What can we do to take care of our digestive system?','We can eat healthy food and drink water.',['We can eat a lot of junk food.','We can skip breakfast.'],'Healthy food and water help digestion.'),

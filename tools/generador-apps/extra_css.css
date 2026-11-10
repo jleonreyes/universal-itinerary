@@ -1,0 +1,14 @@
+.flds{display:flex;flex-wrap:wrap;gap:12px 16px;justify-content:center;align-items:center;margin:12px 0}
+.fld{display:flex;align-items:center;gap:8px;font:800 24px var(--display)}
+.fld input{font:800 26px var(--display);text-align:center;padding:8px 10px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);max-width:90vw}
+.fld input.ok{border-color:var(--ok);background:var(--ok-soft)} .fld input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.show{font-family:var(--display);font-weight:800;font-size:26px;color:var(--ok)}
+.slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.psteps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.pst{font-weight:800;font-size:14px;padding:5px 10px;border-radius:999px;border:2px solid var(--line);color:var(--muted);background:var(--surface)}
+.pst.now{border-color:var(--sel);color:var(--sel);background:var(--sel-soft)} .pst.done{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.bars{display:inline-flex;flex-direction:column;gap:3px;min-width:170px;font:800 18px var(--display)}
+.bars .row{display:flex;gap:3px} .bars .row div{flex:1;border:2px solid currentColor;border-radius:6px;padding:4px 6px;text-align:center;background:rgba(255,255,255,.6)}
+.diag{width:min(100%,330px);height:auto;display:block;margin:0 auto}
+.p2empty{background:var(--surface);border:3px dashed var(--line);border-radius:18px;padding:22px;text-align:center;font-size:18px}
+.p2empty b{font-family:var(--display);font-size:22px}

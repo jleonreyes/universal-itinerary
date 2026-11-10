@@ -378,6 +378,7 @@ function vHub(){
   app.innerHTML = header() + `
   <div class="menu">
     <button class="mbtn" data-go="tables"><span class="ic">⚔️</span><span><h3>Tablas y villanos</h3><small>Aprende cada tabla y vence a su villano para ganar su trofeo.</small></span></button>
+    <a class="mbtn" href="matematicas/" style="text-decoration:none;color:inherit"><span class="ic">🤖</span><span><h3>Matemáticas (como el examen)</h3><small>Sumas, restas, problemas con barras, valor posicional y más. Gana robots.</small></span></a>
     <button class="mbtn" data-go="free"><span class="ic">🎯</span><span><h3>Práctica libre</h3><small>Cualquier tabla, sola o mezcladas, cuando quieras.</small></span></button>
     <button class="mbtn" data-act="repaso" ${lt?"":"disabled"}><span class="ic">🧠</span><span><h3>Repaso inteligente</h3><small>${lt?(due?`${due} operaciones te esperan hoy.`:"Todo al día. Puedes repasar las más difíciles."):"Se abre al aprender tu primera tabla."}</small></span>${due?`<span class="badge">${due}</span>`:""}</button>
     <button class="mbtn" data-act="sprint" ${lt?"":"disabled"}><span class="ic">⚡</span><span><h3>Sprint de 60 segundos</h3><small>${p.sprint?`Tu récord: ${p.sprint} aciertos.`:"¿Cuántas resuelves en un minuto?"}</small></span></button>

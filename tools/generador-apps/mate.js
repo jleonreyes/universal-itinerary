@@ -1,0 +1,61 @@
+/* ===== MATEMÁTICAS · 1.er periodo (examen: cálculo mental, secuencias, problemas, ordenar, < >, valor posicional, números con letra, sumas, restas, multiplicaciones) ===== */
+const BARS = (top, parts) => `<span class="bars"><span class="row"><div>${top}</div></span><span class="row">${parts.map(p => `<div>${p}</div>`).join('')}</span></span>`;
+const RULE_PROB = 'Los problemas se resuelven en 4 pasos, como en el examen:<br><b>1. Comprendo:</b> subraya los datos. ¿Qué me dan y qué me preguntan?<br><b>2. Planeo (barras):</b> ¿cuál número es el <b>TOTAL</b> y cuáles son las <b>PARTES</b>?<br>• Si me dan las partes y me preguntan el total → <b>sumo</b>.<br>• Si me dan el total y una parte → <b>resto</b>.<br>• Si son grupos iguales → <b>multiplico</b>.<br><b>3. Resuelvo</b> con la frase numérica. <b>4. Resultado:</b> escribo la respuesta completa.<br>¡Copia bien los números!';
+/* Problema parte-todo: kind 'suma' (dan partes) o 'resta' (dan total y una parte) */
+const PB = (text, kind, a, b, res, o) => {
+  const ans = kind === 'suma' ? a + b : kind === 'resta' ? a - b : a * b;
+  const opBars = kind === 'suma' ? [BARS('?', [a, b]), BARS(a, [b, '?']), BARS(a + b + 100, [a, b])] : kind === 'resta' ? [BARS(a, [b, '?']), BARS('?', [a, b]), BARS(b, [a, '?'])] : [BARS('?', Array(Math.min(b, 6)).fill(a).concat(b > 6 ? ['…'] : [])), BARS('?', [a, b]), BARS(a, [b, '?'])];
+  return { text, ans, res, ojo:o, op: kind === 'suma' ? `${a} + ${b} = ${ans}` : kind === 'resta' ? `${a} − ${b} = ${ans}` : `${a} × ${b} = ${ans}`,
+    why: kind === 'suma' ? `Me dan las dos partes y me preguntan el total: ${a} + ${b} = ${ans}.` : kind === 'resta' ? `${a} es el TOTAL y ${b} es una parte: ${a} − ${b} = ${ans}.` : `Son ${b} grupos iguales de ${a}: ${a} × ${b} = ${ans}.`,
+    steps:[ { p:'1. Comprendo: ¿qué te preguntan?', o:[res[2], res[3]], a:0, why:`Me preguntan: ${res[2]}` },
+      { p:'2. Planeo: ¿cuál barra es la correcta?', o:opBars, a:0, why: kind === 'resta' ? `${a} es el TOTAL (va arriba); ${b} es una parte.` : kind === 'suma' ? 'El total es lo que no sé: va arriba con ?.' : 'Son grupos iguales.', no: kind === 'resta' ? `¡Ojo! ${a} ya es el total: va arriba.` : '' },
+      { p:'3. Resuelvo: ¿qué operación hago?', o:['suma (+)','resta (−)','multiplicación (×)'], a: kind === 'suma' ? 0 : kind === 'resta' ? 1 : 2, why: kind === 'suma' ? 'Junto las partes: sumo.' : kind === 'resta' ? 'Tengo el total y una parte: resto.' : 'Grupos iguales: multiplico.' } ] };
+};
+const NUMS1 = { 0:'',1:'uno',2:'dos',3:'tres',4:'cuatro',5:'cinco',6:'seis',7:'siete',8:'ocho',9:'nueve',10:'diez',11:'once',12:'doce',13:'trece',14:'catorce',15:'quince',16:'dieciséis',17:'diecisiete',18:'dieciocho',19:'diecinueve',20:'veinte',21:'veintiuno',22:'veintidós',23:'veintitrés',24:'veinticuatro',25:'veinticinco',26:'veintiséis',27:'veintisiete',28:'veintiocho',29:'veintinueve' };
+const DEC = ['','','','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+const CEN = ['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+const lt2 = n => n < 30 ? NUMS1[n] : DEC[Math.floor(n / 10)] + (n % 10 ? ' y ' + NUMS1[n % 10] : '');
+const letra = n => n === 100 ? 'cien' : n < 100 ? lt2(n) : (CEN[Math.floor(n / 100)] + (n % 100 ? ' ' + lt2(n % 100) : ''));
+const VP = n => { const s = String(n), L = s.length, names = ['um','c','d','u'].slice(4 - L), vals = [...s].map((d, j) => +d * 10 ** (L - 1 - j));
+  return { p:`Valor posicional y descomposición de ${n.toLocaleString('en-US')}:`, big:n.toLocaleString('en-US'),
+    f: vals.map((v, j) => ({ l: j ? '+' : '=', a:String(v), num:1, w:6 })).concat([...s].map((d, j) => ({ l: names[j].toUpperCase() + ' =', a:d, num:1, w:3 }))),
+    why:`${n.toLocaleString('en-US')} = ${vals.join(' + ')}. ¡Ojo! C = ${s[L - 3] || 0} (el dígito), pero vale ${vals[L - 3] || 0}.`, hint:'Arriba va lo que VALE cada número (900); abajo va solo el DÍGITO (C = 9).' }; };
+const SUM = (a, b, o) => ({ p:'Realiza la suma. Copia bien los números:', big:`${a.toLocaleString('en-US')} + ${b.toLocaleString('en-US')} =`, f:[{ a:String(a + b), num:1, w:7 }], why:`${a.toLocaleString('en-US')} + ${b.toLocaleString('en-US')} = ${(a + b).toLocaleString('en-US')}.`, hint:'¿Copiaste bien los números? ¿Llevaste a la siguiente columna?', ojo:o });
+const RES = (a, b, o) => ({ p:'Realiza la resta:', big:`${a} − ${b} =`, f:[{ a:String(a - b), num:1, w:6 }], why:`${a} − ${b} = ${a - b}.`, hint:'Si arriba es más chico, pide prestado a la columna de al lado.', ojo:o });
+const ACTS = [
+  {g:'mat', id:'mental', type:'campos', title:'1. Cálculo mental', src:'Resuélvelo en tu cabeza', rule:'Suma o resta de memoria. Truco: completa la decena (8 + 5 = 8 + 2 + 3 = 13).',
+   items:[[5,5],[7,6],[15,7],[4,6],[8,4],[12,8],[9,9],[14,6],[20,8],[25,5],[18,4],[30,10]].map(([a, b]) => ({ p:'Cálculo mental:', big:`${a} + ${b} =`, f:[{ a:String(a + b), num:1, w:4 }], why:`${a} + ${b} = ${a + b}.` }))
+     .concat([[20,7],[15,5],[13,6],[30,12]].map(([a, b]) => ({ p:'Cálculo mental:', big:`${a} − ${b} =`, f:[{ a:String(a - b), num:1, w:4 }], why:`${a} − ${b} = ${a - b}.` })))},
+  {g:'mat', id:'secu', type:'campos', title:'2. Secuencias numéricas', src:'Completa las secuencias', rule:'Mira de cuánto en cuánto va: ¿suma o resta? ¿de 1 en 1, de 2 en 2, de 100 en 100?',
+   items:[[900,-100],[262,2],[756,1],[480,10],[1000,-100],[345,5],[120,20],[999,-1]].map(([s0, st]) => { const seq = [0,1,2,3,4,5,6].map(i => s0 + i * st);
+     return { p:'Completa la secuencia:', big:seq.map((v, i) => i % 2 ? '___' : v).join(', '), f:seq.filter((v, i) => i % 2).map(v => ({ a:String(v), num:1, w:5 })), why:`Va de ${Math.abs(st)} en ${Math.abs(st)} ${st < 0 ? 'hacia atrás' : 'hacia adelante'}: ${seq.join(', ')}.` }; })},
+  {g:'mat', id:'prob', type:'prob', title:'3. Resuelve los problemas', src:'Comprendo · Planeo (barras) · Resuelvo · Resultado', rule:RULE_PROB, inst:'Sigue los 4 pasos, como en el examen.',
+   items:[PB('En una biblioteca hay 956 libros. Se compran 178 más. ¿Cuántos libros hay ahora?','suma',956,178,['En la biblioteca hay','libros.','¿Cuántos libros hay ahora?','¿Cuántos libros se compraron?']),
+     PB('En un restaurante hay 823 cajas rojas y azules. 698 son rojas. ¿Cuántas cajas azules hay?','resta',823,698,['Hay','cajas azules.','¿Cuántas cajas azules hay?','¿Cuántas cajas hay en total?'],1),
+     PB('En una escuela hay 645 alumnos entre niños y niñas. 318 son niños. ¿Cuántas niñas hay?','resta',645,318,['Hay','niñas.','¿Cuántas niñas hay?','¿Cuántos alumnos hay en total?'],1),
+     PB('Elena tiene 354 dulces y compró 163 más. ¿Cuántos dulces tiene en total?','suma',354,163,['Elena tiene','dulces.','¿Cuántos dulces tiene en total?','¿Cuántos dulces compró?']),
+     PB('En un parque hay 912 globos rojos y verdes. 467 son rojos. ¿Cuántos globos verdes hay?','resta',912,467,['Hay','globos verdes.','¿Cuántos globos verdes hay?','¿Cuántos globos hay en total?'],1),
+     PB('Hay 7 cajas con 6 galletas cada una. ¿Cuántas galletas hay?','mult',6,7,['Hay','galletas.','¿Cuántas galletas hay en total?','¿Cuántas cajas hay?'],1),
+     PB('Un cine vendió 181 boletos en la mañana y 278 en la tarde. ¿Cuántos boletos vendió en total?','suma',181,278,['El cine vendió','boletos.','¿Cuántos boletos vendió en total?','¿Cuántos boletos vendió en la tarde?'])]},
+  {g:'mat', id:'ordena', type:'ordena', title:'4. Ordena de mayor a menor', src:'Ordena los números', rule:'Compara primero las centenas; si son iguales, las decenas; luego las unidades. El mayor va primero.',
+   items:[[582,748,693,309,810],[670,980,847,850,766],[405,450,504,540,54],[1279,1972,1729,1297,1792],[333,303,330,313,331]].map(ns => { const a = ns.slice().sort((x, y) => y - x); return { p:'Ordena de MAYOR a MENOR:', nums:ns, a, why:a.join(' > ') }; })},
+  {g:'mat', id:'mayor', type:'elige', title:'5. Mayor o menor (< >)', src:'Compara los números', rule:'La boca del cocodrilo (<, >) siempre se come al número <b>MAYOR</b>.<br>236 <b>&lt;</b> 248 · 999 <b>&gt;</b> 997',
+   items:[[236,248],[999,997],[1279,4589],[589,597],[704,740],[1500,1050],[865,856],[3021,3012],[410,401],[2999,3000]].map(([a, b]) => ({ p:'¿Qué signo va?', big:`${a} _ ${b}`, a: a < b ? '<' : '>', w:[a < b ? '>' : '<'], why:`${a} ${a < b ? '<' : '>'} ${b}: la boca se come al ${Math.max(a, b)}.` }))},
+  {g:'mat', id:'valor', type:'campos', title:'6. Valor posicional y descomposición', src:'Como en el examen: descompón y escribe C, D, U', rule:'<b>Descomponer:</b> 907 = 900 + 0 + 7 (lo que VALE cada número).<br><b>C, D, U:</b> solo el DÍGITO. 907 → C = 9, D = 0, U = 7.<br>¡Ojo! C = 9, no C = 900.',
+   items:[907,1234,719,586,2408,350,4061,999].map(VP).map((x, j) => ({ ...x, ojo: j < 2 ? 1 : 0 }))},
+  {g:'mat', id:'letra', type:'campos', title:'7. Escribe los números', src:'Con número y con letra', rule:'Ojo con la ortografía: <b>doscientos</b>, <b>quinientos</b>, <b>setecientos</b>, <b>novecientos</b>, <b>veintidós</b>, <b>dieciséis</b>.',
+   items:[978,608,245,702,516,889,123,450,377,961].map((n, j) => j % 2 ? { p:'Escríbelo con número:', big:letra(n), f:[{ a:String(n), num:1, w:5 }], why:`${letra(n)} = ${n}.` }
+     : { p:'Escríbelo con letra:', big:String(n), f:[{ a:letra(n), w:26 }], why:`${n} se escribe «${letra(n)}».`, hint:'Revisa la ortografía y los acentos.' })},
+  {g:'mat', id:'sumas', type:'campos', title:'8. Sumas', src:'Sumas con transformación (llevando)', rule:'Acomoda los números en columnas: unidades con unidades, decenas con decenas… Empieza por las unidades. Si te pasas de 9, <b>llevas 1</b> a la siguiente columna.<br>¡Copia bien los números antes de sumar!',
+   items:[SUM(4678,1582,1), SUM(3678,2467), SUM(1567,1498), SUM(2456,677,1), SUM(3549,2876), SUM(1938,4295), SUM(5067,2988), SUM(789,456)]},
+  {g:'mat', id:'restas', type:'campos', title:'9. Restas', src:'Restas pidiendo prestado', rule:'Empieza por las unidades. Si el número de arriba es más chico, <b>pide prestado</b> 1 a la columna de al lado (vale 10).',
+   items:[RES(845,766), RES(904,595,1), RES(723,458), RES(600,247,1), RES(512,389), RES(931,674)]},
+  {g:'mat', id:'sumamult', type:'elige', title:'10. ¿Suma o multiplicación?', src:'Inventa y resuelve problemas', rule:'<b>Suma:</b> junto cantidades diferentes (354 dulces y 163 más).<br><b>Multiplicación:</b> grupos IGUALES (7 cajas con 6 galletas cada una).',
+   items:[['Hay 4 bolsas con 5 canicas cada una. ¿Cuántas canicas hay?',1],['Tengo 23 estampas y me regalan 15. ¿Cuántas tengo?',0],['Hay 6 mesas con 4 sillas cada una. ¿Cuántas sillas hay?',1],['Compré 120 hojas y luego 85 más. ¿Cuántas hojas tengo?',0],['Cada niña tiene 3 lápices y son 9 niñas. ¿Cuántos lápices hay?',1],['En la mañana vinieron 45 personas y en la tarde 38. ¿Cuántas vinieron?',0]]
+     .map(([t, m]) => ({ p:'¿Con qué se resuelve?', big:t, long:1, a: m ? 'multiplicación' : 'suma', w:[m ? 'suma' : 'multiplicación'], why: m ? 'Son grupos IGUALES: multiplicación.' : 'Junto dos cantidades diferentes: suma.', cls:'small' }))},
+  {g:'mat', id:'mult', type:'campos', title:'11. Multiplicaciones', src:'Las tablas del examen (¡ojo con la del 7!)', rule:'Repasa la tabla del 7: 7, 14, 21, <b>28</b>, 35, <b>42</b>, 49, 56, 63, 70.<br>4 × 7 = 28 · 6 × 7 = 42',
+   items:[[5,9],[4,7,1],[3,8],[6,9],[5,8],[4,10],[3,9],[2,8],[6,7,1],[5,7],[2,4],[3,6],[5,5],[4,4],[7,7,1],[8,7,1]].map(([a, b, o]) => ({ p:'Resuelve:', big:`${a} × ${b} =`, f:[{ a:String(a * b), num:1, w:4 }], why:`${a} × ${b} = ${a * b}.`, ojo:o }))}
+];
+const GROUPS = [
+  {g:'mat', p:1, x:'🏆 ¡El Gran Reto de Matemáticas!', h:'Matemáticas del 1.er periodo', d:'Como en el examen: cálculo mental, secuencias, problemas con barras, comparar, valor posicional, sumas, restas y multiplicaciones.'}
+];

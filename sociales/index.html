@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sociales">
+<meta name="theme-color" content="#FDE7C8">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}[hidden]{display:none!important}</style>
+<title>Ciencias Sociales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Workbook: a menu of exercise cards (by tema) and toy shelves where plush rewards collect; one question per screen, tap-only for iPad */
+:root{
+  color-scheme:light;
+  --bg:#FDE7C8; --surface:#FFFFFF; --baby:#A8D4F7; --baby-line:#7FBCEB; --baby-ink:#123A5E; --ink:#2A2418; --muted:#6B6250; --line:#DCD2B8;
+  --sun:#D99A00; --sun-soft:#FCEFC7; --petal:#F4B400; --seed:#6B3F1D; --stem:#3E8E41; --leaf:#5DAE4B; --soil:#B68A5A; --soil2:#9C7246; --sky:#E4F1F8;
+  --ok:#23804D; --ok-soft:#DDF2E4; --bad:#C23B34; --bad-soft:#F9DEDB; --sel:#2B63D1; --sel-soft:#DCE7FB;
+  --ton:#2B63D1; --ton-soft:#DCE7FB; --aton:#C23B34; --aton-soft:#F9DEDB;
+  --wood:#A86F3E; --wood2:#C68A52; --wood3:#7E4F28; --wall:#FFF6EA; --wall2:#F6E6CE;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Nunito", "Segoe UI", system-ui, sans-serif;
+}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.4;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 40px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sel);outline-offset:2px}
+
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--sun);font-weight:800}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);line-height:1.05;margin:2px 0 0;text-wrap:balance}
+.total{font-family:var(--display);font-weight:800;font-size:20px;background:var(--sun-soft);border-radius:999px;padding:4px 14px;white-space:nowrap}
+.total b{color:var(--sun)}
+
+/* muñecas: repisas tipo juguetera */
+.toys{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 14px 14px;margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.toys .gh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.toys h2{font-family:var(--display);font-weight:800;font-size:22px;margin:0}
+.toys .gn{font-family:var(--display);font-weight:800;color:var(--sun);font-size:20px}
+.toys p{margin:0;color:var(--muted);font-size:14.5px}
+.toys h3{font-family:var(--display);font-weight:800;font-size:17px;margin:0 0 4px;display:flex;justify-content:space-between}
+.toys h3 span{color:var(--muted);font-size:15px}
+.cab{background:linear-gradient(180deg,var(--wall),var(--wall2));border:9px solid var(--wood);border-radius:14px;padding:6px 6px 0;display:grid;grid-template-columns:repeat(5,1fr);box-shadow:inset 0 6px 12px rgba(0,0,0,.12)}
+.slot{position:relative;box-sizing:border-box;width:100%;margin:0;aspect-ratio:1/1.05;border:none;background:transparent;padding:0;font:inherit;line-height:0;border-bottom:7px solid var(--wood2);box-shadow:0 3px 0 -1px var(--wood3)}
+.slot .toy{position:absolute;left:2%;bottom:0;width:96%;height:auto}
+.toy.photo{object-fit:contain;aspect-ratio:1/1;filter:drop-shadow(0 3px 3px rgba(0,0,0,.22))}
+.slot.royal{background:radial-gradient(circle at 50% 60%,rgba(255,206,84,.55),rgba(255,206,84,0) 70%)}
+.slot.special{background:radial-gradient(circle at 50% 60%,rgba(255,120,200,.45),rgba(120,200,255,.25) 45%,rgba(255,255,255,0) 72%)}
+.slot.doll{background:radial-gradient(circle at 50% 58%,rgba(255,205,60,.75),rgba(255,205,60,0) 72%);animation:dollbg 1.8s ease-in-out infinite}
+.toy.glow,.slot.doll .toy{animation:dollglow 1.8s ease-in-out infinite}
+@keyframes dollglow{0%,100%{filter:drop-shadow(0 0 4px rgba(255,200,40,.7)) drop-shadow(0 0 10px rgba(255,215,0,.5))}50%{filter:drop-shadow(0 0 12px rgba(255,200,40,1)) drop-shadow(0 0 28px rgba(255,215,0,.9))}}
+@keyframes dollbg{0%,100%{background-size:100% 100%}50%{background-size:125% 125%}}
+.newtoys .dollwin .toy{width:220px;height:220px}
+@media (prefers-reduced-motion:reduce){.toy.glow,.slot.doll .toy,.slot.doll{animation:none}}
+.slot.empty::before{content:"?";position:absolute;inset:18% 20% 10%;border:2px dashed var(--line);border-radius:50%;display:grid;place-items:center;color:var(--muted);font:800 18px var(--display);opacity:.6}
+.slot.new .toy{animation:drop .8s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes drop{0%{transform:translateY(-40%) scale(.4);opacity:0}100%{transform:none;opacity:1}}
+.newtoys{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.newtoys figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-weight:800}
+.newtoys .royalwin .toy{width:170px;height:170px;filter:drop-shadow(0 0 12px rgba(255,200,60,.8))}
+.newtoys .toy{width:130px;height:130px;animation:drop .9s cubic-bezier(.3,1.5,.5,1) both}
+.toybar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.toybar .mini{display:flex;gap:2px;flex:1;min-width:0;overflow:hidden}
+.toybar .mini .toy{width:58px;height:58px;flex:none}
+.toybar .none{color:var(--muted);font-size:15px;flex:1}
+.chipw{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:4px 12px;font-weight:800;font-size:14.5px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:16px}
+.pcard{display:flex;align-items:center;gap:14px;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 16px;text-align:left}
+.pcard:hover{border-color:var(--sun)}
+.pcard .pav{width:80px;height:80px;flex:none;display:grid;place-items:center;font-size:44px;background:var(--sun-soft);border-radius:16px}
+.pcard .pav .toy{width:76px;height:76px}
+.pcard .pn{display:block;font-family:var(--display);font-weight:800;font-size:21px;line-height:1.1}
+.pcard .ps{color:var(--muted);font-size:14px}
+.newp{background:var(--surface);border:2px solid var(--sun);border-radius:18px;padding:16px;margin-top:16px;display:flex;flex-direction:column;gap:12px;align-items:center}
+.newp input{font:800 24px var(--display);text-align:center;width:min(100%,380px);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+.modal{position:fixed;inset:0;background:rgba(20,14,6,.55);display:grid;place-items:center;padding:16px;z-index:10}
+.modal .box{background:var(--surface);border-radius:22px;padding:18px 22px;text-align:center;max-width:340px;width:100%;display:flex;flex-direction:column;gap:6px;align-items:center}
+.modal .toy{width:min(260px,70vw);height:auto}
+.modal .nm{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.1}
+.modal .ct{color:var(--muted);font-size:14px}
+
+.revbtn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:16px;padding:14px 16px;margin-top:16px}
+.revbtn .ico{font-size:30px;line-height:1}
+.revbtn .t{font-weight:800;font-size:18px;display:block}
+.revbtn .s{font-size:14px;opacity:.85}
+
+.group h2{font-family:var(--display);font-size:22px;margin:6px 0 8px;font-weight:800}
+.crownp{font-family:var(--body);font-size:14px;font-weight:800;background:#FFF1C7;color:#8A6300;border-radius:999px;padding:2px 10px;vertical-align:middle;margin-left:6px}
+.group p.gdesc{margin:-6px 0 10px;color:var(--muted);font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:4px;min-height:100px}
+.card.exam{border:3px solid var(--aton);background:#FFF4F6}
+.card.exam .t{color:var(--aton)}
+.card.exam{position:relative;padding-right:110px;grid-column:span 2;min-height:118px}
+@media (max-width:480px){.card.exam{grid-column:auto}}
+.prize{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:96px;display:flex;flex-direction:column;align-items:center;font-size:11px;font-weight:800;color:#C2187A;text-align:center;line-height:1.1}
+.prize .toy{width:88px;height:88px;filter:grayscale(.85) opacity(.55)}
+.prize.got .toy{filter:none}
+.topic{font-family:var(--display);font-weight:800;font-size:clamp(26px,6vw,36px);line-height:1.1;color:#D21F3C;text-transform:uppercase;letter-spacing:.02em;margin-bottom:4px}
+.pertabs{display:flex;gap:8px;margin-top:20px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:5px}
+.ptab{flex:1;border:none;border-radius:999px;padding:10px 12px;font-weight:800;font-size:17px;background:transparent;color:var(--muted)}
+.ptab.on{background:var(--baby);color:var(--baby-ink);box-shadow:0 1px 0 var(--baby-line)}
+.card:hover{border-color:var(--sun)}
+.card .t{font-weight:800;font-size:18px;line-height:1.2}
+.card .s{font-size:13px;color:var(--muted)}
+.card .st{margin-top:auto;font-size:20px;letter-spacing:2px;color:var(--line)}
+.card .st .on{color:var(--sun)}
+
+/* play */
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.back{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:6px 14px;font-weight:800}
+.ptitle{font-family:var(--display);font-size:clamp(22px,5vw,30px);font-weight:800;margin:0;line-height:1.1;flex:1;min-width:0}
+.rule{background:var(--surface);border:2px dashed var(--sun);border-radius:14px;padding:10px 14px;font-size:15.5px}
+.rule summary{font-weight:800;color:var(--sun);cursor:pointer;list-style:none}
+.rule summary::-webkit-details-marker{display:none}
+.rule summary::before{content:"📒 "}
+.rule div{margin-top:6px;line-height:1.5}
+.inst{background:var(--sun-soft);border-radius:12px;padding:10px 14px;font-weight:600}
+.meta{display:flex;justify-content:space-between;gap:10px;font-size:15px;color:var(--muted);font-weight:700}
+.prog{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--sun);transition:width .3s}
+#fb{min-height:26px;font-weight:800;text-align:center}
+#fb.ok{color:var(--ok)} #fb.bad{color:var(--bad)}
+
+.qp{font-weight:800;font-size:18px;text-align:center}
+.qcard{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:22px 16px;text-align:center}
+.word{font-family:var(--display);font-weight:800;font-size:clamp(34px,8vw,52px);line-height:1.15;overflow-wrap:anywhere}
+.word.long{font-family:var(--body);font-size:clamp(22px,5vw,28px);line-height:1.5}
+.word u{text-decoration-thickness:3px;text-underline-offset:5px;text-decoration-color:var(--sun)}
+.hole{display:inline-block;min-width:1.1em;padding:0 .12em;border-bottom:4px solid var(--sel);background:var(--sel-soft);border-radius:8px 8px 0 0;color:var(--sel)}
+.hole.ok{border-bottom-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.opt{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 20px;font-weight:800;font-size:20px;min-width:72px}
+.opt.small{font-size:17px;padding:12px 16px}
+.opt.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.opt.bad{border-color:var(--bad);background:var(--bad-soft);opacity:.6}
+
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.bucket{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;align-items:stretch;gap:8px;min-height:130px}
+.bucket .bh{font-family:var(--display);font-weight:800;font-size:20px;border-bottom:3px solid var(--sun);padding-bottom:4px;text-align:center}
+.bucket .bl{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
+.bucket .bl span{background:var(--sun-soft);border-radius:8px;padding:2px 8px;font-size:14.5px;font-weight:700}
+.bucket.bad{border-color:var(--bad);background:var(--bad-soft)}
+.bucket.ok{border-color:var(--ok)}
+
+.sent{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.tok{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-size:22px}
+.tok.ok{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.tok.bad{border-color:var(--bad);background:var(--bad-soft)}
+.tok.blu{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
+.tok.red{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.tok.miss{outline:3px dashed var(--bad)}
+.pens{display:flex;gap:10px;justify-content:center;margin:10px 0}
+.pen{font:800 18px var(--display);padding:8px 16px;border-radius:999px;border:3px solid var(--line);background:var(--surface)}
+.pen.blu.on{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
+.pen.red.on{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.wr{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+.wr .bad-s{font:700 22px var(--display);text-align:center;color:var(--muted)}
+.wr textarea{font:700 22px var(--display);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);min-height:96px;width:100%;box-sizing:border-box}
+.wr textarea.bad{border-color:var(--bad);background:var(--bad-soft)}
+.wr textarea.ok{border-color:var(--ok);background:var(--ok-soft)}
+.wr .hint{color:var(--muted);font-size:18px;text-align:center}
+.wr .show{font:800 22px var(--display);color:var(--ok);text-align:center}
+.trow{display:grid;gap:10px}
+.tcol{display:flex;flex-direction:column;gap:6px}
+.tcol .th{font-weight:800;font-size:16px;color:var(--muted)}
+.tcol .ops{display:flex;gap:8px;flex-wrap:wrap}
+.tcol .op{font:700 18px var(--display);padding:8px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface)}
+.tcol .op.on{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.tcol .op.ok{border-color:var(--ok);background:var(--ok-soft)}
+.tcol .op.bad{border-color:var(--bad);background:var(--bad-soft)}
+
+.letters{display:flex;justify-content:center;align-items:stretch;flex-wrap:nowrap;font-family:var(--display);font-weight:800;font-size:clamp(22px,6.2vw,54px);line-height:1}
+.letters .lt{padding:8px 0}
+.gap{border:none;background:transparent;width:30px;margin:0 -2px;border-radius:8px;position:relative;font-family:var(--display);font-weight:800;color:var(--bad);font-size:clamp(30px,8vw,44px);padding:0}
+.gap::after{content:"";position:absolute;left:50%;top:14%;bottom:14%;border-left:3px dotted var(--muted);opacity:.55}
+.gap.on::after{display:none}
+.gap.on{background:var(--bad-soft)}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{border-radius:999px;padding:11px 22px;font-weight:800;border:2px solid var(--baby-line);background:var(--baby);color:var(--baby-ink);font-size:17px}
+.btn.alt{background:var(--surface);color:var(--baby-ink);border-color:var(--baby-line)}
+
+.syls{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+.syl{background:var(--surface);border:3px solid var(--line);border-radius:14px;padding:10px 16px;font-family:var(--display);font-weight:800;font-size:clamp(30px,7vw,44px);line-height:1;min-width:64px}
+.syl.ton{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
+.syl.aton{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
+.sylw{display:flex;flex-direction:column;align-items:center;gap:4px}
+.syll{font-weight:800;font-size:15px;min-height:20px;text-transform:uppercase;letter-spacing:.04em}
+.syll.ton{color:var(--ton)} .syll.pos{color:var(--muted);text-transform:none;font-size:13px}
+.syll.pos.ton{color:var(--ton)} .syll.aton{color:var(--aton)}
+.syl.bad{border-color:var(--bad);background:var(--bad-soft)}
+.say{background:var(--baby);color:var(--baby-ink);border:2px solid var(--baby-line);border-radius:999px;padding:8px 16px;font-weight:800}
+.saybig{font-size:22px;padding:14px 26px}
+.dict{display:flex;flex-direction:column;gap:12px;align-items:center}
+.dict .hint{color:var(--muted);font-size:18px;text-align:center}
+.dict input{font:800 30px var(--display);text-align:center;width:min(100%,380px);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+.dict input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.dict input.ok{border-color:var(--ok);background:var(--ok-soft)}
+.dict .show{font-family:var(--display);font-weight:800;font-size:28px;color:var(--ok)}
+
+.note{background:var(--surface);border:2px solid var(--sun);border-radius:14px;padding:12px 16px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;font-weight:700}
+.note .why{font-size:17px}
+
+/* matching (une) */
+.match{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:44px;align-items:start}
+.col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mi{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;font-weight:700;font-size:17px;line-height:1.25;min-height:52px}
+.mi .pt{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:var(--ink);border:2px solid var(--surface)}
+.left .mi .pt{right:-8px} .right .mi .pt{left:-8px}
+.mi.sel{border-color:var(--sel);background:var(--sel-soft)}
+.mi.ok{border-color:var(--ok);background:var(--ok-soft)}
+.mi.ok .pt{background:var(--ok)}
+.mi.bad{border-color:var(--bad);background:var(--bad-soft)}
+.lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.lines line{stroke-width:4;stroke-linecap:round}
+.lines .ok{stroke:var(--ok)} .lines .bad{stroke:var(--bad)}
+
+.finish{background:var(--surface);border:3px solid var(--sun);border-radius:18px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.finish .big{font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.finish .stars{font-size:40px;letter-spacing:6px;color:var(--line)}
+.finish .stars .on{color:var(--sun)}
+.finish .gain{font-weight:800;color:var(--stem)}
+.finish .btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.pop{animation:pop .35s}
+@keyframes pop{50%{transform:scale(1.06)}}
+@media (max-width:480px){ .match{column-gap:30px} .mi{font-size:15px;padding:9px 10px} .gap{width:18px} }
+@media (prefers-reduced-motion:reduce){ .shake,.pop,.grow{animation:none} .prog i{transition:none} }
+.flds{display:flex;flex-wrap:wrap;gap:12px 16px;justify-content:center;align-items:center;margin:12px 0}
+.fld{display:flex;align-items:center;gap:8px;font:800 24px var(--display)}
+.fld input{font:800 26px var(--display);text-align:center;padding:8px 10px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);max-width:90vw}
+.fld input.ok{border-color:var(--ok);background:var(--ok-soft)} .fld input.bad{border-color:var(--bad);background:var(--bad-soft)}
+.show{font-family:var(--display);font-weight:800;font-size:26px;color:var(--ok)}
+.slots{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.psteps{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.pst{font-weight:800;font-size:14px;padding:5px 10px;border-radius:999px;border:2px solid var(--line);color:var(--muted);background:var(--surface)}
+.pst.now{border-color:var(--sel);color:var(--sel);background:var(--sel-soft)} .pst.done{border-color:var(--ok);color:var(--ok);background:var(--ok-soft)}
+.bars{display:inline-flex;flex-direction:column;gap:3px;min-width:170px;font:800 18px var(--display)}
+.bars .row{display:flex;gap:3px} .bars .row div{flex:1;border:2px solid currentColor;border-radius:6px;padding:4px 6px;text-align:center;background:rgba(255,255,255,.6)}
+.diag{width:min(100%,330px);height:auto;display:block;margin:0 auto}
+.p2empty{background:var(--surface);border:3px dashed var(--line);border-radius:18px;padding:22px;text-align:center;font-size:18px}
+.p2empty b{font-family:var(--display);font-size:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="who" hidden>
+    <header class="top"><div><div class="kicker">Ciencias Sociales · 3.º de primaria</div><h1>¿Quién va a estudiar?</h1></div></header>
+    <div id="wholist" class="plist"></div>
+    <button class="btn alt" type="button" id="addp" style="margin-top:16px">+ Nueva jugadora</button>
+    <div id="newp" class="newp" hidden>
+      <label for="pname" class="qp">Nombre de la jugadora</label>
+      <input id="pname" type="text" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done">
+      <div class="qp">¿Qué muñeca quieres primero?</div>
+      <div class="opts" id="firsts"></div>
+      <div class="actions"><button class="btn" type="button" id="pcreate">Crear</button><button class="btn alt" type="button" id="pcancel">Cancelar</button></div>
+    </div>
+  </div>
+  <div id="home" hidden>
+    <header class="top">
+      <div>
+        <div class="kicker">Ciencias Sociales · 3.º de primaria</div>
+        <h1>Ciencias Sociales</h1>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><button class="chipw" type="button" id="whochip"></button><div class="total" id="total"></div></div>
+    </header>
+    <section class="toys" id="toys" aria-label="Mis muñecas"></section>
+    <div id="rev"></div>
+    <div id="pertabs" class="pertabs" role="tablist"></div>
+    <div id="groups" style="display:flex;flex-direction:column;gap:22px;margin-top:14px"></div>
+  </div>
+
+  <div id="shelf" hidden>
+    <div class="bar"><button class="back" id="sback" type="button">← Menú</button><h2 class="ptitle">Mi casita de muñecas</h2></div>
+    <section class="toys" id="cabs" aria-label="Mis muñecas"></section>
+  </div>
+
+  <div id="play" hidden>
+    <div class="bar">
+      <button class="back" id="back" type="button">← Menú</button>
+      <h2 class="ptitle" id="ptitle"></h2>
+    </div>
+    <details class="rule" id="rule"><summary>Lo que dice mi cuaderno</summary><div id="ruletxt"></div></details>
+    <div class="inst" id="inst"></div>
+    <div class="meta"><span id="count"></span><span id="errs"></span></div>
+    <div class="prog"><i id="progbar"></i></div>
+    <div id="area" style="display:flex;flex-direction:column;gap:16px"></div>
+    <div id="fb" aria-live="polite"></div>
+    <div id="note"></div>
+    <div id="finish"></div>
+  </div>
+</div>
+<div class="modal" id="modal" hidden></div>
+
+<script>
+/* ================= DATOS (del cuaderno, con las correcciones de la miss) ================= */
+// ojo: 1 = palabra que la miss corrigió o que costó trabajo; siempre entra en la ronda.
+const V  = (w, o) => ({t:w, b:1, why:`«${w}» es un verbo: es una acción, no nombra nada.`, ojo:o});
+const AD = (w, o) => ({t:w, b:1, why:`«${w}» es un adjetivo: dice cómo es algo o alguien.`, ojo:o});
+const N  = (w, que) => ({t:w, b:0, why:`«${w}» es un sustantivo: nombra ${que}.`});
+const CO = (w, que) => ({t:w, b:0, why:`«${w}» es común: nombra ${que} de manera general.`});
+const PR = (w) => ({t:w, b:1, why:`«${w}» es propio: nombra de manera particular y va con mayúscula.`});
+const CC = (w, como, o) => ({t:w, b:0, why:`«${w}» es concreto: ${como}.`, ojo:o});
+const AB = (w) => ({t:w, b:1, why:`«${w}» es abstracto: no lo podemos ver, tocar, oír, oler ni probar.`});
+const IN = (w) => ({t:w, b:0, why:`«${w}» es individual: nombra un solo ser o elemento.`});
+const CL = (w, de) => ({t:w, b:1, why:`«${w}» es colectivo: aunque está en singular, nombra a un conjunto de ${de}.`});
+const GN = ['masculino singular','masculino plural','femenino singular','femenino plural'];
+const GA = {el:0, los:1, la:2, las:3};
+const G  = (w, art, o, extra) => ({p:'¿Qué género y número tiene?', big:w, a:GN[GA[art]], w:GN.filter((x, i) => i !== GA[art]), why:`Decimos «${art} ${w}»: ${GN[GA[art]]}.${extra ? ' ' + extra : ''}`, ojo:o, cls:'small'});
+const L  = (big, a, w, why, o) => ({p:a.length > 1 && /^(que|qui|ca|co|cu)$/.test(a) ? '¿Qué sílaba falta?' : '¿Qué letra falta?', big, a, w, why, ojo:o});
+const Q  = (p, a, w, why, o, big) => ({p, big, a, w, why, ojo:o, cls:'small'});
+const QA = (p, ok, w) => ({p, a:ok[0], alt:ok.slice(1), w:ok.slice(1).concat(w), why:`${ok.join(' y ')}: ${p}. ¡Los dos cuentan!`, cls:'small'});
+const PS = (sub, rest, a, w, why, o) => ({p:'Cambia lo subrayado por un pronombre:', html:`<u>${sub}</u> ${rest}`, after:`<b style="color:var(--ok)">${a}</b> ${rest}`, a, w, why, ojo:o, long:1});
+const MS = (big, a, w, why, o) => ({p:'¿Cómo se escribe?', big, a, w, why, ojo:o, long:1});
+
+const RULE_S = ['-oso / -osa: dice cómo es algo','-ísimo / -ísima: algo muy grande','-ense / -és / -esa: lugar de origen','-sión','-ista / -ismo: trabajos, aficiones o gustos'];
+const RS = (w, k) => Q(`¿Por qué «${w}» se escribe con S?`, RULE_S[k], RULE_S.filter((x, i) => i !== k).slice(0, 3), `«${w}» → ${RULE_S[k]}.`);
+const RULE_BV = ['Va antes de L o de R','Va después de M','Empieza con bu-, bur- o bus-','Va después de N','Empieza con vice-','Es forma de tener, estar o andar'];
+const RB = (w, k) => Q(`¿Por qué «${w}» se escribe así?`, RULE_BV[k], RULE_BV.filter((x, i) => i !== k).slice(0, 3), `«${w}» → ${RULE_BV[k].toLowerCase()}.`);
+
+// Sílabas (separación correcta). ojo = corregidas en el cuaderno.
+const SIL = [
+  ['sol','sol'],['pan','pan'],['luz','luz'],['mar','mar'],['flor','flor'],['pez','pez'],
+  ['casa','ca-sa',1],['mesa','me-sa'],['gato','ga-to',1],['lápiz','lá-piz'],['árbol','ár-bol'],['queso','que-so'],['perro','pe-rro',1],['silla','si-lla'],['camión','ca-mión'],['avión','a-vión'],
+  ['pelota','pe-lo-ta'],['camisa','ca-mi-sa'],['música','mú-si-ca'],['ventana','ven-ta-na'],['zapato','za-pa-to'],['corazón','co-ra-zón'],['girasol','gi-ra-sol'],['juguete','ju-gue-te'],['sábado','sá-ba-do'],['escuela','es-cue-la'],['abuelo','a-bue-lo'],['mosquito','mos-qui-to'],['raqueta','ra-que-ta'],['pequeño','pe-que-ño'],
+  ['mariposa','ma-ri-po-sa',1],['elefante','e-le-fan-te'],['chocolate','cho-co-la-te'],['computadora','com-pu-ta-do-ra'],['zapatilla','za-pa-ti-lla'],['caramelo','ca-ra-me-lo']
+];
+const SILTON = [['ca-sa',0,1],['pe-lo-ta',1,1],['ár-bol',0,1],['ca-mi-sa',1,1],['ven-ta-na',1,1],['co-ra-zón',2,1],['ma-ri-po-sa',2,1],['lá-piz',0,1],
+     ['ca-mión',1],['ju-gue-te',1],['mú-si-ca',0],['ra-tón',1],['pá-ja-ro',0],['za-pa-to',1],['ma-má',1],['sá-ba-do',0],['es-cue-la',1],['fe-liz',1],['pan-ta-lón',2],['me-sa',0],['ga-to',0],['cas-ti-llo',1],['a-vión',1],['gi-ra-sol',2],['pe-que-ño',1],['ca-ra-col',2]].map(([s, t, o]) => ({s, t, ojo:o}));
+/* ===== 2.º periodo: clasificación de las palabras según la sílaba tónica (ojo = las que fallaron en el cuaderno) ===== */
+const ACEN_N = ['Aguda', 'Grave', 'Esdrújula', 'Sobresdrújula'];
+const ACEN_POS = ['última', 'penúltima', 'antepenúltima', 'anterior a la antepenúltima'];
+const ACEN = [
+  ['pa-red',1],['me-nú',1],['a-mén',1,1],['fran-cés',1,1],['ho-tel',1],['ca-mión',1],['ra-tón',1],['re-loj',1],['co-ra-zón',2],['a-vión',1],['pa-pel',1],['ca-fé',1],['so-fá',1],['jar-dín',1],['a-zul',1],['fe-liz',1],['can-ción',1],['gi-ra-sol',2],
+  ['hor-mi-ga',1],['i-ma-gen',1],['a-zú-car',1,1],['ca-rre-ra',1,1],['ár-bol',0],['lá-piz',0],['ca-sa',0],['pe-lo-ta',1],['ven-ta-na',1],['fá-cil',0],['cés-ped',0],['es-cue-la',1],['gui-ta-rra',1],['za-pa-to',1],['gi-gan-te',1],['ca-mi-sa',1],
+  ['ú-ni-co',0],['mé-di-ca',0],['fa-ná-ti-co',1,1],['e-xá-me-nes',1,1],['di-ná-mi-cas',1,1],['mú-si-ca',0],['sá-ba-do',0],['pá-ja-ro',0],['plá-ta-no',0],['lám-pa-ra',0],['brú-ju-la',0],['ma-te-má-ti-cas',2],['te-lé-fo-no',1],['mur-cié-la-go',1],['pe-lí-cu-la',1],['nú-me-ro',0],['mé-di-co',0],
+  ['dí-ga-me-lo',0],['cóm-pra-me-lo',0],['cuén-ta-me-lo',0],['llé-va-te-lo',0],['dé-ja-me-lo',0],['prés-ta-me-lo',0]
+].map(([s, t, o]) => { const S = s.split('-'), k = Math.min(3, S.length - 1 - t);
+  return { s, t, k, ojo: o, word: S.join(''), show: S.map((x, j) => j === t ? x.toUpperCase() : x).join('-'), why: `${S.map((x, j) => j === t ? x.toUpperCase() : x).join('-')}: la fuerza va en la ${ACEN_POS[k]} sílaba → ${ACEN_N[k].toLowerCase()}.` }; });
+const RULE_ACEN = '<b>Agudas:</b> se pronuncian con mayor intensidad en la <b>última</b> sílaba. Ejemplo: pa-<b>red</b>, me-<b>nú</b>.<br><b>Graves:</b> en la <b>penúltima</b> sílaba. Ejemplo: hor-<b>mi</b>-ga, i-<b>ma</b>-gen.<br><b>Esdrújulas:</b> en la <b>antepenúltima</b> sílaba. Ejemplo: <b>ú</b>-ni-co, <b>mé</b>-di-ca.<br><b>Sobresdrújulas:</b> en una sílaba <b>anterior a la antepenúltima</b>. Ejemplo: <b>dí</b>-ga-me-lo.<br>¡Ojo! Primero encuentra la tónica y luego <b>cuenta desde el final</b>: última (1), penúltima (2), antepenúltima (3). Que una palabra tenga acento (´) <b>no</b> quiere decir que sea aguda: fa-<b>ná</b>-ti-co es esdrújula y a-<b>zú</b>-car es grave.';
+const RULE_G = 'La <b>g</b> tiene 2 sonidos.<br><b>Suave:</b> delante de la <b>a, o, u</b> (ga, go, gu): gato, goma, guante. Para que suene suave con e, i se escribe <b>gue, gui</b>: guerra, guitarra.<br><b>Fuerte:</b> delante de la <b>e, i</b> (ge, gi), sonando igual que la <b>j</b>: gigante, magia, girasol.<br><b>Regla clave:</b> se escriben con g las palabras que empiezan por <b>geo-</b> y <b>gest-</b> (geografía, gestión) y las que llevan <b>-gésimo</b> y <b>-gente</b> (vigésimo, inteligente, gente).<br>Palabras: gato, goma, guante, guitarra, guerra, gigante, geografía, gestión, magia, inteligente, vigésimo, girasol, biología.';
+const GL = (big, a, w, why, o) => ({p:'¿Qué va en el hueco: g, gu o j?', big, a, w, why, ojo:o});
+const GS = (w, b, o) => ({ t: w, b, ojo: o, why: b === 0 ? `En «${w}» la g suena suave, como en gato.` : `En «${w}» la g suena fuerte, igual que la j (ge, gi).` });
+const RULE_J = 'La <b>J</b> suena fuerte con todas las vocales: <b>ja, je, ji, jo, ju</b>.<br>Palabras del cuaderno: juego, joven, jarra, jardín, jirafa, jamón, jarrón, junio, julio, jugo, joya.<br>¡Ojo! <b>ge</b> y <b>gi</b> suenan igual que <b>je</b> y <b>ji</b> (girasol, gigante). Esas hay que aprenderlas de memoria.';
+const RULE_ART = 'Los <b>artículos</b> son palabras que <b>acompañan al sustantivo</b> y nos indican su <b>género</b> (masculino y femenino) y su <b>número</b> (singular y plural).<br><b>Determinados o definidos:</b> se usan cuando hablamos de algo <b>conocido o específico</b>: <b>el, la, lo, los, las</b>. Ejemplo: <b>El</b> perro de mi vecino.<br><b>Indeterminados o indefinidos:</b> se usan cuando hablamos de algo <b>no específico</b> o que no conocemos bien: <b>un, una, unos, unas</b>. Ejemplo: <b>Un</b> niño tocó la puerta.';
+const AR = (t, b) => ({t, b, why: b === 0 ? `«${t}» lleva artículo determinado (el, la, lo, los, las): algo conocido.` : `«${t}» lleva artículo indeterminado (un, una, unos, unas): algo no conocido.`});
+const TA = (s, a, alt) => ({s, a, alt, why: /^(el|la|lo|los|las)$/i.test(a) ? `«${a}» es un artículo determinado.` : `«${a}» es un artículo indeterminado.`});
+const AE = (w, a, o) => ({p:'¿Qué artículo DETERMINADO va?', big:'_ ' + w, a, w:['el','la','los','las'].filter(x => x !== a), why:`Decimos «${a} ${w}».`, ojo:o, cls:'small'});
+const AU = (w, a, o) => ({p:'¿Qué artículo INDETERMINADO va?', big:'_ ' + w, a, w:['un','una','unos','unas'].filter(x => x !== a), why:`Decimos «${a} ${w}».`, ojo:o, cls:'small'});
+const ART_D = ['el','la','lo','los','las'], ART_I = ['un','una','unos','unas'];
+const ART_GN = {el:['masculino','singular'], la:['femenino','singular'], lo:['neutro','singular'], los:['masculino','plural'], las:['femenino','plural'], un:['masculino','singular'], una:['femenino','singular'], unos:['masculino','plural'], unas:['femenino','plural']};
+const AT = (frase) => { const a = frase.split(' ')[0].toLowerCase(), d = ART_D.includes(a), [g, n] = ART_GN[a];
+  return { p:'Completa la tabla del artículo:', w:frase, cols:[['Tipo', d ? 'determinado' : 'indeterminado', ['determinado','indeterminado']], ['Género', g, ['masculino','femenino']], ['Número', n, ['singular','plural']]],
+    why:`En «${frase}», «${a}» es artículo ${d ? 'determinado' : 'indeterminado'}, ${g} y ${n}.` }; };
+const CR = (s, a, why, o) => ({ s, a, why, ojo:o });
+const ES = (w, hint, o) => ({ w, hint, ojo:o });
+const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
+
+/* ===== CIENCIAS SOCIALES · 1.er periodo (examen: México antiguo, Mesoamérica, nómadas y sedentarios, estados y capitales del norte) ===== */
+const RULE_AREAS = 'El México antiguo se divide en <b>3 grandes áreas</b>:<br>• <b>Aridoamérica</b>: al norte, tierras secas; pueblos <b>nómadas</b> (cazaban y recolectaban).<br>• <b>Oasisamérica</b>: al noroeste, tierras secas con ríos y oasis; pueblos que sembraban cerca del agua.<br>• <b>Mesoamérica</b>: al centro y sur; pueblos <b>sedentarios</b> que sembraban maíz y construyeron ciudades.';
+const RULE_MESO = '<b>Mesoamérica</b> se divide en 3 periodos:<br>• <b>Preclásico</b> (2500 a. C. – 200 d. C.): <b>olmecas</b>.<br>• <b>Clásico</b> (200 d. C. – 900 d. C.): <b>teotihuacanos, zapotecas y mayas</b>.<br>• <b>Posclásico</b> (900 d. C. – 1521): <b>toltecas, mixtecas y mexicas</b>.';
+const RULE_NOM = '<b>Nómadas:</b> se movían de un lugar a otro buscando alimento; <b>cazaban, pescaban y recolectaban</b>; vivían en cuevas o chozas.<br><b>Sedentarios:</b> <b>se quedaban a vivir en un lugar fijo</b>; practicaban la <b>agricultura</b> (sembraban maíz), construían casas y ciudades.<br>Los pueblos construyeron <b>canales para regar sus cultivos</b>.';
+const CAPS = [['Baja California','Mexicali'],['Baja California Sur','La Paz'],['Sonora','Hermosillo'],['Chihuahua','Chihuahua'],['Coahuila','Saltillo'],['Nuevo León','Monterrey'],['Tamaulipas','Ciudad Victoria'],['Sinaloa','Culiacán'],['Durango','Durango']];
+const RULE_CAP = 'Estados del norte y sus capitales:<br>' + CAPS.map(([e, c]) => `<b>${e}</b> → ${c}`).join('<br>') + '<br>¡Ojo! <b>Hermosillo</b> es de <b>Sonora</b>, no de Sinaloa. <b>Culiacán</b> es de Sinaloa.';
+const SQ = (p, a, w, why, o) => ({ p, a, w, why, ojo:o, cls:'small' });
+const CULT = [['olmecas',0,1],['teotihuacanos',1,1],['zapotecas',1,1],['mayas',1],['toltecas',2],['mixtecas',2,1],['mexicas',2]];
+const ACTS = [
+  {g:'soc', id:'areas', type:'campos', title:'1. Las 3 áreas del México antiguo', src:'Como en el examen: escribe las 3 áreas', rule:RULE_AREAS, inst:'Escribe las 3 áreas. Cuida la ortografía y los acentos.',
+   items:[{p:'Escribe las 3 áreas importantes del México antiguo:', f:[{l:'1.', a:['Aridoamérica'], w:14},{l:'2.', a:['Oasisamérica'], w:14},{l:'3.', a:['Mesoamérica'], w:14}], why:'Aridoamérica, Oasisamérica y Mesoamérica: las tres llevan acento en la é de «América».', ojo:1},
+     {p:'El área del norte, con tierras secas y pueblos nómadas, es:', f:[{a:'Aridoamérica', w:14}], why:'Aridoamérica: árida = seca.'},
+     {p:'El área con ríos y oasis, al noroeste, es:', f:[{a:'Oasisamérica', w:14}], why:'Oasisamérica: oasis = agua en el desierto.'},
+     {p:'El área del centro y sur, con pueblos que sembraban maíz y construyeron ciudades, es:', f:[{a:'Mesoamérica', w:14}], why:'Mesoamérica.'}]},
+  {g:'soc', id:'areaclas', type:'clas', title:'¿Qué área es?', src:'Aridoamérica · Oasisamérica · Mesoamérica', buckets:['Aridoamérica','Oasisamérica','Mesoamérica'], rule:RULE_AREAS,
+   items:[['tierras muy secas, sin agua',0],['pueblos nómadas que cazaban',0],['al norte',0],['oasis y ríos en el desierto',1],['sembraban cerca de los ríos',1],['al noroeste',1],['sembraban maíz',2],['construyeron pirámides y ciudades',2],['olmecas y mayas',2],['al centro y sur',2]].map(([t, b]) => ({ t, b, why:`${t}: ${['Aridoamérica','Oasisamérica','Mesoamérica'][b]}.` }))},
+  {g:'soc', id:'mapa', type:'clas', title:'2. Completa el mapa conceptual', src:'Mesoamérica: Preclásico, Clásico y Posclásico', buckets:['Preclásico','Clásico','Posclásico'], rule:RULE_MESO, inst:'¿En qué periodo va cada cultura? Toca la columna.',
+   items:CULT.map(([t, b, o]) => ({ t, b, ojo:o, why:`Los ${t} van en el ${['Preclásico','Clásico','Posclásico'][b]}.` }))},
+  {g:'soc', id:'mapaw', type:'campos', title:'2. Escribe las culturas de cada periodo', src:'Como en el examen: llena el mapa conceptual', rule:RULE_MESO, inst:'Escribe las culturas que van en cada periodo.',
+   items:[{p:'Preclásico (2500 a. C. – 200 d. C.). Cultura:', f:[{a:['olmecas','olmeca'], w:12}], why:'Preclásico: olmecas, la «cultura madre».'},
+     {p:'Clásico (200 d. C. – 900 d. C.). Escribe sus 3 culturas:', f:[{l:'1.', a:['teotihuacanos','zapotecas','mayas']},{l:'2.', a:['teotihuacanos','zapotecas','mayas']},{l:'3.', a:['teotihuacanos','zapotecas','mayas']}], why:'Clásico: teotihuacanos, zapotecas y mayas.', ojo:1, distinct:1},
+     {p:'Posclásico (900 d. C. – 1521). Escribe sus 3 culturas:', f:[{l:'1.', a:['toltecas','mixtecas','mexicas']},{l:'2.', a:['toltecas','mixtecas','mexicas']},{l:'3.', a:['toltecas','mixtecas','mexicas']}], why:'Posclásico: toltecas, mixtecas y mexicas.', ojo:1, distinct:1}]},
+  {g:'soc', id:'fechas', type:'elige', title:'Fechas de los periodos', src:'Mesoamérica', rule:RULE_MESO,
+   items:[SQ('¿Cuándo fue el Preclásico?','2500 a. C. – 200 d. C.',['200 d. C. – 900 d. C.','900 d. C. – 1521'],'Preclásico: 2500 a. C. – 200 d. C.'),
+     SQ('¿Cuándo fue el Clásico?','200 d. C. – 900 d. C.',['2500 a. C. – 200 d. C.','900 d. C. – 1521'],'Clásico: 200 d. C. – 900 d. C.'),
+     SQ('¿Cuándo fue el Posclásico?','900 d. C. – 1521',['200 d. C. – 900 d. C.','2500 a. C. – 200 d. C.'],'Posclásico: 900 d. C. – 1521.'),
+     SQ('¿Qué periodo fue primero?','Preclásico',['Clásico','Posclásico'],'Pre = antes: el Preclásico fue primero.'),
+     SQ('¿Qué periodo fue el último?','Posclásico',['Clásico','Preclásico'],'Pos = después: el Posclásico fue el último.')]},
+  {g:'soc', id:'canales', type:'elige', title:'3. Opción múltiple', src:'Elige la respuesta correcta', rule:RULE_NOM + '<br><br>' + RULE_AREAS,
+   items:[SQ('¿Para qué construyeron canales?','Para regar sus cultivos',['Para viajar','Para vivir dentro de ellos'],'Los canales llevaban agua a los cultivos.'),
+     SQ('¿Qué sembraban los pueblos de Mesoamérica?','Maíz',['Trigo','Manzanas'],'El maíz era su alimento principal.'),
+     SQ('Los pueblos que se movían de un lugar a otro eran…','nómadas',['sedentarios'],'Nómadas: se movían buscando alimento.',1),
+     SQ('Los pueblos que se quedaban a vivir en un lugar fijo eran…','sedentarios',['nómadas'],'Sedentarios: lugar fijo y agricultura.',1),
+     SQ('¿Qué hacían los nómadas para comer?','Cazaban, pescaban y recolectaban',['Sembraban maíz en un lugar fijo','Compraban en el mercado'],'Los nómadas no sembraban: cazaban y recolectaban.',1)]},
+  {g:'soc', id:'nomsed', type:'clas', title:'4. Nómadas y sedentarios', src:'¿Cuál es la diferencia?', buckets:['Nómadas','Sedentarios'], rule:RULE_NOM, inst:'¿Es de los nómadas o de los sedentarios? Toca la columna.',
+   items:[['se movían de un lugar a otro',0,1],['cazaban y recolectaban',0],['vivían en cuevas',0],['seguían a los animales',0],['no tenían casa fija',0],
+     ['se quedaban en un lugar fijo',1,1],['sembraban maíz',1],['construían casas',1],['construyeron ciudades',1],['practicaban la agricultura',1]].map(([t, b, o]) => ({ t, b, ojo:o, why:`«${t}»: ${b ? 'sedentarios' : 'nómadas'}.` }))},
+  {g:'soc', id:'nomw', type:'escribe', title:'4. Escribe la diferencia', src:'Como en el examen: escríbelo con tus palabras', rule:RULE_NOM, inst:'Escribe una oración completa. Empieza con mayúscula y termina con punto.',
+   items:[{w:'nómadas', hint:'Ejemplo: Los nómadas se movían…', ojo:1}, {w:'sedentarios', hint:'Ejemplo: Los sedentarios se quedaban…', ojo:1}]},
+  {g:'soc', id:'caps', type:'campos', title:'5. Estados y capitales del norte', src:'Como en el examen: escribe la capital o el estado', rule:RULE_CAP, inst:'Escribe la capital o el estado que falta. Con mayúscula y acentos.',
+   items:CAPS.map(([e, c]) => ({ p:`Estado: ${e}. ¿Cuál es su capital?`, f:[{a:c, w:14}], why:`La capital de ${e} es ${c}.`, ojo: ['Sonora','Sinaloa','Coahuila'].includes(e) ? 1 : 0 }))
+     .concat(CAPS.filter(([e, c]) => e !== c).map(([e, c]) => ({ p:`Capital: ${c}. ¿De qué estado es?`, f:[{a:e, w:18}], why:`${c} es la capital de ${e}.`, ojo: ['Hermosillo','Culiacán'].includes(c) ? 1 : 0 })))},
+  {g:'soc', id:'capsu', type:'unir', title:'Une el estado con su capital', src:'Estados del norte', rule:RULE_CAP, pairs:CAPS}
+];
+const GROUPS = [
+  {g:'soc', p:1, x:'👑 ¡Reina de la Historia de México!', h:'El México antiguo', d:'Como en el examen del 1.er periodo: áreas, Mesoamérica, nómadas y sedentarios, y estados del norte.'}
+];
+
+const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
+const PERIODS = [{ p: 1, h: '1.er periodo' }, { p: 2, h: '2.º periodo' }];
+const P1G = GROUPS.filter(G => G.p === 1);
+let PER = 2;
+const INST = {
+  clas:'Lee la palabra y toca la columna donde va.',
+  elige:'Toca la respuesta correcta.',
+  toca:'Toca el pronombre de la oración.',
+  sil:'Toca entre las letras para cortar la palabra en sílabas. Cuando termines, toca «Revisar».',
+  ton:'🔵 Toca la sílaba TÓNICA: la que suena más FUERTE. Solo hay una. Toca 🔊 para oír la palabra.',
+  aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
+  dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
+  unir:'Toca una palabra de un lado y luego su pareja del otro lado.',
+  acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.',
+  corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
+  escribe:'Escribe una oración completa con la palabra. Empieza con mayúscula y termina con punto.',
+  circ:'Lee el texto. Elige el color y toca las palabras. Cuando termines, toca «Revisar».',
+  campos:'Escribe la respuesta en el espacio y toca «Revisar».',
+  ordena:'Toca los elementos en el orden correcto. Toca uno de arriba para quitarlo.',
+  prob:'Sigue los pasos del examen: Comprendo, Planeo, Resuelvo y Resultado.',
+  tabla:'Completa la fila de la tabla: elige una opción en cada columna y toca «Revisar».'
+};
+
+/* ================= ESTADO ================= */
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+/* Para el examen final: las prácticas de «unir» se convierten en preguntas de opción múltiple */
+ACTS.filter(a => a.type === 'unir').forEach(a => {
+  const R = a.pairs.map(x => x[1]);
+  BYID[a.id + 'Q'] = { id: a.id + 'Q', base: a.id, g: a.g, type: 'elige', title: a.title, rule: a.rule,
+    items: a.pairs.map(([l, r]) => Q(a.id === 'conjunto' ? `Un conjunto de ${l} se llama…` : `El femenino de «${l}» es…`, r, shuffle(R.filter(x => x !== r)).slice(0, 3), `${l} → ${r}.`)) };
+});
+const examActs = g => ACTS.filter(a => a.g === g).map(a => a.type === 'unir' ? BYID[a.id + 'Q'] : a);
+const load = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
+const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+let errHist = {}, errTot = {}, best = {}, errs = {}, toys = [], toysSeen = 0, crown = {}, royals = [], specials = [], doll = null;
+const starStr = n => [1,2,3].map(i => `<span class="${i <= n ? 'on' : ''}">★</span>`).join('');
+const MAXSTARS = ACTS.length * 3;
+const totalStars = () => ACTS.reduce((s, a) => s + (best[a.id] || 0), 0);
+const key = q => q.act.id + ':' + q.i;
+const markErr = q => { errHist[key(q)] = (errHist[key(q)] || 0) + 1; save(K('errhist'), errHist); errs[key(q)] = Math.min(3, (errs[key(q)] || 0) + 1); save(K('errs'), errs); };
+const clearErr = q => { const k = key(q); if (!errs[k]) return; if (--errs[k] <= 0) delete errs[k]; save(K('errs'), errs); };
+const errKeys = () => Object.keys(errs).filter(k => { const [a, i] = k.split(':'); return BYID[a] && BYID[a].items && BYID[a].items[+i]; });
+
+/* voz */
+let VOICE = null;
+function pickVoice() { try { const vs = speechSynthesis.getVoices(); VOICE = vs.find(v => /es[-_]MX/i.test(v.lang)) || vs.find(v => /es[-_]US/i.test(v.lang)) || vs.find(v => /^es/i.test(v.lang)) || null; } catch (e) {} }
+if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(parts, rate) {
+  if (!('speechSynthesis' in window)) return false;
+  try { speechSynthesis.cancel(); [].concat(parts).forEach(t => { const u = new SpeechSynthesisUtterance(t); u.lang = VOICE ? VOICE.lang : 'es-MX'; if (VOICE) u.voice = VOICE; u.rate = rate || 0.85; speechSynthesis.speak(u); }); return true; } catch (e) { return false; }
+}
+
+const THEME = { kind:'doll', cats:['Muñecas de trapo','Muñecas de fiesta','Muñecas exploradoras'], name:(c, n) => ['Muñeca ', 'Muñeca ', 'Exploradora '][c] + n + ['', ' de Fiesta', ''][c], royals:['Princesa Fresa','Princesa Menta','Princesa Uva','Princesa Cielo','Princesa Mango','Princesa Coral','Princesa Lavanda','Princesa Turquesa','Princesa Galaxia'], specials:['Muñeca Mexica','Muñeca Maya','Muñeca Olmeca'], finals:['Muñeca Gigante Castaña','Muñeca Gigante Rubia'], word:{ realCap:'Muñeca real', retoCap:'Muñeca de reto', finalCap:'Muñeca gigante' } };
+/* ================= PREMIOS (dibujos generados, sin imágenes) ================= */
+const PAL = [['Fresa','#FF7AA8'],['Menta','#6FE0B5'],['Uva','#A983F2'],['Limón','#F5E04A'],['Cielo','#7CC8FF'],['Mango','#FFB347'],['Chicle','#FF9FE0'],['Lima','#9BE15D'],['Coral','#FF7F6E'],['Lavanda','#C3A6FF'],
+  ['Turquesa','#3CD3C9'],['Durazno','#FFC3A0'],['Arándano','#5B7CFA'],['Sandía','#FF5E7E'],['Pistache','#B5D99C'],['Caramelo','#E3A35B'],['Algodón','#FFC9EC'],['Océano','#3A9BDC'],['Kiwi','#8CC63F'],['Mora','#8E44AD'],
+  ['Naranja','#FF8C32'],['Nube','#DDE6F5'],['Cereza','#E0315B'],['Plátano','#FFE27A'],['Galaxia','#4B3BA8']];
+function rng(seed) { let s = hashS(seed) || 1; return () => { s ^= s << 13; s ^= s >>> 17; s ^= s << 5; return ((s >>> 0) % 10000) / 10000; }; }
+const crownSVG = (x, y, s) => `<path d="M${x - 14 * s} ${y} l${4 * s} ${-14 * s} l${6 * s} ${8 * s} l${4 * s} ${-12 * s} l${4 * s} ${12 * s} l${6 * s} ${-8 * s} l${4 * s} ${14 * s}z" fill="#FFC531" stroke="#B8860B" stroke-width="2"/><circle cx="${x}" cy="${y - 5 * s}" r="${2.4 * s}" fill="#E0315B"/>`;
+const starSVG = (x, y, r) => { let p = ''; for (let i = 0; i < 10; i++) { const a = Math.PI / 5 * i - Math.PI / 2, rr = i % 2 ? r * .45 : r; p += `${i ? 'L' : 'M'}${(x + rr * Math.cos(a)).toFixed(1)} ${(y + rr * Math.sin(a)).toFixed(1)}`; } return `<path d="${p}Z" fill="#FFD23F" stroke="#C99700" stroke-width="1.5"/>`; };
+const eyes = (R, cx, cy, n, sz) => { const xs = n === 1 ? [cx] : n === 2 ? [cx - sz * 1.4, cx + sz * 1.4] : [cx - sz * 2.2, cx, cx + sz * 2.2];
+  return xs.map((x, j) => { const yy = cy + (n === 3 && j === 1 ? -sz * .9 : 0), dx = (R() - .5) * sz * .6, dy = (R() - .5) * sz * .6;
+    return `<circle cx="${x}" cy="${yy}" r="${sz}" fill="#fff" stroke="#333" stroke-width="1.5"/><circle cx="${x + dx}" cy="${yy + dy}" r="${sz * .5}" fill="#222"/><circle cx="${x + dx - sz * .2}" cy="${yy + dy - sz * .2}" r="${sz * .15}" fill="#fff"/>`; }).join(''); };
+function drawSlime(t) {
+  const R = rng(t.id), c = t.col || PAL[Math.floor(R() * PAL.length)][1], n = 1 + Math.floor(R() * 3), big = t.doll;
+  const fill = big ? 'url(#rb)' : c;
+  let x = `<path d="M14 84 Q8 46 32 34 Q50 16 68 34 Q92 46 86 84 Q88 94 76 91 Q72 98 64 91 Q52 98 42 91 Q32 98 26 91 Q12 94 14 84Z" fill="${fill}" stroke="rgba(0,0,0,.25)" stroke-width="2"/>
+    <ellipse cx="36" cy="44" rx="10" ry="6" fill="#fff" opacity=".45" transform="rotate(-25 36 44)"/>`;
+  if (t.cat === 1 || big) for (let i = 0; i < 9; i++) x += `<circle cx="${22 + R() * 56}" cy="${48 + R() * 36}" r="${1 + R() * 1.6}" fill="${R() > .5 ? '#fff' : '#FFE27A'}" opacity=".9"/>`;
+  if (t.cat === 2) x += `<path d="M30 34 q6 -10 14 -4 q6 -10 14 0 q8 -6 12 4" fill="#fff" stroke="rgba(0,0,0,.15)" stroke-width="1.5"/>`;
+  x += eyes(R, 50, 58, n, 7) + `<path d="M42 74 Q50 ${80 + R() * 4} 58 74" fill="none" stroke="#333" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="30" cy="72" rx="5" ry="3" fill="#FF6F91" opacity=".45"/><ellipse cx="70" cy="72" rx="5" ry="3" fill="#FF6F91" opacity=".45"/>`;
+  if (t.royal || big) x += crownSVG(50, 30, 1.2);
+  if (t.special) x += starSVG(80, 26, 11);
+  return x;
+}
+const SKIN = ['#F9D7C3','#F1C27D','#E0AC69','#C68642','#FBE3D2'], HAIR = ['#F3D36B','#6B3F1D','#2A1B12','#C1440E','#E8C27A','#9B6B43'];
+function drawDoll(t) {
+  const R = rng(t.id), skin = SKIN[Math.floor(R() * SKIN.length)], hair = t.hair || HAIR[Math.floor(R() * HAIR.length)], dress = t.col || PAL[Math.floor(R() * PAL.length)][1], st = Math.floor(R() * 3);
+  let x = `<path d="M30 96 L36 58 Q50 52 64 58 L70 96Z" fill="${dress}" stroke="rgba(0,0,0,.25)" stroke-width="2"/>`;
+  if (t.cat === 1 || t.doll) for (let i = 0; i < 7; i++) x += `<circle cx="${38 + R() * 24}" cy="${66 + R() * 26}" r="2" fill="#fff" opacity=".85"/>`;
+  if (t.cat === 0) x += `<path d="M40 70 h20 M38 80 h24" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/>`;
+  x += `<rect x="45" y="50" width="10" height="8" fill="${skin}"/>`;
+  x += st === 0 ? `<path d="M26 40 Q26 12 50 12 Q74 12 74 40 L74 62 Q68 66 64 58 L36 58 Q32 66 26 62Z" fill="${hair}"/>` : st === 1 ? `<circle cx="27" cy="30" r="9" fill="${hair}"/><circle cx="73" cy="30" r="9" fill="${hair}"/>` : `<path d="M60 18 Q84 22 80 60 Q76 48 70 40Z" fill="${hair}"/>`;
+  x += `<circle cx="50" cy="34" r="18" fill="${skin}" stroke="rgba(0,0,0,.2)" stroke-width="1.5"/><path d="M32 30 Q34 14 50 14 Q66 14 68 30 Q58 22 50 24 Q42 22 32 30Z" fill="${hair}"/>
+    <circle cx="43" cy="35" r="2.6" fill="#2a1b12"/><circle cx="57" cy="35" r="2.6" fill="#2a1b12"/><path d="M45 42 Q50 46 55 42" fill="none" stroke="#B5523F" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="39" cy="40" r="3" fill="#FF8FA3" opacity=".5"/><circle cx="61" cy="40" r="3" fill="#FF8FA3" opacity=".5"/>`;
+  if (t.cat === 2) x += `<path d="M30 22 Q50 2 70 22 Z" fill="${PAL[Math.floor(R() * PAL.length)][1]}" stroke="rgba(0,0,0,.2)"/><rect x="26" y="20" width="48" height="4" rx="2" fill="#7E4F28"/>`;
+  if (t.royal || t.doll) x += crownSVG(50, 14, 1);
+  if (t.special) x += starSVG(80, 22, 11);
+  return x;
+}
+function drawRobot(t) {
+  const R = rng(t.id), c = t.col || PAL[Math.floor(R() * PAL.length)][1], eyeC = ['#3CD3C9','#FF5E7E','#FFE27A','#9BE15D'][Math.floor(R() * 4)], n = (Math.floor(R() * 9) + 1);
+  let x = `<line x1="50" y1="10" x2="50" y2="20" stroke="#555" stroke-width="3"/><circle cx="50" cy="9" r="4" fill="${eyeC}"/>
+    <rect x="28" y="20" width="44" height="30" rx="9" fill="${t.doll ? '#FFC531' : c}" stroke="rgba(0,0,0,.3)" stroke-width="2"/>
+    <circle cx="40" cy="34" r="6" fill="#fff"/><circle cx="60" cy="34" r="6" fill="#fff"/><circle cx="40" cy="34" r="3" fill="${eyeC}"/><circle cx="60" cy="34" r="3" fill="${eyeC}"/>
+    <rect x="42" y="42" width="16" height="4" rx="2" fill="#333"/>
+    <rect x="30" y="52" width="40" height="32" rx="7" fill="${t.doll ? '#FFE27A' : c}" stroke="rgba(0,0,0,.3)" stroke-width="2"/>
+    <rect x="38" y="57" width="24" height="16" rx="3" fill="#1d2b3a"/><text x="50" y="70" text-anchor="middle" font-size="13" font-weight="800" fill="${eyeC}" font-family="sans-serif">${t.num || n}</text>
+    <rect x="18" y="56" width="10" height="22" rx="5" fill="#9aa7b4"/><rect x="72" y="56" width="10" height="22" rx="5" fill="#9aa7b4"/>
+    <rect x="35" y="84" width="10" height="10" rx="3" fill="#6b7785"/><rect x="55" y="84" width="10" height="10" rx="3" fill="#6b7785"/>`;
+  if (t.cat === 1) x += `<ellipse cx="50" cy="6" rx="18" ry="3" fill="#9aa7b4" stroke="#555"/>`;
+  if (t.cat === 2) x += `<path d="M70 68 h12 m0 -6 v12" stroke="#B8860B" stroke-width="3" stroke-linecap="round"/>`;
+  if (t.royal || t.doll) x += crownSVG(50, 20, 1);
+  if (t.special) x += starSVG(80, 16, 10);
+  return x;
+}
+const DRAW = { slime: drawSlime, doll: drawDoll, robot: drawRobot }[THEME.kind];
+const SVGCACHE = {};
+function toySVG(t, extraCls) {
+  if (!SVGCACHE[t.id]) { const defs = '<defs><linearGradient id="rb" x1="0" x2="1"><stop offset="0" stop-color="#FF7AA8"/><stop offset=".33" stop-color="#FFE27A"/><stop offset=".66" stop-color="#6FE0B5"/><stop offset="1" stop-color="#7CC8FF"/></linearGradient></defs>';
+    SVGCACHE[t.id] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${defs}${DRAW(t)}</svg>`); }
+  return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="${SVGCACHE[t.id]}" alt="${esc(t.name)}" decoding="async">`;
+}
+const OLD_ANI = {};
+const TOYS = [].concat(...THEME.cats.map((cn, cat) => PAL.map(([nm, col], j) => ({ id:`${THEME.kind}-${cat}-${j}`, name:THEME.name(cat, nm, j), cat, col, num: (j % 9) + 1 }))));
+const ROYALS = THEME.royals.map((name, j) => ({ id:'real-' + j, name, cat:3, royal:true, col:PAL[(j * 7) % PAL.length][1] }));
+const CATS = THEME.cats.concat([THEME.word.realCap + ' 👑', THEME.word.retoCap + ' ⭐', THEME.word.finalCap + ' 💛']);
+const SPECIALS = GROUPS.filter(G => G.p === 1).map((G, j) => ({ id:'reto-' + G.g, g:G.g, name:THEME.specials[j % THEME.specials.length], cat:4, special:true, col:PAL[(j * 5 + 3) % PAL.length][1] }));
+const DOLLS = [{ id:'muneca-rubia', name:THEME.finals[1], cat:5, doll:true, hair:'#F3D36B', col:'#FF9FE0' }, { id:'muneca-castana', name:THEME.finals[0], cat:5, doll:true, hair:'#6B3F1D', col:'#7CC8FF' }];
+const myDoll = () => { const p = me(); const k = p && (p.doll || (p.id === 'p1' ? 'castana' : p.id === 'p2' ? 'rubia' : (hashS(p.id) % 2 ? 'rubia' : 'castana'))); return DOLLS.find(d => d.id === 'muneca-' + k); };
+function hashS(str) { let h = 2166136261; for (const c of String(str)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }
+const TOYBY = Object.fromEntries(TOYS.concat(ROYALS, SPECIALS, DOLLS).map(t => [t.id, t]));
+const ALLIDS = () => TOYS.concat(ROYALS, SPECIALS).map(t => t.id).concat(myDoll() ? [myDoll().id] : []);
+const TOTAL = TOYS.length + ROYALS.length + SPECIALS.length + 1;
+const owned = () => toys.concat(royals, specials, doll ? [doll] : []);
+
+/* ================= JUGADORAS ================= */
+// Cada jugadora guarda su avance por separado. first: qué muñeca le sale primero (oso, ani, mon, fru); luego se alternan los tipos.
+const FIRST = { a: { cat: 0, label: THEME.cats[0] }, b: { cat: 1, label: THEME.cats[1] }, c: { cat: 2, label: THEME.cats[2] } };
+let players = load('soc-players', null);
+if (!Array.isArray(players) || !players.length) { players = [{ id: 'p1', name: 'Pelonchis Cacatúa', first: 'a' }, { id: 'p2', name: 'Pillus Makakikus', first: 'b' }]; save('soc-players', players); }
+let PID = load('soc-cur', null);
+const K = n => `soc-${PID}-${n}`;
+const me = () => players.find(x => x.id === PID);
+function loadPlayer(id) {
+  PID = id; save('soc-cur', id); PER = load(K('period'), 2);
+  // avance guardado antes de que hubiera jugadoras: pasa a la primera jugadora que se elija en este iPad
+  const legacy = load('soc-stars', null);
+  if (legacy && !load(K('stars'), null)) {
+    ['stars', 'errs'].forEach(n => { const v = load('soc-' + n, null); if (v) save(K(n), v); });
+    ['soc-stars', 'soc-errs', 'soc-seen', 'soc-toys', 'soc-toys-seen', 'soc-bonus'].forEach(k => { try { localStorage.removeItem(k); } catch (e) {} });
+  }
+  best = load(K('stars'), {}); errs = load(K('errs'), {}); errTot = load(K('errtot'), {}); errHist = load(K('errhist'), {});
+  if (!load(K('fix-tabla'), 0)) { Object.keys(errs).forEach(k => { if (k.startsWith('tabla:')) delete errs[k]; }); save(K('errs'), errs); save(K('fix-tabla'), 1); }
+  toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
+  royals = load(K('royals'), []).filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
+  crown = load(K('crown'), null);
+  if (!crown) { crown = {}; GROUPS.forEach(G => { crown[G.g] = ACTS.filter(a => a.g === G.g && best[a.id] === 3).map(a => a.id); }); save(K('crown'), crown); }
+}
+function awardToys(n) {
+  const got = [], p = me(), start = (FIRST[p && p.first] || FIRST.a).cat;
+  for (let i = 0; i < n; i++) {
+    const free = TOYS.filter(t => !toys.includes(t.id)); if (!free.length) break;
+    let pool = free.filter(t => t.cat === (start + toys.length) % 3);
+    if (!toys.length && p && FIRST[p.first] && FIRST[p.first].id) pool = pool.filter(t => t.id === FIRST[p.first].id);   // Pelonchis: oso pardo · Pillus: nutria
+    if (!pool.length) pool = free;
+    const t = pool[Math.floor(Math.random() * pool.length)]; toys.push(t.id); got.push(t);
+  }
+  save(K('toys'), toys); return got;
+}
+const allThree = () => P1G.every(G => best['exam-' + G.g] === 3);   // los 5 retos finales con 3 ★
+function dollCheck() { if (doll || !allThree() || !myDoll()) return null; doll = myDoll().id; save(K('doll'), doll); return myDoll(); }
+/* Ronda de corona: cada vez que todas las prácticas de una sección llegan a 3 ★ (desde la última corona), se gana una muñeca real. */
+function crownCheck(act, stars) {
+  if (stars < 3) return null;
+  const list = crown[act.g] = crown[act.g] || [];
+  if (!list.includes(act.id)) list.push(act.id);
+  const all = ACTS.filter(a => a.g === act.g).map(a => a.id);
+  let got = null;
+  if (all.every(id => list.includes(id))) {
+    const free = ROYALS.filter(r => !royals.includes(r.id));
+    if (free.length) { got = royals.length ? free[Math.floor(Math.random() * free.length)] : free[0]; royals.push(got.id); save(K('royals'), royals); }
+    crown[act.g] = [];
+  }
+  save(K('crown'), crown); return got;
+}
+
+function showWho() {
+  ['home', 'play', 'shelf'].forEach(x => $('#' + x).hidden = true); $('#who').hidden = false; window.scrollTo(0, 0);
+  const info = p => { const t = load(`soc-${p.id}-toys`, []).filter(x => TOYBY[x]); return { n: t.length, last: t.length ? TOYBY[t[t.length - 1]] : null }; };
+  $('#wholist').innerHTML = players.map(p => { const i = info(p); return `<button class="pcard" type="button" data-p="${p.id}">
+      <span class="pav">${i.last ? toySVG(i.last) : '🪆'}</span><span><span class="pn">${esc(p.name)}</span><span class="ps">${i.n} ${i.n === 1 ? 'muñeca' : 'muñecas'}</span></span></button>`; }).join('');
+  $('#newp').hidden = true; $('#addp').hidden = false;
+}
+$('#wholist').addEventListener('click', e => { const b = e.target.closest('.pcard'); if (!b) return; loadPlayer(b.dataset.p); $('#who').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); });
+let newFirst = 'a';
+$('#addp').onclick = () => {
+  $('#addp').hidden = true; $('#newp').hidden = false; newFirst = 'a';
+  $('#firsts').innerHTML = Object.entries(FIRST).map(([k, v]) => `<button class="opt small${k === newFirst ? ' ok' : ''}" type="button" data-f="${k}">${v.label}</button>`).join('');
+  $('#pname').value = ''; $('#pname').focus();
+};
+$('#firsts').addEventListener('click', e => { const b = e.target.closest('.opt'); if (!b) return; newFirst = b.dataset.f; [...$('#firsts').children].forEach(x => x.classList.toggle('ok', x === b)); });
+$('#pcancel').onclick = () => { $('#newp').hidden = true; $('#addp').hidden = false; };
+$('#pcreate').onclick = () => {
+  const name = $('#pname').value.trim().replace(/\s+/g, ' ').slice(0, 30);
+  if (!name) { shake($('#pname')); $('#pname').focus(); return; }
+  const id = 'p' + Date.now().toString(36);
+  players.push({ id, name, first: newFirst }); save('soc-players', players); showWho();
+};
+$('#pname').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#pcreate').click(); } });
+
+const SHOWALL = location.hash === '#todos';
+function renderToyBar() {
+  const all = SHOWALL ? ALLIDS() : owned(), n = all.length, TOT = TOTAL, last = all.slice(-6).reverse();
+  $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mis muñecas'}</h2><span class="gn">🪆 ${n} de ${TOT}</span></div>
+    <p>Cada práctica que terminas con 2 ★ o más te regala una muñeca. Cuando ya sacaste 3 ★ en una práctica, desde ahí la muñeca se gana solo con 3 ★. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas una muñeca real con corona.</p>
+    <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes muñecas. ¡Gana tu primera estrella!</div>'}
+    <button class="btn" type="button" id="toshelf">Ver mis repisas 🪆</button></div>`;
+  $('#toshelf').onclick = openShelf;
+}
+const hash = str => { let h = 2166136261; for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
+function openShelf() {
+  $('#home').hidden = true; $('#shelf').hidden = false; window.scrollTo(0, 0);
+  const fresh = new Set(toys.slice(toysSeen));
+  const have = SHOWALL ? ALLIDS() : owned(), TOT = TOTAL, n = have.length;
+  // Orden de la repisa: hasta arriba los reyes en el orden en que se ganaron, luego el primer muñeca que obtuvo la jugadora,
+  // y después los demás mezclados (siempre en el mismo lugar). Al final, los lugares vacíos.
+  // Después del primer muñeca van las muñecas de reto ⭐ en el orden en que se ganaron.
+  const dolls = have.filter(id => TOYBY[id].doll), kings = have.filter(id => TOYBY[id].royal), stars5 = have.filter(id => TOYBY[id].special), first = have.find(id => !TOYBY[id].royal && !TOYBY[id].special && !TOYBY[id].doll);
+  const rest = have.filter(id => !TOYBY[id].royal && !TOYBY[id].special && !TOYBY[id].doll && id !== first).sort((x, y) => hash(PID + x) - hash(PID + y));
+  const tail = dolls.concat(kings, first ? [first] : [], stars5);
+  const slots = tail.concat(rest, Array(Math.max(0, TOT - n)).fill(null));
+  $('#cabs').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mi colección'}</h2><span class="gn">🪆 ${n} de ${TOT}</span></div>
+    <p>${n === TOT ? 'Juntaste todos las muñecas. ¡Felicidades!' : 'Toca una muñeca para verla de cerca. Las muñecas reales 👑 brillan en dorado y los de reto ⭐ en arcoíris.'}</p>
+    <div class="cab">${slots.map(id => { if (!id) return '<div class="slot empty" aria-label="Lugar vacío"></div>'; const t = TOYBY[id];
+      return `<button class="slot${t.royal ? ' royal' : ''}${t.special ? ' special' : ''}${t.doll ? ' doll' : ''}${fresh.has(id) ? ' new' : ''}" type="button" data-t="${id}" aria-label="${esc(t.name)}">${toySVG(t)}</button>`; }).join('')}</div>`;
+  toysSeen = toys.length; save(K('toys-seen'), toysSeen);
+}
+$('#sback').addEventListener('click', () => { $('#shelf').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); });
+$('#cabs').addEventListener('click', e => { const b = e.target.closest('.slot[data-t]'); if (b) showToy(TOYBY[b.dataset.t]); });
+$('#toys').addEventListener('click', e => { if (e.target.closest('.mini .toy')) openShelf(); });
+function showToy(t) {
+  const m = $('#modal');
+  m.innerHTML = `<div class="box" role="dialog" aria-label="${esc(t.name)}">${toySVG(t, t.doll ? 'glow' : '')}<div class="nm">${esc(t.name)}</div><div class="ct">${CATS[t.cat]}</div><button class="btn" type="button" id="mclose">Cerrar</button></div>`;
+  m.hidden = false; $('#mclose').onclick = () => { m.hidden = true; };
+}
+$('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.target.hidden = true; });
+
+/* ================= MENÚ ================= */
+function renderHome() {
+  $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
+  $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Cambiar</u>`;
+  renderToyBar();
+  const ek = errKeys().length;
+  $('#rev').innerHTML = ek ? `<button class="revbtn" type="button" id="revgo"><span class="ico">🔁</span><span><span class="t">Repaso de mis errores</span>
+    <span class="s">${ek} ${ek === 1 ? 'pregunta que se te dificultó' : 'preguntas que se te dificultaron'}. ¡Vamos a practicarlas!</span></span></button>` : '';
+  if (ek) $('#revgo').onclick = startReview;
+  $('#pertabs').innerHTML = PERIODS.map(P => `<button type="button" class="ptab${P.p === PER ? ' on' : ''}" data-p="${P.p}">${P.h}</button>`).join('');
+  if (!GROUPS.some(G => G.p === PER)) { $('#groups').innerHTML = `<div class="p2empty"><b>📒 ${PERIODS.find(P => P.p === PER).h}</b><br>Aquí van a aparecer los temas nuevos en cuanto lleguen los apuntes del cuaderno.<br>Mientras, repasa el 1.er periodo.</div>`; return; }
+  $('#groups').innerHTML = GROUPS.filter(G => G.p === PER).map(G => `
+    <section class="group"><h2>${G.h} <span class="crownp">👑 ${(crown[G.g] || []).length}/${ACTS.filter(x => x.g === G.g).length}</span></h2><p class="gdesc">${G.d}</p>
+    <div class="cards">${ACTS.filter(a => a.g === G.g).map(a => `
+      <button class="card" type="button" data-id="${a.id}"><span class="t">${a.title}</span><span class="s">${a.src}</span>
+      <span class="st">${starStr(best[a.id] || 0)}</span></button>`).join('')}
+      <button class="card exam" type="button" data-exam="${G.g}"><span class="t">${G.x}</span><span class="s">El reto final: preguntas de todo ${G.h}, mezcladas. Más preguntas de lo que más se te dificulta.</span>
+      <span class="st">${starStr(best['exam-' + G.g] || 0)}</span>${(() => { const sp = SPECIALS.find(t => t.g === G.g); if (!sp) return ''; const h = specials.includes(sp.id);
+        return `<span class="prize${h ? ' got' : ''}">${toySVG(sp)}<span>${h ? '⭐ ¡Ya es tuyo!' : '⭐ Premio con 3 ★'}</span></span>`; })()}</button></div></section>`).join('');
+}
+$('#pertabs').addEventListener('click', e => { const b = e.target.closest('.ptab'); if (!b) return; PER = +b.dataset.p; save(K('period'), PER); renderHome(); });
+$('#groups').addEventListener('click', e => { const c = e.target.closest('.card'); if (!c) return; if (c.dataset.exam) startExam(c.dataset.exam); else start(c.dataset.id); });
+$('#back').addEventListener('click', goHome);
+function goHome() { try { speechSynthesis.cancel(); } catch (e) {} $('#play').hidden = true; $('#home').hidden = false; renderHome(); window.scrollTo(0, 0); }
+
+/* ================= RONDA ================= */
+let cur = null;
+/* Dictado: 20 palabras por ronda, repartidas entre S, C, Z, B, V y Q (3 o 4 de cada letra), sin repetir de una práctica a otra:
+   cada letra tiene su «bolsa» que se recorre completa antes de volver a usar una palabra. Solo las de error pendiente pueden repetirse. */
+const DLET = {"visita": "S", "grandísimo": "S", "mariposa": "S", "hermoso": "S", "deportista": "S", "casa": "S", "camisa": "S", "música": "S", "pasado": "S", "precioso": "S", "piso": "S", "beso": "S", "uso": "S", "grandísima": "S", "televisión": "S", "canadiense": "S", "francés": "S", "cariñoso": "S", "hacer": "C", "peces": "C", "cerca": "C", "luces": "C", "cinco": "C", "cielo": "C", "dulces": "C", "cocina": "C", "gracias": "C", "decir": "C", "lápices": "C", "circo": "C", "dulce": "C", "cine": "C", "comercial": "C", "silencioso": "C", "espacioso": "C", "delicioso": "C", "gracioso": "C", "zanahoria": "Z", "zapatos": "Z", "lápiz": "Z", "feliz": "Z", "arroz": "Z", "maíz": "Z", "zapato": "Z", "zorro": "Z", "zapatilla": "Z", "azúcar": "Z", "nariz": "Z", "pez": "Z", "luz": "Z", "zumo": "Z", "abuelo": "B", "biblioteca": "B", "buscar": "B", "barca": "B", "bebé": "B", "blanco": "B", "brazo": "B", "también": "B", "tambor": "B", "burro": "B", "abuela": "B", "vino": "V", "avión": "V", "viernes": "V", "ventana": "V", "verano": "V", "vivir": "V", "volver": "V", "enviar": "V", "invierno": "V", "vicepresidente": "V", "tuve": "V", "estuve": "V", "anduve": "V", "queso": "Q", "esquina": "Q", "mosquito": "Q", "pequeño": "Q", "parque": "Q", "raqueta": "Q", "paquete": "Q", "quince": "Q", "quitar": "Q", "equipo": "Q", "querer": "Q", "máquina": "Q", "quemar": "Q"};
+const LETS = ['S', 'C', 'Z', 'B', 'V', 'Q'];
+function pickDict(act) {
+  const n = act.n, all = act.items.map((x, i) => i), E = i => errs[act.id + ':' + i] || 0, Hh = i => errHist[act.id + ':' + i] || 0;
+  const letOf = i => DLET[act.items[i].w] || 'S';
+  const last = load(K('dict-last'), []), bags = load(K('dict-bags'), {});
+  const quota = {}, extra = shuffle(LETS).slice(0, n - 3 * LETS.length);   // 20 = 3 de cada una + 2 letras con 4
+  LETS.forEach(l => quota[l] = 3 + (extra.includes(l) ? 1 : 0));
+  const weighted = arr => arr.map(i => [i, Math.random() / (1 + 2 * Hh(i))]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
+  const q = [];
+  LETS.forEach(l => {
+    const mine = all.filter(i => letOf(i) === l);
+    const missed = shuffle(mine.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, Math.min(2, quota[l]));
+    q.push(...missed);
+    let bag = (bags[l] || []).filter(i => act.items[i] && letOf(i) === l && !missed.includes(i));
+    let need = quota[l] - missed.length;
+    while (need > 0) {
+      if (!bag.length) { bag = mine.filter(i => !q.includes(i) && !last.includes(i)); if (!bag.length) bag = mine.filter(i => !q.includes(i)); if (!bag.length) break; }
+      const i = weighted(bag)[0]; q.push(i); bag = bag.filter(x => x !== i); need--;
+    }
+    bags[l] = bag;
+  });
+  save(K('dict-bags'), bags); save(K('dict-last'), q);
+  return shuffle(q);
+}
+function pick(act) {
+  if (act.id === 'dictado') return pickDict(act);
+  const n = act.n || 10, all = act.items.map((x, i) => i);
+  // Primero las que tiene pendientes por error (las de más errores primero), luego algunas que corrigió la miss,
+  // y el resto al azar pero con más probabilidad para las que se han equivocado antes.
+  const E = i => errs[act.id + ':' + i] || 0, Hh = i => errHist[act.id + ':' + i] || 0;
+  const big = act.type === 'dict';
+  const missed = shuffle(all.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, big ? 8 : 5);
+  const ojo = shuffle(all.filter(i => act.items[i].ojo && !missed.includes(i))).slice(0, big ? 2 : 99);
+  const rest = all.filter(i => !missed.includes(i) && !ojo.includes(i)).map(i => [i, Math.random() / (1 + 2 * Hh(i))]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
+  return shuffle(missed.concat(ojo, rest).slice(0, Math.min(n, all.length)));
+}
+function setupPlay(title, act) {
+  $('#home').hidden = true; $('#play').hidden = false;
+  $('#ptitle').textContent = title;
+  $('#rule').hidden = !act; if (act) { $('#ruletxt').innerHTML = act.rule; $('#rule').open = false; }
+  $('#finish').innerHTML = ''; $('#note').innerHTML = ''; fb('', '');
+  window.scrollTo(0, 0);
+}
+function start(id) {
+  const act = BYID[id];
+  cur = { act, mistakes: 0, done: 0, total: 0, over: false, cols: {}, k: 0 };
+  setupPlay(act.title, act);
+  $('#inst').textContent = act.inst || INST[act.type];
+  if (act.type === 'unir') { renderUnir(act); progress(); return; }
+  cur.qs = pick(act).map(i => ({ act, i })); cur.total = cur.qs.length;
+  progress(); next();
+}
+/* ---------- Examen final de cada sección: mezcla preguntas de todas sus prácticas, con más preguntas de las que tuvieron más errores ---------- */
+const EXAM_N = 15;
+function startExam(g) {
+  const acts = examActs(g);
+  const cnt = a => { const base = a.base || a.id; return (errTot[base] || 0) + 2 * Object.keys(errs).filter(k => k.split(':')[0] === a.id).length; };
+  const w = acts.map(a => 1 + cnt(a));
+  const n = acts.map(() => 1); let left = EXAM_N - acts.length;
+  while (left > 0) { const tot = w.reduce((x, y) => x + y, 0); let r = Math.random() * tot, j = 0; while (r > w[j]) { r -= w[j]; j++; } if (n[j] < acts[j].items.length) { n[j]++; left--; } else w[j] = 0; if (!w.some(x => x)) break; }
+  const qs = [];
+  acts.forEach((a, j) => { const all = a.items.map((x, i) => i), miss = shuffle(all.filter(i => errs[a.id + ':' + i])), ojo = shuffle(all.filter(i => a.items[i].ojo && !miss.includes(i))), rest = shuffle(all.filter(i => !miss.includes(i) && !ojo.includes(i)));
+    miss.concat(ojo, rest).slice(0, n[j]).forEach(i => qs.push({ act: a, i })); });
+  const G = GROUPS.find(x => x.g === g);
+  cur = { review: true, exam: g, mistakes: 0, done: 0, total: qs.length, over: false, cols: {}, k: 0, qs: shuffle(qs) };
+  setupPlay(G.x, null);
+  progress(); next();
+}
+function startReview() {
+  const qs = shuffle(errKeys()).slice(0, 12).map(k => { const [a, i] = k.split(':'); return { act: BYID[a], i: +i }; });
+  if (!qs.length) return;
+  cur = { review: true, mistakes: 0, done: 0, total: qs.length, over: false, cols: {}, k: 0, qs };
+  setupPlay('Repaso de mis errores', null);
+  $('#inst').textContent = 'Estas son las preguntas que se te dificultaron. Si las contestas bien a la primera, salen de tu lista.';
+  progress(); next();
+}
+function next() {
+  $('#note').innerHTML = '';
+  if (cur.k >= cur.qs.length) return finish();
+  const q = cur.qs[cur.k]; q.bad = false;
+  if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = false; $('#rule').open = false;
+    if (cur.exam) $('#inst').innerHTML = `<div class="topic">${esc(q.act.title.replace(/ [🔵🔴]/u, ''))}</div>${esc(q.act.inst || INST[q.act.type])}`;
+    else $('#inst').textContent = q.act.title + ' · ' + (q.act.inst || INST[q.act.type]); }
+  RENDER[q.act.type](q, q.act.items[q.i]);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function progress() {
+  $('#count').textContent = `${cur.done} de ${cur.total}`;
+  $('#errs').textContent = cur.mistakes ? `Errores: ${cur.mistakes}` : '';
+  $('#progbar').style.width = (cur.total ? cur.done / cur.total * 100 : 0) + '%';
+}
+let fbT;
+function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = msg; clearTimeout(fbT); if (msg) fbT = setTimeout(() => { f.textContent = ''; }, 1600); }
+const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡Así se hace!'];
+const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
+const addErrTot = id => { id = (BYID[id] && BYID[id].base) || id; errTot[id] = (errTot[id] || 0) + 1; save(K('errtot'), errTot); };
+function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
+function rightQ(q, why, wait) {
+  cur.over = true;
+  if (!q.bad) clearErr(q);
+  cur.done++; progress();
+  const go = () => { cur.over = false; cur.k++; next(); };
+  if ((q.bad || wait) && why) {
+    fb('ok', q.bad ? '¡Ahora sí!' : PRAISE[Math.floor(Math.random() * PRAISE.length)]);
+    $('#note').innerHTML = `<div class="note"><div class="why">💡 ${why}</div><button class="btn" type="button" id="nx">Siguiente →</button></div>`;
+    $('#nx').onclick = go; $('#nx').focus({ preventScroll: true });
+    $('#note').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else { fb('ok', PRAISE[Math.floor(Math.random() * PRAISE.length)]); setTimeout(go, 900); }
+}
+function finish() {
+  cur.over = true; $('#area').innerHTML = '';
+  const m = cur.mistakes;
+  if (cur.exam) {
+    const id = 'exam-' + cur.exam, G = GROUPS.find(x => x.g === cur.exam);
+    const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[id] || 0;
+    best[id] = Math.max(before, stars); save(K('stars'), best);
+    const sp = SPECIALS.find(t => t.g === cur.exam), hasSp = !sp || specials.includes(sp.id);
+    let spGot = null, got = [];
+    if (stars === 3) { if (!hasSp) { specials.push(sp.id); save(K('specials'), specials); spGot = sp; } else got = awardToys(1); }
+    const dg = dollCheck(), retos = P1G.filter(x => best['exam-' + x.g] === 3).length;
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Lo lograste! ' + G.x.replace(/[¡!]/g, '') : stars === 2 ? '¡Muy bien, casi lo logras!' : '¡Terminaste el reto!'}</div>
+      <div class="stars">${starStr(stars)}</div>
+      <div>${G.h}: ${m === 0 ? 'sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? '¡Estás lista para el examen de la escuela!' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      ${dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste todos los retos con 3 ★. Este es el premio más especial:</div><div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>`
+        : (!doll && G.p === 1 ? `<div style="color:#B8860B;font-weight:800">💛 Retos con 3 ★: ${retos} de ${P1G.length}. ¡Gánalos todos para el premio final!</div>` : '')}
+      ${spGot ? `<div class="gain" style="color:#C2187A">⭐ ¡Ganaste la muñeca especial de este reto!</div><div class="newtoys"><figure class="royalwin">${toySVG(spGot)}<figcaption>${esc(spGot.name)}</figcaption></figure></div>` : ''}
+      ${got.length ? `<div class="gain">🪆 ¡Ganaste una muñeca!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
+      ${stars < 3 ? `<div>${hasSp ? 'Saca 3 ★ en el reto para ganar una muñeca.' : `⭐ Saca 3 ★ para ganar a <b>${esc(sp.name)}</b>, la muñeca especial de este reto.`}</div>` : ''}
+      <div class="btns"><button class="btn" type="button" id="again">Otro reto</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+    const g = cur.exam; $('#again').onclick = () => startExam(g);
+  } else if (cur.review) {
+    const left = errKeys().length, got = m <= 3 ? awardToys(1) : [];
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? '¡Perfecto!' : '¡Buen repaso!'}</div>
+      ${got.length ? `<div class="gain">🪆 ¡Ganaste una muñeca!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
+      <div>${left ? `Te ${left === 1 ? 'queda' : 'quedan'} ${left} en tu lista de repaso.` : '¡Ya no te queda nada por repasar!'}</div>
+      <div class="btns">${left ? '<button class="btn" type="button" id="again">Repasar otra vez</button>' : ''}<button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+    if (left) $('#again').onclick = startReview;
+  } else {
+    const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
+    best[cur.act.id] = Math.max(before, stars); save(K('stars'), best);
+    const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora la muñeca solo con 3 ★
+    const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars), dg = dollCheck();
+    const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
+    const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste todos los retos con 3 ★. Este es el premio más especial:</div>
+      <div class="newtoys"><figure class="dollwin">${toySVG(dg, 'glow')}<figcaption>${esc(dg.name)}</figcaption></figure></div>` : '') + (rg ? `<div class="gain" style="color:#B8860B">👑 ¡Completaste ${esc(G.h)} con 3 ★ en todo! Ganaste una muñeca real:</div>
+      <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
+      + (got.length ? `<div class="gain">🪆 ¡Ganaste una muñeca!</div>
+      <div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
+      : `<div>${need === 3 ? 'Ya sacaste 3 ★ en esta práctica: ahora la muñeca se gana solo con 3 ★. ¡Tú puedes!' : 'Termina la práctica con 2 ★ o más para ganar una muñeca.'}</div>`)
+      + (!rg && ROYALS.some(r => !royals.includes(r.id)) ? `<div style="color:var(--muted);font-size:15px">👑 ${esc(G.h)}: ${done3} de ${sec.length} prácticas con 3 ★ para la muñeca real.</div>` : '');
+    $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!'}</div>
+      <div class="stars">${starStr(stars)}</div>
+      <div>${m === 0 ? 'Sin errores.' : m === 1 ? '1 error.' : m + ' errores.'} ${stars === 3 ? 'Te lo sabes muy bien.' : 'Repítelo para ganar las 3 estrellas.'}</div>
+      ${gain}
+      <div class="btns"><button class="btn" type="button" id="again">Otra vez</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
+    $('#again').onclick = () => start(cur.act.id);
+  }
+  $('#tomenu').onclick = goHome;
+  $('#finish').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ================= TIPOS DE EJERCICIO ================= */
+const RENDER = {
+  /* Clasifica en columnas */
+  clas(q, it) {
+    const B = q.act.buckets, ck = j => q.act.id + ':' + j;
+    $('#area').innerHTML = `<div class="qcard"><div class="word" id="w">${esc(it.t)}</div></div>
+      <div class="buckets" id="bk">${B.map((b, j) => `<button class="bucket" type="button" data-j="${j}"><span class="bh">${b}</span>
+        <span class="bl">${(cur.cols[ck(j)] || []).map(w => `<span>${esc(w)}</span>`).join('')}</span></button>`).join('')}</div>`;
+    $('#bk').onclick = e => {
+      const b = e.target.closest('.bucket'); if (!b || cur.over) return; const j = +b.dataset.j;
+      if (j === it.b) {
+        (cur.cols[ck(j)] = cur.cols[ck(j)] || []).push(it.t);
+        b.querySelector('.bl').insertAdjacentHTML('beforeend', `<span class="pop">${esc(it.t)}</span>`); b.classList.add('ok');
+        if (it.show) $('#w').textContent = it.show;
+        rightQ(q, it.why);
+      } else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
+    };
+  },
+  /* Elige la respuesta */
+  elige(q, it) {
+    const opts = shuffle([it.a].concat(it.w));
+    const long = it.long || (it.big && it.big.length > 14);
+    const big = it.html || (it.big ? esc(it.big).replace('_', '<span class="hole" id="hole">?</span>') : '');
+    $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>${big ? `<div class="qcard"><div class="word${long ? ' long' : ''}" id="w">${big}</div></div>` : ''}
+      <div class="opts" id="op">${opts.map(o => `<button class="opt${it.cls ? ' ' + it.cls : ''}" type="button" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
+    $('#op').onclick = e => {
+      const b = e.target.closest('.opt'); if (!b || cur.over || b.disabled) return;
+      if (b.dataset.o === it.a || (it.alt || []).includes(b.dataset.o)) {
+        b.classList.add('ok', 'pop');
+        const h = $('#hole'); if (h) { h.textContent = b.dataset.o; h.classList.add('ok'); }
+        if (it.after) $('#w').innerHTML = it.after;
+        rightQ(q, it.why);
+      } else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); }
+    };
+  },
+  /* Toca la palabra en la oración */
+  toca(q, it) {
+    const toks = it.s.split(' ');
+    $('#area').innerHTML = `<div class="qcard"><div class="sent" id="st">${toks.map((t, j) => `<button class="tok" type="button" data-j="${j}">${esc(t)}</button>`).join('')}</div></div>`;
+    $('#st').onclick = e => {
+      const b = e.target.closest('.tok'); if (!b || cur.over) return;
+      const w = toks[+b.dataset.j].replace(/[.,;:¡!¿?]/g, '');
+      if (w === it.a || (it.alt || []).includes(w)) { b.classList.add('ok', 'pop'); rightQ(q, it.why || `«${it.a}» es el pronombre: está en lugar del nombre.`); }
+      else { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); }
+    };
+  },
+  /* Corrige la oración (como en el examen: se vuelve a escribir bien) */
+  corrige(q, it) {
+    $('#area').innerHTML = `<div class="wr"><div class="qp">Corrige la oración:</div><div class="qcard"><div class="bad-s">${esc(it.s)}</div></div>
+      <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Escribe la oración corregida">${esc(it.s)}</textarea>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div></div>`;
+    const inp = $('#in'); let tries = 0;
+    const N = x => x.normalize('NFC').trim().replace(/\s+/g, ' ');
+    const W = x => N(x).split(' ');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const v = N(inp.value);
+      if (v === N(it.a)) { inp.classList.add('ok'); inp.blur(); rightQ(q, it.why, 1); return; }
+      tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+      const A = W(it.a), B = W(v), bad = A.filter((w, j) => B[j] !== w).length;
+      if (tries < 3) fb('bad', bad === 1 ? 'Casi. Te falta corregir 1 palabra.' : `Casi. Revisa ${bad || 'algunas'} palabras: mayúsculas, acentos, letras y el punto.`);
+      else $('#sh').innerHTML = `<div class="hint">Se escribe así:</div><div class="show">${esc(it.a)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+    };
+  },
+  /* Escribe una oración con la palabra */
+  escribe(q, it) {
+    $('#area').innerHTML = `<div class="wr"><div class="qp">Escribe una oración con esta palabra:</div><div class="qcard"><div class="word">${esc(it.w)}</div>${it.hint ? `<div class="hint">${esc(it.hint)}</div>` : ''}</div>
+      <textarea id="in" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Escribe tu oración"></textarea>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div></div>`;
+    const inp = $('#in');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const v = inp.value.normalize('NFC').trim().replace(/\s+/g, ' '); if (!v) return;
+      const words = v.replace(/[.,;:¡!¿?"«»]/g, ' ').split(/\s+/).filter(Boolean);
+      const has = words.some(x => x.toLowerCase() === it.w.toLowerCase());
+      const near = !has && words.some(x => x.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') === it.w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''));
+      let msg = '';
+      if (!has) msg = near ? `Revisa cómo escribiste «${it.w}»: ¿lleva acento?` : `Tu oración debe llevar la palabra «${it.w}», bien escrita.`;
+      else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
+      else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
+      else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
+      if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
+      inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
+    };
+  },
+  /* Lee y encierra con azul / rojo */
+  circ(q, it) {
+    const toks = it.text.split(' '), col = toks.map(() => ''), clean = t => t.replace(/[.,;:¡!¿?"«»]/g, '');
+    const want = toks.map(t => { const w = clean(t).toLowerCase(); return it.blue.includes(w) ? 'blu' : it.red.includes(w) ? 'red' : ''; });
+    let pen = 'blu';
+    const draw = () => toks.map((t, j) => `<button class="tok${col[j] ? ' ' + col[j] : ''}" type="button" data-j="${j}">${esc(t)}</button>`).join('');
+    $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>
+      <div class="pens"><button type="button" class="pen blu on" data-c="blu">🔵 ${esc(it.blueName)}</button><button type="button" class="pen red" data-c="red">🔴 ${esc(it.redName)}</button></div>
+      <div class="qcard"><div class="sent" id="st" style="justify-content:flex-start">${draw()}</div></div>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+    document.querySelectorAll('.pen').forEach(b => b.onclick = () => { pen = b.dataset.c; document.querySelectorAll('.pen').forEach(x => x.classList.toggle('on', x === b)); });
+    $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over) return; const j = +b.dataset.j; col[j] = col[j] === pen ? '' : pen; $('#st').innerHTML = draw(); };
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const wrong = toks.map((t, j) => col[j] !== want[j] ? j : -1).filter(j => j >= 0);
+      if (!wrong.length) { const nb = want.filter(x => x === 'blu').length, nr = want.filter(x => x === 'red').length;
+        rightQ(q, `¡Los encontraste todos! ${nb} en azul (${it.blueName.toLowerCase()}) y ${nr} en rojo (${it.redName.toLowerCase()}).`, 1); return; }
+      const missing = wrong.filter(j => want[j] && !col[j]).length, extra = wrong.filter(j => !want[j]).length, swapped = wrong.length - missing - extra;
+      wrongQ(q, $('#st'));
+      const parts = []; if (missing) parts.push(`te faltan ${missing}`); if (swapped) parts.push(`${swapped} ${swapped === 1 ? 'tiene' : 'tienen'} el color equivocado`); if (extra) parts.push(`${extra} no ${extra === 1 ? 'es artículo' : 'son artículos'}`);
+      fb('bad', 'Casi: ' + parts.join(', ') + '.');
+      if (q.tries = (q.tries || 0) + 1, q.tries >= 3) wrong.forEach(j => { const b = $('#st').querySelector(`[data-j="${j}"]`); if (b) b.classList.add('miss'); });
+    };
+  },
+  /* Fila de una tabla con varias columnas */
+  tabla(q, it) {
+    const sel = it.cols.map(() => null);
+    $('#area').innerHTML = `<div class="qp">${esc(it.p || 'Completa la tabla:')}</div><div class="qcard"><div class="word">${esc(it.w)}</div></div>
+      <div class="trow">${it.cols.map((c, k) => `<div class="tcol" data-k="${k}"><div class="th">${esc(c[0])}</div><div class="ops">${c[2].map(o => `<button type="button" class="op" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`).join('')}</div>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+    $('#area').querySelectorAll('.tcol').forEach(tc => tc.onclick = e => { const b = e.target.closest('.op'); if (!b || cur.over) return; const k = +tc.dataset.k; sel[k] = b.dataset.o;
+      tc.querySelectorAll('.op').forEach(x => { x.classList.toggle('on', x === b); x.classList.remove('bad', 'ok'); }); });
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (sel.some(x => x === null)) { fb('bad', 'Falta elegir en alguna columna.'); return; }
+      let bad = 0;
+      it.cols.forEach((c, k) => { const b = $('#area').querySelector(`.tcol[data-k="${k}"] .op.on`); const ok = sel[k] === c[1]; if (!ok) bad++; b.classList.add(ok ? 'ok' : 'bad'); });
+      if (!bad) { rightQ(q, it.why, 1); return; }
+      wrongQ(q); fb('bad', bad === 1 ? 'Casi. Una columna está mal.' : `Casi. ${bad} columnas están mal.`);
+    };
+  },
+  /* Escribe la respuesta en uno o varios espacios (como en el examen) */
+  campos(q, it) {
+    const top = it.html ? `<div class="qcard">${it.html}</div>` : it.big ? `<div class="qcard"><div class="word${it.big.length > 14 ? ' long' : ''}">${esc(it.big)}</div></div>` : '';
+    $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>${top}
+      <div class="flds">${it.f.map((f, k) => `<label class="fld">${f.l ? `<span>${esc(f.l)}</span>` : ''}<input data-k="${k}" type="text" ${f.num ? 'inputmode="numeric"' : ''} autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="width:${f.w || (f.num ? 6 : 12)}ch">${f.r ? `<span>${esc(f.r)}</span>` : ''}</label>`).join('')}</div>
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div>`;
+    const ins = [...document.querySelectorAll('.flds input')]; let tries = 0;
+    const N = (v, num) => { v = v.normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' '); return num ? v.replace(/[\s,.]/g, '') : v.replace(/[.]$/, ''); };
+    const S = v => v.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (ins.some(x => !x.value.trim())) { fb('bad', 'Falta llenar algún espacio.'); return; }
+      let bad = 0, acc = 0;
+      const used = new Set();
+      it.f.forEach((f, k) => { const v = N(ins[k].value, f.num), ok = [].concat(f.a).map(a => N(String(a), f.num));
+        let good = ok.includes(v) && !(it.distinct && used.has(v)); used.add(v); if (!good) { bad++; if (ok.map(S).includes(S(v))) acc++; }
+        ins[k].classList.toggle('ok', good); ins[k].classList.toggle('bad', !good); });
+      if (!bad) { ins.forEach(x => x.blur()); rightQ(q, it.why, 1); return; }
+      tries++; wrongQ(q, ...ins.filter(x => x.classList.contains('bad')));
+      if (acc) fb('bad', '¡Casi! Revisa los acentos (´).');
+      else if (it.hint && tries === 1) fb('bad', it.hint);
+      if (tries >= 2) $('#sh').innerHTML = `<div class="hint" style="text-align:center">La respuesta es:</div><div class="show" style="text-align:center">${it.f.map(f => esc(String([].concat(f.a)[0]))).join(' · ')}</div><div class="hint" style="text-align:center">Escríbela tú para seguir.</div>`;
+    };
+  },
+  /* Ordena tocando en orden */
+  ordena(q, it) {
+    const pool = shuffle(it.nums.map((n, j) => ({ n, j }))), put = [];
+    const draw = () => {
+      $('#area').innerHTML = `<div class="qp">${esc(it.p)}</div>
+        <div class="qcard"><div class="slots">${it.nums.map((_, k) => `<button type="button" class="tok slotb${put[k] ? ' ok' : ''}" data-k="${k}">${put[k] ? esc(put[k].n) : '___'}</button>`).join('')}</div></div>
+        <div class="sent" id="pool">${pool.map(x => put.includes(x) ? '' : `<button type="button" class="tok" data-j="${x.j}">${esc(x.n)}</button>`).join('')}</div>
+        <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+      $('#pool').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over) return; put.push(pool.find(x => x.j === +b.dataset.j)); draw(); };
+      document.querySelectorAll('.slotb').forEach(b => b.onclick = () => { if (cur.over) return; const k = +b.dataset.k; if (put[k]) { put.splice(k, 1); draw(); } });
+      $('#ck').onclick = () => {
+        if (cur.over) return;
+        if (put.length < it.nums.length) { fb('bad', 'Coloca todos los números.'); return; }
+        const okk = put.every((x, k) => String(x.n) === String(it.a[k]));
+        if (okk) { rightQ(q, it.why, 1); return; }
+        wrongQ(q); fb('bad', 'Casi. Toca un número de arriba para quitarlo y vuelve a acomodarlo.');
+      };
+    };
+    draw();
+  },
+  /* Problema con los pasos del examen: Comprendo · Planeo (barras) · Resuelvo · Resultado */
+  prob(q, it) {
+    let k = 0;
+    const draw = () => {
+      const st = it.steps[k], fin = k >= it.steps.length;
+      $('#area').innerHTML = `<div class="qcard"><div class="word long">${esc(it.text)}</div></div>
+        <div class="psteps">${['Comprendo', 'Planeo (barras)', 'Resuelvo', 'Resultado'].map((s, j) => `<span class="pst${j < Math.min(k, 3) ? ' done' : j === Math.min(k, 3) ? ' now' : ''}">${s}</span>`).join('')}</div>
+        ${fin ? `<div class="qp">Resultado:</div><div class="flds"><label class="fld"><span>${esc(it.res[0])}</span><input id="in" type="text" inputmode="numeric" autocomplete="off" style="width:7ch"><span>${esc(it.res[1])}</span></label></div>
+          <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div>`
+        : `<div class="qp">${esc(st.p)}</div><div class="opts" id="op">${shuffle(st.o.map((o, j) => ({ o, j }))).map(x => `<button class="opt small" type="button" data-j="${x.j}">${x.o}</button>`).join('')}</div>`}`;
+      if (!fin) $('#op').onclick = e => { const b = e.target.closest('.opt'); if (!b || cur.over) return;
+        if (+b.dataset.j === st.a) { b.classList.add('ok'); fb('ok', '¡Bien!'); $('#note').innerHTML = st.why ? `<div class="note"><div class="why">💡 ${st.why}</div></div>` : ''; setTimeout(() => { k++; draw(); }, 1100); }
+        else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); if (st.no) fb('bad', st.no); } };
+      else { let tries = 0; const inp = $('#in');
+        $('#ck').onclick = () => { if (cur.over) return; const v = inp.value.replace(/[\s,.]/g, ''); if (!v) return;
+          if (v === String(it.ans)) { inp.classList.add('ok'); $('#note').innerHTML = ''; rightQ(q, it.why, 1); return; }
+          tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+          fb('bad', 'Revisa tu operación: ¿copiaste bien los números? ¿Llevaste o pediste prestado?');
+          if (tries >= 2) $('#sh').innerHTML = `<div class="hint" style="text-align:center">${esc(it.op)}</div>`; }; }
+    };
+    draw();
+  },
+  /* Separa en sílabas y clasifica */
+  sil(q, it) {
+    const L = [...it.w], cuts = new Set(); let c = 0;
+    for (const ch of it.s) { if (ch === '-') cuts.add(c - 1); else c++; }
+    const on = new Set(); let tries = 0;
+    const n = it.s.split('-').length, ans = Math.min(n, 4) - 1;
+    const draw = () => L.map((ch, j) => `<span class="lt">${esc(ch)}</span>${j < L.length - 1 ? `<button class="gap${on.has(j) ? ' on' : ''}" type="button" data-j="${j}" aria-label="Cortar después de ${esc(ch)}">${on.has(j) ? '-' : ''}</button>` : ''}`).join('');
+    $('#area').innerHTML = `<div class="qp">Separa en sílabas:</div><div class="qcard"><div class="letters" id="lt">${draw()}</div></div>
+      <div class="actions" id="ac"><button class="say" type="button" id="sy">🔊 Oír</button><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="ph2"></div>`;
+    $('#sy').onclick = () => speak(it.w, 0.7);
+    $('#lt').onclick = e => { const g = e.target.closest('.gap'); if (!g || cur.over) return; const j = +g.dataset.j; on.has(j) ? on.delete(j) : on.add(j); $('#lt').innerHTML = draw(); };
+    const phase2 = () => {
+      $('#lt').innerHTML = it.s.split('-').map(x => `<span class="lt">${esc(x)}</span>`).join('<span class="lt" style="color:var(--bad)">-</span>');
+      $('#ac').innerHTML = '';
+      $('#ph2').innerHTML = `<div class="qp" style="margin-bottom:10px">Tiene ${n} ${n === 1 ? 'sílaba' : 'sílabas'}. ¿Cómo se llama?</div>
+        <div class="opts" id="op">${SNAME.map((s, j) => `<button class="opt small" type="button" data-j="${j}">${s}</button>`).join('')}</div>`;
+      $('#op').onclick = e => {
+        const b = e.target.closest('.opt'); if (!b || cur.over || b.disabled) return;
+        if (+b.dataset.j === ans) { b.classList.add('ok', 'pop'); rightQ(q, `${it.s} → ${n} ${n === 1 ? 'sílaba' : 'sílabas'}: ${SNAME[ans]}.`); }
+        else { b.classList.add('bad'); b.disabled = true; wrongQ(q, b); }
+      };
+    };
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      const okk = on.size === cuts.size && [...cuts].every(j => on.has(j));
+      if (okk) { fb('ok', '¡Bien separada!'); phase2(); return; }
+      tries++; wrongQ(q, $('#lt'));
+      if (tries >= 2) { $('#ck').disabled = true; fb('bad', `Así se separa: ${it.s}`); setTimeout(phase2, 1200); }
+    };
+  },
+  /* Sílaba tónica: azul la tónica, rojo las átonas */
+  ton(q, it) { silRender(q, it, 'ton'); },
+  aton(q, it) { silRender(q, it, 'aton'); },
+  acen(q, it) {
+    const S = it.s.split('-'), n = S.length, pos = j => n - 1 - j;
+    $('#area').innerHTML = `<div class="qp" id="ap">Paso 1: 🔵 toca la sílaba <span style="color:var(--ton)">TÓNICA</span> de «${esc(it.word)}»</div>
+      <div class="qcard"><div class="syls" id="sy">${S.map((x, j) => `<div class="sylw"><button class="syl" type="button" data-j="${j}">${esc(x)}</button><span class="syll" id="sl${j}"></span></div>`).join('')}</div></div>
+      <div class="actions"><button class="say" type="button" id="say">🔊 Oír</button></div><div id="ph2"></div>`;
+    $('#say').onclick = () => speak(it.word, 0.7);
+    $('#sy').onclick = e => {
+      const b = e.target.closest('.syl'); if (!b || cur.over || $('#ph2').innerHTML) return; const j = +b.dataset.j;
+      if (j !== it.t) { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); return; }
+      S.forEach((x, k) => { $(`.syl[data-j="${k}"]`).classList.add(k === it.t ? 'ton' : 'aton'); const p = pos(k); $('#sl' + k).textContent = p < 3 ? ACEN_POS[p] : ''; $('#sl' + k).className = 'syll pos' + (k === it.t ? ' ton' : ''); });
+      fb('ok', '¡Esa es la tónica!');
+      $('#ap').innerHTML = 'Paso 2: la tónica es la <span style="color:var(--ton)">' + (it.k < 3 ? ACEN_POS[it.k] : 'anterior a la antepenúltima') + '</span>. ¿Qué tipo de palabra es?';
+      $('#ph2').innerHTML = `<div class="opts" id="op">${ACEN_N.map((x, k) => `<button class="opt small" type="button" data-k="${k}">${x}</button>`).join('')}</div>`;
+      $('#op').onclick = ev => {
+        const o = ev.target.closest('.opt'); if (!o || cur.over || o.disabled) return;
+        if (+o.dataset.k === it.k) { o.classList.add('ok', 'pop'); rightQ(q, `<span style="color:var(--ton)">🔵 ${esc(it.show)}</span>: la fuerza va en la <b>${ACEN_POS[it.k]}</b> sílaba → <b>${ACEN_N[it.k].toLowerCase()}</b>.`, true); }
+        else { o.classList.add('bad'); o.disabled = true; wrongQ(q, o); }
+      };
+    };
+  },
+  /* Dictado */
+  dict(q, it) {
+    const can = 'speechSynthesis' in window;
+    const blank = it.s.replace(new RegExp(it.w, 'i'), '_____');
+    $('#area').innerHTML = `<div class="dict">
+      ${can ? '<button class="say saybig" type="button" id="say">🔊 Escuchar</button>' : '<div class="hint">Pide a alguien que te dicte la palabra.</div>'}
+      <div class="hint">${esc(blank)}</div>
+      <input id="in" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" enterkeyhint="done" aria-label="Escribe la palabra">
+      <div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="sh"></div></div>`;
+    const say = () => speak([it.w, it.s, it.w]);
+    if (can) { $('#say').onclick = say; setTimeout(say, 350); }
+    const inp = $('#in'); let tries = 0;
+    const strip = s => s.normalize('NFD').replace(/[̀-́̈]/g, '').normalize('NFC');
+    const norm = s => s.normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
+    const accented = /[áéíóúü]/.test(it.w);
+    const check = () => {
+      if (cur.over) return;
+      const v = norm(inp.value); if (!v) return;
+      if (v === it.w) { inp.classList.add('ok'); inp.blur(); rightQ(q, accented ? `Se escribe «${it.w}», con acento.` : `Se escribe «${it.w}».`); return; }
+      tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+      // Las letras están bien pero el acento no: cuenta como error y no avanza hasta que lo escriban bien.
+      if (strip(v) === strip(it.w)) {
+        fb('bad', accented ? '¡Casi! Revisa el acento (´).' : '¡Casi! Esta palabra no lleva acento.');
+        if (tries >= 2) $('#sh').innerHTML = `<div class="hint">${accented ? 'Lleva acento:' : 'No lleva acento:'}</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+        return;
+      }
+      if (tries >= 2) $('#sh').innerHTML = `<div class="hint">Se escribe:</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+    };
+    $('#ck').onclick = check;
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+  }
+};
+
+/* ---------- Sílaba tónica (azul) / átonas (rojo) ---------- */
+function silRender(q, it, mode) {
+  const S = it.s.split('-'), word = S.join(''), need = mode === 'ton' ? 1 : S.length - 1, got = new Set();
+  $('#area').innerHTML = `<div class="qp">${mode === 'ton' ? `🔵 ¿Cuál es la sílaba <span style="color:var(--ton)">TÓNICA</span> de «${esc(word)}»?`
+      : `🔴 Toca las sílabas <span style="color:var(--aton)">ÁTONAS</span> de «${esc(word)}» ${need > 1 ? `(son ${need})` : '(es 1)'}`}</div>
+    <div class="qcard"><div class="syls" id="sy">${S.map((x, j) => `<div class="sylw"><button class="syl" type="button" data-j="${j}">${esc(x)}</button><span class="syll" id="sl${j}"></span></div>`).join('')}</div></div>
+    <div class="actions"><button class="say" type="button" id="say">🔊 Oír</button></div>`;
+  $('#say').onclick = () => speak(word, 0.7);
+  const reveal = () => {
+    S.forEach((x, k) => { const b = $(`.syl[data-j="${k}"]`); b.classList.remove('bad'); b.classList.add(k === it.t ? 'ton' : 'aton'); $('#sl' + k).textContent = k === it.t ? 'tónica' : 'átona'; $('#sl' + k).className = 'syll ' + (k === it.t ? 'ton' : 'aton'); });
+    const at = S.filter((x, k) => k !== it.t);
+    rightQ(q, `<span style="color:var(--ton)">🔵 Tónica: «${S[it.t]}»</span> (la que suena más fuerte)<br><span style="color:var(--aton)">🔴 ${at.length === 1 ? 'Átona' : 'Átonas'}: ${at.map(x => '«' + x + '»').join(', ')}</span> (suenan más suave)`, true);
+  };
+  $('#sy').onclick = e => {
+    const b = e.target.closest('.syl'); if (!b || cur.over) return; const j = +b.dataset.j;
+    const ok = mode === 'ton' ? j === it.t : j !== it.t;
+    if (!ok) { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); return; }
+    if (mode === 'ton') return reveal();
+    if (got.has(j)) return;
+    got.add(j); b.classList.add('aton', 'pop'); $('#sl' + j).textContent = 'átona'; $('#sl' + j).className = 'syll aton';
+    if (got.size === need) reveal(); else fb('ok', `¡Bien! Te ${need - got.size === 1 ? 'falta 1' : 'faltan ' + (need - got.size)}.`);
+  };
+}
+
+/* ---------- Une con líneas ---------- */
+function renderUnir(act) {
+  const pairs = shuffle(act.pairs).slice(0, 5);
+  cur.total = pairs.length;
+  const Lf = shuffle(pairs.map((p, k) => ({ t: p[0], k }))), Rt = shuffle(pairs.map((p, k) => ({ t: p[1], k })));
+  const col = (arr, side) => arr.map(x => `<button class="mi" type="button" data-side="${side}" data-k="${x.k}">${esc(x.t)}<span class="pt"></span></button>`).join('');
+  $('#area').innerHTML = `<div class="qp">${act.id === 'conjunto' ? 'Un conjunto de… se llama…' : 'Masculino → femenino'}</div>
+    <div class="match" id="match"><svg class="lines" id="lines" aria-hidden="true"></svg>
+    <div class="col left">${col(Lf, 'L')}</div><div class="col right">${col(Rt, 'R')}</div></div>`;
+  const box = $('#match'), sel = { L: null, R: null }, matched = new Set();
+  let temp = null;
+  const btn = (side, k) => box.querySelector(`.mi[data-side="${side}"][data-k="${k}"]`);
+  function draw() {
+    const b = box.getBoundingClientRect(), svg = $('#lines'); if (!svg) return;
+    svg.setAttribute('viewBox', `0 0 ${b.width} ${b.height}`);
+    const seg = (kl, kr, cls) => { const l = btn('L', kl).getBoundingClientRect(), r = btn('R', kr).getBoundingClientRect();
+      return `<line class="${cls}" x1="${l.right - b.left}" y1="${l.top + l.height / 2 - b.top}" x2="${r.left - b.left}" y2="${r.top + r.height / 2 - b.top}"/>`; };
+    svg.innerHTML = [...matched].map(k => seg(k, k, 'ok')).join('') + (temp ? seg(temp[0], temp[1], 'bad') : '');
+  }
+  box.addEventListener('click', e => {
+    const b = e.target.closest('.mi'); if (!b || b.classList.contains('ok') || cur.over) return;
+    const side = b.dataset.side, k = +b.dataset.k;
+    if (sel[side] !== null) btn(side, sel[side]).classList.remove('sel');
+    if (sel[side] === k) { sel[side] = null; return; }
+    sel[side] = k; b.classList.add('sel');
+    if (sel.L === null || sel.R === null) return;
+    const bl = btn('L', sel.L), br = btn('R', sel.R);
+    bl.classList.remove('sel'); br.classList.remove('sel');
+    if (sel.L === sel.R) {
+      matched.add(sel.L); bl.classList.add('ok', 'pop'); br.classList.add('ok', 'pop'); draw();
+      cur.done++; fb('ok', PRAISE[Math.floor(Math.random() * PRAISE.length)]); progress();
+      if (cur.done === cur.total) setTimeout(finish, 600);
+    } else {
+      temp = [sel.L, sel.R]; draw(); bl.classList.add('bad'); br.classList.add('bad');
+      cur.mistakes++; addErrTot(cur.act.id); fb('bad', 'Casi. Inténtalo otra vez.'); progress(); shake(bl); shake(br);
+      setTimeout(() => { temp = null; bl.classList.remove('bad'); br.classList.remove('bad'); draw(); }, 700);
+    }
+    sel.L = sel.R = null;
+  });
+  new ResizeObserver(draw).observe(box);
+}
+
+if (me()) { loadPlayer(PID); $('#home').hidden = false; renderHome(); } else showWho();
+$('#whochip').onclick = showWho;
+</script>
+</body>
+</html>

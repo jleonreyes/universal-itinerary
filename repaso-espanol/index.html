@@ -814,7 +814,7 @@ const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
   const all = SHOWALL ? ALLIDS() : owned(), n = all.length, TOT = TOTAL, last = all.slice(-6).reverse();
   $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? '¡Colección completa!' : 'Mis peluches'}</h2><span class="gn">🧸 ${n} de ${TOT}</span></div>
-    <p>Cada práctica que terminas con 2 ★ o más te regala un peluche. Cuando ya sacaste 3 ★ en una práctica, desde ahí el peluche se gana solo con 3 ★. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas un peluche real con corona.</p>
+    <p>Cada práctica que terminas con 3 ★ te regala un peluche. 👑 Si sacas 3 ★ en <b>todas</b> las prácticas de una sección, ganas un peluche real con corona.</p>
     <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">Todavía no tienes peluches. ¡Gana tu primera estrella!</div>'}
     <button class="btn" type="button" id="toshelf">Ver mis repisas 🧸</button></div>`;
   $('#toshelf').onclick = openShelf;
@@ -1013,7 +1013,7 @@ function finish() {
       <div class="btns"><button class="btn" type="button" id="again">Otro reto</button><button class="btn alt" type="button" id="tomenu">Menú</button></div></div>`;
     const g = cur.exam; $('#again').onclick = () => startExam(g);
   } else if (cur.review) {
-    const left = errKeys().length, got = m <= 3 ? awardToys(1) : [];
+    const left = errKeys().length, got = m <= 1 ? awardToys(1) : [];   // 3 ★ en el repaso (máximo 1 error)
     $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? '¡Perfecto!' : '¡Buen repaso!'}</div>
       ${got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
       <div>${left ? `Te ${left === 1 ? 'queda' : 'quedan'} ${left} en tu lista de repaso.` : '¡Ya no te queda nada por repasar!'}</div>
@@ -1022,7 +1022,7 @@ function finish() {
   } else {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
     best[cur.act.id] = Math.max(before, stars); save(K('stars'), best);
-    const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora el peluche solo con 3 ★
+    const need = 3;   // el peluche solo se gana con 3 ★
     const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars), dg = dollCheck();
     const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
     const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 ¡INCREÍBLE! Ganaste los 5 retos con 3 ★. Este es el premio más especial:</div>
@@ -1030,7 +1030,7 @@ function finish() {
       <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
       + (got.length ? `<div class="gain">🧸 ¡Ganaste un peluche!</div>
       <div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
-      : `<div>${need === 3 ? 'Ya sacaste 3 ★ en esta práctica: ahora el peluche se gana solo con 3 ★. ¡Tú puedes!' : 'Termina la práctica con 2 ★ o más para ganar un peluche.'}</div>`)
+      : `<div>Saca 3 ★ para ganar un peluche. ¡Tú puedes!</div>`)
       + (!rg && ROYALS.some(r => !royals.includes(r.id)) ? `<div style="color:var(--muted);font-size:15px">👑 ${esc(G.h)}: ${done3} de ${sec.length} prácticas con 3 ★ para el peluche real.</div>` : '');
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? '¡Perfecto!' : stars === 2 ? '¡Muy bien!' : '¡Terminaste!'}</div>
       <div class="stars">${starStr(stars)}</div>

@@ -340,9 +340,25 @@ const ACEN_N = ['Aguda', 'Grave', 'Esdrújula', 'Sobresdrújula'];
 const ACEN_POS = ['última', 'penúltima', 'antepenúltima', 'anterior a la antepenúltima'];
 const ACEN = [
   ['pa-red',1],['me-nú',1],['a-mén',1,1],['fran-cés',1,1],['ho-tel',1],['ca-mión',1],['ra-tón',1],['re-loj',1],['co-ra-zón',2],['a-vión',1],['pa-pel',1],['ca-fé',1],['so-fá',1],['jar-dín',1],['a-zul',1],['fe-liz',1],['can-ción',1],['gi-ra-sol',2],
-  ['hor-mi-ga',1],['i-ma-gen',1],['a-zú-car',1,1],['ca-rre-ra',1,1],['ár-bol',0],['lá-piz',0],['ca-sa',0],['pe-lo-ta',1],['ven-ta-na',1],['fá-cil',0],['cés-ped',0],['es-cue-la',1],['gui-ta-rra',1],['za-pa-to',1],['gi-gan-te',1],['ca-mi-sa',1],
+  ['a-zú-car',1,1],['ca-rre-ra',1,1],['gui-ta-rra',1],['gi-gan-te',1],
   ['ú-ni-co',0],['mé-di-ca',0],['fa-ná-ti-co',1,1],['e-xá-me-nes',1,1],['di-ná-mi-cas',1,1],['mú-si-ca',0],['sá-ba-do',0],['pá-ja-ro',0],['plá-ta-no',0],['lám-pa-ra',0],['brú-ju-la',0],['ma-te-má-ti-cas',2],['te-lé-fo-no',1],['mur-cié-la-go',1],['pe-lí-cu-la',1],['nú-me-ro',0],['mé-di-co',0],
-  ['dí-ga-me-lo',0],['cóm-pra-me-lo',0],['cuén-ta-me-lo',0],['llé-va-te-lo',0],['dé-ja-me-lo',0],['prés-ta-me-lo',0]
+  ['dí-ga-me-lo',0],['cóm-pra-me-lo',0],['cuén-ta-me-lo',0],['llé-va-te-lo',0],['dé-ja-me-lo',0],['prés-ta-me-lo',0],
+  /* --- de sus exámenes y apuntes (dictado, sustantivos, sílabas, montaña rusa, Lucía y Toby, la J, artículos, Religión) --- */
+  ['ha-cer',1],['de-cir',1],['vi-vir',1],['bus-car',1],['del-fín',1],['ma-rrón',1],['co-llar',1],['can-tar',1],['ga-na-dor',2],['di-ver-sión',2],['ve-lo-ci-dad',3],['se-gu-ri-dad',3],
+  ['es-qui-mal',2],['Be-lén',1],['Je-ru-sa-lén',3],['Na-za-ret',2],['Jor-dán',1],['Ca-far-na-úm',3],['a-mor',1],['ja-món',1],['ja-rrón',1],['e-mo-cio-nó',3],['a-plau-dió',2],['ce-pi-lló',2],
+  ['ma-ri-po-sa',2],['Pi-no-cho',1],['Oa-xa-ca',1],['sar-di-na',1],['Ma-rí-a',1],['a-gua',0],['ma-na-da',1],['ni-ño',0],['pro-fe-so-ras',2],['co-ci-ne-ro',2],['ca-la-ba-za',2],['es-ca-pa-ra-te',3],
+  ['ce-re-zas',1],['pi-za-rra',1],['re-vis-ta',1],['per-so-na-je',2],['jau-la',0],['pe-ce-ra',1],['man-te-qui-lla',2],['a-mi-go',1],['pia-nis-ta',1],['mie-do',0],['ner-vio-sis-mo',2],['bo-le-te-rí-a',3],
+  ['a-le-gre',1],['bos-que',0],['o-re-ja',1],['in-se-pa-ra-bles',3],['con-cur-so',1],['se-ma-na',1],['mas-co-ta',1],['co-ne-jos',1],['tran-qui-lo',1],['ga-lle-ta',1],['re-com-pen-sa',2],['son-ri-sa',1],
+  ['ho-ci-co',1],['ji-ra-fa',1],['jo-ven',0],['mo-chi-la',1],['pin-güi-nos',1],['ve-ci-no',1],['Ga-li-le-a',2],['pa-la-bra',1],['za-na-ho-ria',2],['her-ma-nos',1],['bio-lo-gí-a',2],
+  ['lá-pi-ces',0],['gran-dí-si-mo',1],['má-qui-na',0],['Mé-ri-da',0],['sim-pá-ti-co',1],['pú-bli-co',0],['zo-o-ló-gi-co',2],['Án-ge-lus',0],['pá-gi-na',0],['vi-gé-si-mo',1],['má-gi-co',0],['ter-mó-me-tro',1],
+  ['fá-cil-men-te',0],['ú-ni-ca-men-te',0],['rá-pi-da-men-te',0],['ce-pí-lla-se-lo',1],['en-sé-ña-se-lo',1],['re-gá-la-me-lo',1],
+  /* --- para balancear: el mismo número de cada tipo --- */
+  ['Ma-drid',1],['Cu-lia-cán',2],['Mon-te-rrey',2],['ciu-dad',1],['Yu-ca-tán',2],['co-lor',1],['li-món',1],['al-go-dón',2],['Pe-rú',1],
+  ['Mé-xi-co',0],['Me-so-a-mé-ri-ca',3],['A-ri-do-a-mé-ri-ca',4],['Pre-clá-si-co',1],['Clá-si-co',0],['Pos-clá-si-co',1],['ma-yús-cu-la',1],['sí-la-ba',0],['mo-no-sí-la-ba',2],['bi-sí-la-ba',1],['tri-sí-la-ba',1],
+  ['po-li-sí-la-ba',2],['es-drú-ju-la',1],['pi-rá-mi-de',1],['ár-bo-les',0],['nó-ma-das',0],['mú-si-cos',0],['e-jér-ci-to',1],['rá-pi-do',0],['fan-tás-ti-co',1],['có-mo-do',0],['tí-tu-lo',0],
+  ['má-gi-ca-men-te',0],['sim-pá-ti-ca-men-te',1],['pú-bli-ca-men-te',0],['có-mo-da-men-te',0],['fan-tás-ti-ca-men-te',1],['úl-ti-ma-men-te',0],['prác-ti-ca-men-te',0],['bá-si-ca-men-te',0],['ló-gi-ca-men-te',0],['fí-si-ca-men-te',0],['tí-mi-da-men-te',0],['mé-di-ca-men-te',0],
+  ['có-me-te-lo',0],['bé-be-te-lo',0],['cuén-ta-se-lo',0],['ex-plí-ca-me-lo',1],['pre-gún-ta-se-lo',1],['di-bú-ja-me-lo',1],['pre-pá-ra-se-lo',1],['bús-ca-me-lo',0],['trá-e-me-lo',0],['pá-sa-me-lo',0],['cuí-da-me-lo',0],['guár-da-me-lo',0],
+  ['prés-ta-se-lo',0],['es-crí-be-me-lo',1],['lé-e-me-lo',0],['cán-ta-se-lo',0],['mán-da-me-lo',0],['lá-va-te-lo',0],['á-bre-me-lo',0],['ter-mí-na-te-lo',1],['de-vuél-ve-me-lo',1],['cóm-pra-se-lo',0],['en-sé-ña-me-lo',1],['re-có-ge-me-lo',1],['cór-ta-me-lo',0],['pín-ta-me-lo',0],['llé-va-se-lo',0]
 ].map(([s, t, o]) => { const S = s.split('-'), k = Math.min(3, S.length - 1 - t);
   return { s, t, k, ojo: o, word: S.join(''), show: S.map((x, j) => j === t ? x.toUpperCase() : x).join('-'), why: `${S.map((x, j) => j === t ? x.toUpperCase() : x).join('-')}: la fuerza va en la ${ACEN_POS[k]} sílaba → ${ACEN_N[k].toLowerCase()}.` }; });
 const RULE_ACEN = '<b>Agudas:</b> se pronuncian con mayor intensidad en la <b>última</b> sílaba. Ejemplo: pa-<b>red</b>, me-<b>nú</b>.<br><b>Graves:</b> en la <b>penúltima</b> sílaba. Ejemplo: hor-<b>mi</b>-ga, i-<b>ma</b>-gen.<br><b>Esdrújulas:</b> en la <b>antepenúltima</b> sílaba. Ejemplo: <b>ú</b>-ni-co, <b>mé</b>-di-ca.<br><b>Sobresdrújulas:</b> en una sílaba <b>anterior a la antepenúltima</b>. Ejemplo: <b>dí</b>-ga-me-lo.<br>¡Ojo! Primero encuentra la tónica y luego <b>cuenta desde el final</b>: última (1), penúltima (2), antepenúltima (3). Que una palabra tenga acento (´) <b>no</b> quiere decir que sea aguda: fa-<b>ná</b>-ti-co es esdrújula y a-<b>zú</b>-car es grave.';
@@ -504,6 +520,7 @@ const INST = {
   aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
   dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
   unir:'Tap a word on one side and then its match on the other side.',
+  acen3:'Hazlo tú sola: separa en sílabas, toca la tónica y las átonas, y di qué tipo de palabra es.',
   acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.',
   corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
   escribe:'Write a complete sentence with the word. Start with a capital letter and end with a period.',
@@ -700,7 +717,7 @@ const SHOWALL = location.hash === '#todos';
 function renderToyBar() {
   const all = SHOWALL ? ALLIDS() : owned(), n = all.length, TOT = TOTAL, last = all.slice(-6).reverse();
   $('#toys').innerHTML = `<div class="gh"><h2>${n === TOT ? 'Collection complete!' : 'My slimes'}</h2><span class="gn">🟢 ${n} of ${TOT}</span></div>
-    <p>Every practice you finish with 2 ★ or more gives you a slime. Once you get 3 ★ in a practice, from then on you win a slime only with 3 ★. 👑 If you get 3 ★ in <b>all</b> the practices of a section, you win a royal slime with a crown.</p>
+    <p>Every practice you finish with 3 ★ gives you a slime. 👑 If you get 3 ★ in <b>all</b> the practices of a section, you win a royal slime with a crown.</p>
     <div class="toybar">${n ? `<div class="mini">${last.map(id => toySVG(TOYBY[id])).join('')}</div>` : '<div class="none">You have no slimes yet. Win your first star!</div>'}
     <button class="btn" type="button" id="toshelf">See my shelves 🟢</button></div>`;
   $('#toshelf').onclick = openShelf;
@@ -797,12 +814,18 @@ function pick(act) {
   const missed = shuffle(all.filter(i => E(i))).sort((x, y) => E(y) - E(x)).slice(0, big ? 8 : 5);
   const ojo = shuffle(all.filter(i => act.items[i].ojo && !missed.includes(i))).slice(0, big ? 2 : 99);
   const rest = all.filter(i => !missed.includes(i) && !ojo.includes(i)).map(i => [i, Math.random() / (1 + 2 * Hh(i))]).sort((x, y) => x[1] - y[1]).map(x => x[0]);
-  return shuffle(missed.concat(ojo, rest).slice(0, Math.min(n, all.length)));
+  const order = missed.concat(ojo, rest);
+  if (act.g === 'acen' && act.items.every(x => typeof (x.k ?? x.b) === 'number')) {   // agudas, graves, esdrújulas y sobresdrújulas en partes iguales
+    const cap = Math.ceil(n / 4), cnt = [0, 0, 0, 0], out = [];
+    for (const i of order) { const t = act.items[i].k ?? act.items[i].b; if (cnt[t] < cap && out.length < n) { cnt[t]++; out.push(i); } }
+    return shuffle(out);
+  }
+  return shuffle(order.slice(0, Math.min(n, all.length)));
 }
 function setupPlay(title, act) {
   $('#home').hidden = true; $('#play').hidden = false;
   $('#ptitle').textContent = title;
-  $('#rule').hidden = !act; if (act) { $('#ruletxt').innerHTML = act.rule; $('#rule').open = false; }
+  $('#rule').hidden = !act || !!act.nohint; if (act && !act.nohint) { $('#ruletxt').innerHTML = act.rule; $('#rule').open = false; }
   $('#finish').innerHTML = ''; $('#note').innerHTML = ''; fb('', '');
   window.scrollTo(0, 0);
 }
@@ -843,7 +866,7 @@ function next() {
   $('#note').innerHTML = '';
   if (cur.k >= cur.qs.length) return finish();
   const q = cur.qs[cur.k]; q.bad = false;
-  if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = false; $('#rule').open = false;
+  if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = !!q.act.nohint; $('#rule').open = false;
     if (cur.exam) $('#inst').innerHTML = `<div class="topic">${esc(q.act.title.replace(/ [🔵🔴]/u, ''))}</div>${esc(q.act.inst || INST[q.act.type])}`;
     else $('#inst').textContent = q.act.title + ' · ' + (q.act.inst || INST[q.act.type]); }
   RENDER[q.act.type](q, q.act.items[q.i]);
@@ -894,7 +917,7 @@ function finish() {
       <div class="btns"><button class="btn" type="button" id="again">Another challenge</button><button class="btn alt" type="button" id="tomenu">Menu</button></div></div>`;
     const g = cur.exam; $('#again').onclick = () => startExam(g);
   } else if (cur.review) {
-    const left = errKeys().length, got = m <= 3 ? awardToys(1) : [];
+    const left = errKeys().length, got = m <= 1 ? awardToys(1) : [];   // 3 ★ en el repaso (máximo 1 error)
     $('#finish').innerHTML = `<div class="finish"><div class="big">${m === 0 ? 'Perfect!' : 'Good review!'}</div>
       ${got.length ? `<div class="gain">🟢 You won a slime!</div><div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>` : ''}
       <div>${left ? `You have ${left} left on your review list.` : 'Nothing left to review!'}</div>
@@ -903,7 +926,7 @@ function finish() {
   } else {
     const stars = m <= 1 ? 3 : m <= 3 ? 2 : 1, before = best[cur.act.id] || 0;
     best[cur.act.id] = Math.max(before, stars); save(K('stars'), best);
-    const need = before === 3 ? 3 : 2;   // ya la tuvo con 3 ★: ahora el slime solo con 3 ★
+    const need = 3;   // el slime solo se gana con 3 ★
     const got = stars >= need ? awardToys(1) : [], rg = crownCheck(cur.act, stars), dg = dollCheck();
     const G = GROUPS.find(x => x.g === cur.act.g), sec = ACTS.filter(a => a.g === cur.act.g), done3 = (crown[cur.act.g] || []).length;
     const gain = (dg ? `<div class="gain" style="color:#B8860B;font-size:20px">💛 AMAZING! You won all the challenges with 3 ★. This is the most special prize:</div>
@@ -911,7 +934,7 @@ function finish() {
       <div class="newtoys"><figure class="royalwin">${toySVG(rg)}<figcaption>${esc(rg.name)}</figcaption></figure></div>` : '')
       + (got.length ? `<div class="gain">🟢 You won a slime!</div>
       <div class="newtoys">${got.map(t => `<figure>${toySVG(t)}<figcaption>${esc(t.name)}</figcaption></figure>`).join('')}</div>`
-      : `<div>${need === 3 ? 'You already got 3 ★ in this practice: now you win a slime only with 3 ★. You can do it!' : 'Finish the practice with 2 ★ or more to win a slime.'}</div>`)
+      : `<div>Get 3 ★ to win a slime. You can do it!</div>`)
       + (!rg && ROYALS.some(r => !royals.includes(r.id)) ? `<div style="color:var(--muted);font-size:15px">👑 ${esc(G.h)}: ${done3} of ${sec.length} practices with 3 ★ for the royal slime.</div>` : '');
     $('#finish').innerHTML = `<div class="finish"><div class="big">${stars === 3 ? 'Perfect!' : stars === 2 ? 'Very good!' : 'You finished!'}</div>
       <div class="stars">${starStr(stars)}</div>
@@ -1149,6 +1172,44 @@ const RENDER = {
   /* Sílaba tónica: azul la tónica, rojo las átonas */
   ton(q, it) { silRender(q, it, 'ton'); },
   aton(q, it) { silRender(q, it, 'aton'); },
+  /* Sin pistas: separa, tónica, átonas y tipo — todo sola */
+  acen3(q, it) {
+    const S = it.s.split('-'), L = [...S.join('')], cuts = new Set(); let c = 0;
+    for (const ch of it.s) { if (ch === '-') cuts.add(c - 1); else c++; }
+    const on = new Set(); let tries = 0;
+    const draw = () => L.map((ch, j) => `<span class="lt">${esc(ch)}</span>${j < L.length - 1 ? `<button class="gap${on.has(j) ? ' on' : ''}" type="button" data-j="${j}" aria-label="Cortar">${on.has(j) ? '-' : ''}</button>` : ''}`).join('');
+    $('#area').innerHTML = `<div class="qp" id="ap">1. Separa la palabra en sílabas.</div><div class="qcard"><div class="letters" id="lt">${draw()}</div></div>
+      <div class="actions" id="ac"><button class="btn" type="button" id="ck">Check ✓</button></div><div id="ph2"></div>`;
+    $('#lt').onclick = e => { const g = e.target.closest('.gap'); if (!g || cur.over) return; const j = +g.dataset.j; on.has(j) ? on.delete(j) : on.add(j); $('#lt').innerHTML = draw(); };
+    const step3 = () => {
+      $('#ap').textContent = '3. ¿Qué tipo de palabra es?';
+      $('#ph2').innerHTML = `<div class="opts" id="op">${ACEN_N.map((x, k) => `<button class="opt small" type="button" data-k="${k}">${x}</button>`).join('')}</div>`;
+      $('#op').onclick = ev => { const o = ev.target.closest('.opt'); if (!o || cur.over || o.disabled) return;
+        if (+o.dataset.k === it.k) { o.classList.add('ok', 'pop'); rightQ(q, it.why, true); }
+        else { o.classList.add('bad'); o.disabled = true; wrongQ(q, o); } };
+    };
+    const step2 = () => {
+      $('#ac').innerHTML = '';
+      $('#ap').textContent = '2. Toca la sílaba tónica.';
+      $('#lt').outerHTML = `<div class="syls" id="sy">${S.map((x, j) => `<div class="sylw"><button class="syl" type="button" data-j="${j}">${esc(x)}</button><span class="syll" id="sl${j}"></span></div>`).join('')}</div>`;
+      let phase = 'ton'; const at = new Set();
+      $('#sy').onclick = e => { const b = e.target.closest('.syl'); if (!b || cur.over || phase === 'done') return; const j = +b.dataset.j;
+        if (phase === 'ton') {
+          if (j !== it.t) { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); return; }
+          b.classList.add('ton'); $('#sl' + j).textContent = 'tónica'; $('#sl' + j).className = 'syll ton'; fb('ok', 'Good!');
+          if (S.length === 1) { phase = 'done'; step3(); return; }
+          phase = 'aton'; $('#ap').textContent = '2. Ahora toca las sílabas átonas.'; return; }
+        if (j === it.t || at.has(j)) return;
+        at.add(j); b.classList.add('aton'); $('#sl' + j).textContent = 'átona'; $('#sl' + j).className = 'syll aton';
+        if (at.size === S.length - 1) { phase = 'done'; fb('ok', 'Good!'); step3(); } };
+    };
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (on.size === cuts.size && [...cuts].every(j => on.has(j))) { fb('ok', '¡Bien separada!'); step2(); return; }
+      tries++; wrongQ(q, $('#lt'));
+      if (tries >= 3) { $('#ck').disabled = true; fb('bad', `Se separa así: ${it.s}`); setTimeout(step2, 1600); }
+    };
+  },
   acen(q, it) {
     const S = it.s.split('-'), n = S.length, pos = j => n - 1 - j;
     $('#area').innerHTML = `<div class="qp" id="ap">Paso 1: 🔵 toca la sílaba <span style="color:var(--ton)">TÓNICA</span> de «${esc(it.word)}»</div>

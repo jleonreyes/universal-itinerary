@@ -525,6 +525,7 @@ const ACTS = [
      Q('¿Qué tipo de palabra es «dinámicas»?','esdrújula',['aguda','grave'],'di-NÁ-mi-cas: antepenúltima → esdrújula.',1,'dinámicas'),
      Q('¿Qué tipo de palabra es «azúcar»?','grave',['aguda','esdrújula'],'a-ZÚ-car: penúltima → grave.',1,'azúcar'),
      Q('¿Qué tipo de palabra es «hotel»?','aguda',['grave','esdrújula'],'ho-TEL: última → aguda.',0,'hotel')]},
+  {g:'acen', id:'acensola', type:'acen3', title:'Sin pistas: ¡tú sola!', src:'Separa, tónica y átonas, y tipo de palabra', rule:RULE_ACEN, nohint:1, items:ACEN},
 
   {g:'orto2', id:'gsonido', type:'clas', title:'G suave o G fuerte', src:'Regla de la G: 2 sonidos', buckets:['G suave (gato)','G fuerte (suena como J)'], rule:RULE_G,
    items:[GS('gato',0),GS('goma',0),GS('guante',0),GS('guitarra',0,1),GS('guerra',0),GS('gusano',0),GS('gota',0),GS('lago',0),GS('amigo',0),GS('juguete',0),GS('hormiga',0),GS('tortuga',0),
@@ -656,6 +657,7 @@ const INST = {
   aton:'🔴 Toca TODAS las sílabas ÁTONAS: las que suenan más suave (todas menos la tónica). Toca 🔊 para oír la palabra.',
   dict:'Toca 🔊 para escuchar. Escribe la palabra y toca «Revisar».',
   unir:'Toca una palabra de un lado y luego su pareja del otro lado.',
+  acen3:'Hazlo tú sola: separa en sílabas, toca la tónica y las átonas, y di qué tipo de palabra es.',
   acen:'Paso 1: toca la sílaba TÓNICA (la que suena más fuerte). Paso 2: mira en qué lugar quedó contando desde el final y elige el tipo de palabra.',
   corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
   escribe:'Escribe una oración completa con la palabra. Empieza con mayúscula y termina con punto.',
@@ -906,7 +908,7 @@ function pick(act) {
 function setupPlay(title, act) {
   $('#home').hidden = true; $('#play').hidden = false;
   $('#ptitle').textContent = title;
-  $('#rule').hidden = !act; if (act) { $('#ruletxt').innerHTML = act.rule; $('#rule').open = false; }
+  $('#rule').hidden = !act || !!act.nohint; if (act && !act.nohint) { $('#ruletxt').innerHTML = act.rule; $('#rule').open = false; }
   $('#finish').innerHTML = ''; $('#note').innerHTML = ''; fb('', '');
   window.scrollTo(0, 0);
 }
@@ -947,7 +949,7 @@ function next() {
   $('#note').innerHTML = '';
   if (cur.k >= cur.qs.length) return finish();
   const q = cur.qs[cur.k]; q.bad = false;
-  if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = false; $('#rule').open = false;
+  if (cur.review) { $('#ruletxt').innerHTML = q.act.rule; $('#rule').hidden = !!q.act.nohint; $('#rule').open = false;
     if (cur.exam) $('#inst').innerHTML = `<div class="topic">${esc(q.act.title.replace(/ [🔵🔴]/u, ''))}</div>${esc(q.act.inst || INST[q.act.type])}`;
     else $('#inst').textContent = q.act.title + ' · ' + (q.act.inst || INST[q.act.type]); }
   RENDER[q.act.type](q, q.act.items[q.i]);
@@ -1187,6 +1189,44 @@ const RENDER = {
   /* Sílaba tónica: azul la tónica, rojo las átonas */
   ton(q, it) { silRender(q, it, 'ton'); },
   aton(q, it) { silRender(q, it, 'aton'); },
+  /* Sin pistas: separa, tónica, átonas y tipo — todo sola */
+  acen3(q, it) {
+    const S = it.s.split('-'), L = [...S.join('')], cuts = new Set(); let c = 0;
+    for (const ch of it.s) { if (ch === '-') cuts.add(c - 1); else c++; }
+    const on = new Set(); let tries = 0;
+    const draw = () => L.map((ch, j) => `<span class="lt">${esc(ch)}</span>${j < L.length - 1 ? `<button class="gap${on.has(j) ? ' on' : ''}" type="button" data-j="${j}" aria-label="Cortar">${on.has(j) ? '-' : ''}</button>` : ''}`).join('');
+    $('#area').innerHTML = `<div class="qp" id="ap">1. Separa la palabra en sílabas.</div><div class="qcard"><div class="letters" id="lt">${draw()}</div></div>
+      <div class="actions" id="ac"><button class="btn" type="button" id="ck">Revisar ✓</button></div><div id="ph2"></div>`;
+    $('#lt').onclick = e => { const g = e.target.closest('.gap'); if (!g || cur.over) return; const j = +g.dataset.j; on.has(j) ? on.delete(j) : on.add(j); $('#lt').innerHTML = draw(); };
+    const step3 = () => {
+      $('#ap').textContent = '3. ¿Qué tipo de palabra es?';
+      $('#ph2').innerHTML = `<div class="opts" id="op">${ACEN_N.map((x, k) => `<button class="opt small" type="button" data-k="${k}">${x}</button>`).join('')}</div>`;
+      $('#op').onclick = ev => { const o = ev.target.closest('.opt'); if (!o || cur.over || o.disabled) return;
+        if (+o.dataset.k === it.k) { o.classList.add('ok', 'pop'); rightQ(q, it.why, true); }
+        else { o.classList.add('bad'); o.disabled = true; wrongQ(q, o); } };
+    };
+    const step2 = () => {
+      $('#ac').innerHTML = '';
+      $('#ap').textContent = '2. Toca la sílaba tónica.';
+      $('#lt').outerHTML = `<div class="syls" id="sy">${S.map((x, j) => `<div class="sylw"><button class="syl" type="button" data-j="${j}">${esc(x)}</button><span class="syll" id="sl${j}"></span></div>`).join('')}</div>`;
+      let phase = 'ton'; const at = new Set();
+      $('#sy').onclick = e => { const b = e.target.closest('.syl'); if (!b || cur.over || phase === 'done') return; const j = +b.dataset.j;
+        if (phase === 'ton') {
+          if (j !== it.t) { b.classList.add('bad'); setTimeout(() => b.classList.remove('bad'), 600); wrongQ(q, b); return; }
+          b.classList.add('ton'); $('#sl' + j).textContent = 'tónica'; $('#sl' + j).className = 'syll ton'; fb('ok', '¡Bien!');
+          if (S.length === 1) { phase = 'done'; step3(); return; }
+          phase = 'aton'; $('#ap').textContent = '2. Ahora toca las sílabas átonas.'; return; }
+        if (j === it.t || at.has(j)) return;
+        at.add(j); b.classList.add('aton'); $('#sl' + j).textContent = 'átona'; $('#sl' + j).className = 'syll aton';
+        if (at.size === S.length - 1) { phase = 'done'; fb('ok', '¡Bien!'); step3(); } };
+    };
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (on.size === cuts.size && [...cuts].every(j => on.has(j))) { fb('ok', '¡Bien separada!'); step2(); return; }
+      tries++; wrongQ(q, $('#lt'));
+      if (tries >= 3) { $('#ck').disabled = true; fb('bad', `Se separa así: ${it.s}`); setTimeout(step2, 1600); }
+    };
+  },
   acen(q, it) {
     const S = it.s.split('-'), n = S.length, pos = j => n - 1 - j;
     $('#area').innerHTML = `<div class="qp" id="ap">Paso 1: 🔵 toca la sílaba <span style="color:var(--ton)">TÓNICA</span> de «${esc(it.word)}»</div>

@@ -121,6 +121,12 @@ const ACTS = [
   {g:'sci', id:'sys', type:'clas', title:'Which system?', src:'Skeletal, muscular or digestive', buckets:['Skeletal','Muscular','Digestive'], rule:RULE_ALL, inst:'Read the word and tap its system.',
    items:[['skull',0],['femur',0],['ribs',0],['spine',0],['patella',0],['biceps',1],['triceps',1],['pectoral',1],['quadriceps',1],['abdominal',1],['stomach',2],['esophagus',2],['liver',2],['small intestine',2],['mouth',2]].map(([t, b]) => ({ t, b, why:`«${t}» belongs to the ${['skeletal','muscular','digestive'][b]} system.` }))}
 ];
+{ const B = Object.keys(BONES), M = Object.keys(MUSCLES), O = Object.keys(ORGANS);
+  const mk = (pos, neg, P, Nn, n) => [0,1,2,3,4,5].map(r => { const inv = r % 3 === 2, a = pos.slice().sort(() => Math.random() - .5).slice(0, 3 + r % 2), b = neg.slice().sort(() => Math.random() - .5).slice(0, 5 - r % 2), ok = inv ? b : a;
+    return { words: a.concat(b), ok, inst: (inv ? Nn : P) + (r % 3 === 1 ? ' Then write <b>how many</b> you tapped.' : ''), count: r % 3 === 1, why: `${inv ? 'Not ' + n : n}: ${ok.join(', ')}.` }; });
+  ACTS.push({g:'sci', id:'readsci', type:'marca', title:'📖 Read the instructions', src:'Sometimes it asks for the opposite!', rule:RULE_ALL,
+    items: mk(B, M.concat(O), 'Tap all the <b>bones</b>.', 'Tap the words that are <b>NOT</b> bones.', 'bones').concat(mk(M, B.concat(O), 'Tap all the <b>muscles</b>.', 'Tap the words that are <b>NOT</b> muscles.', 'muscles'), mk(O, B.concat(M), 'Tap all the <b>digestive organs</b>.', 'Tap the words that are <b>NOT</b> digestive organs.', 'digestive organs')) });
+}
 const GROUPS = [
   {g:'sci', p:1, x:'🏆 Final challenge: The Human Body!', h:'The Human Body: skeletal, muscular and digestive systems', d:'Like the 1st period exam: multiple choice, fill in the blanks, order, questions and diagrams.'}
 ];

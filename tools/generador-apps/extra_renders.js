@@ -16,6 +16,8 @@
         let good = ok.includes(v) && !(it.distinct && used.has(v)); used.add(v); if (!good) { bad++; if (ok.map(S).includes(S(v))) acc++; }
         ins[k].classList.toggle('ok', good); ins[k].classList.toggle('bad', !good); });
       if (!bad) { ins.forEach(x => x.blur()); rightQ(q, it.why, 1); return; }
+      const noHit = it.f.findIndex((f, k) => f.no && [].concat(f.no).map(a => N(String(a), f.num)).includes(N(ins[k].value, f.num)));
+      if (noHit >= 0) { instrErr(q, it.f[noHit].noMsg || it.noMsg || 'Tu respuesta no es lo que pide la instrucción. Vuelve a leerla.', ins[noHit]); return; }
       tries++; wrongQ(q, ...ins.filter(x => x.classList.contains('bad')));
       if (acc) fb('bad', '¡Casi! Revisa los acentos (´).');
       else if (it.hint && tries === 1) fb('bad', it.hint);
@@ -37,6 +39,7 @@
         if (put.length < it.nums.length) { fb('bad', 'Coloca todos los números.'); return; }
         const okk = put.every((x, k) => String(x.n) === String(it.a[k]));
         if (okk) { rightQ(q, it.why, 1); return; }
+        if (put.every((x, k) => String(x.n) === String(it.a[it.a.length - 1 - k]))) { instrErr(q, 'Lo ordenaste al revés. Vuelve a leer la instrucción: ¿de mayor a menor o de menor a mayor?'); return; }
         wrongQ(q); fb('bad', 'Casi. Toca un número de arriba para quitarlo y vuelve a acomodarlo.');
       };
     };

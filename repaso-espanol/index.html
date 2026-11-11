@@ -154,6 +154,18 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .tok{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-size:22px}
 .tok.ok{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
 .tok.bad{border-color:var(--bad);background:var(--bad-soft)}
+.qinst{font:800 21px var(--display);text-align:center;line-height:1.35;background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 14px;margin:0 0 10px}
+.flash{animation:flashi 1.4s ease-in-out 2}
+@keyframes flashi{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 5px #FFB020;background:#FFF3CF}}
+.tok.sel{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.chk{display:flex;flex-direction:column;gap:8px;margin:12px auto;max-width:560px}
+.chk label{display:flex;gap:10px;align-items:center;font-weight:700;font-size:18px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px}
+.chk input{width:24px;height:24px}
+.bank{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}
+.bank span{background:var(--sun-soft);border:2px solid var(--sun);border-radius:10px;padding:3px 10px;font-weight:800}
+.rd input,.rd textarea{font:700 20px var(--body);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:100%;box-sizing:border-box}
+.rd textarea{min-height:190px}
+.parent{margin-top:26px;color:var(--muted);font-size:14px;text-align:center}
 .tok.blu{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
 .tok.red{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
 .tok.miss{outline:3px dashed var(--bad)}
@@ -641,6 +653,66 @@ const ACTS = [
      Q('¿«él» con acento es un artículo?','No: «él» es un pronombre',['Sí: es un artículo'],'«el» sin acento es artículo (el gato). «él» con acento es pronombre (él juega).',1)]}
 ];
 const BYID = Object.fromEntries(ACTS.map(a => [a.id, a]));
+
+/* ======== 📖 LEE LA INSTRUCCIÓN: en cada sección, la instrucción cambia lo que hay que hacer ======== */
+// MK: arma rondas de «toca todas las que…». pos/neg: listas [palabra]. Una de cada 4 pide lo CONTRARIO y algunas piden además escribir cuántas.
+function MK(pos, neg, P, N, whyP, whyN) {
+  const items = [], pick = (a, k) => a.map(x => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map(x => x[1]).slice(0, k);
+  for (let r = 0; r < 12; r++) {
+    const a = pick(pos, 3 + (r % 3)), b = pick(neg, 7 - (r % 3) - (r % 2)), words = a.concat(b);
+    const inv = r % 4 === 3, cnt = r % 3 === 1;
+    const ok = inv ? b : a, inst = (inv ? N : P) + (cnt ? ' Después escribe <b>cuántas</b> tocaste.' : '');
+    items.push({ words, ok, inst, count: cnt, why: (inv ? whyN : whyP)(ok) });
+  }
+  return items;
+}
+const VAL = (arr, f) => arr.filter(f).map(x => x.t);
+{
+  const E = BYID.essust.items, C = BYID.comun.items, K2 = BYID.concreto.items, L2 = BYID.colectivo.items;
+  const SN = ['monosílabas','bisílabas','trisílabas','polisílabas'];
+  const silW = k => SIL.filter(([w, s2]) => Math.min(s2.split('-').length, 4) - 1 === k).map(x => x[0]);
+  const acW = k => ACEN.filter(a => a.k === k).map(a => a.word.toLowerCase());
+  const PRON = ['yo','tú','él','ella','nosotros','nosotras','ustedes','ellos','ellas'], NOPRON = ['casa','perro','correr','María','azul','mesa','el','la','escuela','feliz','niña','saltar'];
+  const GN2 = [['la casa','f','s'],['los perros','m','p'],['las flores','f','p'],['el niño','m','s'],['la luz','f','s'],['los lápices','m','p'],['las mesas','f','p'],['el árbol','m','s'],['la flor','f','s'],['los peces','m','p'],['las sillas','f','p'],['el camión','m','s']].map(([w, g, n]) => ({ w: w.split(' ')[1], g, n }));
+  const J = ['juego','joven','jarra','jardín','jirafa','jamón','jarrón','junio','julio','jugo','joya','ojo'], Gw = ['girasol','gigante','gente','magia','página','ángel','geografía','gemelo','biología','gimnasio'];
+  const GSU = BYID.gsonido.items.filter(x => x.b === 0).map(x => x.t), GFU = BYID.gsonido.items.filter(x => x.b === 1).map(x => x.t);
+  const SW = ['visita','mariposa','hermoso','casa','camisa','música','beso','piso','deportista','televisión'], CW = ['hacer','peces','decir','gracias','cerca','circo','cielo','cocina','dulce','cine'];
+  const BW = ['abuelo','biblioteca','barca','bebé','buscar','blanco','brazo','también','tambor','burro'], VW = ['avión','ventana','verano','viernes','vivir','volver','enviar','invierno','tuve','estuve'];
+  const DET = ['el','la','los','las','lo'], IND = ['un','una','unos','unas'];
+  const L = (g, id, title, items, rule) => ACTS.push({ g, id, type:'marca', title:'📖 ' + title, src:'Lee bien la instrucción: a veces pide lo contrario', rule: rule || BYID[ACTS.find(a => a.g === g).id].rule, items });
+  L('sust', 'leesust', 'Lee la instrucción: sustantivos', MK(VAL(E, x => x.b === 0), VAL(E, x => x.b === 1), 'Toca <b>todos los sustantivos</b>.', 'Toca las palabras que <b>NO</b> son sustantivos.', o => `Los sustantivos: ${o.join(', ')}.`, o => `No son sustantivos: ${o.join(', ')}.`)
+    .concat(MK(VAL(C, x => x.b === 1), VAL(C, x => x.b === 0), 'Toca los sustantivos <b>propios</b>.', 'Toca los sustantivos <b>comunes</b>.', o => `Propios: ${o.join(', ')}.`, o => `Comunes: ${o.join(', ')}.`).slice(0, 6))
+    .concat(MK(VAL(K2, x => x.b === 1), VAL(K2, x => x.b === 0), 'Toca los sustantivos <b>abstractos</b>.', 'Toca los sustantivos <b>concretos</b>.', o => `Abstractos: ${o.join(', ')}.`, o => `Concretos: ${o.join(', ')}.`).slice(0, 6))
+    .concat(MK(VAL(L2, x => x.b === 1), VAL(L2, x => x.b === 0), 'Toca los sustantivos <b>colectivos</b>.', 'Toca los sustantivos <b>individuales</b>.', o => `Colectivos: ${o.join(', ')}.`, o => `Individuales: ${o.join(', ')}.`).slice(0, 6)));
+  L('gen', 'leegen', 'Lee la instrucción: género y número', MK(GN2.filter(x => x.n === 'p').map(x => x.w), GN2.filter(x => x.n === 's').map(x => x.w), 'Toca las palabras en <b>plural</b>.', 'Toca las palabras en <b>singular</b>.', o => `Plural: ${o.join(', ')}.`, o => `Singular: ${o.join(', ')}.`)
+    .concat(MK(GN2.filter(x => x.g === 'f').map(x => x.w), GN2.filter(x => x.g === 'm').map(x => x.w), 'Toca las palabras <b>femeninas</b>.', 'Toca las palabras <b>masculinas</b>.', o => `Femeninas: ${o.join(', ')}.`, o => `Masculinas: ${o.join(', ')}.`).slice(0, 6)));
+  L('pron', 'leepron', 'Lee la instrucción: pronombres', MK(PRON, NOPRON, 'Toca <b>todos los pronombres personales</b>.', 'Toca las palabras que <b>NO</b> son pronombres.', o => `Pronombres: ${o.join(', ')}.`, o => `No son pronombres: ${o.join(', ')}.`));
+  L('sil', 'leesil', 'Lee la instrucción: sílabas', MK(silW(1), silW(2).concat(silW(0)), 'Toca las palabras <b>bisílabas</b> (2 sílabas).', 'Toca las palabras que <b>NO</b> son bisílabas.', o => `Bisílabas: ${o.join(', ')}.`, o => `No son bisílabas: ${o.join(', ')}.`).slice(0, 6)
+    .concat(MK(silW(2), silW(1).concat(silW(3)), 'Toca las palabras <b>trisílabas</b> (3 sílabas).', 'Toca las palabras que <b>NO</b> son trisílabas.', o => `Trisílabas: ${o.join(', ')}.`, o => `No son trisílabas: ${o.join(', ')}.`).slice(0, 6))
+    .concat(MK(silW(0), silW(1), 'Toca las palabras <b>monosílabas</b> (1 sílaba).', 'Toca las palabras que <b>NO</b> son monosílabas.', o => `Monosílabas: ${o.join(', ')}.`, o => `No son monosílabas: ${o.join(', ')}.`).slice(0, 6)));
+  L('orto', 'leeorto', 'Lee la instrucción: ortografía', MK(SW, CW, 'Toca las palabras que se escriben con <b>S</b>.', 'Toca las palabras que se escriben con <b>C</b>.', o => `Con S: ${o.join(', ')}.`, o => `Con C: ${o.join(', ')}.`).slice(0, 8)
+    .concat(MK(VW, BW, 'Toca las palabras que se escriben con <b>V</b>.', 'Toca las palabras que se escriben con <b>B</b>.', o => `Con V: ${o.join(', ')}.`, o => `Con B: ${o.join(', ')}.`).slice(0, 8)));
+  L('acen', 'leeacen', 'Lee la instrucción: agudas, graves y esdrújulas', [0, 1, 2, 3].flatMap(k => MK(acW(k), [0, 1, 2, 3].filter(x => x !== k).flatMap(acW), `Toca las palabras <b>${ACEN_N[k].toLowerCase()}s</b>.`, `Toca las palabras que <b>NO</b> son ${ACEN_N[k].toLowerCase()}s.`, o => `${ACEN_N[k]}s: ${o.join(', ')}.`, o => `No son ${ACEN_N[k].toLowerCase()}s: ${o.join(', ')}.`).slice(0, 4)));
+  L('orto2', 'leeorto2', 'Lee la instrucción: la G', MK(GFU, GSU, 'Toca las palabras donde la G suena <b>fuerte</b> (como J).', 'Toca las palabras donde la G suena <b>suave</b> (como en gato).', o => `G fuerte: ${o.join(', ')}.`, o => `G suave: ${o.join(', ')}.`));
+  L('orto3', 'leeorto3', 'Lee la instrucción: la J', MK(J, Gw, 'Toca las palabras que se escriben con <b>J</b>.', 'Toca las palabras que se escriben con <b>G</b>.', o => `Con J: ${o.join(', ')}.`, o => `Con G: ${o.join(', ')}.`));
+  L('art', 'leeart', 'Lee la instrucción: artículos', ['La maestra llegó tarde y los niños leían unos libros.', 'Un niño tocó la puerta de una casa.', 'Las jirafas comen unas hojas del árbol.', 'El perro de mi vecino encontró un hueso.', 'Unas niñas visitaron el zoológico y vieron una jirafa.', 'Los conejos y unos gatos duermen en la casa.']
+    .flatMap((t, r) => { const w = t.split(' '), c = x => x.replace(/[.,]/g, '').toLowerCase(), d = w.filter(x => DET.includes(c(x))), i = w.filter(x => IND.includes(c(x)));
+      return [{ keep:1, words:w, ok:d, inst:'Toca solo los artículos <b>determinados</b>.' + (r % 2 ? ' Después escribe <b>cuántos</b> tocaste.' : ''), count: !!(r % 2), why:`Determinados: ${d.join(', ')}.` },
+              { keep:1, words:w, ok:i, inst:'Toca solo los artículos <b>indeterminados</b>.', why:`Indeterminados: ${i.join(', ')}.` }]; }));
+}
+/* ======== ✍️ ESCRITURA: instrucciones de varias partes, como en el examen ======== */
+ACTS.push({ g:'escr', id:'redacta', type:'redacta', title:'✍️ Escribe siguiendo TODA la instrucción', src:'Título, oraciones, banco de palabras y tu experiencia', n:1,
+  rule:'Antes de escribir, lee la instrucción <b>completa</b>: ¿qué tema? ¿cuántas oraciones? ¿debe ser TU experiencia? ¿lleva título? ¿qué palabras del banco?<br>Al terminar, vuelve a leer la instrucción y revisa cada punto.',
+  items:[
+    { inst:'Piensa si has subido alguna vez a una montaña rusa: dónde, cuándo, si te gustó o no y por qué. Escribe <b>tu experiencia</b> en <b>4 oraciones o más</b>. Usa <b>3 palabras del banco</b>. <b>No te olvides del título.</b>', bank:['miedo','diversión','gritos','nerviosismo','velocidad','parque de atracciones','boletería','seguridad'],
+      checks:[{k:'titulo', t:'Le puse título'}, {k:'yo', t:'Escribí MI experiencia (yo, me, fui…), no un cuento de otros'}, {k:'min', n:4, t:'Escribí 4 oraciones o más'}, {k:'banco', n:3, t:'Usé 3 palabras del banco'}, {k:'mayus', t:'Cada oración empieza con mayúscula'}, {k:'punto', t:'Terminé con punto'}] },
+    { inst:'Escribe sobre <b>tu animal favorito</b>: cómo es, qué come y por qué te gusta. Escribe <b>5 oraciones o más</b> y <b>ponle título</b>.', checks:[{k:'titulo', t:'Le puse título'}, {k:'min', n:5, t:'Escribí 5 oraciones o más'}, {k:'mayus', t:'Cada oración empieza con mayúscula'}, {k:'punto', t:'Terminé con punto'}] },
+    { inst:'Cuenta <b>un día en el que fuiste a un parque</b>. Escríbelo en <b>primera persona</b> (yo…), en <b>4 oraciones o más</b>, usando <b>2 palabras del banco</b>, y con <b>título</b>.', bank:['jardín','jirafa','jugo','juego','joven','julio'],
+      checks:[{k:'titulo', t:'Le puse título'}, {k:'yo', t:'Lo escribí en primera persona (yo, fui, me…)'}, {k:'min', n:4, t:'Escribí 4 oraciones o más'}, {k:'banco', n:2, t:'Usé 2 palabras del banco'}, {k:'mayus', t:'Cada oración empieza con mayúscula'}, {k:'punto', t:'Terminé con punto'}] },
+    { inst:'Escribe <b>3 oraciones</b> sobre tu escuela. En una de ellas usa la palabra <b>«maestra»</b> y en otra la palabra <b>«amigos»</b>. <b>Sin título</b> esta vez.', checks:[{k:'min', n:3, t:'Escribí 3 oraciones'}, {k:'palabra', w:'maestra', t:'Usé «maestra»'}, {k:'palabra', w:'amigos', t:'Usé «amigos»'}, {k:'mayus', t:'Cada oración empieza con mayúscula'}, {k:'punto', t:'Terminé con punto'}] }
+  ]});
+
+ACTS.forEach(a => { BYID[a.id] = a; });
 const GROUPS = [
   {g:'sust', p:1, x:'👑 ¡Reina de los Sustantivos!', h:'Sustantivos', d:'Común y propio, concreto y abstracto, individual y colectivo.'},
   {g:'gen', p:1, x:'🏆 ¡Campeona de Género y Número!', h:'Género y número', d:'Masculino y femenino, singular y plural.'},
@@ -650,7 +722,8 @@ const GROUPS = [
   {g:'acen', p:2, x:'🏆 ¡Campeona de las Agudas, Graves y Esdrújulas!', h:'Agudas, graves y esdrújulas', d:'Clasificación de las palabras según la sílaba tónica.'},
   {g:'orto2', p:2, x:'👑 ¡Reina de la G!', h:'Ortografía: la G', d:'G suave y G fuerte, gue y gui, y la regla clave. Y un dictado.'},
   {g:'orto3', p:2, x:'👑 ¡Reina de la J!', h:'Ortografía: la J', d:'Las palabras con J del cuaderno, sus oraciones y un dictado.'},
-  {g:'art', p:2, x:'🏆 ¡Campeona de los Artículos!', h:'Los artículos', d:'Determinados (el, la, lo, los, las) e indeterminados (un, una, unos, unas).'}
+  {g:'art', p:2, x:'🏆 ¡Campeona de los Artículos!', h:'Los artículos', d:'Determinados (el, la, lo, los, las) e indeterminados (un, una, unos, unas).'},
+  {g:'escr', p:2, x:'✍️ ¡Escritora de examen!', h:'✍️ Escritura: sigue TODA la instrucción', d:'Título, número de oraciones, banco de palabras y tu propia experiencia, como en el examen.'}
 ];
 const PERIODS = [{ p: 1, h: '1.er periodo' }, { p: 2, h: '2.º periodo' }];
 const P1G = GROUPS.filter(G => G.p === 1);
@@ -669,6 +742,8 @@ const INST = {
   corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
   escribe:'Escribe una oración completa con la palabra. Empieza con mayúscula y termina con punto.',
   circ:'Lee el texto. Elige el color y toca las palabras. Cuando termines, toca «Revisar».',
+  marca:'Lee la instrucción con atención y haz exactamente lo que pide.',
+  redacta:'Lee TODA la instrucción. Escribe, revisa la lista y entrega.',
   tabla:'Completa la fila de la tabla: elige una opción en cada columna y toca «Revisar».'
 };
 
@@ -857,6 +932,8 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.targ
 /* ================= MENÚ ================= */
 function renderHome() {
   $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
+  { const ie = load(K('instr'), {}), wk = weekKey(), pw = weekKey(new Date(Date.now() - 7 * 864e5)); let pe = $('#parentnote'); if (!pe) { pe = document.createElement('div'); pe.id = 'parentnote'; pe.className = 'parent'; $('#home').appendChild(pe); }
+    pe.textContent = `Para papá · errores de instrucción (no leyó lo que se pedía): esta semana ${ie[wk] || 0} · semana pasada ${ie[pw] || 0}`; }
   $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Cambiar</u>`;
   renderToyBar();
   const ek = errKeys().length;
@@ -986,6 +1063,14 @@ const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡As
 const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
 const addErrTot = id => { id = (BYID[id] && BYID[id].base) || id; errTot[id] = (errTot[id] || 0) + 1; save(K('errtot'), errTot); };
 function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
+/* ---------- Errores de INSTRUCCIÓN: la respuesta no es lo que pide la instrucción ---------- */
+function instrErr(q, msg, ...els) {
+  wrongQ(q, ...els);
+  const wk = weekKey(), ie = load(K('instr'), {}); ie[wk] = (ie[wk] || 0) + 1; save(K('instr'), ie);
+  fb('bad', msg || 'Tu respuesta no es lo que pide la instrucción. Vuelve a leerla.');
+  document.querySelectorAll('.qinst, #inst').forEach(x => { x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); });
+}
+function weekKey(d) { d = d || new Date(); const t = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7)); return t.toISOString().slice(0, 10); }
 function rightQ(q, why, wait) {
   cur.over = true;
   if (!q.bad) clearErr(q);
@@ -1108,6 +1193,7 @@ const RENDER = {
       if (cur.over) return;
       const v = N(inp.value);
       if (v === N(it.a)) { inp.classList.add('ok'); inp.blur(); rightQ(q, it.why, 1); return; }
+      if (v === N(it.s)) { instrErr(q, 'La instrucción pide CORREGIR la oración: todavía está igual.', inp); return; }
       tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
       const A = W(it.a), B = W(v), bad = A.filter((w, j) => B[j] !== w).length;
       if (tries < 3) fb('bad', bad === 1 ? 'Casi. Te falta corregir 1 palabra.' : `Casi. Revisa ${bad || 'algunas'} palabras: mayúsculas, acentos, letras y el punto.`);
@@ -1131,6 +1217,7 @@ const RENDER = {
       else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
       else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
       else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
+      if (!has && !near) { instrErr(q, `La instrucción pide una oración CON la palabra «${it.w}».`, inp); return; }
       if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
       inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
     };
@@ -1152,6 +1239,7 @@ const RENDER = {
       const wrong = toks.map((t, j) => col[j] !== want[j] ? j : -1).filter(j => j >= 0);
       if (!wrong.length) { const nb = want.filter(x => x === 'blu').length, nr = want.filter(x => x === 'red').length;
         rightQ(q, `¡Los encontraste todos! ${nb} en azul (${it.blueName.toLowerCase()}) y ${nr} en rojo (${it.redName.toLowerCase()}).`, 1); return; }
+      const arts = toks.map((t, j) => j).filter(j => want[j]); if (arts.length > 1 && arts.every(j => col[j] && col[j] !== want[j])) { instrErr(q, 'Revisa la instrucción: ¿qué color va con los determinados y cuál con los indeterminados?', $('#st')); return; }
       const missing = wrong.filter(j => want[j] && !col[j]).length, extra = wrong.filter(j => !want[j]).length, swapped = wrong.length - missing - extra;
       wrongQ(q, $('#st'));
       const parts = []; if (missing) parts.push(`te faltan ${missing}`); if (swapped) parts.push(`${swapped} ${swapped === 1 ? 'tiene' : 'tienen'} el color equivocado`); if (extra) parts.push(`${extra} no ${extra === 1 ? 'es artículo' : 'son artículos'}`);
@@ -1174,6 +1262,62 @@ const RENDER = {
       it.cols.forEach((c, k) => { const b = $('#area').querySelector(`.tcol[data-k="${k}"] .op.on`); const ok = sel[k] === c[1]; if (!ok) bad++; b.classList.add(ok ? 'ok' : 'bad'); });
       if (!bad) { rightQ(q, it.why, 1); return; }
       wrongQ(q); fb('bad', bad === 1 ? 'Casi. Una columna está mal.' : `Casi. ${bad} columnas están mal.`);
+    };
+  },
+  /* Lee la instrucción: toca TODAS las palabras que pide (a veces pide las que NO son…) */
+  marca(q, it) {
+    const sel = new Set(), words = it.keep ? it.words : shuffle(it.words);
+    let step = 1;
+    const draw = () => `${words.map((w, j) => `<button class="tok${sel.has(w) ? ' sel' : ''}" type="button" data-w="${esc(w)}">${esc(w)}</button>`).join('')}`;
+    $('#area').innerHTML = `<div class="qinst">${it.inst}</div><div class="qcard"><div class="sent" id="st">${draw()}</div></div>
+      <div id="cnt"></div><div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+    $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over || step > 1) return; const w = b.dataset.w; sel.has(w) ? sel.delete(w) : sel.add(w); $('#st').innerHTML = draw(); };
+    const clean = w => w.replace(/[.,;:¡!¿?]/g, '');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (step === 2) { const v = ($('#cn').value || '').trim(); if (!v) { fb('bad', 'Escribe el número.'); return; }
+        if (v === String(it.ok.length)) { rightQ(q, it.why, 1); return; }
+        if (sel.size && v === String(words.length)) { instrErr(q, 'La instrucción pide escribir cuántas TOCASTE, no cuántas palabras hay.', $('#cn')); return; }
+        wrongQ(q, $('#cn')); return; }
+      if (!sel.size) { fb('bad', 'Toca las palabras que pide la instrucción.'); return; }
+      const okSet = new Set(it.ok), shown = words.filter(w => okSet.has(w)), other = words.filter(w => !okSet.has(w));
+      const good = shown.length === sel.size && shown.every(w => sel.has(w));
+      if (good) { if (it.count) { step = 2; fb('ok', '¡Bien! Ahora termina la instrucción.'); $('#cnt').innerHTML = `<div class="flds"><label class="fld"><span>¿Cuántas tocaste?</span><input id="cn" inputmode="numeric" autocomplete="off" style="width:4ch"></label></div>`; return; }
+        rightQ(q, it.why, 1); return; }
+      // ¿tocó justo lo contrario? → no leyó la instrucción
+      const opp = other.length && other.length === sel.size && other.every(w => sel.has(w));
+      const mostlyOpp = [...sel].filter(w => !okSet.has(w)).length >= Math.max(2, Math.ceil(sel.size * 0.75));
+      if (opp || mostlyOpp) { instrErr(q, null, $('#st')); return; }
+      const miss = shown.filter(w => !sel.has(w)).length, extra = [...sel].filter(w => !okSet.has(w)).length;
+      wrongQ(q, $('#st')); fb('bad', `Casi: ${[miss ? `te ${miss === 1 ? 'falta 1' : 'faltan ' + miss}` : '', extra ? `${extra} no ${extra === 1 ? 'va' : 'van'}` : ''].filter(Boolean).join(' y ')}.`);
+    };
+  },
+  /* Redacción con instrucción de varias partes y lista para revisar antes de entregar */
+  redacta(q, it) {
+    $('#area').innerHTML = `<div class="qinst">${it.inst}</div>${it.bank ? `<div class="bank">${it.bank.map(b => `<span>${esc(b)}</span>`).join('')}</div>` : ''}
+      <div class="rd wr"><input id="tt" placeholder="Título" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><textarea id="tx" placeholder="Escribe aquí…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>
+      <div class="qp" style="margin-top:12px">Antes de entregar, revisa la instrucción:</div>
+      <div class="chk">${it.checks.map((c, k) => `<label><input type="checkbox" data-k="${k}">${esc(c.t)}</label>`).join('')}</div>
+      <div class="actions"><button class="btn" type="button" id="ck">Entregar ✓</button></div>`;
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if ([...document.querySelectorAll('.chk input')].some(x => !x.checked)) { fb('bad', 'Revisa y marca cada punto de la lista antes de entregar.'); return; }
+      const T = $('#tt').value.trim(), X = $('#tx').value.normalize('NFC').trim();
+      const sents = X.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(x => x.length > 2);
+      const words = X.toLowerCase().replace(/[.,;:¡!¿?"«»]/g, ' ').split(/\s+/).filter(Boolean);
+      for (const c of it.checks) {
+        let bad = '';
+        if (c.k === 'titulo' && !T) bad = 'La instrucción pide un TÍTULO.';
+        if (c.k === 'titulo' && T && !/^[A-ZÁÉÍÓÚÑ¡¿]/.test(T)) bad = 'El título empieza con mayúscula.';
+        if (c.k === 'min' && sents.length < c.n) bad = `La instrucción pide por lo menos ${c.n} oraciones. Llevas ${sents.length}. (Cada oración termina con punto.)`;
+        if (c.k === 'banco') { const used = it.bank.filter(b => X.toLowerCase().includes(b.toLowerCase())).length; if (used < c.n) bad = `La instrucción pide usar ${c.n} palabras del banco. Usaste ${used}.`; }
+        if (c.k === 'yo' && !words.some(w => /^(yo|me|mi|mis|fui|nos|fuimos|subí|sentí|tenía|estaba|grité|vi|tuve|quise|pude)$/.test(w))) bad = 'La instrucción pide TU experiencia: escríbela en primera persona (yo, me, fui, subí…).';
+        if (c.k === 'mayus' && sents.some(x => !/^[¡¿"«]?[A-ZÁÉÍÓÚÑ]/.test(x))) bad = 'Cada oración empieza con MAYÚSCULA.';
+        if (c.k === 'punto' && !/[.!?]$/.test(X)) bad = 'No olvides el punto final.';
+        if (c.k === 'palabra' && !words.includes(c.w.toLowerCase())) bad = `La instrucción pide usar la palabra «${c.w}».`;
+        if (bad) { instrErr(q, bad, $('#tx')); return; }
+      }
+      rightQ(q, it.why || '¡Cumpliste TODA la instrucción! Así se hace en el examen.', 1);
     };
   },
   /* Separa en sílabas y clasifica */

@@ -38,10 +38,17 @@ const ACTS = [
   {g:'soc', id:'nomw', type:'escribe', title:'4. Escribe la diferencia', src:'Como en el examen: escríbelo con tus palabras', rule:RULE_NOM, inst:'Escribe una oración completa. Empieza con mayúscula y termina con punto.',
    items:[{w:'nómadas', hint:'Ejemplo: Los nómadas se movían…', ojo:1}, {w:'sedentarios', hint:'Ejemplo: Los sedentarios se quedaban…', ojo:1}]},
   {g:'soc', id:'caps', type:'campos', title:'5. Estados y capitales del norte', src:'Como en el examen: escribe la capital o el estado', rule:RULE_CAP, inst:'Escribe la capital o el estado que falta. Con mayúscula y acentos.',
-   items:CAPS.map(([e, c]) => ({ p:`Estado: ${e}. ¿Cuál es su capital?`, f:[{a:c, w:14}], why:`La capital de ${e} es ${c}.`, ojo: ['Sonora','Sinaloa','Coahuila'].includes(e) ? 1 : 0 }))
-     .concat(CAPS.filter(([e, c]) => e !== c).map(([e, c]) => ({ p:`Capital: ${c}. ¿De qué estado es?`, f:[{a:e, w:18}], why:`${c} es la capital de ${e}.`, ojo: ['Hermosillo','Culiacán'].includes(c) ? 1 : 0 })))},
+   items:CAPS.map(([e, c]) => ({ p:`Estado: ${e}. ¿Cuál es su capital?`, f:[{a:c, w:14, no: e !== c ? e : null, noMsg:'La instrucción pide la CAPITAL, no el estado.'}], why:`La capital de ${e} es ${c}.`, ojo: ['Sonora','Sinaloa','Coahuila'].includes(e) ? 1 : 0 }))
+     .concat(CAPS.filter(([e, c]) => e !== c).map(([e, c]) => ({ p:`Capital: ${c}. ¿De qué estado es?`, f:[{a:e, w:18, no:c, noMsg:'La instrucción pide el ESTADO, no la capital.'}], why:`${c} es la capital de ${e}.`, ojo: ['Hermosillo','Culiacán'].includes(c) ? 1 : 0 })))},
   {g:'soc', id:'capsu', type:'unir', title:'Une el estado con su capital', src:'Estados del norte', rule:RULE_CAP, pairs:CAPS}
 ];
+{ const CL = CULT.map(x => x[0]), per = ['Preclásico','Clásico','Posclásico'];
+  const NOM = ['se movían de un lugar a otro','cazaban y recolectaban','vivían en cuevas','seguían a los animales'], SED = ['se quedaban en un lugar fijo','sembraban maíz','construían casas','construyeron ciudades'];
+  ACTS.push({g:'soc', id:'leesoc', type:'marca', title:'📖 Lee la instrucción', src:'A veces pide lo contrario', rule:RULE_MESO + '<br><br>' + RULE_NOM,
+    items:[0,1,2].flatMap(k => [0,1].map(inv => { const ok = CULT.filter(x => inv ? x[1] !== k : x[1] === k).map(x => x[0]); return { words:CL, ok, inst: inv ? `Toca las culturas que <b>NO</b> son del <b>${per[k]}</b>.` : `Toca las culturas del <b>${per[k]}</b>.` + (k === 1 ? ' Después escribe <b>cuántas</b> son.' : ''), count: !inv && k === 1, why:`${inv ? 'No son del' : 'Son del'} ${per[k]}: ${ok.join(', ')}.` }; }))
+      .concat([0,1].map(inv => ({ words:NOM.concat(SED), ok: inv ? SED : NOM, inst: inv ? 'Toca lo que hacían los <b>sedentarios</b>.' : 'Toca lo que hacían los <b>nómadas</b>.', why: inv ? 'Sedentarios: lugar fijo y agricultura.' : 'Nómadas: se movían, cazaban y recolectaban.' })))
+      .concat(CAPS.slice(0, 6).map(([e, c], j) => ({ words:[e, c].concat(CAPS.filter(x => x[0] !== e).slice(j, j + 3).flatMap(x => [x[0], x[1]])).filter((v, i, a) => a.indexOf(v) === i), ok: j % 2 ? [e] : [c], inst: j % 2 ? `Toca el <b>ESTADO</b> cuya capital es ${c}.` : `Toca la <b>CAPITAL</b> de ${e}.`, why: `${e} → ${c}.` })))});
+}
 const GROUPS = [
   {g:'soc', p:1, x:'👑 ¡Reina de la Historia de México!', h:'El México antiguo', d:'Como en el examen del 1.er periodo: áreas, Mesoamérica, nómadas y sedentarios, y estados del norte.'}
 ];

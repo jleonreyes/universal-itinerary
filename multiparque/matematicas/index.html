@@ -154,6 +154,18 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .tok{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-size:22px}
 .tok.ok{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
 .tok.bad{border-color:var(--bad);background:var(--bad-soft)}
+.qinst{font:800 21px var(--display);text-align:center;line-height:1.35;background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 14px;margin:0 0 10px}
+.flash{animation:flashi 1.4s ease-in-out 2}
+@keyframes flashi{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 5px #FFB020;background:#FFF3CF}}
+.tok.sel{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.chk{display:flex;flex-direction:column;gap:8px;margin:12px auto;max-width:560px}
+.chk label{display:flex;gap:10px;align-items:center;font-weight:700;font-size:18px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px}
+.chk input{width:24px;height:24px}
+.bank{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}
+.bank span{background:var(--sun-soft);border:2px solid var(--sun);border-radius:10px;padding:3px 10px;font-weight:800}
+.rd input,.rd textarea{font:700 20px var(--body);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:100%;box-sizing:border-box}
+.rd textarea{min-height:190px}
+.parent{margin-top:26px;color:var(--muted);font-size:14px;text-align:center}
 .tok.blu{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
 .tok.red{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
 .tok.miss{outline:3px dashed var(--bad)}
@@ -400,7 +412,7 @@ const lt2 = n => n < 30 ? NUMS1[n] : DEC[Math.floor(n / 10)] + (n % 10 ? ' y ' +
 const letra = n => n === 100 ? 'cien' : n < 100 ? lt2(n) : (CEN[Math.floor(n / 100)] + (n % 100 ? ' ' + lt2(n % 100) : ''));
 const VP = n => { const s = String(n), L = s.length, names = ['um','c','d','u'].slice(4 - L), vals = [...s].map((d, j) => +d * 10 ** (L - 1 - j));
   return { p:`Valor posicional y descomposición de ${n.toLocaleString('en-US')}:`, big:n.toLocaleString('en-US'),
-    f: vals.map((v, j) => ({ l: j ? '+' : '=', a:String(v), num:1, w:6 })).concat([...s].map((d, j) => ({ l: names[j].toUpperCase() + ' =', a:d, num:1, w:3 }))),
+    f: vals.map((v, j) => ({ l: j ? '+' : '=', a:String(v), num:1, w:6 })).concat([...s].map((d, j) => ({ l: names[j].toUpperCase() + ' =', a:d, num:1, w:3, no: +d && vals[j] !== +d ? String(vals[j]) : null, noMsg:`Abajo la instrucción pide solo el DÍGITO: ${names[j].toUpperCase()} = ${d}, no ${vals[j]}.` }))),
     why:`${n.toLocaleString('en-US')} = ${vals.join(' + ')}. ¡Ojo! C = ${s[L - 3] || 0} (el dígito), pero vale ${vals[L - 3] || 0}.`, hint:'Arriba va lo que VALE cada número (900); abajo va solo el DÍGITO (C = 9).' }; };
 const SUM = (a, b, o) => ({ p:'Realiza la suma. Copia bien los números:', big:`${a.toLocaleString('en-US')} + ${b.toLocaleString('en-US')} =`, f:[{ a:String(a + b), num:1, w:7 }], why:`${a.toLocaleString('en-US')} + ${b.toLocaleString('en-US')} = ${(a + b).toLocaleString('en-US')}.`, hint:'¿Copiaste bien los números? ¿Llevaste a la siguiente columna?', ojo:o });
 const RES = (a, b, o) => ({ p:'Realiza la resta:', big:`${a} − ${b} =`, f:[{ a:String(a - b), num:1, w:6 }], why:`${a} − ${b} = ${a - b}.`, hint:'Si arriba es más chico, pide prestado a la columna de al lado.', ojo:o });
@@ -420,14 +432,14 @@ const ACTS = [
      PB('Hay 7 cajas con 6 galletas cada una. ¿Cuántas galletas hay?','mult',6,7,['Hay','galletas.','¿Cuántas galletas hay en total?','¿Cuántas cajas hay?'],1),
      PB('Un cine vendió 181 boletos en la mañana y 278 en la tarde. ¿Cuántos boletos vendió en total?','suma',181,278,['El cine vendió','boletos.','¿Cuántos boletos vendió en total?','¿Cuántos boletos vendió en la tarde?'])]},
   {g:'mat', id:'ordena', type:'ordena', title:'4. Ordena de mayor a menor', src:'Ordena los números', rule:'Compara primero las centenas; si son iguales, las decenas; luego las unidades. El mayor va primero.',
-   items:[[582,748,693,309,810],[670,980,847,850,766],[405,450,504,540,54],[1279,1972,1729,1297,1792],[333,303,330,313,331]].map(ns => { const a = ns.slice().sort((x, y) => y - x); return { p:'Ordena de MAYOR a MENOR:', nums:ns, a, why:a.join(' > ') }; })},
+   items:[[582,748,693,309,810],[670,980,847,850,766],[405,450,504,540,54],[1279,1972,1729,1297,1792],[333,303,330,313,331],[256,652,526,265,625],[908,890,980,809,899],[1450,1045,1504,1405,1540]].map((ns, j) => { const up = j % 4 === 3, a = ns.slice().sort((x, y) => up ? x - y : y - x); return { p: up ? 'Ordena de MENOR a MAYOR:' : 'Ordena de MAYOR a MENOR:', nums:ns, a, why:a.join(up ? ' < ' : ' > ') }; })},
   {g:'mat', id:'mayor', type:'elige', title:'5. Mayor o menor (< >)', src:'Compara los números', rule:'La boca del cocodrilo (<, >) siempre se come al número <b>MAYOR</b>.<br>236 <b>&lt;</b> 248 · 999 <b>&gt;</b> 997',
    items:[[236,248],[999,997],[1279,4589],[589,597],[704,740],[1500,1050],[865,856],[3021,3012],[410,401],[2999,3000]].map(([a, b]) => ({ p:'¿Qué signo va?', big:`${a} _ ${b}`, a: a < b ? '<' : '>', w:[a < b ? '>' : '<'], why:`${a} ${a < b ? '<' : '>'} ${b}: la boca se come al ${Math.max(a, b)}.` }))},
   {g:'mat', id:'valor', type:'campos', title:'6. Valor posicional y descomposición', src:'Como en el examen: descompón y escribe C, D, U', rule:'<b>Descomponer:</b> 907 = 900 + 0 + 7 (lo que VALE cada número).<br><b>C, D, U:</b> solo el DÍGITO. 907 → C = 9, D = 0, U = 7.<br>¡Ojo! C = 9, no C = 900.',
    items:[907,1234,719,586,2408,350,4061,999].map(VP).map((x, j) => ({ ...x, ojo: j < 2 ? 1 : 0 }))},
   {g:'mat', id:'letra', type:'campos', title:'7. Escribe los números', src:'Con número y con letra', rule:'Ojo con la ortografía: <b>doscientos</b>, <b>quinientos</b>, <b>setecientos</b>, <b>novecientos</b>, <b>veintidós</b>, <b>dieciséis</b>.',
    items:[978,608,245,702,516,889,123,450,377,961].map((n, j) => j % 2 ? { p:'Escríbelo con número:', big:letra(n), f:[{ a:String(n), num:1, w:5 }], why:`${letra(n)} = ${n}.` }
-     : { p:'Escríbelo con letra:', big:String(n), f:[{ a:letra(n), w:26 }], why:`${n} se escribe «${letra(n)}».`, hint:'Revisa la ortografía y los acentos.' })},
+     : { p:'Escríbelo con letra:', big:String(n), f:[{ a:letra(n), w:26, no:String(n), noMsg:'La instrucción pide escribirlo CON LETRA, no con número.' }], why:`${n} se escribe «${letra(n)}».`, hint:'Revisa la ortografía y los acentos.' })},
   {g:'mat', id:'sumas', type:'campos', title:'8. Sumas', src:'Sumas con transformación (llevando)', rule:'Acomoda los números en columnas: unidades con unidades, decenas con decenas… Empieza por las unidades. Si te pasas de 9, <b>llevas 1</b> a la siguiente columna.<br>¡Copia bien los números antes de sumar!',
    items:[SUM(4678,1582,1), SUM(3678,2467), SUM(1567,1498), SUM(2456,677,1), SUM(3549,2876), SUM(1938,4295), SUM(5067,2988), SUM(789,456)]},
   {g:'mat', id:'restas', type:'campos', title:'9. Restas', src:'Restas pidiendo prestado', rule:'Empieza por las unidades. Si el número de arriba es más chico, <b>pide prestado</b> 1 a la columna de al lado (vale 10).',
@@ -438,6 +450,8 @@ const ACTS = [
   {g:'mat', id:'mult', type:'campos', title:'11. Multiplicaciones', src:'Las tablas del examen (¡ojo con la del 7!)', rule:'Repasa la tabla del 7: 7, 14, 21, <b>28</b>, 35, <b>42</b>, 49, 56, 63, 70.<br>4 × 7 = 28 · 6 × 7 = 42',
    items:[[5,9],[4,7,1],[3,8],[6,9],[5,8],[4,10],[3,9],[2,8],[6,7,1],[5,7],[2,4],[3,6],[5,5],[4,4],[7,7,1],[8,7,1]].map(([a, b, o]) => ({ p:'Resuelve:', big:`${a} × ${b} =`, f:[{ a:String(a * b), num:1, w:4 }], why:`${a} × ${b} = ${a * b}.`, ojo:o }))}
 ];
+ACTS.push({g:'mat', id:'leemat', type:'marca', title:'📖 Lee la instrucción', src:'A veces pide lo contrario', rule:'Lee con atención: ¿mayores o menores? ¿pares o impares? ¿con 7 en las decenas?',
+  items:[[500,'mayores que 500','menores que 500',x=>x>500],[300,'menores que 300','mayores que 300',x=>x<300],[0,'números PARES','números IMPARES',x=>x%2===0],[0,'números IMPARES','números PARES',x=>x%2===1],[0,'números con 7 en las DECENAS','números con 7 en las UNIDADES',x=>Math.floor(x/10)%10===7]].flatMap(([_, A, B, f], j) => [0,1,2].map(r => { const ns = [...new Set(Array.from({length:9}, () => 100 + Math.floor(Math.random() * 900)).concat([170,275,407,571,697,712]))].sort(() => Math.random() - .5).slice(0, 8).map(String); const inv = r === 2, ok = ns.filter(x => inv ? !f(+x) : f(+x)); return { words:ns, ok: ok.length ? ok : [ns[0]], inst:`Toca los <b>${inv ? B : A}</b>.` + (r === 1 ? ' Después escribe <b>cuántos</b> tocaste.' : ''), count: r === 1, why:`${inv ? B : A}: ${ok.join(', ')}.` }; }).filter(x => x.ok.length))});
 const GROUPS = [
   {g:'mat', p:1, x:'🏆 ¡El Gran Reto de Matemáticas!', h:'Matemáticas del 1.er periodo', d:'Como en el examen: cálculo mental, secuencias, problemas con barras, comparar, valor posicional, sumas, restas y multiplicaciones.'}
 ];
@@ -460,6 +474,8 @@ const INST = {
   corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
   escribe:'Escribe una oración completa con la palabra. Empieza con mayúscula y termina con punto.',
   circ:'Lee el texto. Elige el color y toca las palabras. Cuando termines, toca «Revisar».',
+  marca:'Lee la instrucción con atención y haz exactamente lo que pide.',
+  redacta:'Lee TODA la instrucción. Escribe, revisa la lista y entrega.',
   campos:'Escribe la respuesta en el espacio y toca «Revisar».',
   ordena:'Toca los elementos en el orden correcto. Toca uno de arriba para quitarlo.',
   prob:'Sigue los pasos del examen: Comprendo, Planeo, Resuelvo y Resultado.',
@@ -599,7 +615,8 @@ function awardToys(n) {
   const got = [], p = me(), start = (FIRST[p && p.first] || FIRST.a).cat;
   for (let i = 0; i < n; i++) {
     const free = TOYS.filter(t => !toys.includes(t.id)); if (!free.length) break;
-    let pool = free.filter(t => t.cat === (start + toys.length) % 3);
+    const REG = [0, 1, 2, 6, 7, 8];   // se alternan los 6 tipos de robot
+    let pool = free.filter(t => t.cat === REG[(Math.max(0, REG.indexOf(start)) + toys.length) % REG.length]);
     if (!toys.length && p && FIRST[p.first] && FIRST[p.first].id) pool = pool.filter(t => t.id === FIRST[p.first].id);   // Pelonchis: oso pardo · Pillus: nutria
     if (!pool.length) pool = free;
     const t = pool[Math.floor(Math.random() * pool.length)]; toys.push(t.id); got.push(t);
@@ -687,6 +704,8 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.targ
 /* ================= MENÚ ================= */
 function renderHome() {
   $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
+  { const ie = load(K('instr'), {}), wk = weekKey(), pw = weekKey(new Date(Date.now() - 7 * 864e5)); let pe = $('#parentnote'); if (!pe) { pe = document.createElement('div'); pe.id = 'parentnote'; pe.className = 'parent'; $('#home').appendChild(pe); }
+    pe.textContent = `Para papá · errores de instrucción (no leyó lo que se pedía): esta semana ${ie[wk] || 0} · semana pasada ${ie[pw] || 0}`; }
   $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Cambiar</u>`;
   renderToyBar();
   const ek = errKeys().length;
@@ -817,6 +836,14 @@ const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡As
 const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
 const addErrTot = id => { id = (BYID[id] && BYID[id].base) || id; errTot[id] = (errTot[id] || 0) + 1; save(K('errtot'), errTot); };
 function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
+/* ---------- Errores de INSTRUCCIÓN: la respuesta no es lo que pide la instrucción ---------- */
+function instrErr(q, msg, ...els) {
+  wrongQ(q, ...els);
+  const wk = weekKey(), ie = load(K('instr'), {}); ie[wk] = (ie[wk] || 0) + 1; save(K('instr'), ie);
+  fb('bad', msg || 'Tu respuesta no es lo que pide la instrucción. Vuelve a leerla.');
+  document.querySelectorAll('.qinst, #inst').forEach(x => { x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); });
+}
+function weekKey(d) { d = d || new Date(); const t = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7)); return t.toISOString().slice(0, 10); }
 function rightQ(q, why, wait) {
   cur.over = true;
   if (!q.bad) clearErr(q);
@@ -939,6 +966,7 @@ const RENDER = {
       if (cur.over) return;
       const v = N(inp.value);
       if (v === N(it.a)) { inp.classList.add('ok'); inp.blur(); rightQ(q, it.why, 1); return; }
+      if (v === N(it.s)) { instrErr(q, 'La instrucción pide CORREGIR la oración: todavía está igual.', inp); return; }
       tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
       const A = W(it.a), B = W(v), bad = A.filter((w, j) => B[j] !== w).length;
       if (tries < 3) fb('bad', bad === 1 ? 'Casi. Te falta corregir 1 palabra.' : `Casi. Revisa ${bad || 'algunas'} palabras: mayúsculas, acentos, letras y el punto.`);
@@ -962,6 +990,7 @@ const RENDER = {
       else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
       else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
       else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
+      if (!has && !near) { instrErr(q, `La instrucción pide una oración CON la palabra «${it.w}».`, inp); return; }
       if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
       inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
     };
@@ -983,6 +1012,7 @@ const RENDER = {
       const wrong = toks.map((t, j) => col[j] !== want[j] ? j : -1).filter(j => j >= 0);
       if (!wrong.length) { const nb = want.filter(x => x === 'blu').length, nr = want.filter(x => x === 'red').length;
         rightQ(q, `¡Los encontraste todos! ${nb} en azul (${it.blueName.toLowerCase()}) y ${nr} en rojo (${it.redName.toLowerCase()}).`, 1); return; }
+      const arts = toks.map((t, j) => j).filter(j => want[j]); if (arts.length > 1 && arts.every(j => col[j] && col[j] !== want[j])) { instrErr(q, 'Revisa la instrucción: ¿qué color va con los determinados y cuál con los indeterminados?', $('#st')); return; }
       const missing = wrong.filter(j => want[j] && !col[j]).length, extra = wrong.filter(j => !want[j]).length, swapped = wrong.length - missing - extra;
       wrongQ(q, $('#st'));
       const parts = []; if (missing) parts.push(`te faltan ${missing}`); if (swapped) parts.push(`${swapped} ${swapped === 1 ? 'tiene' : 'tienen'} el color equivocado`); if (extra) parts.push(`${extra} no ${extra === 1 ? 'es artículo' : 'son artículos'}`);
@@ -1007,6 +1037,62 @@ const RENDER = {
       wrongQ(q); fb('bad', bad === 1 ? 'Casi. Una columna está mal.' : `Casi. ${bad} columnas están mal.`);
     };
   },
+  /* Lee la instrucción: toca TODAS las palabras que pide (a veces pide las que NO son…) */
+  marca(q, it) {
+    const sel = new Set(), words = it.keep ? it.words : shuffle(it.words);
+    let step = 1;
+    const draw = () => `${words.map((w, j) => `<button class="tok${sel.has(w) ? ' sel' : ''}" type="button" data-w="${esc(w)}">${esc(w)}</button>`).join('')}`;
+    $('#area').innerHTML = `<div class="qinst">${it.inst}</div><div class="qcard"><div class="sent" id="st">${draw()}</div></div>
+      <div id="cnt"></div><div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
+    $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over || step > 1) return; const w = b.dataset.w; sel.has(w) ? sel.delete(w) : sel.add(w); $('#st').innerHTML = draw(); };
+    const clean = w => w.replace(/[.,;:¡!¿?]/g, '');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (step === 2) { const v = ($('#cn').value || '').trim(); if (!v) { fb('bad', 'Escribe el número.'); return; }
+        if (v === String(it.ok.length)) { rightQ(q, it.why, 1); return; }
+        if (sel.size && v === String(words.length)) { instrErr(q, 'La instrucción pide escribir cuántas TOCASTE, no cuántas palabras hay.', $('#cn')); return; }
+        wrongQ(q, $('#cn')); return; }
+      if (!sel.size) { fb('bad', 'Toca las palabras que pide la instrucción.'); return; }
+      const okSet = new Set(it.ok), shown = words.filter(w => okSet.has(w)), other = words.filter(w => !okSet.has(w));
+      const good = shown.length === sel.size && shown.every(w => sel.has(w));
+      if (good) { if (it.count) { step = 2; fb('ok', '¡Bien! Ahora termina la instrucción.'); $('#cnt').innerHTML = `<div class="flds"><label class="fld"><span>¿Cuántas tocaste?</span><input id="cn" inputmode="numeric" autocomplete="off" style="width:4ch"></label></div>`; return; }
+        rightQ(q, it.why, 1); return; }
+      // ¿tocó justo lo contrario? → no leyó la instrucción
+      const opp = other.length && other.length === sel.size && other.every(w => sel.has(w));
+      const mostlyOpp = [...sel].filter(w => !okSet.has(w)).length >= Math.max(2, Math.ceil(sel.size * 0.75));
+      if (opp || mostlyOpp) { instrErr(q, null, $('#st')); return; }
+      const miss = shown.filter(w => !sel.has(w)).length, extra = [...sel].filter(w => !okSet.has(w)).length;
+      wrongQ(q, $('#st')); fb('bad', `Casi: ${[miss ? `te ${miss === 1 ? 'falta 1' : 'faltan ' + miss}` : '', extra ? `${extra} no ${extra === 1 ? 'va' : 'van'}` : ''].filter(Boolean).join(' y ')}.`);
+    };
+  },
+  /* Redacción con instrucción de varias partes y lista para revisar antes de entregar */
+  redacta(q, it) {
+    $('#area').innerHTML = `<div class="qinst">${it.inst}</div>${it.bank ? `<div class="bank">${it.bank.map(b => `<span>${esc(b)}</span>`).join('')}</div>` : ''}
+      <div class="rd wr"><input id="tt" placeholder="Título" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><textarea id="tx" placeholder="Escribe aquí…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>
+      <div class="qp" style="margin-top:12px">Antes de entregar, revisa la instrucción:</div>
+      <div class="chk">${it.checks.map((c, k) => `<label><input type="checkbox" data-k="${k}">${esc(c.t)}</label>`).join('')}</div>
+      <div class="actions"><button class="btn" type="button" id="ck">Entregar ✓</button></div>`;
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if ([...document.querySelectorAll('.chk input')].some(x => !x.checked)) { fb('bad', 'Revisa y marca cada punto de la lista antes de entregar.'); return; }
+      const T = $('#tt').value.trim(), X = $('#tx').value.normalize('NFC').trim();
+      const sents = X.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(x => x.length > 2);
+      const words = X.toLowerCase().replace(/[.,;:¡!¿?"«»]/g, ' ').split(/\s+/).filter(Boolean);
+      for (const c of it.checks) {
+        let bad = '';
+        if (c.k === 'titulo' && !T) bad = 'La instrucción pide un TÍTULO.';
+        if (c.k === 'titulo' && T && !/^[A-ZÁÉÍÓÚÑ¡¿]/.test(T)) bad = 'El título empieza con mayúscula.';
+        if (c.k === 'min' && sents.length < c.n) bad = `La instrucción pide por lo menos ${c.n} oraciones. Llevas ${sents.length}. (Cada oración termina con punto.)`;
+        if (c.k === 'banco') { const used = it.bank.filter(b => X.toLowerCase().includes(b.toLowerCase())).length; if (used < c.n) bad = `La instrucción pide usar ${c.n} palabras del banco. Usaste ${used}.`; }
+        if (c.k === 'yo' && !words.some(w => /^(yo|me|mi|mis|fui|nos|fuimos|subí|sentí|tenía|estaba|grité|vi|tuve|quise|pude)$/.test(w))) bad = 'La instrucción pide TU experiencia: escríbela en primera persona (yo, me, fui, subí…).';
+        if (c.k === 'mayus' && sents.some(x => !/^[¡¿"«]?[A-ZÁÉÍÓÚÑ]/.test(x))) bad = 'Cada oración empieza con MAYÚSCULA.';
+        if (c.k === 'punto' && !/[.!?]$/.test(X)) bad = 'No olvides el punto final.';
+        if (c.k === 'palabra' && !words.includes(c.w.toLowerCase())) bad = `La instrucción pide usar la palabra «${c.w}».`;
+        if (bad) { instrErr(q, bad, $('#tx')); return; }
+      }
+      rightQ(q, it.why || '¡Cumpliste TODA la instrucción! Así se hace en el examen.', 1);
+    };
+  },
   /* Escribe la respuesta en uno o varios espacios (como en el examen) */
   campos(q, it) {
     const top = it.html ? `<div class="qcard">${it.html}</div>` : it.big ? `<div class="qcard"><div class="word${it.big.length > 14 ? ' long' : ''}">${esc(it.big)}</div></div>` : '';
@@ -1025,6 +1111,8 @@ const RENDER = {
         let good = ok.includes(v) && !(it.distinct && used.has(v)); used.add(v); if (!good) { bad++; if (ok.map(S).includes(S(v))) acc++; }
         ins[k].classList.toggle('ok', good); ins[k].classList.toggle('bad', !good); });
       if (!bad) { ins.forEach(x => x.blur()); rightQ(q, it.why, 1); return; }
+      const noHit = it.f.findIndex((f, k) => f.no && [].concat(f.no).map(a => N(String(a), f.num)).includes(N(ins[k].value, f.num)));
+      if (noHit >= 0) { instrErr(q, it.f[noHit].noMsg || it.noMsg || 'Tu respuesta no es lo que pide la instrucción. Vuelve a leerla.', ins[noHit]); return; }
       tries++; wrongQ(q, ...ins.filter(x => x.classList.contains('bad')));
       if (acc) fb('bad', '¡Casi! Revisa los acentos (´).');
       else if (it.hint && tries === 1) fb('bad', it.hint);
@@ -1046,6 +1134,7 @@ const RENDER = {
         if (put.length < it.nums.length) { fb('bad', 'Coloca todos los números.'); return; }
         const okk = put.every((x, k) => String(x.n) === String(it.a[k]));
         if (okk) { rightQ(q, it.why, 1); return; }
+        if (put.every((x, k) => String(x.n) === String(it.a[it.a.length - 1 - k]))) { instrErr(q, 'Lo ordenaste al revés. Vuelve a leer la instrucción: ¿de mayor a menor o de menor a mayor?'); return; }
         wrongQ(q); fb('bad', 'Casi. Toca un número de arriba para quitarlo y vuelve a acomodarlo.');
       };
     };

@@ -154,6 +154,18 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 .tok{background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;font-size:22px}
 .tok.ok{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
 .tok.bad{border-color:var(--bad);background:var(--bad-soft)}
+.qinst{font:800 21px var(--display);text-align:center;line-height:1.35;background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 14px;margin:0 0 10px}
+.flash{animation:flashi 1.4s ease-in-out 2}
+@keyframes flashi{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 5px #FFB020;background:#FFF3CF}}
+.tok.sel{border-color:var(--sel);background:var(--sel-soft);color:var(--sel)}
+.chk{display:flex;flex-direction:column;gap:8px;margin:12px auto;max-width:560px}
+.chk label{display:flex;gap:10px;align-items:center;font-weight:700;font-size:18px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:8px 12px}
+.chk input{width:24px;height:24px}
+.bank{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 0}
+.bank span{background:var(--sun-soft);border:2px solid var(--sun);border-radius:10px;padding:3px 10px;font-weight:800}
+.rd input,.rd textarea{font:700 20px var(--body);padding:10px 12px;border:3px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);width:100%;box-sizing:border-box}
+.rd textarea{min-height:190px}
+.parent{margin-top:26px;color:var(--muted);font-size:14px;text-align:center}
 .tok.blu{border-color:var(--ton);background:var(--ton-soft);color:var(--ton)}
 .tok.red{border-color:var(--aton);background:var(--aton-soft);color:var(--aton)}
 .tok.miss{outline:3px dashed var(--bad)}
@@ -503,6 +515,12 @@ const ACTS = [
   {g:'sci', id:'sys', type:'clas', title:'Which system?', src:'Skeletal, muscular or digestive', buckets:['Skeletal','Muscular','Digestive'], rule:RULE_ALL, inst:'Read the word and tap its system.',
    items:[['skull',0],['femur',0],['ribs',0],['spine',0],['patella',0],['biceps',1],['triceps',1],['pectoral',1],['quadriceps',1],['abdominal',1],['stomach',2],['esophagus',2],['liver',2],['small intestine',2],['mouth',2]].map(([t, b]) => ({ t, b, why:`«${t}» belongs to the ${['skeletal','muscular','digestive'][b]} system.` }))}
 ];
+{ const B = Object.keys(BONES), M = Object.keys(MUSCLES), O = Object.keys(ORGANS);
+  const mk = (pos, neg, P, Nn, n) => [0,1,2,3,4,5].map(r => { const inv = r % 3 === 2, a = pos.slice().sort(() => Math.random() - .5).slice(0, 3 + r % 2), b = neg.slice().sort(() => Math.random() - .5).slice(0, 5 - r % 2), ok = inv ? b : a;
+    return { words: a.concat(b), ok, inst: (inv ? Nn : P) + (r % 3 === 1 ? ' Then write <b>how many</b> you tapped.' : ''), count: r % 3 === 1, why: `${inv ? 'Not ' + n : n}: ${ok.join(', ')}.` }; });
+  ACTS.push({g:'sci', id:'readsci', type:'marca', title:'📖 Read the instructions', src:'Sometimes it asks for the opposite!', rule:RULE_ALL,
+    items: mk(B, M.concat(O), 'Tap all the <b>bones</b>.', 'Tap the words that are <b>NOT</b> bones.', 'bones').concat(mk(M, B.concat(O), 'Tap all the <b>muscles</b>.', 'Tap the words that are <b>NOT</b> muscles.', 'muscles'), mk(O, B.concat(M), 'Tap all the <b>digestive organs</b>.', 'Tap the words that are <b>NOT</b> digestive organs.', 'digestive organs')) });
+}
 const GROUPS = [
   {g:'sci', p:1, x:'🏆 Final challenge: The Human Body!', h:'The Human Body: skeletal, muscular and digestive systems', d:'Like the 1st period exam: multiple choice, fill in the blanks, order, questions and diagrams.'}
 ];
@@ -525,6 +543,8 @@ const INST = {
   corrige:'Corrige la oración: arregla mayúsculas, acentos, letras y el punto final. Luego toca «Revisar».',
   escribe:'Write a complete sentence with the word. Start with a capital letter and end with a period.',
   circ:'Lee el texto. Elige el color y toca las palabras. Cuando termines, toca «Revisar».',
+  marca:'Read the instructions carefully and do exactly what they say.',
+  redacta:'Read ALL the instructions. Write, check the list and hand it in.',
   campos:'Write the answer in the space and tap «Check».',
   ordena:'Tap the words in the correct order. Tap one at the top to remove it.',
   prob:'Sigue los pasos del examen: Comprendo, Planeo, Resuelvo y Resultado.',
@@ -665,7 +685,8 @@ function awardToys(n) {
   const got = [], p = me(), start = (FIRST[p && p.first] || FIRST.a).cat;
   for (let i = 0; i < n; i++) {
     const free = TOYS.filter(t => !toys.includes(t.id)); if (!free.length) break;
-    let pool = free.filter(t => t.cat === (start + toys.length) % 3);
+    const REG = [0, 1, 2, 6, 7, 8];   // se alternan los 6 tipos de slime
+    let pool = free.filter(t => t.cat === REG[(Math.max(0, REG.indexOf(start)) + toys.length) % REG.length]);
     if (!toys.length && p && FIRST[p.first] && FIRST[p.first].id) pool = pool.filter(t => t.id === FIRST[p.first].id);   // Pelonchis: oso pardo · Pillus: nutria
     if (!pool.length) pool = free;
     const t = pool[Math.floor(Math.random() * pool.length)]; toys.push(t.id); got.push(t);
@@ -753,6 +774,8 @@ $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') e.targ
 /* ================= MENÚ ================= */
 function renderHome() {
   $('#total').innerHTML = `<b>★ ${totalStars()}</b> / ${MAXSTARS}`;
+  { const ie = load(K('instr'), {}), wk = weekKey(), pw = weekKey(new Date(Date.now() - 7 * 864e5)); let pe = $('#parentnote'); if (!pe) { pe = document.createElement('div'); pe.id = 'parentnote'; pe.className = 'parent'; $('#home').appendChild(pe); }
+    pe.textContent = `Para papá · errores de instrucción (no leyó lo que se pedía): esta semana ${ie[wk] || 0} · semana pasada ${ie[pw] || 0}`; }
   $('#whochip').innerHTML = `👧 ${esc(me() ? me().name : '')} · <u>Change</u>`;
   renderToyBar();
   const ek = errKeys().length;
@@ -883,6 +906,14 @@ const PRAISE = ['Correct!', 'Very good!', "That's it!", 'Excellent!', 'Great job
 const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
 const addErrTot = id => { id = (BYID[id] && BYID[id].base) || id; errTot[id] = (errTot[id] || 0) + 1; save(K('errtot'), errTot); };
 function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Almost. Try again.'); progress(); els.forEach(shake); }
+/* ---------- Errores de INSTRUCCIÓN: la respuesta no es lo que pide la instrucción ---------- */
+function instrErr(q, msg, ...els) {
+  wrongQ(q, ...els);
+  const wk = weekKey(), ie = load(K('instr'), {}); ie[wk] = (ie[wk] || 0) + 1; save(K('instr'), ie);
+  fb('bad', msg || 'Your answer is not what the instructions ask for. Read them again.');
+  document.querySelectorAll('.qinst, #inst').forEach(x => { x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); });
+}
+function weekKey(d) { d = d || new Date(); const t = new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7)); return t.toISOString().slice(0, 10); }
 function rightQ(q, why, wait) {
   cur.over = true;
   if (!q.bad) clearErr(q);
@@ -1005,6 +1036,7 @@ const RENDER = {
       if (cur.over) return;
       const v = N(inp.value);
       if (v === N(it.a)) { inp.classList.add('ok'); inp.blur(); rightQ(q, it.why, 1); return; }
+      if (v === N(it.s)) { instrErr(q, 'La instrucción pide CORREGIR la oración: todavía está igual.', inp); return; }
       tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
       const A = W(it.a), B = W(v), bad = A.filter((w, j) => B[j] !== w).length;
       if (tries < 3) fb('bad', bad === 1 ? 'Casi. Te falta corregir 1 palabra.' : `Casi. Revisa ${bad || 'algunas'} palabras: mayúsculas, acentos, letras y el punto.`);
@@ -1028,6 +1060,7 @@ const RENDER = {
       else if (words.length < 4) msg = 'Write a more complete sentence: at least 4 words.';
       else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'A sentence starts with a CAPITAL letter.';
       else if (!/[.!?]$/.test(v)) msg = 'Don\'t forget the period at the end.';
+      if (!has && !near) { instrErr(q, `The instructions ask for a sentence WITH the word «${it.w}».`, inp); return; }
       if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `Great sentence! It has «${it.w}», starts with a capital letter and ends with a period.`, 1); return; }
       inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
     };
@@ -1049,6 +1082,7 @@ const RENDER = {
       const wrong = toks.map((t, j) => col[j] !== want[j] ? j : -1).filter(j => j >= 0);
       if (!wrong.length) { const nb = want.filter(x => x === 'blu').length, nr = want.filter(x => x === 'red').length;
         rightQ(q, `¡Los encontraste todos! ${nb} en azul (${it.blueName.toLowerCase()}) y ${nr} en rojo (${it.redName.toLowerCase()}).`, 1); return; }
+      const arts = toks.map((t, j) => j).filter(j => want[j]); if (arts.length > 1 && arts.every(j => col[j] && col[j] !== want[j])) { instrErr(q, 'Revisa la instrucción: ¿qué color va con los determinados y cuál con los indeterminados?', $('#st')); return; }
       const missing = wrong.filter(j => want[j] && !col[j]).length, extra = wrong.filter(j => !want[j]).length, swapped = wrong.length - missing - extra;
       wrongQ(q, $('#st'));
       const parts = []; if (missing) parts.push(`te faltan ${missing}`); if (swapped) parts.push(`${swapped} ${swapped === 1 ? 'tiene' : 'tienen'} el color equivocado`); if (extra) parts.push(`${extra} no ${extra === 1 ? 'es artículo' : 'son artículos'}`);
@@ -1073,6 +1107,62 @@ const RENDER = {
       wrongQ(q); fb('bad', bad === 1 ? 'Almost. One column is wrong.' : `Almost. ${bad} columns are wrong.`);
     };
   },
+  /* Lee la instrucción: toca TODAS las palabras que pide (a veces pide las que NO son…) */
+  marca(q, it) {
+    const sel = new Set(), words = it.keep ? it.words : shuffle(it.words);
+    let step = 1;
+    const draw = () => `${words.map((w, j) => `<button class="tok${sel.has(w) ? ' sel' : ''}" type="button" data-w="${esc(w)}">${esc(w)}</button>`).join('')}`;
+    $('#area').innerHTML = `<div class="qinst">${it.inst}</div><div class="qcard"><div class="sent" id="st">${draw()}</div></div>
+      <div id="cnt"></div><div class="actions"><button class="btn" type="button" id="ck">Check ✓</button></div>`;
+    $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over || step > 1) return; const w = b.dataset.w; sel.has(w) ? sel.delete(w) : sel.add(w); $('#st').innerHTML = draw(); };
+    const clean = w => w.replace(/[.,;:¡!¿?]/g, '');
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if (step === 2) { const v = ($('#cn').value || '').trim(); if (!v) { fb('bad', 'Write the number.'); return; }
+        if (v === String(it.ok.length)) { rightQ(q, it.why, 1); return; }
+        if (sel.size && v === String(words.length)) { instrErr(q, 'The instructions ask how many YOU TAPPED, not how many words there are.', $('#cn')); return; }
+        wrongQ(q, $('#cn')); return; }
+      if (!sel.size) { fb('bad', 'Tap the words the instructions ask for.'); return; }
+      const okSet = new Set(it.ok), shown = words.filter(w => okSet.has(w)), other = words.filter(w => !okSet.has(w));
+      const good = shown.length === sel.size && shown.every(w => sel.has(w));
+      if (good) { if (it.count) { step = 2; fb('ok', 'Good! Now finish the instructions.'); $('#cnt').innerHTML = `<div class="flds"><label class="fld"><span>How many did you tap?</span><input id="cn" inputmode="numeric" autocomplete="off" style="width:4ch"></label></div>`; return; }
+        rightQ(q, it.why, 1); return; }
+      // ¿tocó justo lo contrario? → no leyó la instrucción
+      const opp = other.length && other.length === sel.size && other.every(w => sel.has(w));
+      const mostlyOpp = [...sel].filter(w => !okSet.has(w)).length >= Math.max(2, Math.ceil(sel.size * 0.75));
+      if (opp || mostlyOpp) { instrErr(q, null, $('#st')); return; }
+      const miss = shown.filter(w => !sel.has(w)).length, extra = [...sel].filter(w => !okSet.has(w)).length;
+      wrongQ(q, $('#st')); fb('bad', `Almost: ${[miss ? `${miss} missing` : '', extra ? `${extra} should not be there` : ''].filter(Boolean).join(' and ')}.`);
+    };
+  },
+  /* Redacción con instrucción de varias partes y lista para revisar antes de entregar */
+  redacta(q, it) {
+    $('#area').innerHTML = `<div class="qinst">${it.inst}</div>${it.bank ? `<div class="bank">${it.bank.map(b => `<span>${esc(b)}</span>`).join('')}</div>` : ''}
+      <div class="rd wr"><input id="tt" placeholder="Título" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"><textarea id="tx" placeholder="Escribe aquí…" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>
+      <div class="qp" style="margin-top:12px">Antes de entregar, revisa la instrucción:</div>
+      <div class="chk">${it.checks.map((c, k) => `<label><input type="checkbox" data-k="${k}">${esc(c.t)}</label>`).join('')}</div>
+      <div class="actions"><button class="btn" type="button" id="ck">Entregar ✓</button></div>`;
+    $('#ck').onclick = () => {
+      if (cur.over) return;
+      if ([...document.querySelectorAll('.chk input')].some(x => !x.checked)) { fb('bad', 'Revisa y marca cada punto de la lista antes de entregar.'); return; }
+      const T = $('#tt').value.trim(), X = $('#tx').value.normalize('NFC').trim();
+      const sents = X.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(x => x.length > 2);
+      const words = X.toLowerCase().replace(/[.,;:¡!¿?"«»]/g, ' ').split(/\s+/).filter(Boolean);
+      for (const c of it.checks) {
+        let bad = '';
+        if (c.k === 'titulo' && !T) bad = 'La instrucción pide un TÍTULO.';
+        if (c.k === 'titulo' && T && !/^[A-ZÁÉÍÓÚÑ¡¿]/.test(T)) bad = 'El título empieza con mayúscula.';
+        if (c.k === 'min' && sents.length < c.n) bad = `La instrucción pide por lo menos ${c.n} oraciones. Llevas ${sents.length}. (Cada oración termina con punto.)`;
+        if (c.k === 'banco') { const used = it.bank.filter(b => X.toLowerCase().includes(b.toLowerCase())).length; if (used < c.n) bad = `La instrucción pide usar ${c.n} palabras del banco. Usaste ${used}.`; }
+        if (c.k === 'yo' && !words.some(w => /^(yo|me|mi|mis|fui|nos|fuimos|subí|sentí|tenía|estaba|grité|vi|tuve|quise|pude)$/.test(w))) bad = 'La instrucción pide TU experiencia: escríbela en primera persona (yo, me, fui, subí…).';
+        if (c.k === 'mayus' && sents.some(x => !/^[¡¿"«]?[A-ZÁÉÍÓÚÑ]/.test(x))) bad = 'Cada oración empieza con MAYÚSCULA.';
+        if (c.k === 'punto' && !/[.!?]$/.test(X)) bad = 'No olvides el punto final.';
+        if (c.k === 'palabra' && !words.includes(c.w.toLowerCase())) bad = `La instrucción pide usar la palabra «${c.w}».`;
+        if (bad) { instrErr(q, bad, $('#tx')); return; }
+      }
+      rightQ(q, it.why || '¡Cumpliste TODA la instrucción! Así se hace en el examen.', 1);
+    };
+  },
   /* Escribe la respuesta en uno o varios espacios (como en el examen) */
   campos(q, it) {
     const top = it.html ? `<div class="qcard">${it.html}</div>` : it.big ? `<div class="qcard"><div class="word${it.big.length > 14 ? ' long' : ''}">${esc(it.big)}</div></div>` : '';
@@ -1091,6 +1181,8 @@ const RENDER = {
         let good = ok.includes(v) && !(it.distinct && used.has(v)); used.add(v); if (!good) { bad++; if (ok.map(S).includes(S(v))) acc++; }
         ins[k].classList.toggle('ok', good); ins[k].classList.toggle('bad', !good); });
       if (!bad) { ins.forEach(x => x.blur()); rightQ(q, it.why, 1); return; }
+      const noHit = it.f.findIndex((f, k) => f.no && [].concat(f.no).map(a => N(String(a), f.num)).includes(N(ins[k].value, f.num)));
+      if (noHit >= 0) { instrErr(q, it.f[noHit].noMsg || it.noMsg || 'Tu respuesta no es lo que pide la instrucción. Vuelve a leerla.', ins[noHit]); return; }
       tries++; wrongQ(q, ...ins.filter(x => x.classList.contains('bad')));
       if (acc) fb('bad', 'Almost! Check your spelling.');
       else if (it.hint && tries === 1) fb('bad', it.hint);
@@ -1112,6 +1204,7 @@ const RENDER = {
         if (put.length < it.nums.length) { fb('bad', 'Place all of them.'); return; }
         const okk = put.every((x, k) => String(x.n) === String(it.a[k]));
         if (okk) { rightQ(q, it.why, 1); return; }
+        if (put.every((x, k) => String(x.n) === String(it.a[it.a.length - 1 - k]))) { instrErr(q, 'Lo ordenaste al revés. Vuelve a leer la instrucción: ¿de mayor a menor o de menor a mayor?'); return; }
         wrongQ(q); fb('bad', 'Almost. Tap one at the top to remove it and place it again.');
       };
     };

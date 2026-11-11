@@ -1,4 +1,13 @@
 EN = [
+ ("marca:'Lee la instrucción con atención y haz exactamente lo que pide.'", "marca:'Read the instructions carefully and do exactly what they say.'"),
+ ("redacta:'Lee TODA la instrucción. Escribe, revisa la lista y entrega.'", "redacta:'Read ALL the instructions. Write, check the list and hand it in.'"),
+ ("msg || 'Tu respuesta no es lo que pide la instrucción. Vuelve a leerla.'", "msg || 'Your answer is not what the instructions ask for. Read them again.'"),
+ ("'Escribe el número.'", "'Write the number.'"), ("'La instrucción pide escribir cuántas TOCASTE, no cuántas palabras hay.'", "'The instructions ask how many YOU TAPPED, not how many words there are.'"),
+ ("'Toca las palabras que pide la instrucción.'", "'Tap the words the instructions ask for.'"), ("'¡Bien! Ahora termina la instrucción.'", "'Good! Now finish the instructions.'"),
+ ("<span>¿Cuántas tocaste?</span>", "<span>How many did you tap?</span>"),
+ ("`Casi: ${[miss ? `te ${miss === 1 ? 'falta 1' : 'faltan ' + miss}` : '', extra ? `${extra} no ${extra === 1 ? 'va' : 'van'}` : ''].filter(Boolean).join(' y ')}.`", "`Almost: ${[miss ? `${miss} missing` : '', extra ? `${extra} should not be there` : ''].filter(Boolean).join(' and ')}.`"),
+ ("`La instrucción pide una oración CON la palabra «${it.w}».`", "`The instructions ask for a sentence WITH the word «${it.w}».`"),
+ ("`Para papá · errores de instrucción (no leyó lo que se pedía): esta semana ${ie[wk] || 0} · semana pasada ${ie[pw] || 0}`", "`Para papá · errores de instrucción (no leyó lo que se pedía): esta semana ${ie[wk] || 0} · semana pasada ${ie[pw] || 0}`"),
  ('¿Quién va a estudiar?', 'Who is going to study?'), ('+ Nueva jugadora', '+ New player'), ('Nombre de la jugadora', "Player's name"),
  ('¿Qué slime quieres primero?', 'Which slime do you want first?'), ('>Crear<', '>Create<'), ('>Cancelar<', '>Cancel<'),
  ('aria-label="Mis slimes"', 'aria-label="My slimes"'), ('Mi colección de slimes', 'My slime collection'), ('← Menú', '← Menu'), ('Lo que dice mi cuaderno', 'What my notebook says'),

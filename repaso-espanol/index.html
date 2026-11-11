@@ -835,7 +835,7 @@ function loadPlayer(id) {
   best = load(K('stars'), {}); errs = load(K('errs'), {}); errTot = load(K('errtot'), {}); errHist = load(K('errhist'), {});
   if (!load(K('fix-tabla'), 0)) { Object.keys(errs).forEach(k => { if (k.startsWith('tabla:')) delete errs[k]; }); save(K('errs'), errs); save(K('fix-tabla'), 1); }
   toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
-  royals = load(K('royals'), []).filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
+  royals = [...new Set(load(K('royals'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
   crown = load(K('crown'), null);
   if (!crown) { crown = {}; GROUPS.forEach(G => { crown[G.g] = ACTS.filter(a => a.g === G.g && best[a.id] === 3).map(a => a.id); }); save(K('crown'), crown); }
 }

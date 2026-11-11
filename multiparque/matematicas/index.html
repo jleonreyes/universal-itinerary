@@ -571,16 +571,27 @@ function drawRobot(t) {
 const DRAW = { slime: drawSlime, doll: drawDoll, robot: drawRobot }[THEME.kind];
 const SVGCACHE = {};
 function toySVG(t, extraCls) {
+  if (t.img != null) return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="premios/s-${String(t.img).padStart(2, '0')}.webp" alt="${esc(t.name)}" loading="lazy" decoding="async">`;
   if (!SVGCACHE[t.id]) { const defs = '<defs><linearGradient id="rb" x1="0" x2="1"><stop offset="0" stop-color="#FF7AA8"/><stop offset=".33" stop-color="#FFE27A"/><stop offset=".66" stop-color="#6FE0B5"/><stop offset="1" stop-color="#7CC8FF"/></linearGradient></defs>';
     SVGCACHE[t.id] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${defs}${DRAW(t)}</svg>`); }
   return `<img class="toy photo${extraCls ? ' ' + extraCls : ''}" src="${SVGCACHE[t.id]}" alt="${esc(t.name)}" decoding="async">`;
 }
 const OLD_ANI = {};
-const TOYS = [].concat(...THEME.cats.map((cn, cat) => PAL.map(([nm, col], j) => ({ id:`${THEME.kind}-${cat}-${j}`, name:THEME.name(cat, nm, j), cat, col, num: (j % 9) + 1 }))));
-const ROYALS = THEME.royals.map((name, j) => ({ id:'real-' + j, name, cat:3, royal:true, col:PAL[(j * 7) % PAL.length][1] }));
+if (THEME.photos) {   // premios con imágenes (fotos recortadas) en lugar de dibujos
+  const P = THEME.photos, nm = j => P.names[j];
+  const regIdx = P.names.map((_, j) => j).filter(j => !P.royals.includes(j) && j !== P.reto && !P.finals.includes(j));
+  var PH_TOYS = regIdx.map((j, k) => ({ id:'ph-' + j, img:j, name:nm(j), cat:0 }));
+  var PH_ROY = P.royals.map((j, k) => ({ id:'real-' + k, img:j, name:nm(j), cat:3, royal:true }));
+  var PH_FIN = [{ id:'muneca-castana', img:P.finals[0], name:nm(P.finals[0]), cat:5, doll:true }, { id:'muneca-rubia', img:P.finals[1], name:nm(P.finals[1]), cat:5, doll:true }];
+  // los premios dibujados que ya ganaron se cambian por fotos (no pierden ninguno)
+  for (let c = 0; c < 3; c++) for (let j = 0; j < 25; j++) OLD_ANI[`${THEME.kind}-${c}-${j}`] = PH_TOYS[(c * 25 + j) % PH_TOYS.length].id;
+  for (let j = P.royals.length; j < 9; j++) OLD_ANI['real-' + j] = 'real-' + (j % P.royals.length);
+}
+const TOYS = THEME.photos ? PH_TOYS : [].concat(...THEME.cats.map((cn, cat) => PAL.map(([nm, col], j) => ({ id:`${THEME.kind}-${cat}-${j}`, name:THEME.name(cat, nm, j), cat, col, num: (j % 9) + 1 }))));
+const ROYALS = THEME.photos ? PH_ROY : THEME.royals.map((name, j) => ({ id:'real-' + j, name, cat:3, royal:true, col:PAL[(j * 7) % PAL.length][1] }));
 const CATS = THEME.cats.concat([THEME.word.realCap + ' 👑', THEME.word.retoCap + ' ⭐', THEME.word.finalCap + ' 💛']);
-const SPECIALS = GROUPS.filter(G => G.p === 1).map((G, j) => ({ id:'reto-' + G.g, g:G.g, name:THEME.specials[j % THEME.specials.length], cat:4, special:true, col:PAL[(j * 5 + 3) % PAL.length][1] }));
-const DOLLS = [{ id:'muneca-rubia', name:THEME.finals[1], cat:5, doll:true, hair:'#F3D36B', col:'#FF9FE0' }, { id:'muneca-castana', name:THEME.finals[0], cat:5, doll:true, hair:'#6B3F1D', col:'#7CC8FF' }];
+const SPECIALS = GROUPS.filter(G => G.p === 1).map((G, j) => THEME.photos && j === 0 ? { id:'reto-' + G.g, g:G.g, name:THEME.photos.names[THEME.photos.reto], img:THEME.photos.reto, cat:4, special:true } : ({ id:'reto-' + G.g, g:G.g, name:THEME.specials[j % THEME.specials.length], cat:4, special:true, col:PAL[(j * 5 + 3) % PAL.length][1] }));
+const DOLLS = THEME.photos ? PH_FIN : [{ id:'muneca-rubia', name:THEME.finals[1], cat:5, doll:true, hair:'#F3D36B', col:'#FF9FE0' }, { id:'muneca-castana', name:THEME.finals[0], cat:5, doll:true, hair:'#6B3F1D', col:'#7CC8FF' }];
 const myDoll = () => { const p = me(); const k = p && (p.doll || (p.id === 'p1' ? 'castana' : p.id === 'p2' ? 'rubia' : (hashS(p.id) % 2 ? 'rubia' : 'castana'))); return DOLLS.find(d => d.id === 'muneca-' + k); };
 function hashS(str) { let h = 2166136261; for (const c of String(str)) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; }
 const TOYBY = Object.fromEntries(TOYS.concat(ROYALS, SPECIALS, DOLLS).map(t => [t.id, t]));
@@ -607,7 +618,7 @@ function loadPlayer(id) {
   best = load(K('stars'), {}); errs = load(K('errs'), {}); errTot = load(K('errtot'), {}); errHist = load(K('errhist'), {});
   if (!load(K('fix-tabla'), 0)) { Object.keys(errs).forEach(k => { if (k.startsWith('tabla:')) delete errs[k]; }); save(K('errs'), errs); save(K('fix-tabla'), 1); }
   toys = [...new Set(load(K('toys'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t] && !TOYBY[t].royal); save(K('toys'), toys); toysSeen = Math.min(load(K('toys-seen'), 0), toys.length);
-  royals = load(K('royals'), []).filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
+  royals = [...new Set(load(K('royals'), []).map(t => OLD_ANI[t] || t))].filter(t => TOYBY[t]); specials = load(K('specials'), []).filter(t => TOYBY[t]); doll = load(K('doll'), null); dollCheck();
   crown = load(K('crown'), null);
   if (!crown) { crown = {}; GROUPS.forEach(G => { crown[G.g] = ACTS.filter(a => a.g === G.g && best[a.id] === 3).map(a => a.id); }); save(K('crown'), crown); }
 }

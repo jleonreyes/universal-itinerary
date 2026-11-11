@@ -1043,21 +1043,29 @@ const RENDER = {
   marca(q, it) {
     const sel = new Set(), words = it.keep ? it.words : shuffle(it.words);
     let step = 1;
+    // A veces pide contar las que SÍ tocó y a veces las que NO tocó
+    let inst = it.inst, cntNot = false;
+    if (it.count && Math.random() < .5) {
+      const r = inst.replace(/<b>(cuánt[ao]s)<\/b> tocaste/, '<b>$1 NO</b> tocaste').replace(/<b>how many<\/b> you tapped/, '<b>how many</b> you did <b>NOT</b> tap');
+      if (r !== inst) { inst = r; cntNot = true; }
+    }
+    const nAns = () => cntNot ? words.length - it.ok.length : it.ok.length, nOther = () => cntNot ? it.ok.length : words.length - it.ok.length;
     const draw = () => `${words.map((w, j) => `<button class="tok${sel.has(w) ? ' sel' : ''}" type="button" data-w="${esc(w)}">${esc(w)}</button>`).join('')}`;
-    $('#area').innerHTML = `<div class="qinst">${it.inst}</div><div class="qcard"><div class="sent" id="st">${draw()}</div></div>
+    $('#area').innerHTML = `<div class="qinst">${inst}</div><div class="qcard"><div class="sent" id="st">${draw()}</div></div>
       <div id="cnt"></div><div class="actions"><button class="btn" type="button" id="ck">Revisar ✓</button></div>`;
     $('#st').onclick = e => { const b = e.target.closest('.tok'); if (!b || cur.over || step > 1) return; const w = b.dataset.w; sel.has(w) ? sel.delete(w) : sel.add(w); $('#st').innerHTML = draw(); };
     const clean = w => w.replace(/[.,;:¡!¿?]/g, '');
     $('#ck').onclick = () => {
       if (cur.over) return;
       if (step === 2) { const v = ($('#cn').value || '').trim(); if (!v) { fb('bad', 'Escribe el número.'); return; }
-        if (v === String(it.ok.length)) { rightQ(q, it.why, 1); return; }
-        if (sel.size && v === String(words.length)) { instrErr(q, 'La instrucción pide escribir cuántas TOCASTE, no cuántas palabras hay.', $('#cn')); return; }
+        if (v === String(nAns())) { rightQ(q, it.why + (cntNot ? ` No tocaste ${nAns()}.` : ''), 1); return; }
+        if (v === String(nOther())) { instrErr(q, cntNot ? 'La instrucción pide cuántas NO tocaste.' : 'La instrucción pide cuántas SÍ tocaste.', $('#cn')); return; }
+        if (sel.size && v === String(words.length)) { instrErr(q, 'La instrucción no pide cuántas palabras hay en total.', $('#cn')); return; }
         wrongQ(q, $('#cn')); return; }
       if (!sel.size) { fb('bad', 'Toca las palabras que pide la instrucción.'); return; }
       const okSet = new Set(it.ok), shown = words.filter(w => okSet.has(w)), other = words.filter(w => !okSet.has(w));
       const good = shown.length === sel.size && shown.every(w => sel.has(w));
-      if (good) { if (it.count) { step = 2; fb('ok', '¡Bien! Ahora termina la instrucción.'); $('#cnt').innerHTML = `<div class="flds"><label class="fld"><span>¿Cuántas tocaste?</span><input id="cn" inputmode="numeric" autocomplete="off" style="width:4ch"></label></div>`; return; }
+      if (good) { if (it.count) { step = 2; fb('ok', '¡Bien! Ahora termina la instrucción.'); $('#cnt').innerHTML = `<div class="flds"><label class="fld"><span>${cntNot ? '¿Cuántas NO tocaste?' : '¿Cuántas tocaste?'}</span><input id="cn" inputmode="numeric" autocomplete="off" style="width:4ch"></label></div>`; return; }
         rightQ(q, it.why, 1); return; }
       // ¿tocó justo lo contrario? → no leyó la instrucción
       const opp = other.length && other.length === sel.size && other.every(w => sel.has(w));

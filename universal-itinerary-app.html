@@ -261,11 +261,11 @@ const RIDE_IC = {
  // iconos propios del itinerario (carpeta itinerary-icons)
  'Descanso en hotel':'I/hotel','Salida a pie del hotel':'I/hotel','Check-in en el hotel':'I/hotel','Regreso al hotel':'I/hotel','Traslado al hotel':'I/hotel',
  'Autobús a IOA':'I/bus',
- 'The Untrainable Dragon':'I/untrainable','Fila para The Untrainable Dragon':'I/untrainable','Le Cirque Arcanus':'I/cirque',
- 'Celestial Park':'I/celestial','Universal Celestial Goodnight':'I/celestial','Posición para Celestial Goodnight':'I/celestial',
- 'Meet Mario y Luigi':'I/mario-luigi','Fila de Mario y Luigi':'I/mario-luigi','Meet Princess Peach':'I/peach','Fila de Peach':'I/peach',
+ 'The Untrainable Dragon':'I/untrainable','Le Cirque Arcanus':'I/cirque',
+ 'Celestial Park':'I/celestial','Universal Celestial Goodnight':'I/celestial',
+ 'Meet Mario y Luigi':'I/mario-luigi','Meet Princess Peach':'I/peach',
  'Power-Up Band':'I/powerup','Retos · segunda ronda':'I/powerup','Batalla con Bowser Jr.':'I/bowser','Meet Toothless':'I/toothless',
- 'Ollivanders':'I/ollivanders','Desfile de Mardi Gras':'I/mardigras','Mardi Gras · comida internacional':'I/mardigras','Posición para el desfile':'I/mardigras',
+ 'Ollivanders':'I/ollivanders','Desfile de Mardi Gras':'I/mardigras','Mardi Gras · comida internacional':'I/mardigras',
  'The Bourne Stuntacular':'I/bourne'
 };
 const RIDE_KEYS = Object.keys(RIDE_IC).sort((a,b) => b.length - a.length);
@@ -334,7 +334,7 @@ const DAYS = [
    ]},
  { key:'2027-02-27', tab:['Sáb','27 feb'], title:'Sábado 27 de febrero', park:'Epic Universe', parks:['Epic'],
    sub:'Ministry of Magic + Isle of Berk · Epic 10:00–21:00 · EPA 9:00',
-   tip:'Battle at the Ministry va primera, sin excepción: en el early entry ronda 50–60 min y después sube sin parar. Las filas de cada atracción son el promedio histórico a esa hora del día. Meet Toothless queda de noche porque a mediodía su fila ronda 65–70 min y de noche baja a ~48; confirma en la app de Universal a qué hora termina de recibir visitas y, si cierra antes, aprovecha ese rato en Celestial Park.',
+   tip:'Battle at the Ministry va primera, sin excepción: en el early entry ronda 50–60 min y después sube sin parar. Las filas de cada atracción son el promedio histórico a esa hora del día. Sin descanso en el hotel: la tarde sigue con Stardust Racers, Monsters Unchained y Meet Toothless, cuando sus filas ya bajaron. Confirma en la app de Universal a qué hora termina Toothless de recibir visitas; si cierra antes de las 19:00, haz primero Toothless y después Monsters.',
    seed:[
     L('7:20','Desayuno en cuarto','',FX),
     L('7:50','Salida a pie del hotel'),
@@ -352,10 +352,14 @@ const DAYS = [
     M('15:15','Bièraubeurre Cart · fila para Le Cirque','hpe','cerveza de mantequilla'),
     S('16:00','Le Cirque Arcanus','hpe','función fija · 25 min'),
     X('16:30','Varitas y hechizos · Rue Fondaine · Place Cachée','hpe'),
-    L('17:20','Descanso en hotel','ida y vuelta'),
-    W('19:05','Caminar a Isle de Berk'),
-    X('19:20','Meet Toothless','berk','~48 min de fila · confirmar a qué hora termina','show'),
-    X('20:20','Celestial Park · tiendas y fuentes','celestial'),
+    W('17:20','Caminar a Celestial Park'),
+    R('17:25','Stardust Racers','celestial',[15,22],'3:00','sin'),
+    W('17:55','Caminar a Dark Universe'),
+    R('18:05','Monsters Unchained','dark',[15,21],'5:00','obl'),
+    W('18:40','Caminar a Isle de Berk'),
+    X('18:55','Meet Toothless','berk','~51 min de fila · confirmar a qué hora termina','show'),
+    R('20:00','Fyre Drill · 2ª vez','berk',[3,6],'4:00','sin-moja'),
+    X('20:15','Celestial Park · tiendas y fuentes','celestial'),
     R('20:30','Constellation Carousel iluminado','celestial',[20,28],'2:00','sin'),
     X('21:10','Posición · laguna del carrusel','celestial','20 min antes',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
@@ -467,12 +471,14 @@ const DAYS = [
     M('15:20','Snack · Star Sui Bao','celestial','bao al vapor · Celestial Park'),
     R('15:50','Monsters Unchained','dark',[20,27],'5:00','obl'),
     M('16:30','Comida · Pizza Moon','celestial','pizza al horno de leña · brownie'),
-    L('17:30','Descanso en hotel','ida y vuelta'),
-    X('19:00','Souvenirs · K. Rammelle y tiendas','hpe'),
-    M('19:30',"Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe','cambia de azul a violeta · sin alcohol'),
-    M('19:45','Crepa de cerveza de mantequilla','hpe',"Café L'air De La Sirène"),
-    X('20:05','Varitas de noche · Rue Fondaine','hpe'),
-    R('20:25','Constellation Carousel iluminado','celestial',[20,28],'2:00','sin'),
+    R('17:30','Stardust Racers','celestial',[15,22],'3:00','sin'),
+    W('18:00','Caminar a Dark Universe'),
+    R('18:05','Curse of the Werewolf · 2ª vez','dark',[35,49],'2:00','obl'),
+    X('19:05','Souvenirs · K. Rammelle y tiendas','hpe'),
+    M('19:35',"Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe','cambia de azul a violeta · sin alcohol'),
+    M('19:50','Crepa de cerveza de mantequilla','hpe',"Café L'air De La Sirène"),
+    X('20:10','Varitas de noche · Rue Fondaine','hpe'),
+    R('20:30','Constellation Carousel iluminado','celestial',[20,28],'2:00','sin'),
     X('21:10','Posición · laguna del carrusel','celestial','salida más rápida',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
@@ -725,10 +731,15 @@ if(state.rideV !== 1){
   DAYS.forEach(d => state.days[d.key].forEach(it => { if(it.type === 'ride'){ const v = rideSecsFor(it.name); if(v !== null) it.ride = v; } }));
   state.rideV = 1;
 }
+// 11 nov 2026: sábado y miércoles sin descanso en el hotel
+if(state.planV === 1){
+  ['2027-02-27','2027-03-03'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
+  state.planV = 2;
+}
 // Itinerario optimizado del 10 nov 2026: rehace sábado, lunes y miércoles una sola vez (domingo y martes no cambian)
-if(state.planV !== 1){
+if(!state.planV){
   ['2027-02-27','2027-03-01','2027-03-03'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
-  state.planV = 1;
+  state.planV = 2;
 }
 if(state.travelV !== 2){
   ['2027-02-26','2027-03-04'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));

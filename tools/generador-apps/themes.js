@@ -63,12 +63,13 @@ function toySVG(t, extraCls) {
 const OLD_ANI = {};
 if (THEME.photos) {   // premios con imágenes (fotos recortadas) en lugar de dibujos
   const P = THEME.photos, nm = j => P.names[j];
-  const regIdx = P.names.map((_, j) => j).filter(j => !P.royals.includes(j) && j !== P.reto && !P.finals.includes(j));
+  const regIdx = P.names.map((_, j) => j).filter(j => !P.royals.includes(j) && j !== P.reto && !P.finals.includes(j) && !(P.skip || []).includes(j));
   var PH_TOYS = regIdx.map((j, k) => ({ id:'ph-' + j, img:j, name:nm(j), cat:0 }));
   var PH_ROY = P.royals.map((j, k) => ({ id:'real-' + k, img:j, name:nm(j), cat:3, royal:true }));
   var PH_FIN = [{ id:'muneca-castana', img:P.finals[0], name:nm(P.finals[0]), cat:5, doll:true }, { id:'muneca-rubia', img:P.finals[1], name:nm(P.finals[1]), cat:5, doll:true }];
   // los premios dibujados que ya ganaron se cambian por fotos (no pierden ninguno)
   for (let c = 0; c < 3; c++) for (let j = 0; j < 25; j++) OLD_ANI[`${THEME.kind}-${c}-${j}`] = PH_TOYS[(c * 25 + j) % PH_TOYS.length].id;
+  (P.skip || []).forEach((j, k) => { if (!P.finals.includes(j)) OLD_ANI['ph-' + j] = PH_TOYS[PH_TOYS.length - 1 - k].id; });   // los que se quitaron se cambian por otro
   for (let j = P.royals.length; j < 9; j++) OLD_ANI['real-' + j] = 'real-' + (j % P.royals.length);
 }
 const TOYS = THEME.photos ? PH_TOYS : [].concat(...THEME.cats.map((cn, cat) => PAL.map(([nm, col], j) => ({ id:`${THEME.kind}-${cat}-${j}`, name:THEME.name(cat, nm, j), cat, col, num: (j % 9) + 1 }))));

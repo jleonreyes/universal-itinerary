@@ -433,10 +433,10 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 </section>
 
 <section class="screen" id="s-look" hidden>
-  <div class="bar"><button class="back" data-act="go" data-to="practice">← Back</button><h2 id="look-title">Look</h2></div>
-  <p class="note" style="text-align:left">Tap a word to hear it and its letters.</p>
+  <div class="bar"><button class="back" id="look-back" data-act="go" data-to="practice">← Back</button><h2 id="look-title">Look</h2></div>
+  <p class="note" id="look-note" style="text-align:left">Tap a word to hear it and its letters.</p>
   <div class="look-list" id="look-list"></div>
-  <div class="row"><button class="btn gold" data-act="lookplay">Play this block ▶</button></div>
+  <div class="row"><button class="btn gold" id="look-play" data-act="lookplay">Play this block ▶</button></div>
 </section>
 
 <section class="screen" id="s-game" hidden>
@@ -622,6 +622,17 @@ const BLOCKS=[
    qs:[['Who sang a song at the fair?','cowboy'],['Who read her book?','author'],['What did the ice start to do?','thaw'],['What did I give Mom?','flower'],['How was the fair? It was very…','crowded']]}}
 ];
 BLOCKS.forEach(b=>b.track='spell');
+/* ---------- MEANINGS of the spelling words (simple English), for the "Meanings" level at the start of each block ---------- */
+const SPELL_DEFS={backpack:'A bag you carry on your back.',homework:'School work you do at home.',starfish:'A sea animal shaped like a star.',bedroom:'The room where you sleep.',fireworks:'Bright lights that explode in the sky at a party.',raindrops:'Small drops of water that fall from the sky.',sunlite:'The light that comes from the sun.',toothbrush:'A small brush to clean your teeth.',birthday:'The day you were born. You have a party!',rainbow:'Colored arch in the sky after the rain.',
+airplane:'A machine with wings that flies in the sky.',baseball:'A game with a bat and a small ball.',goldfish:'A small orange fish that lives in a bowl.',mailbox:'A box where letters arrive.',moonlight:'The light that comes from the moon.',crosswalk:'Lines on the street where people cross.',rowboat:'A small boat you move with oars.',snowstorm:'A storm with a lot of snow and wind.',spaceship:'A vehicle that travels to space.',wheelchair:'A chair with wheels for people who cannot walk.',
+coin:'A round piece of metal money.',join:'To come together with others.',point:'To show something with your finger.',soil:'The dirt where plants grow.',boil:'To heat water until it bubbles.',oil:'A thick liquid for cooking or for cars.',boy:'A child who is not a girl.',toy:'Something children play with.',joy:'A feeling of great happiness.',enjoy:'To like doing something a lot.',royal:'Of a king or a queen.',
+happy:'Feeling good and glad.',funny:'Something that makes you laugh.',sunny:'With a lot of sun.',baby:'A very young child.',lady:'A polite word for a woman.',candy:'A sweet food.',city:'A big town with many people.',pony:'A small horse.',story:'Words that tell what happened.',very:'A lot; more than usual.',silly:'Funny and not serious.',lucky:'When good things happen to you by chance.',
+armband:'A band you wear around your arm.',birthplace:'The place where you were born.',cardboard:'Thick, stiff paper used for boxes.',floorboard:'A long piece of wood in a floor.',grandfather:'The father of your mom or dad.',horseback:'Riding on a horse.',newspaper:'Printed pages with the news.',popcorn:'Corn that pops when you heat it.',rainstorm:'A storm with a lot of rain.',smartphone:'A phone that is also a small computer.',sunburn:'Red, painful skin from too much sun.',workshop:'A room where people make or fix things.',
+acorn:'The nut of an oak tree.',bored:'Feeling that nothing is fun.',circus:'A show with clowns, acrobats and animals.',farmhouse:'The house on a farm.',garden:'A place where flowers and plants grow.',keyboard:'The keys you type on.',nervous:'Feeling worried or a little afraid.',party:'A fun time with friends, music and cake.',target:'Something you try to hit.',trapdoor:'A secret door in the floor.',treasure:'Gold, jewels and other valuable things.',worried:'Afraid that something bad will happen.',
+cry:'Tears come out of your eyes.',try:'To do your best to do something.',fly:'To move through the air.',sky:'The space above us, where clouds are.',dry:'Not wet.',shy:'Nervous in front of people.',reply:'To answer.',deny:'To say something is not true.',apply:'To put something on, or ask for a job.',spy:'A person who watches others in secret.',July:'The seventh month of the year.',fry:'To cook in hot oil.',
+citizen:'A person who belongs to a country.',determined:'Wanting something very much and not giving up.',fist:'A closed hand.',proud:'Happy about something you did well.',refugee:'A person who leaves their country because of danger.','role model':'Someone you admire and want to be like.',unkind:'Not nice.',war:'A fight between countries.',visit:'To go to see a person or a place.',present:'A gift.',meal:'Food you eat at one time, like lunch.',photos:'Pictures taken with a camera.',
+audio:'Sound that you can hear and record.',author:'A person who writes books.',cowboy:'A man who rides a horse and takes care of cows.',crowded:'Full of people.',flower:'The colorful part of a plant.',loud:'Making a lot of sound.',noisy:'Full of noise.',sound:'Something you hear.',thaw:'When ice melts and becomes water.'};
+
 
 /* ---------- VOCABULARY (study guide order): [word, picture, meaning, fill-in-the-blank sentence] ---------- */
 const VOCAB=[
@@ -801,7 +812,7 @@ const emptyPeriod=()=>`<div class="empty-period"><span>📭</span><b>No words ye
 const keyOf=(b,w)=>b.track==='vocab'?'v:'+w:w;
 /* give existing players their starting Park Pass tickets right away */
 state.players.forEach(p=>passOf(p));save();
-const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s,c])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',ctx:b.track==='vocab'?(c||''):'',block:b.id})));
+const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s,c])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',mdef:b.track==='vocab'?s:(SPELL_DEFS[w]||SPELL_DEFS[w.toLowerCase()]||''),ctx:b.track==='vocab'?(c||''):'',block:b.id})));
 const plain=k=>k.replace(/^v:/,'');
 const st=(k,p=me())=>p.words[k]||{box:0,r:0,w:0,seen:0};
 const starHTML=n=>[0,1,2].map(i=>`<span class="${i<n?'on':'off'}">★</span>`).join('');
@@ -845,13 +856,13 @@ function renderHome(){
 let mapTrack='spell';
 function getLevels(track=mapTrack,per=getPeriod()){
   const bl=pBlocks(track,per),L=[];
-  bl.forEach(b=>L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`}));
+  bl.forEach(b=>{if(b.words.some(([w,e,x])=>b.track==='vocab'?x:SPELL_DEFS[w]))L.push({id:'meet:'+b.id,kind:'meet',blocks:[b.id],sub:`${b.name} · What do the words mean?`});L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`})});
   const groups=[];for(let i=0;i<bl.length;i+=2)groups.push(bl.slice(i,i+2));
   if(groups.length>1&&groups[groups.length-1].length===1){groups[groups.length-1]=[bl[bl.length-2],bl[bl.length-1]]}
   if(bl.length>1)groups.forEach(g=>L.push({id:'m:'+g.map(b=>b.id).join('+'),kind:'mix',blocks:g.map(b=>b.id),sub:g.map(b=>b.name).join(' + ')+' mixed'}));
   if(!bl.length)return L;
   L.push({id:(track==='spell'?'final':'final:'+track)+(per===1?'':':p'+per),kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
-  L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:`Level ${i+1}`);
+  L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:l.kind==='meet'?`Level ${i+1} · Meanings 💡`:`Level ${i+1}`);
   return L;
 }
 const isOpen=(i,L)=>{const lv=me().levels;return i===0||(lv[L[i-1].id]||0)>0||L.slice(i).some(l=>(lv[l.id]||0)>0)};
@@ -861,11 +872,12 @@ function renderMap(){
   $('#map-ptabs').innerHTML=periodTabs();
   if(!L.length){$('#map-list').innerHTML=`<li>${emptyPeriod()}</li>`;show('s-map');return}
   $('#map-list').innerHTML=L.map((lv,i)=>{const s=p.levels[lv.id]||0,open=isOpen(i,L);
-    return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
+    return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':lv.kind==='meet'?'💡':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
   show('s-map');
 }
 function startLevel(i){
   const L=getLevels(),lv=L[i];if(!lv||!isOpen(i,L)){owlToast();return}
+  if(lv.kind==='meet')return renderLook(lv.blocks[0],i);
   const words=wordsOf(lv.blocks);
   let list=lv.kind==='block'?shuffle(words.slice()):pickWeighted(words,lv.kind==='final'?Math.min(15,words.length):Math.min(12,words.length));
   start(lv.kind,list,lv.id,()=>startLevel(i),'map');
@@ -881,20 +893,25 @@ function renderPractice(){
     if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match words with meanings and fill in the blanks, like the quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
     if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
     h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
-      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}${hasStory(b)?`<button class="btn berry small" data-act="story" data-b="${b.id}">Story 📖</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
+      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn mint small" data-act="meet" data-id="${b.id}">Meanings 💡</button><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}${hasStory(b)?`<button class="btn berry small" data-act="story" data-b="${b.id}">Story 📖</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
     return h+'</div>'};
   $('#prac-ptabs').innerHTML=periodTabs();
   $('#practice-list').innerHTML=(sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean'))||emptyPeriod();
   show('s-practice');
 }
 let lookBlock=null;
-function renderLook(id){
-  lookBlock=id;const b=allBlocks().find(x=>x.id===id);if(!b)return renderPractice();
-  $('#look-title').textContent=b.name;
+let lookMeet=null;
+function renderLook(id,meetI){
+  lookBlock=id;lookMeet=meetI??null;const b=allBlocks().find(x=>x.id===id);if(!b)return renderPractice();
+  $('#look-title').textContent=lookMeet!=null?b.name+' · Meanings':b.name;
   const vocab=b.track==='vocab';
-  $('#look-list').innerHTML=b.words.map(([w,e,s,c])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}" data-def="${vocab?esc(s):''}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${s?`<span class="look-sent">${esc(vocab?s:s.replace('___',w))}</span>`:''}${vocab&&c?`<span class="look-sent"><i>${esc(c.replace('___',w))}</i></span>`:''}</span></button>`).join('');
+  $('#look-note').textContent=lookMeet!=null?'First learn what each word means. Read the meaning and tap the word to hear it. Then play!':'Tap a word to hear it and its letters.';
+  $('#look-play').textContent=lookMeet!=null?'I read them all! Play ▶':'Play this block ▶';
+  $('#look-back').dataset.to=lookMeet!=null&&lookMeet>=0?'map':'practice';
+  $('#look-list').innerHTML=b.words.map(([w,e,s,c])=>`<button class="look-item" data-act="sayword" data-w="${esc(w)}" data-def="${vocab?esc(s):''}"><span class="look-emoji">${e}</span><span style="min-width:0"><span class="look-word">${esc(w)}</span>${!vocab&&lookMeet!=null&&SPELL_DEFS[w]?`<span class="look-sent"><b>Meaning:</b> ${esc(SPELL_DEFS[w])}</span>`:''}${vocab&&lookMeet!=null?`<span class="look-sent"><b>Meaning:</b> ${esc(s)}</span>`:s&&!(lookMeet!=null&&vocab)?`<span class="look-sent">${esc(vocab?s:s.replace('___',w))}</span>`:''}${vocab&&c?`<span class="look-sent"><i>${esc(c.replace('___',w))}</i></span>`:''}</span></button>`).join('');
   show('s-look');
 }
+const playMeet=(id,i)=>{const w=wordsOf([id]).filter(x=>x.mdef).map(x=>({...x,key:'m:'+x.key,def:x.mdef}));if(w.length<3)return playBlock(id);const L=getLevels(),lv=i!=null?L[i]:null;start('meet',shuffle(w.slice()).concat(shuffle(w.slice())),lv?lv.id:null,()=>playMeet(id,i),lv?'map':'practice');if(S){S.blockId=id;S.uniq=w.length}};
 const playBlock=id=>{const w=wordsOf([id]);start('practice',shuffle(w.slice()),null,()=>playBlock(id),'practice');if(S)S.blockId=id};
 const playMatch=(ids,n)=>{const w=wordsOf(ids).filter(x=>x.def&&canChoose(x));if(!w.length)return renderPractice();start('match',n?pickWeighted(w,Math.min(n,w.length)):shuffle(w.slice()),null,()=>playMatch(ids,n),'practice');if(S&&ids.length===1)S.blockId=ids[0]};
 const playTricky=track=>{const t=trickyWords(track);if(!t.length)return renderPractice();start('practice',t,null,()=>playTricky(track),'practice')};
@@ -1004,6 +1021,7 @@ function start(kind,list,levelId,replay,from){
   show('s-game');nextQ();
 }
 function chooseMode(w,tries){
+  if(S.kind==='meet')return tries>0?'match':(Math.random()<.5?'match':'meaning');
   if(w.def&&canChoose(w)){
     const pickChoice=()=>{const r=Math.random();if(w.ctx&&r<.35)return'context';return r<.7?'match':'meaning'};
     if(S.kind==='match')return pickChoice();
@@ -1022,7 +1040,7 @@ function chooseMode(w,tries){
 }
 function vocabWithDefs(){return allBlocks('vocab').flatMap(b=>b.words.map(x=>({word:x[0],def:x[2],block:b.id}))).filter(x=>x.def)}
 const CHOICE=['match','meaning','context','pickspell'];
-function canChoose(w){return vocabWithDefs().filter(x=>x.word!==w.word).length>=2}
+function canChoose(w){if(S&&S.kind==='meet')return true;return vocabWithDefs().filter(x=>x.word!==w.word).length>=2}
 function misspellings(word){
   const L=word.toLowerCase(),cap=word[0]!==L[0],V={a:'e',e:'i',i:'e',o:'u',u:'o'};
   const rule=[x=>x.replace(/y$/,'ie'),x=>x.replace(/y$/,'i'),x=>x.replace(/y$/,'ey'),x=>x.replace(/oy/,'oi'),x=>x.replace(/oi/,'oy'),
@@ -1038,7 +1056,7 @@ function misspellings(word){
 }
 function makeOpts(w,mode){
   if(mode==='pickspell')return shuffle(misspellings(w.word).map(x=>({word:x})).concat([{word:w.word}]));
-  const n=mode==='meaning'?3:4,all=vocabWithDefs().filter(x=>x.word!==w.word&&x.def!==w.def);
+  const n=mode==='meaning'?3:4,all=(S&&S.kind==='meet'?[...new Map(S.queue.map(q=>[q.w.word,{word:q.w.word,def:q.w.def,block:q.w.block}])).values()]:vocabWithDefs()).filter(x=>x.word!==w.word&&x.def!==w.def);
   const same=shuffle(all.filter(x=>x.block===w.block)),other=shuffle(all.filter(x=>x.block!==w.block));
   const seen=new Set([w.word]),pick=[];
   for(const x of same.concat(other)){if(pick.length>=n-1)break;if(!seen.has(x.word)){seen.add(x.word);pick.push(x)}}
@@ -1203,7 +1221,7 @@ function finish(){
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
-  $('#r-line').textContent=S.kind==='story'?`You got ${good} of ${keys.length} story words right on the first try.`:S.kind==='match'?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
+  $('#r-line').textContent=S.kind==='story'?`You got ${good} of ${keys.length} story words right on the first try.`:(S.kind==='match'||S.kind==='meet')?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
   if(motivGot)got.unshift(motivGot);
   const rule=practice?'3 stars and no mistakes':'3 stars';
@@ -1370,7 +1388,8 @@ const acts={
   skey:b=>storyKey(b.dataset.k),
   sread:()=>ST&&say(ST.phase==='qs'?storyRead()+'. '+ST.qs[ST.qi].q:storyRead(),.8),
   squit:b=>{if(!armed(b))return;speechSynthesis&&speechSynthesis.cancel();ST=null;S=null;renderPractice()},
-  lookplay:()=>lookBlock&&playBlock(lookBlock),
+  lookplay:()=>lookBlock&&(lookMeet!=null?playMeet(lookBlock,lookMeet):playBlock(lookBlock)),
+  meet:b=>renderLook(b.dataset.id,-1),
   tricky:b=>playTricky(b.dataset.track),
   sayword:b=>spellOut(b.dataset.w,b.dataset.def||''),
   tile:b=>{if(!b.classList.contains('used'))press(b.textContent,b)},

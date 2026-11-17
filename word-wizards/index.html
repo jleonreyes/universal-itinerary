@@ -1030,7 +1030,10 @@ function owl(t){$('#owl-msg').textContent=t;const o=$('#st-owl');if(o)o.textCont
 
 function start(kind,list,levelId,replay,from){
   if(!list.length)return;
-  S={kind,levelId,replay,from,flawless:true,queue:list.map(w=>({w,tries:0})),i:0,pts:0,streak:0,first:{},uniq:list.length};
+  // Spelling: después de practicar cada palabra, la escriben COMPLETA letra por letra (al final de la ronda)
+  const q=list.map(w=>({w,tries:0}));
+  if(!['meet','match','story'].includes(kind))shuffle(list.filter(w=>!w.def).slice()).forEach(w=>q.push({w,tries:0,force:'spell'}));
+  S={kind,levelId,replay,from,flawless:true,queue:q,i:0,pts:0,streak:0,first:{},uniq:list.length};
   $('#quit-btn').dataset.armed='';$('#quit-btn').textContent='✕ Stop';
   show('s-game');nextQ();
 }
@@ -1077,7 +1080,7 @@ function makeOpts(w,mode){
   return shuffle(pick.concat([{word:w.word,def:w.def,block:w.block}]));
 }
 function buildQ(it){
-  const w=it.w,letters=[...w.word],mode=chooseMode(w,it.tries);
+  const w=it.w,letters=[...w.word],mode=it.force||chooseMode(w,it.tries);
   if(CHOICE.includes(mode))return{it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
   const idx=letters.map((c,i)=>i).filter(i=>letters[i]!==' ');
   let hidden;
@@ -1091,7 +1094,7 @@ function nextQ(){
   if(S.i>=S.queue.length)return finish();
   Q=buildQ(S.queue[S.i]);
   const n=Object.keys(S.first).length+(S.first[Q.w.key]===undefined?1:0);
-  $('#g-count').textContent=Q.it.tries>0?`Again: let's fix this one!`:`Word ${Math.min(n,S.uniq)} of ${S.uniq}`;
+  $('#g-count').textContent=Q.it.force&&!Q.it.tries?`✍️ Write the whole word · ${S.queue.slice(0,S.i+1).filter(x=>x.force&&!x.tries).length} of ${S.queue.filter(x=>x.force&&!x.tries).length}`:Q.it.tries>0?`Again: let's fix this one!`:`Word ${Math.min(n,S.uniq)} of ${S.uniq}`;
   $('#g-bar').style.width=(Object.keys(S.first).length/S.uniq*100)+'%';
   $('#g-pts').textContent=me().points;
   const sk=$('#g-streak');sk.hidden=S.streak<2;sk.textContent=`🔥 ${S.streak} in a row!`;
@@ -1160,7 +1163,7 @@ function complete(){
   const s=p.words[k]||(p.words[k]={box:0,r:0,w:0,seen:0});s.seen++;
   let pts;
   if(perfect){S.streak++;pts=10+Math.min(S.streak-1,5)*2;s.box=Math.min(5,s.box+1);s.r++}
-  else{S.flawless=false;S.streak=0;pts=3;s.box=Math.max(0,s.box-1);s.w++;if(Q.it.tries<2)S.queue.splice(Math.min(S.queue.length,S.i+3),0,{w:Q.w,tries:Q.it.tries+1})}
+  else{S.flawless=false;S.streak=0;pts=3;s.box=Math.max(0,s.box-1);s.w++;if(Q.it.tries<2)S.queue.splice(Math.min(S.queue.length,S.i+3),0,{w:Q.w,tries:Q.it.tries+1,force:Q.it.force})}
   if(Q.it.tries===0)S.first[k]=perfect;
   S.pts+=pts;p.points+=pts;p.toward+=pts;save();
   renderSlots();

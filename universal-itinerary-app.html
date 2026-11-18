@@ -347,7 +347,7 @@ const DAYS = [
     X('12:40','Fila para The Untrainable Dragon','berk','10 min antes'),
     S('12:50','The Untrainable Dragon','berk','función fija · 25 min'),
     R('13:20','Fyre Drill','berk',[20,31],'4:00','sin-moja'),
-    M('14:00','Comida · Mead Hall','berk','mac and cheese · hamburguesa · pollo'),
+    M('14:00','Comida · Mead Hall','berk','salmón · alitas de pavo · albóndigas · kids: chicken tenders (aquí no venden el cono de mac and cheese)'),
     W('15:00','Regresar a Ministry'),
     M('15:15','Bièraubeurre Cart · fila para Le Cirque','hpe','cerveza de mantequilla'),
     S('16:00','Le Cirque Arcanus','hpe','función fija · 25 min'),
@@ -357,14 +357,14 @@ const DAYS = [
     W('18:05','Caminar a Isle de Berk'),
     R('18:20',"Dragon Racer's Rally · 2ª vez",'berk',[20,28],'2:00','obl'),
     X('19:05','Meet Toothless','berk','~51 min de fila · confirmar a qué hora termina','show'),
-    X('20:05','Celestial Park · tiendas y fuentes','celestial'),
-    R('20:35','Constellation Carousel iluminado','celestial',[20,27],'2:00','sin'),
-    X('21:10','Posición · laguna del carrusel','celestial','20 min antes',FX),
+    W('20:00','Caminar a Celestial Park'),
+    R('20:10','Constellation Carousel iluminado','celestial',[20,27],'2:00','sin'),
+    X('20:45','Posición · laguna del carrusel','celestial','45–60 min antes para ir sentados','other',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
  { key:'2027-02-28', tab:['Dom','28 feb'], title:'Domingo 28 de febrero', park:'Epic Universe', parks:['Epic'],
    sub:'Super Nintendo World + Dark Universe · Epic 10:00–21:00 · EPA 9:00',
-   tip:'Celestial Goodnight se ve mejor de cara al Helios Grand Hotel, en el arco del portal de Dark Universe al Meteor Astropub. Si Mine-Cart marca más de 50 min o está detenida, pasa directo a Mario Kart y recupérala el miércoles. Mario y Luigi están en planta baja y Peach en el nivel superior: fórmate 20 minutos antes de cada función.',
+   tip:'Para Celestial Goodnight hay que llegar 45–60 min antes para ir sentados; se ve mejor de cara al Helios Grand Hotel, en el arco del portal de Dark Universe al Meteor Astropub. Si Mine-Cart marca más de 50 min o está detenida, pasa directo a Mario Kart y recupérala el miércoles. Mario y Luigi están en planta baja y Peach en el nivel superior: fórmate 20 minutos antes de cada función.',
    seed:[
     L('7:20','Desayuno en cuarto','',FX),
     L('7:50','Salida a pie del hotel'),
@@ -386,8 +386,8 @@ const DAYS = [
     R('18:10','Monsters Unchained','dark',[15,30],'5:00','obl'),
     R('18:50','Curse of the Werewolf','dark',[20,45],'2:00','sin'),
     X('19:35','Dark Universe de noche','dark'),
-    W('20:50','Caminar a Celestial Park'),
-    X('21:00','Posición · portal Dark Universe a Meteor Astropub','celestial','30 min antes',FX),
+    W('20:30','Caminar a Celestial Park'),
+    X('20:40','Posición · portal Dark Universe a Meteor Astropub','celestial','45–60 min antes para ir sentados','other',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
  { key:'2027-03-01', tab:['Lun','1 mar'], title:'Lunes 1 de marzo', park:'Harry Potter · IOA ↔ USF', parks:['IOA','USF'],
@@ -476,9 +476,9 @@ const DAYS = [
     X('19:15','Souvenirs · K. Rammelle y tiendas','hpe'),
     M('19:35',"Beau Thé Bleu d'Occamy · Bar Moonshine",'hpe','cambia de azul a violeta · sin alcohol'),
     M('19:50','Crepa de cerveza de mantequilla','hpe',"Café L'air De La Sirène"),
-    X('20:10','Varitas de noche · Rue Fondaine','hpe'),
-    R('20:25','Constellation Carousel iluminado','celestial',[20,28],'2:00','sin'),
-    X('21:10','Posición · laguna del carrusel','celestial','salida más rápida',FX),
+    W('20:05','Caminar a Celestial Park'),
+    R('20:10','Constellation Carousel iluminado','celestial',[20,27],'2:00','sin'),
+    X('20:45','Posición · laguna del carrusel','celestial','45–60 min antes para ir sentados · salida más rápida','other',FX),
     S('21:30','Universal Celestial Goodnight','celestial','30 min tras el cierre',{d:20}),
    ]},
  { key:'2027-03-04', tab:['Jue','4 mar'], title:'Jueves 4 de marzo', park:'Vuelo de regreso', parks:[],
@@ -510,7 +510,7 @@ const CAT = [
    o('Astronomica','celestial',20,'fuentes y juegos de agua','other'),
    o('Universal Celestial Goodnight','celestial',20,'30 min tras el cierre','show'),
    o('The Cosmos Fountain','celestial',15,'show de fuentes y luces · noche','show'),
-   o('Posición para Celestial Goodnight','celestial',30,'30 min antes'),
+   o('Posición para Celestial Goodnight','celestial',50,'45–60 min antes para ir sentados'),
    o('Comida · Pizza Moon','celestial',70,'pizza al horno de leña · brownie','meal'),
    o('Snack · Star Sui Bao','celestial',30,'bao al vapor','meal'),
    o('Comida · The Blue Dragon','celestial',60,'pan-asiático','meal'),
@@ -533,7 +533,7 @@ const CAT = [
    o('The Untrainable Dragon','berk',45,'función fija · 25 min','show'),
    o('Meet Toothless','berk',30,'filas largas','show'),
    o('Viking Training Camp','berk',45),
-   o('Comida · Mead Hall','berk',45,'mac and cheese · hamburguesa · pollo','meal'),
+   o('Comida · Mead Hall','berk',45,'salmón · alitas de pavo · albóndigas · kids: chicken tenders (aquí no venden el cono de mac and cheese)','meal'),
    o("Comida · Hooligan's Grog & Gruel",'berk',40,'mac and cheese','meal'),
  ]],
  ['Epic · Super Nintendo World', [
@@ -735,10 +735,34 @@ if(state.planV === 1 || state.planV === 2){
   ['2027-02-27','2027-03-03'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
   state.planV = 3;
 }
+// 18 nov 2026: Celestial Goodnight con 45–60 min de anticipación; nota de Mead Hall
+if(state.planV === 3){
+  ['2027-02-27','2027-03-03'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
+  state.planV = 4;
+}
+// Corrige renglones de posición que debían tener hora fija
+DAYS.forEach(d => (state.days[d.key] || []).forEach(it => {
+  if(it.type && typeof it.type === 'object'){ it.fixed = true; it.type = 'other'; }
+}));
+// Domingo: solo se ajusta la llegada a Celestial Goodnight, sin tocar lo demás que hayan editado
+if(state.sunV !== 1){
+  const sun = state.days['2027-02-28'] || [];
+  const pos = sun.find(it => it.name.startsWith('Posición · portal Dark Universe'));
+  const du = sun.find(it => it.name === 'Dark Universe de noche');
+  if(du && du.dur === 75) du.dur = 55;
+  if(pos){
+    pos.note = '45–60 min antes para ir sentados'; pos.dur = 50;
+    if(pos.at === toMin('21:00')) pos.at = toMin('20:40');
+  }
+  state.sunV = 1;
+}
+DAYS.forEach(d => (state.days[d.key] || []).forEach(it => {
+  if(it.name === 'Comida · Mead Hall' && /mac and cheese · hamburguesa/.test(it.note)) it.note = 'salmón · alitas de pavo · albóndigas · kids: chicken tenders (aquí no venden el cono de mac and cheese)';
+}));
 // Itinerario optimizado del 10 nov 2026: rehace sábado, lunes y miércoles una sola vez (domingo y martes no cambian)
 if(!state.planV){
   ['2027-02-27','2027-03-01','2027-03-03'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));
-  state.planV = 3;
+  state.planV = 4;
 }
 if(state.travelV !== 2){
   ['2027-02-26','2027-03-04'].forEach(k => state.days[k] = build(DAYS.find(d => d.key === k).seed));

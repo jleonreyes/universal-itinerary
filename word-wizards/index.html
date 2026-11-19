@@ -172,6 +172,14 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
 .tile{width:clamp(48px,13vw,66px);height:clamp(54px,14vw,72px);border-radius:16px;background:var(--gold);color:var(--ink);font-size:clamp(1.6rem,6vw,2.2rem);font-weight:700;box-shadow:0 5px 0 var(--gold-deep);transition:transform .08s}
 .tile:active{transform:translateY(4px);box-shadow:0 1px 0 var(--gold-deep)}
 .tile.used{visibility:hidden}
+
+.dline{min-height:64px;width:100%;border-bottom:3px solid var(--sky-3);font-size:clamp(1.8rem,7vw,2.4rem);font-weight:800;letter-spacing:.06em;text-align:center;padding:8px 4px;margin-top:8px;word-break:break-all}
+.dline .cur{display:inline-block;width:3px;height:1em;background:var(--sky-3);vertical-align:-.12em;animation:dblink 1s steps(2) infinite}
+@keyframes dblink{50%{opacity:0}}
+.dres{width:100%;display:flex;flex-direction:column;gap:8px}
+.dres .grade{font-size:3rem;font-weight:900;text-align:center}
+.drow{display:flex;justify-content:space-between;gap:10px;background:var(--paper);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:1.15rem;font-weight:700}
+.drow .bad{color:#C23B34;text-decoration:line-through}.drow .ok{color:#23804D}
 .kb-row{display:flex;gap:6px;justify-content:center;width:100%}
 .key{flex:1 1 0;max-width:64px;min-width:0;height:clamp(50px,12vw,60px);border-radius:12px;background:var(--sky-3);color:var(--paper);font-size:clamp(1.3rem,5vw,1.7rem);font-weight:700;box-shadow:0 4px 0 var(--sky)}
 .key:active{transform:translateY(3px);box-shadow:0 1px 0 var(--sky)}
@@ -461,6 +469,21 @@ h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.1}
     <button class="btn gold" data-act="next" id="next-btn">Next ➜</button>
   </div>
   <div class="owl"><span class="owl-face" aria-hidden="true">🦉</span><p id="owl-msg">Let's spell!</p></div>
+</section>
+
+<section class="screen" id="s-dict" hidden>
+  <div class="gbar">
+    <button class="back" data-act="dquit">✕ Stop</button>
+    <div class="gprog"><div class="gprog-txt" id="d-count">Dictation</div><div class="meter thin"><span id="d-bar"></span></div></div>
+    <span class="chip stat">📝</span>
+  </div>
+  <div class="qcard" id="d-card">
+    <p class="q-inst" id="d-inst">Listen and write the word. No help, like in class!</p>
+    <div class="q-tools"><button class="tool" data-act="dhear">🔊 Hear it again</button></div>
+    <div class="dline" id="d-line"></div>
+  </div>
+  <div class="input" id="d-input"></div>
+  <div class="dres" id="d-res" hidden></div>
 </section>
 
 <section class="screen" id="s-story" hidden>
@@ -883,7 +906,7 @@ let voice=null;
 function pickVoice(){try{const vs=speechSynthesis.getVoices();voice=vs.find(v=>/en[-_]US/i.test(v.lang)&&/Samantha|Ava|Allison|Nicky|Google US/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null}catch(e){}}
 try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
 function say(text,rate=.85){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u)}catch(e){}}
-const spellOut=(w,extra='')=>say(`${w}. ${[...w].filter(c=>c!==' ').map(c=>c.toUpperCase()).join(', ')}. ${w}. ${extra}`,.8);
+const spellOut=(w,extra='')=>say(`${w}. ${[...w].filter(c=>c!==' ').map(c=>c==='-'?'dash':c.toUpperCase()).join(', ')}. ${w}. ${extra}`,.8);
 
 function confetti(n=46){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const box=document.createElement('div');box.className='confetti';const cs=['var(--gold)','var(--berry)','var(--mint)','var(--lilac)','var(--white)'];for(let i=0;i<n;i++){const p=document.createElement('i');p.style.setProperty('--x',Math.random()*100+'%');p.style.setProperty('--d',Math.random()*.5+'s');p.style.setProperty('--c',rand(cs));p.style.setProperty('--r',(Math.random()*900-450)+'deg');box.appendChild(p)}document.body.appendChild(box);setTimeout(()=>box.remove(),2600)}
 
@@ -908,13 +931,13 @@ function renderHome(){
 let mapTrack='spell';
 function getLevels(track=mapTrack,per=getPeriod()){
   const bl=pBlocks(track,per),L=[];
-  bl.forEach(b=>{if(b.words.some(([w,e,x])=>b.track==='vocab'?x:SPELL_DEFS[w]))L.push({id:'meet:'+b.id,kind:'meet',blocks:[b.id],sub:`${b.name} · What do the words mean?`});if(b.track!=='vocab'&&b.words.filter(([w])=>patternOf(w)).length>=4)L.push({id:'snd:'+b.id,kind:'sounds',blocks:[b.id],sub:`${b.name} · Sound rules 🔤`});L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`})});
+  bl.forEach(b=>{if(b.words.some(([w,e,x])=>b.track==='vocab'?x:SPELL_DEFS[w]))L.push({id:'meet:'+b.id,kind:'meet',blocks:[b.id],sub:`${b.name} · What do the words mean?`});if(b.track!=='vocab'&&b.words.filter(([w])=>patternOf(w)).length>=4)L.push({id:'snd:'+b.id,kind:'sounds',blocks:[b.id],sub:`${b.name} · Sound rules 🔤`});L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`});if(b.track!=='vocab')L.push({id:'dict:'+b.id,kind:'dict',blocks:[b.id],sub:`${b.name} · Dictation like in class 📝`})});
   const groups=[];for(let i=0;i<bl.length;i+=2)groups.push(bl.slice(i,i+2));
   if(groups.length>1&&groups[groups.length-1].length===1){groups[groups.length-1]=[bl[bl.length-2],bl[bl.length-1]]}
   if(bl.length>1)groups.forEach(g=>L.push({id:'m:'+g.map(b=>b.id).join('+'),kind:'mix',blocks:g.map(b=>b.id),sub:g.map(b=>b.name).join(' + ')+' mixed'}));
   if(!bl.length)return L;
   L.push({id:(track==='spell'?'final':'final:'+track)+(per===1?'':':p'+per),kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
-  L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:l.kind==='meet'?`Level ${i+1} · Meanings 💡`:l.kind==='sounds'?`Level ${i+1} · Sounds 🔤`:`Level ${i+1}`);
+  L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:l.kind==='meet'?`Level ${i+1} · Meanings 💡`:l.kind==='sounds'?`Level ${i+1} · Sounds 🔤`:l.kind==='dict'?`Level ${i+1} · Dictation 📝`:`Level ${i+1}`);
   return L;
 }
 const isOpen=(i,L)=>{const lv=me().levels;return i===0||(lv[L[i-1].id]||0)>0||L.slice(i).some(l=>(lv[l.id]||0)>0)};
@@ -924,18 +947,58 @@ function renderMap(){
   $('#map-ptabs').innerHTML=periodTabs();
   if(!L.length){$('#map-list').innerHTML=`<li>${emptyPeriod()}</li>`;show('s-map');return}
   $('#map-list').innerHTML=L.map((lv,i)=>{const s=p.levels[lv.id]||0,open=isOpen(i,L);
-    return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':lv.kind==='meet'?'💡':lv.kind==='sounds'?'🔤':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
+    return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':lv.kind==='meet'?'💡':lv.kind==='sounds'?'🔤':lv.kind==='dict'?'📝':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
   show('s-map');
 }
 function startLevel(i){
   const L=getLevels(),lv=L[i];if(!lv||!isOpen(i,L)){owlToast();return}
   if(lv.kind==='meet')return renderLook(lv.blocks[0],i);
+  if(lv.kind==='dict')return startDict(lv.blocks[0],i);
   if(lv.kind==='sounds'){const w=wordsOf(lv.blocks).filter(x=>patternOf(x.word)).map(x=>({...x,key:'s:'+x.key}));start('sounds',shuffle(w.slice()).concat(shuffle(w.slice())),lv.id,()=>startLevel(i),'map');if(S)S.uniq=w.length;return}
   const words=wordsOf(lv.blocks);
   let list=lv.kind==='block'?shuffle(words.slice()):pickWeighted(words,lv.kind==='final'?Math.min(15,words.length):Math.min(12,words.length));
   start(lv.kind,list,lv.id,()=>startLevel(i),'map');
 }
 function owlToast(){sBonk()}
+
+
+/* ---------- 📝 DICTATION: like the Friday dictation in class — no boxes, no letter count, no help, checked at the end ---------- */
+let D=null;
+function bonusVocab(per){const v=wordsOf(pBlocks('vocab',per).map(b=>b.id)).filter(w=>!/\s/.test(w.word));return shuffle(v).slice(0,2).map(w=>({...w,bonus:true}))}
+function startDict(blockId,levelIdx){
+  const b=allBlocks('spell').find(x=>x.id===blockId),words=shuffle(wordsOf([blockId]));
+  D={blockId,levelIdx,list:words.concat(bonusVocab(b.period||1)),i:0,typed:'',ans:[]};
+  show('s-dict');$('#d-res').hidden=true;$('#d-card').hidden=false;$('#d-input').hidden=false;dRender();dSay();
+}
+function dSay(){const w=D.list[D.i];if(!w)return;const sent=w.sent?w.sent.replace('___',w.word):w.ctx?w.ctx.replace('___',w.word):'';say(`${w.word}. ${sent} ${w.word}.`,.8)}
+function dRender(){
+  const w=D.list[D.i],n=D.list.filter(x=>!x.bonus).length;
+  $('#d-count').textContent=w.bonus?`📝 Bonus word`:`📝 Dictation · Word ${D.i+1} of ${n}`;
+  $('#d-bar').style.width=(D.i/D.list.length*100)+'%';
+  $('#d-line').innerHTML=esc(D.typed)+'<span class="cur"></span>';
+  $('#d-input').innerHTML=KB.map((r,k)=>'<div class="kb-row">'+[...r].map(c=>`<button class="key" data-act="dkey" data-k="${c}">${c}</button>`).join('')+(k===2?'<button class="key" data-act="dback" style="max-width:90px">⌫</button>':'')+'</div>').join('')+
+    '<div class="kb-row"><button class="key" data-act="dkey" data-k="-" style="max-width:70px">-</button><button class="key" data-act="dkey" data-k=" " style="max-width:260px;flex:4">space</button></div><div class="row"><button class="btn gold" data-act="dnext">'+(D.i===D.list.length-1?'Finish ✓':'Next ➜')+'</button></div>';
+}
+function dNext(){
+  if(!D.typed.trim()){owlToast();return}
+  D.ans.push(D.typed.trim().toLowerCase().replace(/\s+/g,' '));D.typed='';D.i++;
+  if(D.i<D.list.length){dRender();dSay();return}
+  dFinish();
+}
+function dFinish(){
+  const p=me(),rows=D.list.map((w,j)=>({w,typed:D.ans[j],ok:D.ans[j]===w.word.toLowerCase()}));
+  const main=rows.filter(r=>!r.w.bonus),good=main.filter(r=>r.ok).length,grade=Math.round(good/main.length*100)/10,bonus=rows.filter(r=>r.w.bonus&&r.ok).length;
+  rows.forEach(r=>{const s=p.words[r.w.key]||(p.words[r.w.key]={box:0,r:0,w:0,seen:0});s.seen++;if(r.ok){s.r++;s.box=Math.min(5,s.box+1)}else{s.w++;s.box=0}});
+  const stars=grade>=10?3:grade>=8?2:grade>=6?1:0,pts=good*5+bonus*5;p.points+=pts;p.toward=(p.toward||0)+pts;
+  const L=getLevels('spell'),lv=D.levelIdx!=null?L[D.levelIdx]:null;if(lv)p.levels[lv.id]=Math.max(p.levels[lv.id]||0,stars);
+  save();
+  $('#d-card').hidden=true;$('#d-input').hidden=true;$('#d-count').textContent='📝 Dictation · Results';$('#d-bar').style.width='100%';
+  $('#d-res').hidden=false;
+  $('#d-res').innerHTML=`<div class="grade">${grade}</div><p style="text-align:center;font-weight:700">${good} of ${main.length} words right${bonus?` · +${bonus} bonus`:''} · ${'★'.repeat(stars)}${'☆'.repeat(3-stars)}</p>`+
+    rows.map(r=>`<div class="drow"><span>${r.w.bonus?'⭐ ':''}${r.ok?'<span class="ok">✓ '+esc(r.w.word)+'</span>':'<span class="bad">'+esc(r.typed)+'</span>'}</span><span>${r.ok?'':'✍️ '+esc(r.w.word)}</span></div>`).join('')+
+    `<p style="text-align:center">${grade>=10?'Perfect! You are ready for the dictation in class!':'The words you missed go to your Tricky Words. Practice them and try again!'}</p><div class="row"><button class="btn gold" data-act="dagain">Try again</button><button class="btn berry" data-act="dquit">Done</button></div>`;
+  if(grade>=10)sBlip();
+}
 
 /* ---------- PRACTICE ---------- */
 function trickyWords(track){const all=wordsOf(pBlocks(track).map(b=>b.id)),seen={};return all.filter(w=>{if(seen[w.key])return false;seen[w.key]=1;const s=st(w.key);return s.seen>0&&(s.box<=1||s.w>s.r)}).sort((a,b)=>st(a.key).box-st(b.key).box).slice(0,10)}
@@ -946,7 +1009,7 @@ function renderPractice(){
     if(track==='vocab')h+=`<div class="bcard"><h3>Match Quiz 🔗</h3><p class="peek">Match words with meanings and fill in the blanks, like the quiz at school.</p><div class="row"><button class="btn mint small" data-act="matchall">Play ▶</button></div></div>`;
     if(tr.length)h+=`<div class="bcard tricky"><h3>Tricky Words</h3><p class="peek">${tr.slice(0,6).map(w=>esc(w.word)).join(', ')}${tr.length>6?'…':''}</p><div class="row"><button class="btn gold small" data-act="tricky" data-track="${track}">Play ▶</button></div></div>`;
     h+=bl.map(b=>{const ws=b.words.map(w=>w[0]);const m=ws.filter(w=>st(keyOf(b,w)).box>=4).length;
-      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn mint small" data-act="meet" data-id="${b.id}">Meanings 💡</button><button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}${hasStory(b)?`<button class="btn berry small" data-act="story" data-b="${b.id}">Story 📖</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
+      return `<div class="bcard ${track==='vocab'?'vocab':''}"><h3>${esc(b.name)}</h3><p class="peek">${ws.slice(0,5).map(esc).join(', ')}${ws.length>5?'…':''}</p><div class="meter"><span style="width:${m/ws.length*100}%"></span></div><span class="mcount">${m} of ${ws.length} words learned</span><div class="row"><button class="btn mint small" data-act="meet" data-id="${b.id}">Meanings 💡</button>${track!=='vocab'?`<button class="btn small" style="background:#2B63D1;color:#fff" data-act="dict" data-id="${b.id}">Dictation 📝</button>`:''}<button class="btn gold small" data-act="play" data-b="${b.id}">Play ▶</button>${track==='vocab'?`<button class="btn mint small" data-act="matchblock" data-b="${b.id}">Match 🔗</button>`:''}${hasStory(b)?`<button class="btn berry small" data-act="story" data-b="${b.id}">Story 📖</button>`:''}<button class="btn small" data-act="look" data-b="${b.id}">Look 👀</button></div></div>`}).join('');
     return h+'</div>'};
   $('#prac-ptabs').innerHTML=periodTabs();
   $('#practice-list').innerHTML=(sec('spell','Spelling words','Learn to write them')+sec('vocab','Vocabulary words','Learn what they mean'))||emptyPeriod();
@@ -1003,7 +1066,7 @@ function renderStory(){
       inp.innerHTML='<div class="bank">'+ST.bank.map(w=>{const used=ST.blanks.some(y=>y.done&&y.w===w);return`<button class="opt ${used?'used':''}" data-act="sword" data-w="${esc(w)}">${esc(w)}</button>`}).join('')+'</div>'}
     else{$('#st-inst').textContent=`Blank ${ST.bi+1}: write the word.`;
       const rows=KB.map(r=>'<div class="kb-row">'+[...r].map(k=>`<button class="key" data-act="skey" data-k="${k}">${k}</button>`).join('')+'</div>');
-      rows.push(`<div class="kb-row"><button class="key wide" data-act="skey" data-k="back" aria-label="Delete">⌫</button>${/\s/.test(x.w)?'<button class="key wide" data-act="skey" data-k=" ">space</button>':''}<button class="key wide ok-key" data-act="skey" data-k="ok">OK ✓</button></div>`);
+      rows.push(`<div class="kb-row"><button class="key wide" data-act="skey" data-k="back" aria-label="Delete">⌫</button>${/\s/.test(x.w)?'<button class="key wide" data-act="skey" data-k=" ">space</button>':''}${/-/.test(x.w)?'<button class="key wide" data-act="skey" data-k="-">-</button>':''}<button class="key wide ok-key" data-act="skey" data-k="ok">OK ✓</button></div>`);
       inp.innerHTML=rows.join('')}
   }else{
     const Qn=ST.qs[ST.qi];q.hidden=false;q.textContent=Qn.q;$('#st-inst').textContent='Answer with a word from the story.';
@@ -1130,7 +1193,7 @@ function makeOpts(w,mode){
 function buildQ(it){
   const w=it.w,letters=[...w.word],mode=it.force||chooseMode(w,it.tries);
   if(CHOICE.includes(mode))return{ans:mode==='sound'?patternOf(w.word).p:w.word,sceneTxt:mode==='scene'?rand(w.scene):'',it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
-  const idx=letters.map((c,i)=>i).filter(i=>letters[i]!==' ');
+  const idx=letters.map((c,i)=>i).filter(i=>letters[i]!==' '&&letters[i]!=='-');
   let hidden;
   if(mode==='scramble'||mode==='spell')hidden=idx;
   else{const frac=mode==='fill1'?.35:.6,pool=mode==='fill1'&&idx.length>2?idx.slice(1):idx;hidden=shuffle(pool.slice()).slice(0,Math.max(1,Math.round(idx.length*frac))).sort((a,b)=>a-b)}
@@ -1462,6 +1525,12 @@ const acts={
   tile:b=>{if(!b.classList.contains('used'))press(b.textContent,b)},
   key:b=>press(b.dataset.k,b),
   hint:()=>hint(),
+  dkey:b=>{if(D&&D.typed.length<24){D.typed+=b.dataset.k;sBlip();$('#d-line').innerHTML=esc(D.typed)+'<span class="cur"></span>'}},
+  dback:()=>{if(D){D.typed=D.typed.slice(0,-1);$('#d-line').innerHTML=esc(D.typed)+'<span class="cur"></span>'}},
+  dnext:()=>dNext(),dhear:()=>dSay(),
+  dagain:()=>startDict(D.blockId,D.levelIdx),
+  dquit:()=>{const from=D&&D.levelIdx!=null;speechSynthesis.cancel();D=null;from?renderMap():renderPractice()},
+  dict:b=>startDict(b.dataset.id,null),
   hear:()=>Q&&say(Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word,.7),
   opt:b=>pickOpt(+b.dataset.j,b),
   matchblock:b=>playMatch([b.dataset.b]),
@@ -1515,7 +1584,7 @@ const acts={
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;unlockAudio();const f=acts[b.dataset.act];if(f)f(b,e)});
 document.addEventListener('keydown',e=>{
-  if(!$('#s-story').hidden&&ST){if(e.metaKey||e.ctrlKey)return;const k=e.key;if(k==='Enter')storyKey('ok');else if(k==='Backspace')storyKey('back');else if(k===' ')storyKey(' ');else if(/^[a-zA-Z']$/.test(k))storyKey(k.toLowerCase());return}
+  if(!$('#s-story').hidden&&ST){if(e.metaKey||e.ctrlKey)return;const k=e.key;if(k==='Enter')storyKey('ok');else if(k==='Backspace')storyKey('back');else if(k===' ')storyKey(' ');else if(/^[a-zA-Z'-]$/.test(k))storyKey(k.toLowerCase());return}
   if($('#s-game').hidden||!Q)return;
   if(Q.done&&e.key==='Enter'){acts.next();return}
   const k=e.key.toLowerCase();if(/^[a-z]$/.test(k)&&!e.metaKey&&!e.ctrlKey){unlockAudio();press(k,Q.mode==='scramble'?null:document.querySelector(`.key[data-k="${k}"]`))}

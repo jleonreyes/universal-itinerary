@@ -636,6 +636,32 @@ const BLOCKS=[
    qs:[['What did the prince wear on his head?','crown'],['Where did the prince live?','tower'],['What did the puppy put on the bed?','paw'],['What did they find at the end of the tunnel?','strawberry'],['How was the sky when they came out?','cloudy']]}}
 ];
 BLOCKS.forEach(b=>b.track='spell');
+
+/* ---------- SOUND PATTERNS: the English "au" sound is written OU/OW; AU/AW sound like "o" ---------- */
+const PATS=['ou','ow','au','aw','oi','oy'];
+const PAT_RULE={ou:'OU and OW sound like "au" in Spanish (auto): s<b>ou</b>nd, cr<b>ow</b>n.',ow:'OU and OW sound like "au" in Spanish (auto): s<b>ou</b>nd, cr<b>ow</b>n.',au:'AU and AW sound like an "o": <b>au</b>thor, p<b>aw</b>. Never use them for the "au" sound!',aw:'AU and AW sound like an "o": <b>au</b>thor, p<b>aw</b>. Never use them for the "au" sound!',oi:'OI and OY sound like "oi": n<b>oi</b>sy, j<b>oy</b>. Use OY at the end of a word or syllable.',oy:'OI and OY sound like "oi": n<b>oi</b>sy, j<b>oy</b>. Use OY at the end of a word or syllable.'};
+const RULE_ALL='🔤 <b>OU / OW</b> = "au" sound (sound, crown) · <b>AU / AW</b> = "o" sound (author, paw) · <b>OI / OY</b> = "oi" sound (noisy, joy)';
+function patternOf(word){const L=word.toLowerCase();let best=null;for(const p of PATS){const i=L.indexOf(p);if(i>=0&&(best===null||i<best.i))best={p,i}}return best}
+/* the girls' own spelling mistakes (weekly quiz) → used as tricky options */
+const KNOWN_ERRS={sound:['saund','sond'],loud:['laud','lowd'],crowded:['craunded','craudet','crouded'],noisy:['noicy','noesy','noysy'],flower:['flawer','flouer'],uneasy:['uneisy','unisy','honizy'],cowboy:['caubay','cauboy'],thaw:['thou','tho'],author:['outhor','autor'],audio:['oudio','awdio'],crown:['craun','croun'],tower:['tauer','touer'],cloudy:['claudy','clowdy'],underground:['undergraund','undergrownd'],yawn:['youn','yaun'],paw:['pau','pou'],haul:['howl','hal'],strawberry:['strauberry','strowberry'],joyride:['joiride'],enjoy:['enjoi']};
+/* situations for vocabulary (like the pictures in the quiz) */
+const SCEN={bully:['A big kid takes other kids\' lunch and pushes them every day. He is a…','Who is the PERSON that hurts and scares other kids?'],
+ glare:['Max says nothing. He just looks at Leo with angry eyes. What does Max do?','Her eyes are angry and she stares at you. What is she doing?'],
+ 'pick on':['Some kids laugh at the new girl and call her names. What are they doing?','The big kids always tease the smallest boy. What do they do to him?'],
+ relief:['You lost your dog. One hour later you find it! What do you feel?','The test was hard, but you passed! Phew! What do you feel?'],
+ shame:['You broke Mom\'s vase and lied. Now your face is red. What do you feel?','Everyone laughed at your mistake and you want to hide your face. What do you feel?'],
+ shy:['A girl hides behind her mom when she meets new people. She is…','He speaks very quietly when many people look at him. He is…'],
+ tough:['He fell and hurt his knee, but stood up and kept playing. He is…','The firefighter is brave and strong. She is…'],
+ uneasy:['You hear a strange noise in the dark house. You feel…','Something feels wrong and you are a little worried. You feel…'],
+ angle:['Leo took the photo from up high, looking down. He chose a funny…','You look at the castle from the side, not from the front. You see it from another…'],
+ collage:['Ana glued many magazine pictures on one paper. She made a…','We put lots of photos together on a big poster. It is a…'],
+ doodle:['Tom draws little stars on his notebook without thinking. He likes to…','While I talk on the phone, I draw little hearts. I…'],
+ experiment:['We put an egg in salt water to see if it floats. We did an…','In science class we test an idea to prove it. We do an…'],
+ innovative:['Sara made a robot that nobody had seen before. Her idea is…','A brand-new and original invention is…'],
+ 'old-fashioned':['Grandpa\'s phone has a round dial. It is…','Clothes from a long, long time ago are…'],
+ popular:['Everyone wants to play with Mia. She is…','Many people love this song. It is very…'],
+ 'self-portrait':['I looked in the mirror and drew my own face. I drew a…','A painter paints a picture of herself. It is a…']};
+const NOTE={bully:'bully = a PERSON who hurts or scares others.','pick on':'pick on = an ACTION: to bully or laugh at someone.',shame:'shame = you feel bad about something YOU did.',uneasy:'uneasy = worried; something feels wrong.',shy:'shy = nervous in front of people.',glare:'glare = to look at someone with ANGRY eyes.',relief:'relief = the good feeling when a problem ends.',tough:'tough = brave and strong.'};
 /* ---------- MEANINGS of the spelling words (simple English), for the "Meanings" level at the start of each block ---------- */
 const SPELL_DEFS={backpack:'A bag you carry on your back.',homework:'School work you do at home.',starfish:'A sea animal shaped like a star.',bedroom:'The room where you sleep.',fireworks:'Bright lights that explode in the sky at a party.',raindrops:'Small drops of water that fall from the sky.',sunlite:'The light that comes from the sun.',toothbrush:'A small brush to clean your teeth.',birthday:'The day you were born. You have a party!',rainbow:'Colored arch in the sky after the rain.',
 airplane:'A machine with wings that flies in the sky.',baseball:'A game with a bat and a small ball.',goldfish:'A small orange fish that lives in a bowl.',mailbox:'A box where letters arrive.',moonlight:'The light that comes from the moon.',crosswalk:'Lines on the street where people cross.',rowboat:'A small boat you move with oars.',snowstorm:'A storm with a lot of snow and wind.',spaceship:'A vehicle that travels to space.',wheelchair:'A chair with wheels for people who cannot walk.',
@@ -838,7 +864,7 @@ const emptyPeriod=()=>`<div class="empty-period"><span>📭</span><b>No words ye
 const keyOf=(b,w)=>b.track==='vocab'?'v:'+w:w;
 /* give existing players their starting Park Pass tickets right away */
 state.players.forEach(p=>passOf(p));save();
-const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s,c])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',mdef:b.track==='vocab'?s:(SPELL_DEFS[w]||SPELL_DEFS[w.toLowerCase()]||''),ctx:b.track==='vocab'?(c||''):'',block:b.id})));
+const wordsOf=ids=>allBlocks().filter(b=>ids.includes(b.id)).flatMap(b=>b.words.map(([w,e,s,c])=>({key:keyOf(b,w),word:w,emoji:e,sent:b.track==='vocab'?'':s,def:b.track==='vocab'?s:'',scene:b.track==='vocab'?(SCEN[w]||null):null,mdef:b.track==='vocab'?s:(SPELL_DEFS[w]||SPELL_DEFS[w.toLowerCase()]||''),ctx:b.track==='vocab'?(c||''):'',block:b.id})));
 const plain=k=>k.replace(/^v:/,'');
 const st=(k,p=me())=>p.words[k]||{box:0,r:0,w:0,seen:0};
 const starHTML=n=>[0,1,2].map(i=>`<span class="${i<n?'on':'off'}">★</span>`).join('');
@@ -882,13 +908,13 @@ function renderHome(){
 let mapTrack='spell';
 function getLevels(track=mapTrack,per=getPeriod()){
   const bl=pBlocks(track,per),L=[];
-  bl.forEach(b=>{if(b.words.some(([w,e,x])=>b.track==='vocab'?x:SPELL_DEFS[w]))L.push({id:'meet:'+b.id,kind:'meet',blocks:[b.id],sub:`${b.name} · What do the words mean?`});L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`})});
+  bl.forEach(b=>{if(b.words.some(([w,e,x])=>b.track==='vocab'?x:SPELL_DEFS[w]))L.push({id:'meet:'+b.id,kind:'meet',blocks:[b.id],sub:`${b.name} · What do the words mean?`});if(b.track!=='vocab'&&b.words.filter(([w])=>patternOf(w)).length>=4)L.push({id:'snd:'+b.id,kind:'sounds',blocks:[b.id],sub:`${b.name} · Sound rules 🔤`});L.push({id:'b:'+b.id,kind:'block',blocks:[b.id],sub:`${b.name} · ${b.words.length} words`})});
   const groups=[];for(let i=0;i<bl.length;i+=2)groups.push(bl.slice(i,i+2));
   if(groups.length>1&&groups[groups.length-1].length===1){groups[groups.length-1]=[bl[bl.length-2],bl[bl.length-1]]}
   if(bl.length>1)groups.forEach(g=>L.push({id:'m:'+g.map(b=>b.id).join('+'),kind:'mix',blocks:g.map(b=>b.id),sub:g.map(b=>b.name).join(' + ')+' mixed'}));
   if(!bl.length)return L;
   L.push({id:(track==='spell'?'final':'final:'+track)+(per===1?'':':p'+per),kind:'final',blocks:bl.map(b=>b.id),sub:track==='spell'?'All the words · Beat the Spelling Dragon!':'All the words · Beat the Word Dragon!'});
-  L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:l.kind==='meet'?`Level ${i+1} · Meanings 💡`:`Level ${i+1}`);
+  L.forEach((l,i)=>l.title=l.kind==='final'?`Level ${i+1} · Boss`:l.kind==='mix'?`Level ${i+1} · Mix`:l.kind==='meet'?`Level ${i+1} · Meanings 💡`:l.kind==='sounds'?`Level ${i+1} · Sounds 🔤`:`Level ${i+1}`);
   return L;
 }
 const isOpen=(i,L)=>{const lv=me().levels;return i===0||(lv[L[i-1].id]||0)>0||L.slice(i).some(l=>(lv[l.id]||0)>0)};
@@ -898,12 +924,13 @@ function renderMap(){
   $('#map-ptabs').innerHTML=periodTabs();
   if(!L.length){$('#map-list').innerHTML=`<li>${emptyPeriod()}</li>`;show('s-map');return}
   $('#map-list').innerHTML=L.map((lv,i)=>{const s=p.levels[lv.id]||0,open=isOpen(i,L);
-    return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':lv.kind==='meet'?'💡':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
+    return `<li class="lv ${lv.kind} ${open?'':'locked'}"><button data-act="level" data-i="${i}" ${open?'':'aria-disabled="true"'}><span class="badge">${!open?'🔒':lv.kind==='final'?'🐉':lv.kind==='meet'?'💡':lv.kind==='sounds'?'🔤':i+1}</span><span class="lv-text"><span class="lv-title">${lv.title}</span><span class="lv-sub">${esc(lv.sub)}</span></span><span class="stars">${starHTML(s)}</span></button></li>`}).join('');
   show('s-map');
 }
 function startLevel(i){
   const L=getLevels(),lv=L[i];if(!lv||!isOpen(i,L)){owlToast();return}
   if(lv.kind==='meet')return renderLook(lv.blocks[0],i);
+  if(lv.kind==='sounds'){const w=wordsOf(lv.blocks).filter(x=>patternOf(x.word)).map(x=>({...x,key:'s:'+x.key}));start('sounds',shuffle(w.slice()).concat(shuffle(w.slice())),lv.id,()=>startLevel(i),'map');if(S)S.uniq=w.length;return}
   const words=wordsOf(lv.blocks);
   let list=lv.kind==='block'?shuffle(words.slice()):pickWeighted(words,lv.kind==='final'?Math.min(15,words.length):Math.min(12,words.length));
   start(lv.kind,list,lv.id,()=>startLevel(i),'map');
@@ -1036,21 +1063,26 @@ const OWL={
   pickspell:['Look closely at the letters!','Which one is spelled right?'],
   match:['Which word matches?','Read the meaning. Find the word!'],
   meaning:['What does it mean?','Find the right meaning!'],
+  sound:['Listen to the sound!','OU, OW, AU or AW?'],
+  scene:['Read what happens!','Which word fits the story?'],
   nope:['Not that one. Try again!','Hmm, read it again.','Almost! Try another one.']};
-const INST={context:'Tap the word that fits in the blank.',pickspell:'Which one is spelled right? Tap it.',match:'Tap the word that matches the meaning.',meaning:'Tap the right meaning.',scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
+const INST={sound:'Listen. Which letters make the missing sound?',scene:'Read what happens. Which word fits?',context:'Tap the word that fits in the blank.',pickspell:'Which one is spelled right? Tap it.',match:'Tap the word that matches the meaning.',meaning:'Tap the right meaning.',scramble:'Tap the letters in order.',fill1:'Type the missing letters.',fill2:'Type the missing letters.',spell:'Listen. Spell the whole word.'};
 function owl(t){$('#owl-msg').textContent=t;const o=$('#st-owl');if(o)o.textContent=t}
 
 function start(kind,list,levelId,replay,from){
   if(!list.length)return;
   // Spelling: después de practicar cada palabra, la escriben COMPLETA letra por letra (al final de la ronda)
   const q=list.map(w=>({w,tries:0}));
-  if(!['meet','match','story'].includes(kind))shuffle(list.filter(w=>!w.def).slice()).forEach(w=>q.push({w,tries:0,force:'spell'}));
-  S={kind,levelId,replay,from,flawless:true,queue:q,i:0,pts:0,streak:0,first:{},uniq:list.length};
+  if(!['meet','match','story','sounds'].includes(kind))shuffle(list.slice()).forEach(w=>q.push({w,tries:0,force:'spell'}));
+  S={kind,levelId,replay,from,flawless:true,queue:q,i:0,pts:0,streak:0,first:{},uniq:new Set(list.map(w=>w.key)).size};
   $('#quit-btn').dataset.armed='';$('#quit-btn').textContent='✕ Stop';
   show('s-game');nextQ();
 }
 function chooseMode(w,tries){
-  if(S.kind==='meet')return tries>0?'match':(Math.random()<.5?'match':'meaning');
+  if(S.kind==='sounds')return'sound';
+  if(S.kind==='meet'){if(w.scene&&Math.random()<.34)return'scene';return tries>0?'match':(Math.random()<.5?'match':'meaning')}
+  if(w.scene&&tries===0&&Math.random()<.3)return'scene';
+  if(!w.def&&tries===0&&patternOf(w.word)&&Math.random()<.2)return'sound';
   if(w.def&&canChoose(w)){
     const pickChoice=()=>{const r=Math.random();if(w.ctx&&r<.35)return'context';return r<.7?'match':'meaning'};
     if(S.kind==='match')return pickChoice();
@@ -1059,7 +1091,7 @@ function chooseMode(w,tries){
     if(Math.random()<chance)return pickChoice();
     if(w.word.length>12)return'fill1';
   }
-  if(!w.def&&tries===0&&Math.random()<.25&&misspellings(w.word).length>=2)return'pickspell';
+  if(tries===0&&Math.random()<(KNOWN_ERRS[w.word.toLowerCase()]?.4:.25)&&misspellings(w.word).length>=2)return'pickspell';
   let b=st(w.key).box;
   if(S.kind==='mix')b+=1;
   if(S.kind==='final')b=Math.max(b,2)+1;
@@ -1068,7 +1100,7 @@ function chooseMode(w,tries){
   if(b<=0)return'scramble';if(b===1)return r?'scramble':'fill1';if(b===2)return r?'fill1':'fill2';if(b===3)return r?'fill2':'spell';return'spell';
 }
 function vocabWithDefs(){return allBlocks('vocab').flatMap(b=>b.words.map(x=>({word:x[0],def:x[2],block:b.id}))).filter(x=>x.def)}
-const CHOICE=['match','meaning','context','pickspell'];
+const CHOICE=['match','meaning','context','pickspell','sound','scene'];
 function canChoose(w){if(S&&S.kind==='meet')return true;return vocabWithDefs().filter(x=>x.word!==w.word).length>=2}
 function misspellings(word){
   const L=word.toLowerCase(),cap=word[0]!==L[0],V={a:'e',e:'i',i:'e',o:'u',u:'o'};
@@ -1079,11 +1111,15 @@ function misspellings(word){
     x=>{const i=1+Math.floor(Math.random()*(x.length-2));return x.slice(0,i)+x[i+1]+x[i]+x.slice(i+2)},
     x=>{const ix=[...x].map((c,i)=>V[c]?i:-1).filter(i=>i>=0);if(!ix.length)return x;const i=rand(ix);return x.slice(0,i)+V[x[i]]+x.slice(i+1)}];
   const out=[];const add=v=>{if(v&&v!==L&&v.length>=2&&!/\s{2}/.test(v)&&!out.includes(v))out.push(v)};
+  (KNOWN_ERRS[L]||[]).forEach(add);if(out.length>=2)return shuffle(out).slice(0,2).map(v=>cap?v[0].toUpperCase()+v.slice(1):v);
+  [x=>x.replace(/ou/,'au'),x=>x.replace(/ow/,'au'),x=>x.replace(/ed$/,'et'),x=>x.replace(/sy$/,'cy')].forEach(f=>add(f(L)));
   shuffle(rule.slice()).forEach(f=>add(f(L)));
   for(let k=0;k<12&&out.length<4;k++)add(rand(rnd)(L));
   return shuffle(out).slice(0,2).map(v=>cap?v[0].toUpperCase()+v.slice(1):v);
 }
 function makeOpts(w,mode){
+  if(mode==='sound'){const p=patternOf(w.word).p,set=['oi','oy'].includes(p)?['oi','oy','oe','ui']:['ou','ow','au','aw'];return shuffle(set.map(x=>({word:x})))}
+  if(mode==='scene'){const pool=(S&&S.kind==='meet'?[...new Map(S.queue.map(q=>[q.w.word,q.w])).values()]:wordsOf([w.block])).filter(x=>x.word!==w.word);const near=pool.filter(x=>NOTE[x.word]&&NOTE[w.word]);return shuffle(shuffle(near).concat(shuffle(pool.filter(x=>!near.includes(x)))).slice(0,3).map(x=>({word:x.word,def:x.def||x.mdef})).concat([{word:w.word}]))}
   if(mode==='pickspell')return shuffle(misspellings(w.word).map(x=>({word:x})).concat([{word:w.word}]));
   const n=mode==='meaning'?3:4,all=(S&&S.kind==='meet'?[...new Map(S.queue.map(q=>[q.w.word,{word:q.w.word,def:q.w.def,block:q.w.block}])).values()]:vocabWithDefs()).filter(x=>x.word!==w.word&&x.def!==w.def);
   const same=shuffle(all.filter(x=>x.block===w.block)),other=shuffle(all.filter(x=>x.block!==w.block));
@@ -1093,7 +1129,7 @@ function makeOpts(w,mode){
 }
 function buildQ(it){
   const w=it.w,letters=[...w.word],mode=it.force||chooseMode(w,it.tries);
-  if(CHOICE.includes(mode))return{it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
+  if(CHOICE.includes(mode))return{ans:mode==='sound'?patternOf(w.word).p:w.word,sceneTxt:mode==='scene'?rand(w.scene):'',it,w,letters,mode,hidden:[],cur:0,filled:{},hinted:{},mistakes:0,wrongHere:0,done:false,tiles:null,opts:makeOpts(w,mode)};
   const idx=letters.map((c,i)=>i).filter(i=>letters[i]!==' ');
   let hidden;
   if(mode==='scramble'||mode==='spell')hidden=idx;
@@ -1112,20 +1148,22 @@ function nextQ(){
   const sk=$('#g-streak');sk.hidden=S.streak<2;sk.textContent=`🔥 ${S.streak} in a row!`;
   $('#q-emoji').textContent=Q.opts&&Q.mode!=='pickspell'?'🤔':Q.w.emoji;
   const qs=$('#q-sent');qs.classList.toggle('is-def',!!Q.w.def);
-  qs.innerHTML=Q.mode==='meaning'?`<span class="def-label">Word</span>What does this word mean?`:Q.mode==='context'?`<span class="def-label">Fill in the blank</span>${esc(Q.w.ctx).replace('___','<span class="blank">?</span>')}`:Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
+  qs.innerHTML=Q.mode==='sound'?`<span class="def-label">Sound rule</span>${RULE_ALL}`:Q.mode==='scene'?`<span class="def-label">What is happening?</span>${esc(Q.sceneTxt)}`:Q.mode==='meaning'?`<span class="def-label">Word</span>What does this word mean?`:Q.mode==='context'?`<span class="def-label">Fill in the blank</span>${esc(Q.w.ctx).replace('___','<span class="blank">?</span>')}`:Q.w.def?`<span class="def-label">Meaning</span>${esc(Q.w.def)}`:Q.w.sent?esc(Q.w.sent).replace('___','<span class="blank">?</span>'):'Listen to the word!';
   $('#q-inst').textContent=INST[Q.mode];
   $('#hint-btn').disabled=false;
   $('#feedback').hidden=true;$('#input').hidden=false;
+  if(Q.it.force&&!Q.it.tries&&Q.mode==='spell'){Q.peek=true;$('#q-inst').textContent='👀 Look at the word… then it hides and you write it!';const qq=Q;setTimeout(()=>{if(Q===qq){Q.peek=false;renderSlots();$('#q-inst').textContent=INST.spell;owl('Now write it! ✍️')}},3000)}
   renderSlots();renderInput();owl(rand(OWL[Q.mode]));
-  say(Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word);
+  say(Q.mode==='scene'?Q.sceneTxt:Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word);
 }
 function renderSlots(){
+  if(Q.opts&&Q.mode==='sound'){const el=$('#slots');el.className='slots';const P=patternOf(Q.w.word);el.innerHTML=`<span class="choice-word">${esc(Q.done?Q.w.word:Q.w.word.slice(0,P.i)+'__'+Q.w.word.slice(P.i+2))}</span>`;return}
   if(Q.opts){const el=$('#slots');el.className='slots';el.innerHTML=(Q.mode==='meaning'||Q.done)?`<span class="choice-word">${esc(Q.w.word)}</span>`:'';return}
   const el=$('#slots');el.className='slots'+(Q.done?(Q.mistakes?' miss':' done'):'');
   el.innerHTML=Q.letters.map((c,i)=>{
     if(c===' ')return'<span class="slot space"></span>';
     const hid=Q.hidden.includes(i),cur=!Q.done&&hid&&Q.hidden[Q.cur]===i;
-    const val=!hid?c:(Q.filled[i]||'');
+    const val=!hid||Q.peek?(Q.filled[i]||c):(Q.filled[i]||'');
     return`<span class="slot ${hid?'h':'given'} ${cur?'cur':''} ${hid&&Q.filled[i]&&!Q.hinted[i]?'ok':''} ${Q.hinted[i]?'hint':''}" data-i="${i}">${esc(val)}</span>`}).join('');
 }
 const KB=['qwertyuiop','asdfghjkl','zxcvbnm'];
@@ -1139,11 +1177,11 @@ function clearGlow(){document.querySelectorAll('.glow').forEach(e=>e.classList.r
 function glow(c){clearGlow();const el=Q.mode==='scramble'?[...document.querySelectorAll('.tile')].find(t=>!t.classList.contains('used')&&t.textContent===c):document.querySelector(`.key[data-k="${c.toLowerCase()}"]`);if(el)el.classList.add('glow')}
 function pickOpt(j,el){
   if(!Q||Q.done||!Q.opts||el.disabled)return;
-  if(Q.opts[j].word===Q.w.word){el.classList.add('right');sBlip();complete()}
-  else{Q.mistakes++;sBonk();owl(rand(OWL.nope));el.classList.add('wrong');el.disabled=true}
+  if(Q.opts[j].word===(Q.ans??Q.w.word)){el.classList.add('right');sBlip();if(Q.mode==='sound')owl(PAT_RULE[Q.ans].replace(/<[^>]+>/g,''));complete()}
+  else{Q.mistakes++;sBonk();const c=Q.opts[j].word;owl(Q.mode==='sound'?(PAT_RULE[c]===PAT_RULE[Q.ans]?'Same sound! But this word is spelled with '+Q.ans.toUpperCase()+'. Look at it again.':'Not '+c.toUpperCase()+'. '+PAT_RULE[Q.ans].replace(/<[^>]+>/g,'')):(NOTE[c]?'Not that one! '+NOTE[c]:Q.mode==='scene'&&Q.opts[j].def?'Not that one! '+c+' = '+Q.opts[j].def:rand(OWL.nope)));el.classList.add('wrong');el.disabled=true}
 }
 function press(c,el){
-  if(!Q||Q.done||Q.opts)return;
+  if(!Q||Q.done||Q.opts||Q.peek)return;
   const pos=Q.hidden[Q.cur],want=Q.letters[pos];
   if(c.toLowerCase()===want.toLowerCase()){
     c=want;Q.filled[pos]=c;Q.cur++;Q.wrongHere=0;
@@ -1159,10 +1197,10 @@ function press(c,el){
 }
 function hint(){
   if(!Q||Q.done)return;
-  if(Q.opts){const btns=[...document.querySelectorAll('.opt')],wrong=btns.filter(b=>!b.disabled&&Q.opts[+b.dataset.j].word!==Q.w.word);
+  if(Q.opts){const btns=[...document.querySelectorAll('.opt')],wrong=btns.filter(b=>!b.disabled&&Q.opts[+b.dataset.j].word!==(Q.ans??Q.w.word));
     Q.mistakes++;tone(660,0,.15);
     if(wrong.length>1){const b=rand(wrong);b.classList.add('gone');b.disabled=true;owl(rand(OWL.help))}
-    else{const b=btns.find(b=>Q.opts[+b.dataset.j].word===Q.w.word);if(b)b.classList.add('right');complete()}
+    else{const b=btns.find(b=>Q.opts[+b.dataset.j].word===(Q.ans??Q.w.word));if(b)b.classList.add('right');complete()}
     return}
   const pos=Q.hidden[Q.cur],want=Q.letters[pos];
   Q.filled[pos]=want;Q.hinted[pos]=1;Q.mistakes++;Q.cur++;Q.wrongHere=0;
@@ -1250,7 +1288,7 @@ function finish(){
   save();
   $('#r-stars').innerHTML=starHTML(stars);
   $('#r-title').textContent=stars===3?'Amazing!':stars===2?'Great job!':'Good work!';
-  $('#r-line').textContent=S.kind==='story'?`You got ${good} of ${keys.length} story words right on the first try.`:(S.kind==='match'||S.kind==='meet')?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
+  $('#r-line').textContent=S.kind==='story'?`You got ${good} of ${keys.length} story words right on the first try.`:(S.kind==='match'||S.kind==='meet'||S.kind==='sounds')?`You matched ${good} of ${keys.length} words on the first try.`:`You got ${good} of ${keys.length} words perfectly.`;
   $('#r-pts').textContent=`+${S.pts} points`;
   if(motivGot)got.unshift(motivGot);
   const rule=practice?'3 stars and no mistakes':'3 stars';

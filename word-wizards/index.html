@@ -683,8 +683,13 @@ const SCEN={bully:['A big kid takes other kids\' lunch and pushes them every day
  innovative:['Sara made a robot that nobody had seen before. Her idea is…','A brand-new and original invention is…'],
  'old-fashioned':['Grandpa\'s phone has a round dial. It is…','Clothes from a long, long time ago are…'],
  popular:['Everyone wants to play with Mia. She is…','Many people love this song. It is very…'],
- 'self-portrait':['I looked in the mirror and drew my own face. I drew a…','A painter paints a picture of herself. It is a…']};
-const NOTE={bully:'bully = a PERSON who hurts or scares others.','pick on':'pick on = an ACTION: to bully or laugh at someone.',shame:'shame = you feel bad about something YOU did.',uneasy:'uneasy = worried; something feels wrong.',shy:'shy = nervous in front of people.',glare:'glare = to look at someone with ANGRY eyes.',relief:'relief = the good feeling when a problem ends.',tough:'tough = brave and strong.'};
+ 'self-portrait':['I looked in the mirror and drew my own face. I drew a…','A painter paints a picture of herself. It is a…'],
+ Earth:['It is the planet where we all live. It is the…','Our planet has land, water and air. Its name is…'],
+ crust:['It is the top layer, where we build houses and plant trees. It is the…','The thin, rocky layer that we walk on is the…'],
+ mantle:['It is the second layer, under the crust. It is very hot. It is the…','The thick, hot layer between the crust and the core is the…'],
+ 'outer core':['This layer is LIQUID, like lava. It is the…','It is the third layer. It moves like hot liquid. It is the…'],
+ 'inner core':['It is in the very center. It is hot, hard and SOLID. It is the…','The deepest layer, a hot solid ball, is the…']};
+const NOTE={bully:'bully = a PERSON who hurts or scares others.','pick on':'pick on = an ACTION: to bully or laugh at someone.',shame:'shame = you feel bad about something YOU did.',uneasy:'uneasy = worried; something feels wrong.',shy:'shy = nervous in front of people.',glare:'glare = to look at someone with ANGRY eyes.',relief:'relief = the good feeling when a problem ends.',tough:'tough = brave and strong.',crust:'crust = the TOP layer, our home.',mantle:'mantle = the SECOND layer, very hot.','outer core':'outer core = the LIQUID layer, like lava.','inner core':'inner core = the CENTER, hot and SOLID.',Earth:'Earth = the planet where we live.'};
 /* ---------- MEANINGS of the spelling words (simple English), for the "Meanings" level at the start of each block ---------- */
 const SPELL_DEFS={backpack:'A bag you carry on your back.',homework:'School work you do at home.',starfish:'A sea animal shaped like a star.',bedroom:'The room where you sleep.',fireworks:'Bright lights that explode in the sky at a party.',raindrops:'Small drops of water that fall from the sky.',sunlite:'The light that comes from the sun.',toothbrush:'A small brush to clean your teeth.',birthday:'The day you were born. You have a party!',rainbow:'Colored arch in the sky after the rain.',
 airplane:'A machine with wings that flies in the sky.',baseball:'A game with a bat and a small ball.',goldfish:'A small orange fish that lives in a bowl.',mailbox:'A box where letters arrive.',moonlight:'The light that comes from the moon.',crosswalk:'Lines on the street where people cross.',rowboat:'A small boat you move with oars.',snowstorm:'A storm with a lot of snow and wind.',spaceship:'A vehicle that travels to space.',wheelchair:'A chair with wheels for people who cannot walk.',
@@ -785,7 +790,16 @@ const VOCAB=[
   ['self-portrait','🧑‍🎨','Drawing of oneself.','I looked in the mirror and drew a ___.']],
   story:{title:'The Art Fair',
    text:'Our class had an art fair. Mia made a [self-portrait] with her big smile. Tom did not plan his picture. He liked to [doodle] stars and moons. Ana cut photos from magazines and made a [collage]. Leo took pictures of the school from a funny [angle]. Sara did a science [experiment] with colors and water. Max painted an [old-fashioned] car like Grandpa\'s. Everyone said Sara\'s idea was very [innovative]. Her table was the most [popular] at the fair!',
-   qs:[['What did Mia draw of herself?','self-portrait'],['What did Ana make with photos from magazines?','collage'],['What did Sara do with colors and water?','experiment'],['What kind of car did Max paint, from the past?','old-fashioned'],['Sara\'s table was admired by many people. It was very…','popular']]}}
+   qs:[['What did Mia draw of herself?','self-portrait'],['What did Ana make with photos from magazines?','collage'],['What did Sara do with colors and water?','experiment'],['What kind of car did Max paint, from the past?','old-fashioned'],['Sara\'s table was admired by many people. It was very…','popular']]}},
+{id:'p2v3',name:'Vocab 3',track:'vocab',period:2,words:[
+  ['Earth','🌍','The planet where we live.','The ___ is our home. It is the planet where we live.'],
+  ['crust','🏔️','The layer where our home is.','We live on the ___, the top layer of the Earth.'],
+  ['mantle','🟠','The second layer of the Earth. It is hot.','Under the crust is the ___. It is very hot.'],
+  ['outer core','🌋','The layer made of lava. It is liquid.','The ___ is liquid, like lava.'],
+  ['inner core','🔴','The center of the Earth. It is hot and hard.','The ___ is in the center. It is hot, hard and solid.']],
+  story:{title:'A Trip to the Center of the Earth',
+   text:'Lucy wanted to visit the center of the [Earth]. First she walked on the [crust], where our homes and trees are. Then she went down to the [mantle]. It was very hot! Next was the [outer core], a layer of hot liquid, like lava. At last she found the [inner core], hot, hard and solid. "Wow!" said Lucy. "Our planet has four layers!"',
+   qs:[['Which planet do we live on?','Earth'],['Which layer is our home on?','crust'],['Which layer is the second one, under the crust?','mantle'],['Which layer is liquid, like lava?','outer core'],['Which layer is in the center, hot and hard?','inner core']]}}
 ];
 const BASE=BLOCKS.concat(VOCAB);
 /* school periods: everything above is the 1st period; 2nd-period blocks are added below as the teacher hands them out */

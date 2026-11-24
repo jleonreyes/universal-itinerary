@@ -656,17 +656,31 @@ const BLOCKS=[
   ['cloudy','☁️','The sky is gray and ___. It may rain.']],
   story:{title:'The Sleepy Prince',
    text:'It was a [partly cloudy] morning. A little prince with a gold [crown] lived in a tall [tower]. His puppy put a [paw] on his bed, and the prince started to [yawn]. They went on a [joyride] in a red truck that could [haul] big boxes. They found a secret tunnel [underground]. At the end there was a basket with a sweet [strawberry]! When they came out, the sky was [cloudy], so they ran home.',
-   qs:[['What did the prince wear on his head?','crown'],['Where did the prince live?','tower'],['What did the puppy put on the bed?','paw'],['What did they find at the end of the tunnel?','strawberry'],['How was the sky when they came out?','cloudy']]}}
+   qs:[['What did the prince wear on his head?','crown'],['Where did the prince live?','tower'],['What did the puppy put on the bed?','paw'],['What did they find at the end of the tunnel?','strawberry'],['How was the sky when they came out?','cloudy']]}},
+ {id:'p2s3',name:'Spelling 3',period:2,words:[
+  ['light','💡','Turn on the ___, please. It is dark.'],
+  ['night','🌙','The moon and the stars come out at ___.'],
+  ['right','➡️','Turn ___ at the corner, not left.'],
+  ['sight','👁️','Our eyes give us the sense of ___.'],
+  ['bright','⭐','The star is very ___ in the dark sky.'],
+  ['tight','👖','My old shoes are too ___. They hurt my feet.'],
+  ['fight','🥊','Brothers should not ___. They should talk.'],
+  ['flight','✈️','Our ___ to Orlando leaves at nine.'],
+  ['fright','😱','The monster mask gave me a big ___!'],
+  ['high','🪁','My kite flies very ___ in the sky.']],
+  story:{title:'The Night Flight',
+   text:'It was a dark [night]. We were on a [flight] to see Grandma. I looked out the window and saw a [bright] star. "Wow, what a beautiful [sight]!" I said. We were very [high] in the sky. Suddenly the plane shook and I got a [fright]! My seatbelt was very [tight], so I was safe. My brother and I did not [fight]; we held hands. Then the pilot turned on the [light] and said, "Everything is all [right]!"',
+   qs:[['When was the trip? It was a dark…','night'],['How did they travel?','flight'],['What did the plane do that gave me a big…?','fright'],['How was my seatbelt?','tight'],['What did the pilot turn on?','light']]}}
 ];
 BLOCKS.forEach(b=>b.track='spell');
 
 /* ---------- SOUND PATTERNS: the English "au" sound is written OU/OW; AU/AW sound like "o" ---------- */
-const PATS=['ou','ow','au','aw','oi','oy'];
-const PAT_RULE={ou:'OU and OW sound like "au" in Spanish (auto): s<b>ou</b>nd, cr<b>ow</b>n.',ow:'OU and OW sound like "au" in Spanish (auto): s<b>ou</b>nd, cr<b>ow</b>n.',au:'AU and AW sound like an "o": <b>au</b>thor, p<b>aw</b>. Never use them for the "au" sound!',aw:'AU and AW sound like an "o": <b>au</b>thor, p<b>aw</b>. Never use them for the "au" sound!',oi:'OI and OY sound like "oi": n<b>oi</b>sy, j<b>oy</b>. Use OY at the end of a word or syllable.',oy:'OI and OY sound like "oi": n<b>oi</b>sy, j<b>oy</b>. Use OY at the end of a word or syllable.'};
-const RULE_ALL='🔤 <b>OU / OW</b> = "au" sound (sound, crown) · <b>AU / AW</b> = "o" sound (author, paw) · <b>OI / OY</b> = "oi" sound (noisy, joy)';
+const PATS=['igh','ou','ow','au','aw','oi','oy'];
+const PAT_RULE={igh:'IGH sounds like "ai" in Spanish: l<b>igh</b>t, n<b>igh</b>t, h<b>igh</b>. The G and H are silent!',ou:'OU and OW sound like "au" in Spanish (auto): s<b>ou</b>nd, cr<b>ow</b>n.',ow:'OU and OW sound like "au" in Spanish (auto): s<b>ou</b>nd, cr<b>ow</b>n.',au:'AU and AW sound like an "o": <b>au</b>thor, p<b>aw</b>. Never use them for the "au" sound!',aw:'AU and AW sound like an "o": <b>au</b>thor, p<b>aw</b>. Never use them for the "au" sound!',oi:'OI and OY sound like "oi": n<b>oi</b>sy, j<b>oy</b>. Use OY at the end of a word or syllable.',oy:'OI and OY sound like "oi": n<b>oi</b>sy, j<b>oy</b>. Use OY at the end of a word or syllable.'};
+const RULE_ALL='🔤 <b>IGH</b> = "ai" sound (light, high) · <b>OU / OW</b> = "au" sound (sound, crown) · <b>AU / AW</b> = "o" sound (author, paw) · <b>OI / OY</b> = "oi" sound (noisy, joy)';
 function patternOf(word){const L=word.toLowerCase();let best=null;for(const p of PATS){const i=L.indexOf(p);if(i>=0&&(best===null||i<best.i))best={p,i}}return best}
 /* the girls' own spelling mistakes (weekly quiz) → used as tricky options */
-const KNOWN_ERRS={sound:['saund','sond'],loud:['laud','lowd'],crowded:['craunded','craudet','crouded'],noisy:['noicy','noesy','noysy'],flower:['flawer','flouer'],uneasy:['uneisy','unisy','honizy'],cowboy:['caubay','cauboy'],thaw:['thou','tho'],author:['outhor','autor'],audio:['oudio','awdio'],crown:['craun','croun'],tower:['tauer','touer'],cloudy:['claudy','clowdy'],underground:['undergraund','undergrownd'],yawn:['youn','yaun'],paw:['pau','pou'],haul:['howl','hal'],strawberry:['strauberry','strowberry'],joyride:['joiride'],enjoy:['enjoi']};
+const KNOWN_ERRS={light:['lait','ligth'],night:['nait','nigth'],right:['rait','rigth'],sight:['sait','site'],bright:['brait','brigth'],tight:['tait','tigth'],fight:['fait','figth'],flight:['flait','fligth'],fright:['frait','fligth'],high:['hai','hight'],sound:['saund','sond'],loud:['laud','lowd'],crowded:['craunded','craudet','crouded'],noisy:['noicy','noesy','noysy'],flower:['flawer','flouer'],uneasy:['uneisy','unisy','honizy'],cowboy:['caubay','cauboy'],thaw:['thou','tho'],author:['outhor','autor'],audio:['oudio','awdio'],crown:['craun','croun'],tower:['tauer','touer'],cloudy:['claudy','clowdy'],underground:['undergraund','undergrownd'],yawn:['youn','yaun'],paw:['pau','pou'],haul:['howl','hal'],strawberry:['strauberry','strowberry'],joyride:['joiride'],enjoy:['enjoi']};
 /* situations for vocabulary (like the pictures in the quiz) */
 const SCEN={bully:['A big kid takes other kids\' lunch and pushes them every day. He is a…','Who is the PERSON that hurts and scares other kids?'],
  glare:['Max says nothing. He just looks at Leo with angry eyes. What does Max do?','Her eyes are angry and she stares at you. What is she doing?'],
@@ -699,7 +713,7 @@ armband:'A band you wear around your arm.',birthplace:'The place where you were 
 acorn:'The nut of an oak tree.',bored:'Feeling that nothing is fun.',circus:'A show with clowns, acrobats and animals.',farmhouse:'The house on a farm.',garden:'A place where flowers and plants grow.',keyboard:'The keys you type on.',nervous:'Feeling worried or a little afraid.',party:'A fun time with friends, music and cake.',target:'Something you try to hit.',trapdoor:'A secret door in the floor.',treasure:'Gold, jewels and other valuable things.',worried:'Afraid that something bad will happen.',
 cry:'Tears come out of your eyes.',try:'To do your best to do something.',fly:'To move through the air.',sky:'The space above us, where clouds are.',dry:'Not wet.',shy:'Nervous in front of people.',reply:'To answer.',deny:'To say something is not true.',apply:'To put something on, or ask for a job.',spy:'A person who watches others in secret.',July:'The seventh month of the year.',fry:'To cook in hot oil.',
 citizen:'A person who belongs to a country.',determined:'Wanting something very much and not giving up.',fist:'A closed hand.',proud:'Happy about something you did well.',refugee:'A person who leaves their country because of danger.','role model':'Someone you admire and want to be like.',unkind:'Not nice.',war:'A fight between countries.',visit:'To go to see a person or a place.',present:'A gift.',meal:'Food you eat at one time, like lunch.',photos:'Pictures taken with a camera.',
-audio:'Sound that you can hear and record.',author:'A person who writes books.',cowboy:'A man who rides a horse and takes care of cows.',crowded:'Full of people.',flower:'The colorful part of a plant.',loud:'Making a lot of sound.',noisy:'Full of noise.',sound:'Something you hear.',thaw:'When ice melts and becomes water.',crown:'A gold ring with jewels that a king or queen wears on the head.',haul:'To pull or carry something heavy.',paw:'The foot of an animal like a dog or a cat.',joyride:'A ride in a car just for fun.',strawberry:'A small, red, sweet fruit.',tower:'A tall, narrow building, like part of a castle.',underground:'Under the ground.',yawn:'To open your mouth wide when you are tired.','partly cloudy':'Some sun and some clouds in the sky.',cloudy:'With a lot of clouds in the sky.'};
+audio:'Sound that you can hear and record.',author:'A person who writes books.',cowboy:'A man who rides a horse and takes care of cows.',crowded:'Full of people.',flower:'The colorful part of a plant.',loud:'Making a lot of sound.',noisy:'Full of noise.',sound:'Something you hear.',thaw:'When ice melts and becomes water.',light:'What lets us see, like the sun or a lamp.',night:'The dark time when we sleep.',right:'The opposite of left. Also: correct.',sight:'The sense of seeing with your eyes.',bright:'Full of light; shining a lot.',tight:'Very close to your body; not loose.',fight:'To hit or argue with someone.',flight:'A trip on an airplane.',fright:'A sudden feeling of fear.',high:'Far up from the ground.',crown:'A gold ring with jewels that a king or queen wears on the head.',haul:'To pull or carry something heavy.',paw:'The foot of an animal like a dog or a cat.',joyride:'A ride in a car just for fun.',strawberry:'A small, red, sweet fruit.',tower:'A tall, narrow building, like part of a castle.',underground:'Under the ground.',yawn:'To open your mouth wide when you are tired.','partly cloudy':'Some sun and some clouds in the sky.',cloudy:'With a lot of clouds in the sky.'};
 
 
 /* ---------- VOCABULARY (study guide order): [word, picture, meaning, fill-in-the-blank sentence] ---------- */
@@ -1195,7 +1209,7 @@ function misspellings(word){
   return shuffle(out).slice(0,2).map(v=>cap?v[0].toUpperCase()+v.slice(1):v);
 }
 function makeOpts(w,mode){
-  if(mode==='sound'){const p=patternOf(w.word).p,set=['oi','oy'].includes(p)?['oi','oy','oe','ui']:['ou','ow','au','aw'];return shuffle(set.map(x=>({word:x})))}
+  if(mode==='sound'){const p=patternOf(w.word).p,set=p==='igh'?['igh','i','ai','y']:['oi','oy'].includes(p)?['oi','oy','oe','ui']:['ou','ow','au','aw'];return shuffle(set.map(x=>({word:x})))}
   if(mode==='scene'){const pool=(S&&S.kind==='meet'?[...new Map(S.queue.map(q=>[q.w.word,q.w])).values()]:wordsOf([w.block])).filter(x=>x.word!==w.word);const near=pool.filter(x=>NOTE[x.word]&&NOTE[w.word]);return shuffle(shuffle(near).concat(shuffle(pool.filter(x=>!near.includes(x)))).slice(0,3).map(x=>({word:x.word,def:x.def||x.mdef})).concat([{word:w.word}]))}
   if(mode==='pickspell')return shuffle(misspellings(w.word).map(x=>({word:x})).concat([{word:w.word}]));
   const n=mode==='meaning'?3:4,all=(S&&S.kind==='meet'?[...new Map(S.queue.map(q=>[q.w.word,{word:q.w.word,def:q.w.def,block:q.w.block}])).values()]:vocabWithDefs()).filter(x=>x.word!==w.word&&x.def!==w.def);
@@ -1234,7 +1248,7 @@ function nextQ(){
   say(Q.mode==='scene'?Q.sceneTxt:Q.mode==='match'?Q.w.def:Q.mode==='context'?Q.w.ctx.replace('___','blank'):Q.w.word);
 }
 function renderSlots(){
-  if(Q.opts&&Q.mode==='sound'){const el=$('#slots');el.className='slots';const P=patternOf(Q.w.word);el.innerHTML=`<span class="choice-word">${esc(Q.done?Q.w.word:Q.w.word.slice(0,P.i)+'__'+Q.w.word.slice(P.i+2))}</span>`;return}
+  if(Q.opts&&Q.mode==='sound'){const el=$('#slots');el.className='slots';const P=patternOf(Q.w.word);el.innerHTML=`<span class="choice-word">${esc(Q.done?Q.w.word:Q.w.word.slice(0,P.i)+'__'+Q.w.word.slice(P.i+P.p.length))}</span>`;return}
   if(Q.opts){const el=$('#slots');el.className='slots';el.innerHTML=(Q.mode==='meaning'||Q.done)?`<span class="choice-word">${esc(Q.w.word)}</span>`:'';return}
   const el=$('#slots');el.className='slots'+(Q.done?(Q.mistakes?' miss':' done'):'');
   el.innerHTML=Q.letters.map((c,i)=>{

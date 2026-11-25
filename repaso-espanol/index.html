@@ -374,6 +374,14 @@ const ART_GN = {el:['masculino','singular'], la:['femenino','singular'], lo:['ne
 const AT = (frase) => { const a = frase.split(' ')[0].toLowerCase(), d = ART_D.includes(a), [g, n] = ART_GN[a];
   return { p:'Completa la tabla del artículo:', w:frase, cols:[['Tipo', d ? 'determinado' : 'indeterminado', ['determinado','indeterminado']], ['Género', g, ['masculino','femenino']], ['Número', n, ['singular','plural']]],
     why:`En «${frase}», «${a}» es artículo ${d ? 'determinado' : 'indeterminado'}, ${g} y ${n}.` }; };
+/* ===== 2.º periodo · cuaderno 19 y 24 nov: ahí / hay / ¡ay!, palabras de uso frecuente y el verbo ===== */
+const RULE_AHI = '<b>Ahí:</b> indica un <b>lugar</b>. Responde a <b>¿dónde?</b> Ejemplo: Mi mochila está <b>ahí</b>.<br><b>Hay:</b> indica que <b>existe algo</b>. Ejemplo: <b>Hay</b> tres libros.<br><b>¡Ay!:</b> expresa <b>dolor, sorpresa o emoción</b>. Ejemplo: <b>¡Ay!</b> Me lastimé.<br>Truco: si puedes preguntar <b>¿dónde?</b> → ahí. Si algo <b>existe</b> (hay mucha gente, hay 25 niños) → hay. Si es un <b>grito</b> → ¡ay!<br>Y <b>a ver</b> (de mirar: «A ver, niñas…») se escribe separado; <b>haber</b> es otra palabra: «Va a haber una fiesta».';
+const RULE_FREC = 'Palabras de uso frecuente del cuaderno: <b>a veces, entonces, gente, escoger, buscar, volver, haber, había, iba, hacer, ahora, también, siempre, porque</b>.<br>¡Ojo con las que te cuestan!<br>• <b>a veces</b> (con C y separado)<br>• <b>escoger</b> (con S y G; no «excoger»)<br>• <b>buscar</b> (bus-, no «bucar»)<br>• <b>había</b> e <b>iba</b> (con H y B en había; iba con B)<br>• <b>también</b> (lleva acento)<br>• <b>hay que…</b> (no «hoy que»)<br>• <b>a ver</b> ≠ <b>haber</b>.';
+const RULE_VERBO = '<b>El verbo</b> es una palabra que expresa una <b>acción</b> que realiza una persona, animal o cosa. Los verbos nos indican <b>qué hacemos o qué sucede</b>. Ejemplo: María <b>corre</b>.<br><b>Los verbos en infinitivo</b> no nos indican quién realiza la acción ni cuándo sucede. Terminan en 3 formas:<br>• <b>-ar:</b> cantar, bailar, jugar…<br>• <b>-er:</b> comer, correr, beber…<br>• <b>-ir:</b> vivir, escribir, dormir…<br>Truco para el infinitivo: piensa «voy a…»: corremos → voy a <b>correr</b>.';
+const AH = (big, a, why, o) => { const up = big.startsWith('_'); const opts = up ? ['Ahí', 'Hay', '¡Ay!'] : ['ahí', 'hay', '¡ay!']; return { p:'¿Ahí, hay o ¡ay!?', big, a, w:opts.filter(x => x !== a), why, ojo:o, long:1 }; };
+const VI = (conj, inf, w, why, o) => ({ p:'¿Cuál es el verbo en infinitivo?', big:conj, a:inf, w, why: why || `«${conj}» → ${inf}. Piensa «voy a ${inf}».`, ojo:o, cls:'small' });
+const VT = (s, a, o) => ({ s, a, ojo:o, why:`«${a}» es el verbo: es la acción de la oración.` });
+const VC = (w, b, o) => ({ t:w, b, ojo:o, why:`${w} termina en ${['-ar','-er','-ir'][b]}.${w === 'dormir' ? ' ¡dormir también es -ir!' : ''}` });
 const CR = (s, a, why, o) => ({ s, a, why, ojo:o });
 const ES = (w, hint, o) => ({ w, hint, ojo:o });
 const SNAME = ['monosílaba','bisílaba','trisílaba','polisílaba'];
@@ -641,6 +649,75 @@ const ACTS = [
      Q('¿Cuál está bien escrita?','jarrón',['jarón','jarron'],'jarrón: RR y acento en la ó.')]},
 
   /* ---------- 2.º periodo · Los artículos (cuaderno 10 nov) — estructura del examen de Español ---------- */
+  /* ---------- 2.º periodo · Ortografía: ahí, hay, ¡ay! y palabras de uso frecuente (cuaderno 19 y 24 nov) ---------- */
+  {g:'orto4', id:'dictado4', type:'dict', title:'1. Dictado', src:'Ahí, hay, ¡ay! y palabras de uso frecuente', n:15,
+   rule:'Escucha con atención. Piensa: ¿es un lugar (ahí), algo que existe (hay) o un grito (ay)? Fíjate en la H, la B/V, la C/S y los acentos (ahí, había, también).',
+   items:[['ahí','Mi mochila está ahí.',1],['hay','Hay tres libros.',1],['ay','¡Ay! Me duele la cabeza.',1],['a veces','A veces voy al cine.',1],['entonces','Entonces sí vamos a jugar.'],['gente','Hay mucha gente hoy.'],
+     ['escoger','Hay que escoger una pareja.',1],['buscar','Hay que buscar un tesoro.',1],['volver','Quiero volver a jugar.'],['haber','Mañana va a haber una fiesta.',1],['había','Había un perro en la calle.',1],
+     ['iba','Iba a ir al cine.'],['hacer','Voy a hacer manualidades.'],['ahora','Ahora voy a hacer la tarea.'],['también','A ella también le gusta viajar.',1],['siempre','Siempre hago la tarea.'],['porque','No vino porque estaba enferma.'],
+     ['obedecer','Hay que obedecer a la maestra.',1]].map(([w, s, o]) => ({w, s, ojo:o}))},
+  {g:'orto4', id:'ahioracexam', type:'escribe', title:'2. Escribe oraciones con palabras del dictado', src:'Como en el examen: oraciones con las palabras del dictado', rule:RULE_AHI + '<br>' + RULE_FREC + '<br>Una oración empieza con <b>mayúscula</b> y termina con <b>punto</b>.',
+   items:[ES('ahí','Lleva acento. Es un lugar.',1), ES('hay','Algo que existe.',1), ES('también','Lleva acento.',1), ES('había','Lleva H, B y acento.',1), ES('a veces','',1), ES('escoger','',1),
+     ES('buscar','',1), ES('siempre'), ES('porque'), ES('entonces'), ES('ahora'), ES('volver'), ES('iba'), ES('gente')]},
+  {g:'orto4', id:'ahicorrige', type:'corrige', title:'3. Corrige las oraciones', src:'Como en el examen: corrige las siguientes oraciones', rule:RULE_AHI + '<br>' + RULE_FREC + '<br>Revisa: <b>mayúscula</b> al inicio, <b>acentos</b>, letras y el <b>punto</b> final.',
+   items:[CR('hoy que buscar un tesoro.','Hay que buscar un tesoro.','«Hay que…» (no «hoy que»). Hay con mayúscula al inicio.',1),
+     CR('quiero bolver a jugar.','Quiero volver a jugar.','Quiero con mayúscula y volver con V.'),
+     CR('haber niñas, hay que obedeser.','A ver, niñas, hay que obedecer.','«A ver» (de mirar) va separado; haber es otra palabra. Y obedecer lleva C.',1),
+     CR('hadía un perro en la calle.','Había un perro en la calle.','Había: con H, con B y con acento en la í.',1),
+     CR('a ella tambien le gusta viajar.','A ella también le gusta viajar.','A con mayúscula y también con acento.',1),
+     CR('hay que excoger una pareja.','Hay que escoger una pareja.','escoger se escribe con S (no «excoger») y con G.',1),
+     CR('a vecer voy al cine.','A veces voy al cine.','A veces: separado, con mayúscula y con C al final: ve-ces.',1),
+     CR('mi mochila esta ay.','Mi mochila está ahí.','está lleva acento y ahí (un lugar) va con H y acento.',1),
+     CR('en el salon ahí 25 niños.','En el salón hay 25 niños.','salón con acento; hay porque los niños existen.',1),
+     CR('hay me duele la cabeza.','¡Ay! Me duele la cabeza.','¡Ay! es un grito de dolor: sin H y con signos ¡!',1),
+     CR('ahi hay mucha gente.','Ahí hay mucha gente.','Ahí (lugar) con mayúscula y acento; hay (existe).')]},
+  {g:'orto4', id:'ahihayay', type:'elige', title:'¿Ahí, hay o ¡ay!?', src:'Ortografía: ahí, hay y ¡ay!', rule:RULE_AHI,
+   items:[AH('Mi mochila está _.','ahí','¿Dónde está? → ahí, un lugar.',1), AH('_ tres libros.','Hay','Los libros existen → hay.',1), AH('_ Me lastimé.','¡Ay!','Es un grito de dolor → ¡ay!',1),
+     AH('_ Me duele la cabeza.','¡Ay!','Dolor → ¡ay!',1), AH('En el salón _ 25 niños.','hay','Los niños existen → hay.',1), AH('_ mucha gente hoy.','Hay','La gente existe → hay.'),
+     AH('Pon tu suéter _.','ahí','¿Dónde? → ahí.'), AH('_ ¡Qué susto!','¡Ay!','Sorpresa → ¡ay!'), AH('_ que hacer la tarea.','Hay','«Hay que…» siempre con H y Y.',1),
+     AH('El gato está _, debajo de la mesa.','ahí','¿Dónde? → ahí.'), AH('_ ¡Qué bonito regalo!','¡Ay!','Emoción → ¡ay!'), AH('¿_ pastel para todos?','Hay','¿Existe pastel? → hay.'),
+     AH('_ está mi lápiz.','Ahí','¿Dónde está? → ahí.'), AH('En mi casa _ un perro.','hay','El perro existe → hay.'),
+     Q('¿Qué indica «ahí»?','un lugar (¿dónde?)',['que algo existe','dolor o sorpresa'],'Ahí indica un lugar.'),
+     Q('¿Qué indica «hay»?','que algo existe',['un lugar (¿dónde?)','dolor o sorpresa'],'Hay indica que existe algo.'),
+     Q('¿Qué expresa «¡ay!»?','dolor, sorpresa o emoción',['un lugar (¿dónde?)','que algo existe'],'¡Ay! expresa dolor, sorpresa o emoción.')]},
+  {g:'orto4', id:'frecuentes', type:'elige', title:'Palabras de uso frecuente', src:'Ortografía: palabras de uso frecuente', rule:RULE_FREC,
+   items:[Q('¿Cuál está bien escrita?','a veces',['a vecer','aveces','a veses'],'a veces: separado y con C.',1), Q('¿Cuál está bien escrita?','escoger',['excoger','escojer','escoguer'],'es-co-ger: con S y con G.',1),
+     Q('¿Cuál está bien escrita?','buscar',['bucar','buzcar','vuscar'],'bus-car: empieza con bus-, va con B.',1), Q('¿Cuál está bien escrita?','había',['hadía','abía','habia'],'ha-bí-a: H, B y acento.',1),
+     Q('¿Cuál está bien escrita?','también',['tambien','tamvién','tanbién'],'también: M antes de B y acento en la é.',1), Q('¿Cuál está bien escrita?','iba',['iva','hiba'],'iba: con B y sin H.'),
+     Q('¿Cuál está bien escrita?','hacer',['aser','haser','hacér'],'hacer: con H y con C.'), Q('¿Cuál está bien escrita?','ahora',['aora','ahorá','haora'],'a-ho-ra: la H va en medio.'),
+     Q('¿Cuál está bien escrita?','siempre',['simpre','siempré','ciempre'],'siem-pre: M antes de P.'), Q('¿Cuál está bien escrita?','porque',['porke','por que','porqué'],'«No vine porque…» va junto y sin acento.'),
+     Q('¿Cuál está bien escrita?','entonces',['entonses','entoces','entónces'],'en-ton-ces: con C.'), Q('¿Cuál está bien escrita?','volver',['bolver','volber','bolber'],'volver: V al inicio y V en medio.'),
+     Q('¿Cuál está bien escrita?','gente',['jente','guente','gentes'],'gente: con G (ge suena como j).'),
+     Q('¿Cuál está bien escrita?','obedecer',['obedeser','ovedecer','obedeçer'],'o-be-de-cer: con B y con C.',1),
+     MS('_ que buscar un tesoro.','Hay',['Hoy','Ay'],'«Hay que…» (no «hoy que»).',1), MS('_, niñas: hay que obedecer.','A ver',['Haber','Aver'],'«A ver» (de mirar) va separado.',1),
+     MS('Mañana va a _ una fiesta.','haber',['a ver','aber'],'«va a haber» = va a existir: haber, con H y B.',1), MS('_ un perro en la calle.','Había',['Hadía','Abía'],'Había: con H, B y acento.',1)]},
+
+  /* ---------- 2.º periodo · El verbo (cuaderno 24 nov) ---------- */
+  {g:'verbo', id:'verbotoca', type:'toca', title:'Encuentra el verbo', src:'Copia las oraciones y subraya los verbos', rule:RULE_VERBO, inst:'Toca el VERBO de la oración: la palabra que dice la acción.',
+   items:[VT('El pájaro vuela por el cielo.','vuela',1), VT('Mi hermana dibuja una flor.','dibuja',1), VT('Los niños juegan en el recreo.','juegan',1), VT('Mi abuela prepara una sopa.','prepara',1),
+     VT('El bebé duerme en su cuna.','duerme',1), VT('María corre en el parque.','corre'), VT('Mi papá lee el periódico.','lee'), VT('Las niñas cantan en el coro.','cantan'),
+     VT('El perro come su croqueta.','come'), VT('Yo escribo una carta.','escribo'), VT('Nosotras bailamos en la fiesta.','bailamos'), VT('El gato salta la barda.','salta'),
+     VT('Mi mamá cocina pasta.','cocina'), VT('Los peces nadan en el agua.','nadan')]},
+  {g:'verbo', id:'verboinf', type:'elige', title:'Escribe el verbo en infinitivo', src:'Verbos en infinitivo', rule:RULE_VERBO,
+   items:[VI('corremos','correr',['corer','corrar','corrir'],'corremos → correr: con RR. ¡No es «corer»!',1), VI('bailaba','bailar',['bailer','bailir','vailar'],'',1),
+     VI('escribieron','escribir',['escriber','escribar','escrivir'],'',1), VI('juego','jugar',['juger','jugir','juegar'],'juego → jugar (la e de «jue» desaparece).',1),
+     VI('comieron','comer',['comar','comir','comier'],'',1), VI('vivimos','vivir',['viver','vivar','bivir'],'',1), VI('cantan','cantar',['canter','cantir']),
+     VI('bebió','beber',['bebar','bebir','veber']), VI('duerme','dormir',['duermir','dormer','duermar'],'duerme → dormir (la «ue» cambia a «o»).',1),
+     VI('vuela','volar',['vuelar','voler','buelar'],'vuela → volar (la «ue» cambia a «o»).',1), VI('dibuja','dibujar',['dibujer','dibujir','divujar']),
+     VI('prepara','preparar',['preparer','preparir']), VI('leemos','leer',['lear','leir']), VI('abrí','abrir',['abrer','abrar']), VI('saltan','saltar',['salter','saltir']),
+     VI('subimos','subir',['suber','subar']), VI('nadaba','nadar',['nader','nadir']), VI('juegan','jugar',['juegar','juger'],'juegan → jugar.')]},
+  {g:'verbo', id:'verboclas', type:'clas', title:'Clasifica los verbos', src:'-ar, -er, -ir', buckets:['-ar','-er','-ir'], rule:RULE_VERBO,
+   items:[VC('cantar',0,1), VC('comer',1,1), VC('escribir',2,1), VC('saltar',0,1), VC('correr',1,1), VC('vivir',2,1), VC('beber',1,1), VC('bailar',0,1), VC('dormir',2,1),
+     VC('jugar',0), VC('leer',1), VC('abrir',2), VC('nadar',0), VC('subir',2), VC('volar',0), VC('dibujar',0), VC('barrer',1), VC('reír',2), VC('aprender',1), VC('vender',1), VC('partir',2), VC('caminar',0)]},
+  {g:'verbo', id:'verboregla', type:'elige', title:'¿Qué es el verbo?', src:'El verbo y el infinitivo', rule:RULE_VERBO,
+   items:[Q('El verbo es una palabra que expresa…','una acción',['un nombre','cómo es algo'],'El verbo expresa una acción. María CORRE.'),
+     Q('¿Cuál es el verbo en «María corre»?','corre',['María'],'corre es la acción.'),
+     Q('Los verbos en infinitivo terminan en…','-ar, -er, -ir',['-o, -a, -s','-ando, -iendo'],'cantar, comer, vivir.'),
+     Q('¿El infinitivo dice quién hace la acción?','No',['Sí'],'El infinitivo no dice quién la hace ni cuándo: cantar, comer, vivir.'),
+     Q('¿Cuál de estas palabras es un verbo?','saltar',['mesa','bonito','feliz'],'saltar es una acción.'),
+     Q('¿Cuál de estas palabras es un verbo?','dibuja',['flor','hermana','roja'],'dibuja es una acción.'),
+     Q('¿Cuál está en infinitivo?','correr',['corremos','corrió','corre'],'correr termina en -er y no dice quién ni cuándo.'),
+     Q('«dormir» termina en…','-ir',['-er','-ar'],'dor-MIR: -ir.',1), Q('«jugar» termina en…','-ar',['-er','-ir'],'ju-GAR: -ar.')]},
   {g:'art', id:'artclas', type:'clas', title:'Escribe en la caja que corresponda', src:'Los artículos', buckets:['Determinado (definido)','Indeterminado (indefinido)'], rule:RULE_ART,
    items:['el','la','los','las','lo'].map(a => AR(a, 0)).concat(['un','una','unos','unas'].map(a => AR(a, 1)),
      [['la maestra',0],['unos colores',1],['el libro',0],['unos pingüinos',1],['el sol',0],['un niño',1],['la puerta',0],['una jirafa',1],['las joyas',0],['unas jarras',1],['los jugos',0],['un jardín',1]].map(([t, b]) => AR(t, b)))},
@@ -742,6 +819,8 @@ const GROUPS = [
   {g:'acen', p:2, x:'🏆 ¡Campeona de las Agudas, Graves y Esdrújulas!', h:'Agudas, graves y esdrújulas', d:'Clasificación de las palabras según la sílaba tónica.'},
   {g:'orto2', p:2, x:'👑 ¡Reina de la G!', h:'Ortografía: la G', d:'G suave y G fuerte, gue y gui, y la regla clave. Y un dictado.'},
   {g:'orto3', p:2, x:'👑 ¡Reina de la J!', h:'Ortografía: la J', d:'Las palabras con J del cuaderno, sus oraciones y un dictado.'},
+  {g:'orto4', p:2, x:'👑 ¡Reina de ahí, hay y ¡ay!!', h:'Ortografía: ahí, hay, ¡ay! y palabras frecuentes', d:'Ahí, hay y ¡ay!, a ver y haber, y las palabras de uso frecuente del cuaderno. Y un dictado.'},
+  {g:'verbo', p:2, x:'🏆 ¡Campeona de los Verbos!', h:'El verbo', d:'Qué es el verbo, encontrarlo en la oración, el infinitivo y las terminaciones -ar, -er, -ir.'},
   {g:'art', p:2, x:'🏆 ¡Campeona de los Artículos!', h:'Los artículos', d:'Determinados (el, la, lo, los, las) e indeterminados (un, una, unos, unas).'},
   {g:'escr', p:2, x:'✍️ ¡Escritora de examen!', h:'✍️ Escritura: sigue TODA la instrucción', d:'Título, número de oraciones, banco de palabras y tu propia experiencia, como en el examen.'}
 ];
@@ -1452,7 +1531,7 @@ const RENDER = {
     if (can) { $('#say').onclick = say; setTimeout(say, 350); }
     const inp = $('#in'); let tries = 0;
     const strip = s => s.normalize('NFD').replace(/[̀-́̈]/g, '').normalize('NFC');
-    const norm = s => s.normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
+    const norm = s => s.normalize('NFC').trim().toLowerCase().replace(/^[¡¿]+|[!?.]+$/g, '').trim().replace(/\s+/g, ' ');
     const accented = /[áéíóúü]/.test(it.w);
     const check = () => {
       if (cur.over) return;

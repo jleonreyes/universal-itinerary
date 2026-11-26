@@ -298,6 +298,7 @@ h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,6vw,40px);lin
 </div>
 <div class="modal" id="modal" hidden></div>
 
+<script src="ortografia/nspell.js" defer></script>
 <script>
 /* ================= DATOS (del cuaderno, con las correcciones de la miss) ================= */
 // ojo: 1 = palabra que la miss corrigió o que costó trabajo; siempre entra en la ronda.
@@ -1157,10 +1158,36 @@ function progress() {
   $('#progbar').style.width = (cur.total ? cur.done / cur.total * 100 : 0) + '%';
 }
 let fbT;
-function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = msg; clearTimeout(fbT); if (msg) fbT = setTimeout(() => { f.textContent = ''; }, 1600); }
+function fb(cls, msg) { const f = $('#fb'); f.className = cls; f.textContent = msg; clearTimeout(fbT); if (msg) fbT = setTimeout(() => { f.textContent = ''; }, Math.max(1600, msg.length * 70)); }
 const PRAISE = ['¡Correcto!', '¡Muy bien!', '¡Eso es!', '¡Excelente!', '¡Así se hace!'];
 const shake = el => { if (!el) return; el.classList.remove('shake'); void el.getBoundingClientRect(); el.classList.add('shake'); };
 const addErrTot = id => { id = (BYID[id] && BYID[id].base) || id; errTot[id] = (errTot[id] || 0) + 1; save(K('errtot'), errTot); };
+/* ===== Revisión de ortografía de TODAS las palabras (diccionario es-MX de LibreOffice + nspell) ===== */
+let SPELL = null;
+const SPELL_OK = new Set(['basketball','basquetbol','soccer','ok','okay','youtube','youtuber','roblox','minecraft','ipad','tablet','wifi','hot','dog','hotdog','nuggets','cupcake','cupcakes','show','halloween','emoji','selfie','cool','hobby','ja','jaja','jajaja','mmm','uy','eh','oh','pelonchis','cacatúa','pillus','makakikus','tiktok','netflix','disney','lego','legos','kinder','pokémon','pokemon','barbie','slime']);
+function loadSpell() {
+  if (SPELL || !window.NSpell || !window.fetch) return;
+  Promise.all(['ortografia/es-MX.aff', 'ortografia/es-MX.dic'].map(u => fetch(u).then(r => { if (!r.ok) throw 0; return r.text(); })))
+    .then(([aff, dic]) => { setTimeout(() => { try { SPELL = window.NSpell(aff, dic); } catch (e) { SPELL = null; } }, 50); }).catch(() => {});
+}
+window.addEventListener('load', () => setTimeout(loadSpell, 400));
+/* Devuelve las palabras mal escritas del texto (sin repetir). Los nombres propios a mitad de oración no se revisan. */
+function ortoErrors(text) {
+  if (!SPELL) return [];
+  const extra = new Set(players.flatMap(x => x.name.toLowerCase().split(/\s+/)));
+  const out = [], re = /[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+|[.!?]/g; let m, start = true;
+  while ((m = re.exec(text.normalize('NFC')))) {
+    const w = m[0];
+    if (/^[.!?]$/.test(w)) { start = true; continue; }
+    const low = w.toLowerCase(), first = start; start = false;
+    if (SPELL_OK.has(low) || extra.has(low) || w.length < 2 && /^[aeoyu]$/i.test(w)) continue;
+    if (SPELL.correct(w) || SPELL.correct(low)) continue;
+    if (!first && /^[A-ZÁÉÍÓÚÑ]/.test(w)) continue;              // nombre propio (María, Minecraft…)
+    if (!out.includes(w)) out.push(w);
+  }
+  return out;
+}
+const ortoMsg = bad => bad.length === 1 ? `Revisa la ortografía de «${bad[0]}».` : `Revisa la ortografía de: ${bad.map(x => `«${x}»`).join(', ')}.`;
 function wrongQ(q, ...els) { cur.mistakes++; addErrTot(q.act.id); if (!q.bad) { q.bad = true; markErr(q); } fb('bad', 'Casi. Inténtalo otra vez.'); progress(); els.forEach(shake); }
 /* ---------- Errores de INSTRUCCIÓN: la respuesta no es lo que pide la instrucción ---------- */
 function instrErr(q, msg, ...els) {
@@ -1323,6 +1350,7 @@ const RENDER = {
       else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
       else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
       else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
+      if (!msg && has) { const bad = ortoErrors(v); if (bad.length) msg = ortoMsg(bad); }
       if (!has && !near && !spaced) { instrErr(q, `La instrucción pide una oración CON la palabra «${it.w}».`, inp); return; }
       if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
       inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
@@ -1431,6 +1459,7 @@ const RENDER = {
         if (c.k === 'palabra' && !words.includes(c.w.toLowerCase())) bad = `La instrucción pide usar la palabra «${c.w}».`;
         if (bad) { instrErr(q, bad, $('#tx')); return; }
       }
+      { const bad = ortoErrors(T + '. ' + X); if (bad.length) { const t = $('#tx'); t.classList.add('bad'); setTimeout(() => t.classList.remove('bad'), 700); wrongQ(q, t); fb('bad', ortoMsg(bad)); return; } }
       rightQ(q, it.why || '¡Cumpliste TODA la instrucción! Así se hace en el examen.', 1);
     };
   },

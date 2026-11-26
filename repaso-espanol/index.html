@@ -1314,12 +1314,16 @@ const RENDER = {
       const line = ' ' + words.join(' ') + ' ', target = it.w.trim().split(/\s+/).join(' ');
       const has = low(line).includes(' ' + low(target) + ' ');
       const near = !has && bare(line).includes(' ' + bare(target) + ' ');
+      /* ¿la escribió pegada (aveces) o separada de más (tam bién)? */
+      const glue = x => bare(x).replace(/ /g, '');
+      const spaced = !has && !near && (() => { const g = glue(target); for (let i = 0; i < words.length; i++) { let acc = ''; for (let j = i; j < words.length && acc.length < g.length; j++) { acc += glue(words[j]); if (acc === g && j - i + 1 !== target.split(' ').length) return true; } } return false; })();
       let msg = '';
-      if (!has) msg = near ? `Revisa cómo escribiste «${it.w}»: ¿lleva acento?` : `Tu oración debe llevar la palabra «${it.w}», bien escrita.`;
+      if (spaced) msg = target.includes(' ') ? `«${it.w}» se escribe SEPARADO: son ${target.split(' ').length} palabras.` : `«${it.w}» se escribe JUNTO, en una sola palabra.`;
+      else if (!has) msg = near ? `Revisa cómo escribiste «${it.w}»: ¿lleva acento?` : `Tu oración debe llevar la palabra «${it.w}», bien escrita.`;
       else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
       else if (!/^[¡¿]?[A-ZÁÉÍÓÚÑ]/.test(v)) msg = 'La oración empieza con MAYÚSCULA.';
       else if (!/[.!?]$/.test(v)) msg = 'No olvides el punto al final.';
-      if (!has && !near) { instrErr(q, `La instrucción pide una oración CON la palabra «${it.w}».`, inp); return; }
+      if (!has && !near && !spaced) { instrErr(q, `La instrucción pide una oración CON la palabra «${it.w}».`, inp); return; }
       if (!msg) { inp.classList.add('ok'); inp.blur(); rightQ(q, `¡Muy buena oración! Lleva «${it.w}», empieza con mayúscula y termina con punto.`, 1); return; }
       inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp); fb('bad', msg);
     };
@@ -1541,6 +1545,13 @@ const RENDER = {
       const v = norm(inp.value); if (!v) return;
       if (v === it.w) { inp.classList.add('ok'); inp.blur(); rightQ(q, accented ? `Se escribe «${it.w}», con acento.` : `Se escribe «${it.w}».`); return; }
       tries++; inp.classList.add('bad'); setTimeout(() => inp.classList.remove('bad'), 700); wrongQ(q, inp);
+      // Mismas letras pero pegadas o separadas de más (aveces / tam bién): es error y se les dice por qué.
+      if (v.replace(/ /g, '') === it.w.replace(/ /g, '') && v !== it.w) {
+        const sep = it.w.includes(' ');
+        fb('bad', sep ? `¡Casi! «${it.w}» se escribe SEPARADO: son ${it.w.split(' ').length} palabras.` : `¡Casi! «${it.w}» se escribe JUNTO, en una sola palabra.`);
+        if (tries >= 2) $('#sh').innerHTML = `<div class="hint">${sep ? 'Va separado:' : 'Va junto:'}</div><div class="show">${esc(it.w)}</div><div class="hint">Escríbela tú para seguir.</div>`;
+        return;
+      }
       // Las letras están bien pero el acento no: cuenta como error y no avanza hasta que lo escriban bien.
       if (strip(v) === strip(it.w)) {
         fb('bad', accented ? '¡Casi! Revisa el acento (´).' : '¡Casi! Esta palabra no lleva acento.');

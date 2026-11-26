@@ -1309,8 +1309,11 @@ const RENDER = {
       if (cur.over) return;
       const v = inp.value.normalize('NFC').trim().replace(/\s+/g, ' '); if (!v) return;
       const words = v.replace(/[.,;:¡!¿?"«»]/g, ' ').split(/\s+/).filter(Boolean);
-      const has = words.some(x => x.toLowerCase() === it.w.toLowerCase());
-      const near = !has && words.some(x => x.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '') === it.w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''));
+      /* la palabra puede ser de varias (a veces): se busca la frase completa entre palabras */
+      const low = x => x.toLowerCase(), bare = x => low(x).normalize('NFD').replace(/[̀-ͯ]/g, '');
+      const line = ' ' + words.join(' ') + ' ', target = it.w.trim().split(/\s+/).join(' ');
+      const has = low(line).includes(' ' + low(target) + ' ');
+      const near = !has && bare(line).includes(' ' + bare(target) + ' ');
       let msg = '';
       if (!has) msg = near ? `Revisa cómo escribiste «${it.w}»: ¿lleva acento?` : `Tu oración debe llevar la palabra «${it.w}», bien escrita.`;
       else if (words.length < 4) msg = 'Escribe una oración más completa: por lo menos 4 palabras.';
